@@ -1,0 +1,91 @@
+<style>
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 50vh;
+        background-color: #f0f0f0;
+    }
+
+    .block-content {
+        width: 400px;
+        height: 400px;
+        max-width: 100%; /* Para garantir que o card seja responsivo */
+        background-color: #ffffff;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    label {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    input[type="number"],
+    textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-bottom: 10px;
+    }
+
+    input[type="submit"] {
+        background-color: #4CAF50
+        ;
+        color: #fff;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .rating-input {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .rating-input label {
+        font-size: 20px;
+    }
+
+    .rating-input input[type="radio"] {
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: 2px solid #ccc;
+        outline: none;
+        margin: 0 5px;
+        cursor: pointer;
+    }
+
+    .rating-input input[type="radio"]:checked {
+        background-color: #4CAF50;
+        border-color: #4CAF50;
+    }
+</style>
+
+<div class="container">
+    <div class="block-content">
+        <form action="{{formaction}}" method="post">
+            <input type="hidden" name="userid" value="{{userid}}" />
+            <input type="hidden" name="courseid" value="{{courseid}}" />
+
+            <label for="grade">Nota:</label>
+            <div class="rating-input">
+                <label><input type="radio" name="grade" value="1"></label>
+                <label><input type="radio" name="grade" value="2"></label>
+                <label><input type="radio" name="grade" value="3"></label>
+                <label><input type="radio" name="grade" value="4"></label>
+                <label><input type="radio" name="grade" value="5"></label>
+            </div>
+
+            <label for="description">Comentário:</label>
+            <textarea name="description"></textarea>
+
+            <input type="submit" value="Submit" />
+        </form>
+    </div>
+</div>
