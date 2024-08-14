@@ -1,0 +1,23 @@
+.ifcare-navigation {
+    margin: 20px 0;
+}
+
+.ifcare-navigation .btn {
+    margin-right: 10px;
+}
+.ifcare-toggle-container {
+    margin: 20px;
+}
+
+.ifcare-toggle {
+    margin-bottom: 10px;
+}
+
+.toggle-content {
+    display: none;
+    margin-top: 10px;
+}
+
+.list-group-item {
+    margin: 5px 0;
+}

@@ -31,7 +31,7 @@ class block_ifcare extends block_base {
      */
     public function init() {
         $this->title = get_string('pluginname', 'block_ifcare');
-    }
+    }    
 
     /**
      * Gets the block contents.
