@@ -1,6 +1,7 @@
 <?php
 require_once('../../config.php');
-$PAGE->requires->css('/blocks/ifcare/styles.css');
+require_once("$CFG->libdir/formslib.php");
+require_once('cadastrar_form.php'); // Inclua o arquivo com a classe de formulário
 
 $courseid = required_param('courseid', PARAM_INT);
 
@@ -26,7 +27,7 @@ echo html_writer::start_tag('div', ['class' => 'row']);
 // Alinhamento com o menu secundário
 echo html_writer::start_tag('div', ['class' => 'col-md-12']);
 
-// Função para criar a estrutura da seção
+// Função para criar a estrutura da seção com layout semelhante ao de configurações
 function create_section($id, $title, $content) {
     echo html_writer::start_tag('li', [
         'id' => "section-$id",
@@ -75,38 +76,29 @@ function create_section($id, $title, $content) {
     echo html_writer::tag('div', '', ['class' => 'section_availability']);
     echo html_writer::end_tag('div'); // End my-3
 
-    echo html_writer::start_tag('ul', ['class' => 'section m-0 p-0 img-text d-block']);
-    echo html_writer::start_tag('li', ['class' => 'activity activity-wrapper', 'id' => "module-$id"]);
-    echo html_writer::start_tag('div', ['class' => 'activity-item focus-control']);
-    echo html_writer::start_tag('div', ['class' => 'activity-grid']);
-    echo html_writer::start_tag('div', ['class' => 'activity-icon activityiconcontainer smaller collaboration courseicon align-self-start mr-2']);
-    echo html_writer::empty_tag('img', [
-        'src' => 'http://localhost/theme/image.php/boost/forum/1723638691/monologo?filtericon=1',
-        'class' => 'activityicon',
-        'data-region' => 'activity-icon',
-        'alt' => ''
-    ]);
-    echo html_writer::end_tag('div'); // End activity-icon
+    // Conteúdo da seção
+    if ($id == 1) { // Se for a seção Cadastrar
+        $form = new cadastrar_form();
+        $form->display();
+    } else {
+        echo $content; // Para outras seções, apenas exibe o conteúdo
+    }
 
-    echo html_writer::start_tag('div', ['class' => 'activity-name-area activity-instance d-flex flex-column mr-2']);
-    echo html_writer::start_tag('div', ['class' => 'activitytitle modtype_forum position-relative align-self-start']);
-    echo html_writer::start_tag('div', ['class' => 'activityname']);
-    echo html_writer::link('', $content, ['class' => 'aalink stretched-link']);
-    echo html_writer::end_tag('div'); // End activityname
-    echo html_writer::end_tag('div'); // End activitytitle
-    echo html_writer::end_tag('div'); // End activity-name-area
-    echo html_writer::end_tag('div'); // End activity-grid
-    echo html_writer::end_tag('div'); // End activity-item
-    echo html_writer::end_tag('li'); // End activity-wrapper
-    echo html_writer::end_tag('ul'); // End section
     echo html_writer::end_tag('div'); // End content
     echo html_writer::end_tag('div'); // End section-item
     echo html_writer::end_tag('li'); // End section
 }
 
-// Adiciona as seções
-create_section(1, 'Cadastrar', 'Cadastrar Content');
-create_section(2, 'Listar', 'Listar Content');
+// Adiciona a seção Cadastrar com formulário
+create_section(1, 'Cadastrar', '');
+
+// Adiciona a seção Listar com dois itens fictícios
+create_section(2, 'Listar', '
+    <ul>
+        <li>Item 1: Fake Content 1</li>
+        <li>Item 2: Fake Content 2</li>
+    </ul>
+');
 
 // Fecha o container
 echo html_writer::end_tag('div'); // End col-md-12
