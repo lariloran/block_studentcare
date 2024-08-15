@@ -26,41 +26,16 @@ class cadastrar_form extends moodleform {
         $mform->addElement('textarea', 'description', get_string('description', 'block_ifcare'), 'wrap="virtual" rows="5" cols="50"');
         $mform->setType('description', PARAM_TEXT);
 
+        // Define as opções para o select.
+        $options = array(
+            'class1' => get_string('class1', 'block_ifcare'),
+            'class2' => get_string('class2', 'block_ifcare'),
+            'class3' => get_string('class3', 'block_ifcare'),
+        );
 
-        // Define the options for the dropdown list.
-$options = new core\output\choicelist();
-$options->add_option(
-    'Emoções relacionadas às aulas',
-    get_string('class1', 'block_ifcare'),
-    [
-        'description' => 'Option 1 description',
-        'icon' => new pix_icon('t/hide', 'Eye icon 1'),
-    ]
-);
-$options->add_option(
-    'Emoções relacionadas aos testes',
-    get_string('class2', 'block_ifcare'),
-    [
-        'description' => 'Option 2 description',
-        'icon' => new pix_icon('t/stealth', 'Eye icon 2'),
-    ]
-);
-$options->add_option(
-    'Emoções relacionadas ao aprendizado',
-    get_string('class3', 'block_ifcare'),
-    [
-        'description' => 'Option 3 description',
-        'icon' => new pix_icon('t/show', 'Eye icon 3'),
-    ]
-);
-
-// Add the choicedropdown field to the form.
-$mform->addElement(
-    'choicedropdown',
-    'FIELDNAME',
-    get_string('aeqclasses', 'block_ifcare'),
-    $options,
-);
+        // Adiciona o campo select ao formulário.
+        $mform->addElement('select', 'FIELDNAME', get_string('aeqclasses', 'block_ifcare'), $options);
+        $mform->setType('FIELDNAME', PARAM_TEXT);
 
         // Adicione o contêiner para a tabela dinâmica utilizando as classes de layout padrão do Moodle
         $mform->addElement('html', '<div class="fitem">
@@ -74,13 +49,6 @@ $mform->addElement(
         $PAGE->requires->js('/blocks/ifcare/tabela_dinamica.js');
 
         $mform->addElement('html', '<div class="fitem">
-                                <div class="fitemtitle">Selecione as emoções</div>
-                                <div class="felement">
-                                    <table id="container-tabela" class="generaltable"></table>
-                                </div>
-                            </div>');
-                            
-        $mform->addElement('html', '<div class="fitem">
     <div class="fitemtitle">Resumo das Seleções</div>
     <div class="felement" id="resumo-selecoes">
         <ul id="resumo-lista">
@@ -90,7 +58,6 @@ $mform->addElement(
 </div>
 ');
 
-
         // Flag "Receber alerta do andamento da coleta"
         $mform->addElement('advcheckbox', 'alertprogress', get_string('alertprogress', 'block_ifcare'), null, array('group' => 1), array(0, 1));
         $mform->setDefault('alertprogress', 1);
@@ -99,7 +66,6 @@ $mform->addElement(
         $mform->addElement('advcheckbox', 'notify_students', get_string('notify_students', 'block_ifcare'), null, array('group' => 1), array(0, 1));
         $mform->setDefault('notify_students', 1);
 
-        
         // Botões de Salvar e Cancelar
         $this->add_action_buttons(true, get_string('submit', 'block_ifcare'));
     }
@@ -116,3 +82,4 @@ $mform->addElement(
         return $errors;
     }
 }
+?>

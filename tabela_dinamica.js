@@ -3,28 +3,36 @@ document.addEventListener('DOMContentLoaded', function() {
     const containerTabela = document.getElementById('container-tabela');
     const resumoSelecoes = document.getElementById('resumo-selecoes');
 
+    // Mapeamento das classes para os nomes legíveis
+    const nomesLegiveisClasses = {
+        'class1': 'Emoções relacionadas às aulas',
+        'class2': 'Emoções relacionadas aos testes',
+        'class3': 'Emoções relacionadas ao aprendizado'
+    };
+
     const emocaoPorClasse = {
-        'Emoções relacionadas às aulas': ['alegria', 'esperanca', 'orgulho', 'raiva', 'ansiedade', 'vergonha', 'desesperança', 'tédio'],
-        'Emoções relacionadas aos testes': ['alegria', 'esperanca', 'orgulho', 'raiva', 'ansiedade', 'vergonha', 'desesperança', 'tédio'],
-        'Emoções relacionadas ao aprendizado': ['alegria', 'esperanca', 'orgulho', 'alívio', 'raiva', 'ansiedade', 'vergonha', 'desesperança']
+        'class1': ['alegria', 'esperanca', 'orgulho', 'raiva', 'ansiedade', 'vergonha', 'desesperança', 'tédio'],
+        'class2': ['alegria', 'esperanca', 'orgulho', 'raiva', 'ansiedade', 'vergonha', 'desesperança', 'tédio'],
+        'class3': ['alegria', 'esperanca', 'orgulho', 'alívio', 'raiva', 'ansiedade', 'vergonha', 'desesperança']
     };
 
     const corClasses = {
-        'Emoções relacionadas às aulas': 'tabela-aula',
-        'Emoções relacionadas aos testes': 'tabela-teste',
-        'Emoções relacionadas ao aprendizado': 'tabela-aprendizado'
+        'class1': 'tabela-aula',
+        'class2': 'tabela-teste',
+        'class3': 'tabela-aprendizado'
     };
 
     let selecoes = {};
 
     function renderizarTabela(opcaoSelecionada) {
         const listaEmocoes = emocaoPorClasse[opcaoSelecionada] || [];
+        const nomeClasse = nomesLegiveisClasses[opcaoSelecionada] || opcaoSelecionada;
         
         let tabelaHtml = `
         <table>
                 <thead>
                  <tr>
-                        <th colspan="5">${opcaoSelecionada}</th>
+                        <th colspan="5">${nomeClasse}</th>
                     </tr>
                     <tr>
                         <th><input type="checkbox" id="select-all" ${isAllSelected(opcaoSelecionada) ? 'checked' : ''} /></th>
@@ -81,13 +89,14 @@ document.addEventListener('DOMContentLoaded', function() {
     function atualizarResumo() {
         let resumoHtml = '<p>Você selecionou as seguintes emoções:</p>';
         for (let classe in emocaoPorClasse) {
+            const nomeClasse = nomesLegiveisClasses[classe] || classe;
             const itensSelecionados = selecoes[classe] || {};
             const resumoItens = Object.keys(itensSelecionados).map(emocao => {
                 const tempo = itensSelecionados[emocao];
                 return `${emocao}(${tempo.antes ? 'A' : '-'},${tempo.durante ? 'D' : '-'},${tempo.depois ? 'D' : '-'})`;
             }).join(', ');
             resumoHtml += `<div class="resumo-classe">
-                                <strong>${classe}:</strong> 
+                                <strong>${nomeClasse}:</strong> 
                                 <span class="resumo-itens">${resumoItens || 'Nenhuma seleção'}</span>
                             </div>`;
         }
@@ -149,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function inicializarFormulario() {
-        const inicialClasse = choiceDropdown.value || 'Emoções relacionadas às aulas';
+        const inicialClasse = choiceDropdown.value || 'class1';
         choiceDropdown.value = inicialClasse;
         containerTabela.classList.add(corClasses[inicialClasse]);
         renderizarTabela(inicialClasse);
