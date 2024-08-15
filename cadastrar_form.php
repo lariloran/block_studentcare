@@ -30,7 +30,7 @@ class cadastrar_form extends moodleform {
         // Define the options for the dropdown list.
 $options = new core\output\choicelist();
 $options->add_option(
-    'option1',
+    'Emoções relacionadas às aulas',
     get_string('class1', 'block_ifcare'),
     [
         'description' => 'Option 1 description',
@@ -38,7 +38,7 @@ $options->add_option(
     ]
 );
 $options->add_option(
-    'option2',
+    'Emoções relacionadas aos testes',
     get_string('class2', 'block_ifcare'),
     [
         'description' => 'Option 2 description',
@@ -46,8 +46,8 @@ $options->add_option(
     ]
 );
 $options->add_option(
-    'option3',
-    get_string('class1', 'block_ifcare'),
+    'Emoções relacionadas ao aprendizado',
+    get_string('class3', 'block_ifcare'),
     [
         'description' => 'Option 3 description',
         'icon' => new pix_icon('t/show', 'Eye icon 3'),
@@ -72,6 +72,19 @@ $mform->addElement(
 
         // Inclua o JavaScript
         $PAGE->requires->js('/blocks/ifcare/tabela_dinamica.js');
+
+        $mform->addElement('html', '<div class="fitem">
+                                <div class="fitemtitle">Selecione as emoções</div>
+                                <div class="felement">
+                                    <table id="container-tabela" class="generaltable"></table>
+                                </div>
+                            </div>');
+                            
+        $mform->addElement('html', '<div class="fitem">
+                                <div class="fitemtitle">Resumo das Seleções</div>
+                                <div class="felement" id="resumo-selecoes"></div>
+                            </div>');
+
 
         // Flag "Receber alerta do andamento da coleta"
         $mform->addElement('advcheckbox', 'alertprogress', get_string('alertprogress', 'block_ifcare'), null, array('group' => 1), array(0, 1));
