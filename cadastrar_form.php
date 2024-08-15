@@ -64,7 +64,7 @@ $mform->addElement(
 
         // Adicione o contêiner para a tabela dinâmica utilizando as classes de layout padrão do Moodle
         $mform->addElement('html', '<div class="fitem">
-                                        <div class="fitemtitle"><p>Selecione as emoções e o momento</p></div> <!-- Espaço vazio à esquerda -->
+                                        <div class="fitemtitle">Selecione as emoções</div> <!-- Espaço vazio à esquerda -->
                                         <div class="felement">
                                             <table id="container-tabela" class="generaltable"></table>
                                         </div>
@@ -81,6 +81,7 @@ $mform->addElement(
         $mform->addElement('advcheckbox', 'notify_students', get_string('notify_students', 'block_ifcare'), null, array('group' => 1), array(0, 1));
         $mform->setDefault('notify_students', 1);
 
+        
         // Botões de Salvar e Cancelar
         $this->add_action_buttons(true, get_string('submit', 'block_ifcare'));
     }

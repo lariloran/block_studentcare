@@ -5,6 +5,7 @@
 .ifcare-navigation .btn {
     margin-right: 10px;
 }
+
 .ifcare-toggle-container {
     margin: 20px;
 }
@@ -22,26 +23,42 @@
     margin: 5px 0;
 }
 
-.generaltable {
-    width: 100%; /* Ajuste a largura para 100% para usar todo o espaço disponível */
-    border-collapse: collapse;
+/* Ajuste para adicionar espaçamento entre os itens do formulário */
+.fitem {
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px; /* Aumenta o espaçamento entre os itens */
 }
 
-.generaltable th, .generaltable td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
+/* Espaçamento dentro dos labels e campos */
+.fitem .fitemtitle {
+    width: 25%; 
+    margin-right: 20px; /* Aumenta o espaço entre o label e o campo */
 }
 
 .fitem .felement {
-    margin-left: 25%; /* Ajuste essa margem para controlar o alinhamento */
+    flex: 1;
+    margin-left: 0;
     padding-left: 0;
+}
+
+/* Remova o padding e o margin das células da tabela */
+.generaltable th, .generaltable td {
+    border: 1px solid #ddd;
+    padding: 0px; /* Remove o espaçamento dentro das células */
+    margin: 0px; /* Remove qualquer margem que possa estar causando espaçamento */
+    text-align: center;
+    line-height: 1; /* Reduz a altura da linha para minimizar o espaço vertical */
+}
+
+/* Ajuste para o input dentro da tabela, caso esteja gerando espaçamento extra */
+.generaltable input[type="checkbox"] {
+    margin: 0; /* Remove margens extras ao redor dos checkboxes */
+    padding: 0; /* Remove padding extra */
+    height: auto; /* Ajusta a altura para evitar aumentar a célula */
 }
 
 #dynamic-table {
     margin-left: 0; /* Mantém a margem à esquerda removida */
 }
 
-.fitemtitle {
-    width: 25%; /* Mantém um espaço reservado à esquerda */
-}
