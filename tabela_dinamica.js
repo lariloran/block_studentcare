@@ -1,17 +1,17 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const selectClasses = document.getElementById('id_aeqclasses');
+    const choiceDropdown = document.querySelector('select[name="FIELDNAME"]'); // Altere FIELDNAME para o nome real do campo
     const containerTabela = document.getElementById('container-tabela');
 
     // Defina as emoções para cada classe
     const emocaoPorClasse = {
-        'class1': ['alegria', 'esperanca', 'orgulho','raiva', 'ansiedade', 'vergonha','desesperança','tédio'],
-        'class2': ['alegria', 'esperanca', 'orgulho','raiva', 'ansiedade', 'vergonha','desesperança','tédio'],
-        'class3': ['alegria', 'esperanca', 'orgulho', 'alívio', 'raiva', 'ansiedade', 'vergonha','desesperança']
+        'option1': ['alegria', 'esperanca', 'orgulho','raiva', 'ansiedade', 'vergonha','desesperança','tédio'],
+        'option2': ['alegria', 'esperanca', 'orgulho','raiva', 'ansiedade', 'vergonha','desesperança','tédio'],
+        'option3': ['alegria', 'esperanca', 'orgulho', 'alívio', 'raiva', 'ansiedade', 'vergonha','desesperança']
     };
 
-    // Função para renderizar a tabela com base na classe selecionada
-    function renderizarTabela(classeSelecionada) {
-        const listaEmocoes = emocaoPorClasse[classeSelecionada] || [];
+    // Função para renderizar a tabela com base na opção selecionada
+    function renderizarTabela(opcaoSelecionada) {
+        const listaEmocoes = emocaoPorClasse[opcaoSelecionada] || [];
         let tabelaHtml = '<table><thead><tr><th></th><th>Nome da Emoção</th><th>Antes</th><th>Durante</th><th>Depois</th></tr></thead><tbody>';
 
         listaEmocoes.forEach(emocao => {
@@ -29,18 +29,18 @@ document.addEventListener('DOMContentLoaded', function() {
         containerTabela.innerHTML = tabelaHtml;
     }
 
-    // Adicione o listener para mudanças na seleção de classes
-    selectClasses.addEventListener('change', function() {
-        const classeSelecionada = selectClasses.value;
-        renderizarTabela(classeSelecionada);
+    // Adicione o listener para mudanças na seleção do dropdown
+    choiceDropdown.addEventListener('change', function() {
+        const opcaoSelecionada = choiceDropdown.value;
+        renderizarTabela(opcaoSelecionada);
     });
 
-    // Renderize a tabela para a primeira classe ao carregar a página
-    if (selectClasses.value) {
-        renderizarTabela(selectClasses.value);
+    // Renderize a tabela para a primeira opção ao carregar a página
+    if (choiceDropdown.value) {
+        renderizarTabela(choiceDropdown.value);
     } else {
-        // Caso nenhuma classe esteja selecionada por padrão, selecione a primeira e renderize a tabela
-        selectClasses.value = 'class1';
-        renderizarTabela('class1');
+        // Caso nenhuma opção esteja selecionada por padrão, selecione a primeira e renderize a tabela
+        choiceDropdown.value = 'option1';
+        renderizarTabela('option1');
     }
 });

@@ -26,15 +26,41 @@ class cadastrar_form extends moodleform {
         $mform->addElement('textarea', 'description', get_string('description', 'block_ifcare'), 'wrap="virtual" rows="5" cols="50"');
         $mform->setType('description', PARAM_TEXT);
 
-        // Campo Selecionar Classes do AEQ
-        $aeqclasses = array(
-            'class1' => get_string('class1', 'block_ifcare'),
-            'class2' => get_string('class2', 'block_ifcare'),
-            'class3' => get_string('class3', 'block_ifcare')
-        );
-        $mform->addElement('select', 'aeqclasses', get_string('aeqclasses', 'block_ifcare'), $aeqclasses, array('multiple' => true));
-        $mform->setType('aeqclasses', PARAM_RAW);
-        $mform->addRule('aeqclasses', null, 'required', null, 'client');
+
+        // Define the options for the dropdown list.
+$options = new core\output\choicelist();
+$options->add_option(
+    'option1',
+    get_string('class1', 'block_ifcare'),
+    [
+        'description' => 'Option 1 description',
+        'icon' => new pix_icon('t/hide', 'Eye icon 1'),
+    ]
+);
+$options->add_option(
+    'option2',
+    get_string('class2', 'block_ifcare'),
+    [
+        'description' => 'Option 2 description',
+        'icon' => new pix_icon('t/stealth', 'Eye icon 2'),
+    ]
+);
+$options->add_option(
+    'option3',
+    get_string('class1', 'block_ifcare'),
+    [
+        'description' => 'Option 3 description',
+        'icon' => new pix_icon('t/show', 'Eye icon 3'),
+    ]
+);
+
+// Add the choicedropdown field to the form.
+$mform->addElement(
+    'choicedropdown',
+    'FIELDNAME',
+    get_string('aeqclasses', 'block_ifcare'),
+    $options,
+);
 
         // Adicione o contêiner para a tabela dinâmica utilizando as classes de layout padrão do Moodle
         $mform->addElement('html', '<div class="fitem">
