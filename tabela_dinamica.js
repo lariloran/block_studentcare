@@ -102,15 +102,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const emocao = e.target.getAttribute('data-emocao');
             const checked = e.target.checked;
             if (checked) {
-                selecoes[opcaoSelecionada][emocao] = selecoes[opcaoSelecionada][emocao] || { antes: false, durante: false, depois: false };
-                document.querySelectorAll(`input[data-emocao="${emocao}"].time-checkbox`).forEach(timeCheckbox => {
-                    timeCheckbox.checked = true;
-                });
-                selecoes[opcaoSelecionada][emocao] = {
-                    antes: true,
-                    durante: true,
-                    depois: true
-                };
+                selecoes[opcaoSelecionada][emocao] = selecoes[opcaoSelecionada][emocao] || { antes: true, durante: false, depois: false };
+                document.querySelector(`input[data-emocao="${emocao}"][data-tempo="antes"]`).checked = true;
             } else {
                 delete selecoes[opcaoSelecionada][emocao];
                 document.querySelectorAll(`input[data-emocao="${emocao}"].time-checkbox`).forEach(timeCheckbox => {
@@ -126,6 +119,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 selecoes[opcaoSelecionada][emocao] = { antes: false, durante: false, depois: false };
             }
             selecoes[opcaoSelecionada][emocao][tempo] = checked;
+
+            // Verifica se algum checkbox de tempo está marcado, senão, mantém "antes" como marcado
+            const tempoSelecionado = selecoes[opcaoSelecionada][emocao];
+            if (!tempoSelecionado.antes && !tempoSelecionado.durante && !tempoSelecionado.depois) {
+                selecoes[opcaoSelecionada][emocao].antes = true;
+                document.querySelector(`input[data-emocao="${emocao}"][data-tempo="antes"]`).checked = true;
+            }
+
+            const emotionCheckbox = document.querySelector(`input[data-emocao="${emocao}"].emotion-checkbox`);
+            if (checked) {
+                emotionCheckbox.checked = true;
+            }
             atualizarResumo();
         }
     });
