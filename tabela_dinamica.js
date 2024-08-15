@@ -9,13 +9,23 @@ document.addEventListener('DOMContentLoaded', function() {
         'Emoções relacionadas ao aprendizado': ['alegria', 'esperanca', 'orgulho', 'alívio', 'raiva', 'ansiedade', 'vergonha', 'desesperança']
     };
 
+    const corClasses = {
+        'Emoções relacionadas às aulas': 'tabela-aula',
+        'Emoções relacionadas aos testes': 'tabela-teste',
+        'Emoções relacionadas ao aprendizado': 'tabela-aprendizado'
+    };
+
     let selecoes = {};
 
     function renderizarTabela(opcaoSelecionada) {
         const listaEmocoes = emocaoPorClasse[opcaoSelecionada] || [];
+        
         let tabelaHtml = `
-            <table>
+        <table>
                 <thead>
+                 <tr>
+                        <th colspan="5">${opcaoSelecionada}</th>
+                    </tr>
                     <tr>
                         <th><input type="checkbox" id="select-all" ${isAllSelected(opcaoSelecionada) ? 'checked' : ''} /></th>
                         <th>Nome da Emoção</th>
@@ -93,6 +103,10 @@ document.addEventListener('DOMContentLoaded', function() {
         if (opcaoSelecionada && !selecoes[opcaoSelecionada]) {
             selecoes[opcaoSelecionada] = {};
         }
+        // Remove a classe de cor anterior
+        containerTabela.classList.remove(...Object.values(corClasses));
+        // Adiciona a nova classe de cor
+        containerTabela.classList.add(corClasses[opcaoSelecionada]);
         renderizarTabela(opcaoSelecionada);
     });
 
@@ -120,7 +134,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             selecoes[opcaoSelecionada][emocao][tempo] = checked;
 
-            // Verifica se algum checkbox de tempo está marcado, senão, mantém "antes" como marcado
             const tempoSelecionado = selecoes[opcaoSelecionada][emocao];
             if (!tempoSelecionado.antes && !tempoSelecionado.durante && !tempoSelecionado.depois) {
                 selecoes[opcaoSelecionada][emocao].antes = true;
@@ -138,6 +151,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function inicializarFormulario() {
         const inicialClasse = choiceDropdown.value || 'Emoções relacionadas às aulas';
         choiceDropdown.value = inicialClasse;
+        containerTabela.classList.add(corClasses[inicialClasse]);
         renderizarTabela(inicialClasse);
 
         const event = new Event('change');
