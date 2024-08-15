@@ -21,3 +21,27 @@
 .list-group-item {
     margin: 5px 0;
 }
+
+.generaltable {
+    width: 100%; /* Ajuste a largura para 100% para usar todo o espaço disponível */
+    border-collapse: collapse;
+}
+
+.generaltable th, .generaltable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.fitem .felement {
+    margin-left: 25%; /* Ajuste essa margem para controlar o alinhamento */
+    padding-left: 0;
+}
+
+#dynamic-table {
+    margin-left: 0; /* Mantém a margem à esquerda removida */
+}
+
+.fitemtitle {
+    width: 25%; /* Mantém um espaço reservado à esquerda */
+}

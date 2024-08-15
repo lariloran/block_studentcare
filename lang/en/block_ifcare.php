@@ -7,6 +7,7 @@ $string['ifcare:myaddinstance'] = 'Add a new ifcare block to the My Moodle page'
 
 $string['cadastrar'] = 'Cadastrar';
 $string['listar'] = 'Listar';
+$string['dynamic_table'] = '';
 
 // Strings para o formulário
 $string['name'] = 'Nome da coleta';

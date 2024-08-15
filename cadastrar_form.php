@@ -1,63 +1,13 @@
 <?php
+
 require_once("$CFG->libdir/formslib.php");
 
 class cadastrar_form extends moodleform {
     // Define o formulário
     public function definition() {
+        global $PAGE;
+
         $mform = $this->_form;
-
-//            // These two elements are part of group 1.
-//     $mform->addElement('advcheckbox', 'test1', 'Test 1', null, ['group' => 1]);
-//     $mform->addElement('advcheckbox', 'test2', 'Test 2', null, ['group' => 1]);
-
-//     // Add a checkbox controller for all checkboxes in `group => 1`:
-//     $this->add_checkbox_controller(1);
-
-//     // These two elements are part of group 3.
-//     $mform->addElement('advcheckbox', 'test3', 'Test 3', null, ['group' => 3]);
-//     $mform->addElement('advcheckbox', 'test4', 'Test 4', null, ['group' => 3]);
-
-//     // Add a checkbox controller for all checkboxes in `group => 3`.
-//     // This example uses a different wording isntead of Select all/none by passing the second parameter:
-//     $this->add_checkbox_controller(
-//         3,
-//         get_string("checkall", "plugintype_pluginname")
-//     );
-
-//     // Define the options for the dropdown list.
-// $options = new core\output\choicelist();
-// $options->add_option(
-//     'option1',
-//     "Text option 1",
-//     [
-//         'description' => 'Option 1 description',
-//         'icon' => new pix_icon('t/hide', 'Eye icon 1'),
-//     ]
-// );
-// $options->add_option(
-//     'option2',
-//     "Text option 2",
-//     [
-//         'description' => 'Option 2 description',
-//         'icon' => new pix_icon('t/stealth', 'Eye icon 2'),
-//     ]
-// );
-// $options->add_option(
-//     'option3',
-//     "Text option 3",
-//     [
-//         'description' => 'Option 3 description',
-//         'icon' => new pix_icon('t/show', 'Eye icon 3'),
-//     ]
-// );
-
-// // Add the choicedropdown field to the form.
-// $mform->addElement(
-//     'choicedropdown',
-//     'FIELDNAME',
-//     get_string('FIELDNAME', 'PLUGINNAME'),
-//     $options,
-// );
 
         // Campo Nome
         $mform->addElement('text', 'name', get_string('name', 'block_ifcare'), array('size' => '50'));
@@ -86,31 +36,16 @@ class cadastrar_form extends moodleform {
         $mform->setType('aeqclasses', PARAM_RAW);
         $mform->addRule('aeqclasses', null, 'required', null, 'client');
 
-        // Campo Selecionar Emoções
-        $emotions = array(
-            'alegria' => get_string('alegria', 'block_ifcare'),
-            'esperanca' => get_string('esperanca', 'block_ifcare'),
-            'orgulho' => get_string('orgulho', 'block_ifcare'),
-            'raiva' => get_string('raiva', 'block_ifcare'),
-            'ansiedade' => get_string('ansiedade', 'block_ifcare'),
-            'vergonha' => get_string('vergonha', 'block_ifcare'),
-            'desesperanca' => get_string('desesperanca', 'block_ifcare'),
-            'tedio' => get_string('tedio', 'block_ifcare'),
-            'alivio' => get_string('alivio', 'block_ifcare')
-        );
-        $mform->addElement('select', 'emotions', get_string('emotions', 'block_ifcare'), $emotions, array('multiple' => true));
-        $mform->setType('emotions', PARAM_RAW);
-        $mform->addRule('emotions', null, 'required', null, 'client');
+        // Adicione o contêiner para a tabela dinâmica utilizando as classes de layout padrão do Moodle
+        $mform->addElement('html', '<div class="fitem">
+                                        <div class="fitemtitle"><p>Selecione as emoções e o momento</p></div> <!-- Espaço vazio à esquerda -->
+                                        <div class="felement">
+                                            <table id="container-tabela" class="generaltable"></table>
+                                        </div>
+                                    </div>');
 
-        // Campo Selecionar Bloco de Momento (Antes, Durante, Depois)
-        $momentblock = array(
-            'before' => get_string('before', 'block_ifcare'),
-            'during' => get_string('during', 'block_ifcare'),
-            'after' => get_string('after', 'block_ifcare')
-        );
-        $mform->addElement('select', 'momentblock', get_string('momentblock', 'block_ifcare'), $momentblock,  array('multiple' => true));
-        $mform->setType('momentblock', PARAM_RAW);
-        $mform->addRule('momentblock', null, 'required', null, 'client');
+        // Inclua o JavaScript
+        $PAGE->requires->js('/blocks/ifcare/tabela_dinamica.js');
 
         // Flag "Receber alerta do andamento da coleta"
         $mform->addElement('advcheckbox', 'alertprogress', get_string('alertprogress', 'block_ifcare'), null, array('group' => 1), array(0, 1));
