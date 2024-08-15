@@ -6,6 +6,59 @@ class cadastrar_form extends moodleform {
     public function definition() {
         $mform = $this->_form;
 
+//            // These two elements are part of group 1.
+//     $mform->addElement('advcheckbox', 'test1', 'Test 1', null, ['group' => 1]);
+//     $mform->addElement('advcheckbox', 'test2', 'Test 2', null, ['group' => 1]);
+
+//     // Add a checkbox controller for all checkboxes in `group => 1`:
+//     $this->add_checkbox_controller(1);
+
+//     // These two elements are part of group 3.
+//     $mform->addElement('advcheckbox', 'test3', 'Test 3', null, ['group' => 3]);
+//     $mform->addElement('advcheckbox', 'test4', 'Test 4', null, ['group' => 3]);
+
+//     // Add a checkbox controller for all checkboxes in `group => 3`.
+//     // This example uses a different wording isntead of Select all/none by passing the second parameter:
+//     $this->add_checkbox_controller(
+//         3,
+//         get_string("checkall", "plugintype_pluginname")
+//     );
+
+//     // Define the options for the dropdown list.
+// $options = new core\output\choicelist();
+// $options->add_option(
+//     'option1',
+//     "Text option 1",
+//     [
+//         'description' => 'Option 1 description',
+//         'icon' => new pix_icon('t/hide', 'Eye icon 1'),
+//     ]
+// );
+// $options->add_option(
+//     'option2',
+//     "Text option 2",
+//     [
+//         'description' => 'Option 2 description',
+//         'icon' => new pix_icon('t/stealth', 'Eye icon 2'),
+//     ]
+// );
+// $options->add_option(
+//     'option3',
+//     "Text option 3",
+//     [
+//         'description' => 'Option 3 description',
+//         'icon' => new pix_icon('t/show', 'Eye icon 3'),
+//     ]
+// );
+
+// // Add the choicedropdown field to the form.
+// $mform->addElement(
+//     'choicedropdown',
+//     'FIELDNAME',
+//     get_string('FIELDNAME', 'PLUGINNAME'),
+//     $options,
+// );
+
         // Campo Nome
         $mform->addElement('text', 'name', get_string('name', 'block_ifcare'), array('size' => '50'));
         $mform->setType('name', PARAM_NOTAGS);
