@@ -28,7 +28,8 @@ echo html_writer::start_tag('div', ['class' => 'row']);
 echo html_writer::start_tag('div', ['class' => 'col-md-12']);
 
 // Função para criar a estrutura da seção com layout semelhante ao de configurações
-function create_section($id, $title, $content) {
+function create_section($id, $title, $content)
+{
     echo html_writer::start_tag('li', [
         'id' => "section-$id",
         'class' => 'section course-section main clearfix',

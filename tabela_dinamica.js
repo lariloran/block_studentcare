@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const choiceDropdown = document.querySelector('select[name="FIELDNAME"]');
     const containerTabela = document.getElementById('container-tabela');
     const resumoSelecoes = document.getElementById('resumo-selecoes');
@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderizarTabela(opcaoSelecionada) {
         const listaEmocoes = emocaoPorClasse[opcaoSelecionada] || [];
         const nomeClasse = nomesLegiveisClasses[opcaoSelecionada] || opcaoSelecionada;
-        
+
         let tabelaHtml = `
         <table>
                 <thead>
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const selectAllCheckbox = document.getElementById('select-all');
         const emotionCheckboxes = document.querySelectorAll('.emotion-checkbox');
 
-        selectAllCheckbox.addEventListener('change', function() {
+        selectAllCheckbox.addEventListener('change', function () {
             const checked = selectAllCheckbox.checked;
             emotionCheckboxes.forEach(checkbox => {
                 checkbox.checked = checked;
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return selecoes[classe] && Object.keys(selecoes[classe]).length === emocaoPorClasse[classe].length;
     }
 
-    choiceDropdown.addEventListener('change', function() {
+    choiceDropdown.addEventListener('change', function () {
         const opcaoSelecionada = choiceDropdown.value;
         if (opcaoSelecionada && !selecoes[opcaoSelecionada]) {
             selecoes[opcaoSelecionada] = {};
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
         renderizarTabela(opcaoSelecionada);
     });
 
-    containerTabela.addEventListener('change', function(e) {
+    containerTabela.addEventListener('change', function (e) {
         const opcaoSelecionada = choiceDropdown.value;
         if (e.target.classList.contains('emotion-checkbox')) {
             const emocao = e.target.getAttribute('data-emocao');

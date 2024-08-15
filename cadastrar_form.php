@@ -2,9 +2,11 @@
 
 require_once("$CFG->libdir/formslib.php");
 
-class cadastrar_form extends moodleform {
+class cadastrar_form extends moodleform
+{
     // Define o formulário
-    public function definition() {
+    public function definition()
+    {
         global $PAGE;
 
         $mform = $this->_form;
@@ -71,7 +73,8 @@ class cadastrar_form extends moodleform {
     }
 
     // Função de validação personalizada (opcional)
-    public function validation($data, $files) {
+    public function validation($data, $files)
+    {
         $errors = parent::validation($data, $files);
 
         // Verifica se a data de fim é posterior à data de início

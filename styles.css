@@ -27,13 +27,15 @@
 .fitem {
     display: flex;
     align-items: center;
-    margin-bottom: 25px; /* Aumenta o espaçamento entre os itens */
+    margin-bottom: 25px;
+    /* Aumenta o espaçamento entre os itens */
 }
 
 /* Espaçamento dentro dos labels e campos */
 .fitem .fitemtitle {
-    width: 25%; 
-    margin-right: 20px; /* Aumenta o espaço entre o label e o campo */
+    width: 25%;
+    margin-right: 20px;
+    /* Aumenta o espaço entre o label e o campo */
 }
 
 .fitem .felement {
@@ -44,75 +46,101 @@
 
 /* Estilo para a tabela e suas bordas */
 .generaltable {
-    border-collapse: collapse; /* Faz com que as bordas se sobreponham, eliminando espaços duplos entre elas */
-    width: 100%; /* Garante que a tabela ocupe toda a largura disponível */
+    border-collapse: collapse;
+    /* Faz com que as bordas se sobreponham, eliminando espaços duplos entre elas */
+    width: 100%;
+    /* Garante que a tabela ocupe toda a largura disponível */
 }
 
 /* Estilo para as células da tabela */
-.generaltable th, .generaltable td {
-    border: 2px solid #333; /* Borda sólida e espessa para todas as células */
-    padding: 8px; /* Espaçamento interno das células */
-    text-align: center; /* Alinhamento central do texto */
-    line-height: 1; /* Altura da linha reduzida para minimizar o espaço vertical */
+.generaltable th,
+.generaltable td {
+    border: 2px solid #333;
+    /* Borda sólida e espessa para todas as células */
+    padding: 8px;
+    /* Espaçamento interno das células */
+    text-align: center;
+    /* Alinhamento central do texto */
+    line-height: 1;
+    /* Altura da linha reduzida para minimizar o espaço vertical */
 }
 
 /* Borda inferior do cabeçalho da tabela */
 .generaltable thead th {
-    border-bottom: 3px solid #000; /* Borda inferior mais espessa para o cabeçalho */
+    border-bottom: 3px solid #000;
+    /* Borda inferior mais espessa para o cabeçalho */
 }
 
 /* Borda inferior da linha abaixo do cabeçalho */
-.generaltable thead + tbody tr:first-child th,
-.generaltable thead + tbody tr:first-child td {
-    border-top: 2px solid #333; /* Borda superior da primeira linha do corpo da tabela */
+.generaltable thead+tbody tr:first-child th,
+.generaltable thead+tbody tr:first-child td {
+    border-top: 2px solid #333;
+    /* Borda superior da primeira linha do corpo da tabela */
 }
 
 /* Borda direita e inferior de todas as células da tabela */
-.generaltable td, .generaltable th {
-    border-right: 2px solid #333; /* Borda direita de cada célula */
-    border-bottom: 2px solid #333; /* Borda inferior de cada célula */
+.generaltable td,
+.generaltable th {
+    border-right: 2px solid #333;
+    /* Borda direita de cada célula */
+    border-bottom: 2px solid #333;
+    /* Borda inferior de cada célula */
 }
 
 /* Estilo para a célula com colspan */
 .generaltable thead th[colspan] {
-    border: 2px solid #333; /* Borda ao redor da célula com colspan */
-    border-bottom: 3px solid #000; /* Borda inferior mais espessa para o cabeçalho com colspan */
-    padding: 8px; /* Espaçamento interno para garantir que o texto não toque as bordas */
+    border: 2px solid #333;
+    /* Borda ao redor da célula com colspan */
+    border-bottom: 3px solid #000;
+    /* Borda inferior mais espessa para o cabeçalho com colspan */
+    padding: 8px;
+    /* Espaçamento interno para garantir que o texto não toque as bordas */
 }
 
 /* Remove a borda direita da última célula em cada linha */
-.generaltable tr td:last-child, .generaltable tr th:last-child {
+.generaltable tr td:last-child,
+.generaltable tr th:last-child {
     border-right: none;
 }
 
 /* Remove a borda inferior da última linha da tabela */
-.generaltable tr:last-child td, .generaltable tr:last-child th {
+.generaltable tr:last-child td,
+.generaltable tr:last-child th {
     border-bottom: none;
 }
 
 /* Adiciona bordas verticais e horizontais para a tabela inteira */
-.generaltable thead, .generaltable tbody, .generaltable tfoot {
-    border: 2px solid #333; /* Borda ao redor da tabela inteira */
+.generaltable thead,
+.generaltable tbody,
+.generaltable tfoot {
+    border: 2px solid #333;
+    /* Borda ao redor da tabela inteira */
 }
 
 /* Estilo para as linhas alternadas e hover */
 .generaltable tbody tr:nth-child(odd) {
-    background-color: #f2f2f2; /* Cor de fundo alternada para linhas ímpares (opcional) */
+    background-color: #f2f2f2;
+    /* Cor de fundo alternada para linhas ímpares (opcional) */
 }
 
 .generaltable tbody tr:hover {
-    background-color: #ddd; /* Cor de fundo ao passar o mouse sobre a linha (opcional) */
+    background-color: #ddd;
+    /* Cor de fundo ao passar o mouse sobre a linha (opcional) */
 }
 
 /* Ajuste para o input dentro da tabela, caso esteja gerando espaçamento extra */
 .generaltable input[type="checkbox"] {
-    margin: 0; /* Remove margens extras ao redor dos checkboxes */
-    padding: 0; /* Remove padding extra */
-    height: auto; /* Ajusta a altura para evitar aumentar a célula */
+    margin: 0;
+    /* Remove margens extras ao redor dos checkboxes */
+    padding: 0;
+    /* Remove padding extra */
+    height: auto;
+    /* Ajusta a altura para evitar aumentar a célula */
 }
 
 #dynamic-table {
-    margin-left: 0; /* Mantém a margem à esquerda removida */
+    margin-left: 0;
+    /* Mantém a margem à esquerda removida */
 }
 
 #resumo-selecoes {
@@ -143,13 +171,16 @@
 
 /* Classes para diferentes cores de fundo para a tabela */
 .tabela-aula {
-    background-color: #f2f2f2; /* Cor de fundo mais suave para a primeira classe */
+    background-color: #f2f2f2;
+    /* Cor de fundo mais suave para a primeira classe */
 }
 
 .tabela-teste {
-    background-color: #e6f7ff; /* Cor de fundo mais suave para a segunda classe */
+    background-color: #e6f7ff;
+    /* Cor de fundo mais suave para a segunda classe */
 }
 
 .tabela-aprendizado {
-    background-color: #fff2e6; /* Cor de fundo mais suave para a terceira classe */
+    background-color: #fff2e6;
+    /* Cor de fundo mais suave para a terceira classe */
 }

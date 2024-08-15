@@ -3,7 +3,8 @@
 
 defined('MOODLE_INTERNAL') || die(); // Certifique-se de que esta linha está presente no início do arquivo.
 
-function block_ifcare_extend_navigation_course($navigation, $course, $context) {
+function block_ifcare_extend_navigation_course($navigation, $course, $context)
+{
     if ($context->contextlevel == CONTEXT_COURSE) {
         $node = $navigation->add(
             get_string('pluginname', 'block_ifcare'),
