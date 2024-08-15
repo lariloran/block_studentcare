@@ -81,9 +81,14 @@ $mform->addElement(
                             </div>');
                             
         $mform->addElement('html', '<div class="fitem">
-                                <div class="fitemtitle">Resumo das Seleções</div>
-                                <div class="felement" id="resumo-selecoes"></div>
-                            </div>');
+    <div class="fitemtitle">Resumo das Seleções</div>
+    <div class="felement" id="resumo-selecoes">
+        <ul id="resumo-lista">
+            <!-- Itens do resumo serão inseridos aqui pelo JavaScript -->
+        </ul>
+    </div>
+</div>
+');
 
 
         // Flag "Receber alerta do andamento da coleta"

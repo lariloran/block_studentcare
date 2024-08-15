@@ -4,9 +4,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const resumoSelecoes = document.getElementById('resumo-selecoes');
 
     const emocaoPorClasse = {
-        'Emoções relacionadas às aulas': ['alegria', 'esperanca', 'orgulho','raiva', 'ansiedade', 'vergonha','desesperança','tédio'],
-        'Emoções relacionadas aos testes': ['alegria', 'esperanca', 'orgulho','raiva', 'ansiedade', 'vergonha','desesperança','tédio'],
-        'Emoções relacionadas ao aprendizado': ['alegria', 'esperanca', 'orgulho', 'alívio', 'raiva', 'ansiedade', 'vergonha','desesperança']
+        'Emoções relacionadas às aulas': ['alegria', 'esperanca', 'orgulho', 'raiva', 'ansiedade', 'vergonha', 'desesperança', 'tédio'],
+        'Emoções relacionadas aos testes': ['alegria', 'esperanca', 'orgulho', 'raiva', 'ansiedade', 'vergonha', 'desesperança', 'tédio'],
+        'Emoções relacionadas ao aprendizado': ['alegria', 'esperanca', 'orgulho', 'alívio', 'raiva', 'ansiedade', 'vergonha', 'desesperança']
     };
 
     let selecoes = {};
@@ -31,9 +31,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 <tr>
                     <td><input type="checkbox" class="emotion-checkbox" data-emocao="${emocao}" ${selecoes[opcaoSelecionada] && selecoes[opcaoSelecionada].includes(emocao) ? 'checked' : ''} /></td>
                     <td>${emocao}</td>
-                    <td><input type="checkbox" checked data-tempo="antes" data-emocao="${emocao}" /></td>
-                    <td><input type="checkbox" checked data-tempo="durante" data-emocao="${emocao}" /></td>
-                    <td><input type="checkbox" checked data-tempo="depois" data-emocao="${emocao}" /></td>
+                    <td><input type="checkbox" class="time-checkbox" data-tempo="antes" data-emocao="${emocao}" ${selecoes[opcaoSelecionada] && selecoes[opcaoSelecionada].includes(emocao) ? 'checked' : ''} /></td>
+                    <td><input type="checkbox" class="time-checkbox" data-tempo="durante" data-emocao="${emocao}" ${selecoes[opcaoSelecionada] && selecoes[opcaoSelecionada].includes(emocao) ? 'checked' : ''} /></td>
+                    <td><input type="checkbox" class="time-checkbox" data-tempo="depois" data-emocao="${emocao}" ${selecoes[opcaoSelecionada] && selecoes[opcaoSelecionada].includes(emocao) ? 'checked' : ''} /></td>
                 </tr>`;
         });
 
@@ -55,17 +55,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else if (!checked) {
                     selecoes[opcaoSelecionada] = selecoes[opcaoSelecionada].filter(em => em !== emocao);
                 }
+                // Marca ou desmarca os checkboxes de tempo
+                document.querySelectorAll(`input[data-emocao="${emocao}"].time-checkbox`).forEach(timeCheckbox => {
+                    timeCheckbox.checked = checked;
+                });
             });
             atualizarResumo();
         });
     }
 
     function atualizarResumo() {
-        let resumoHtml = '';
-        for (let classe in selecoes) {
-            if (selecoes.hasOwnProperty(classe)) {
-                resumoHtml += `<div><strong>${classe}:</strong> ${selecoes[classe].join(', ')}</div>`;
-            }
+        let resumoHtml = '<p>Você selecionou as seguintes emoções:</p>';
+        for (let classe in emocaoPorClasse) {
+            const itensSelecionados = selecoes[classe] && selecoes[classe].length > 0 ? selecoes[classe].join(', ') : 'Nenhuma seleção';
+            resumoHtml += `<div class="resumo-classe">
+                                <strong>${classe}:</strong> 
+                                <span class="resumo-itens">${itensSelecionados}</span>
+                            </div>`;
         }
         resumoSelecoes.innerHTML = resumoHtml;
     }
@@ -86,10 +92,22 @@ document.addEventListener('DOMContentLoaded', function() {
         const opcaoSelecionada = choiceDropdown.value;
         if (e.target.classList.contains('emotion-checkbox')) {
             const emocao = e.target.getAttribute('data-emocao');
-            if (e.target.checked && !selecoes[opcaoSelecionada].includes(emocao)) {
-                selecoes[opcaoSelecionada].push(emocao);
-            } else if (!e.target.checked) {
+            const checked = e.target.checked;
+
+            if (checked) {
+                if (!selecoes[opcaoSelecionada].includes(emocao)) {
+                    selecoes[opcaoSelecionada].push(emocao);
+                }
+                // Marca todos os checkboxes de tempo
+                document.querySelectorAll(`input[data-emocao="${emocao}"].time-checkbox`).forEach(timeCheckbox => {
+                    timeCheckbox.checked = true;
+                });
+            } else {
                 selecoes[opcaoSelecionada] = selecoes[opcaoSelecionada].filter(em => em !== emocao);
+                // Desmarca todos os checkboxes de tempo
+                document.querySelectorAll(`input[data-emocao="${emocao}"].time-checkbox`).forEach(timeCheckbox => {
+                    timeCheckbox.checked = false;
+                });
             }
             atualizarResumo();
         }

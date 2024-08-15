@@ -62,3 +62,30 @@
     margin-left: 0; /* Mantém a margem à esquerda removida */
 }
 
+#resumo-selecoes {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+    background-color: #f9f9f9;
+}
+
+#resumo-selecoes p {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.resumo-classe {
+    margin-bottom: 10px;
+}
+
+.resumo-classe strong {
+    color: #0056b3;
+}
+
+.resumo-itens {
+    color: #333;
+    font-style: italic;
+}
+
+
