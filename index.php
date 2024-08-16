@@ -1,7 +1,7 @@
 <?php
 require_once('../../config.php');
 require_once("$CFG->libdir/formslib.php");
-require_once('cadastrar_form.php'); // Inclua o arquivo com a classe de formulário
+require_once(__DIR__ . '/coleta/cadastrar_form.php');
 
 $courseid = required_param('courseid', PARAM_INT);
 

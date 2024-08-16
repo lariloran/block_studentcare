@@ -48,7 +48,7 @@ class cadastrar_form extends moodleform
                                     </div>');
 
         // Inclua o JavaScript
-        $PAGE->requires->js('/blocks/ifcare/tabela_dinamica.js');
+        $PAGE->requires->js('/blocks/ifcare/js/tabela_dinamica.js');
 
         $mform->addElement('html', '<div class="fitem">
     <div class="fitemtitle">Resumo das Seleções</div>
