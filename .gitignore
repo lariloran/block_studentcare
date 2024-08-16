@@ -41,7 +41,6 @@ Thumbs.db
 
 # Ignorar arquivos específicos do Moodle
 /moodledata/
-/db/
 /lib/classes/
 /lib/db/
 /lib/phpunit/
