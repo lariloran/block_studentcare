@@ -1,7 +1,52 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <XMLDB PATH="blocks/ifcare/db" VERSION="2024011811" COMMENT="Instalação do banco de dados para o seu plugin" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
 
-  <TABLES>
+  <!-- Tabela para CadastroColeta -->
+    <TABLE NAME="ifcare_cadastrocoleta" COMMENT="Armazena os cadastros de coletas">
+        <FIELDS>
+            <FIELD NAME="id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" SEQUENCE="true"/>
+            <FIELD NAME="nome" TYPE="char" LENGTH="255" NOTNULL="true" COMMENT="Nome da coleta"/>
+            <FIELD NAME="data_inicio" TYPE="datetime" NOTNULL="true" COMMENT="Data e hora de início"/>
+            <FIELD NAME="data_fim" TYPE="datetime" NOTNULL="true" COMMENT="Data e hora de fim"/>
+            <FIELD NAME="descricao" TYPE="text" NOTNULL="false" COMMENT="Descrição da coleta"/>
+            <FIELD NAME="receber_alerta" TYPE="int" LENGTH="1" NOTNULL="true" COMMENT="Se o usuário deve receber alertas"/>
+            <FIELD NAME="notificar_alunos" TYPE="int" LENGTH="1" NOTNULL="true" COMMENT="Se os alunos devem ser notificados"/>
+        </FIELDS>
+        <KEYS>
+            <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        </KEYS>
+    </TABLE>
+
+    <!-- Tabela para ClasseAeq -->
+    <TABLE NAME="ifcare_classeaeq" COMMENT="Armazena as classes AEQ associadas às coletas">
+        <FIELDS>
+            <FIELD NAME="id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" SEQUENCE="true"/>
+            <FIELD NAME="cadastrocoleta_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID da coleta associada"/>
+            <FIELD NAME="nome_classe" TYPE="char" LENGTH="255" NOTNULL="true" COMMENT="Nome da classe AEQ"/>
+        </FIELDS>
+        <KEYS>
+            <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            <KEY NAME="cadastrocoleta_fk" TYPE="foreign" FIELDS="cadastrocoleta_id" REFTABLE="ifcare_cadastrocoleta" REFFIELDS="id" ONDELETE="cascade"/>
+        </KEYS>
+    </TABLE>
+
+    <!-- Tabela para Emocao -->
+    <TABLE NAME="ifcare_emocao" COMMENT="Armazena as emoções associadas às classes AEQ">
+        <FIELDS>
+            <FIELD NAME="id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" SEQUENCE="true"/>
+            <FIELD NAME="classeaeq_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID da classe AEQ associada"/>
+            <FIELD NAME="nome" TYPE="char" LENGTH="255" NOTNULL="true" COMMENT="Nome da emoção"/>
+            <FIELD NAME="antes" TYPE="int" LENGTH="1" NOTNULL="true" COMMENT="Se a emoção ocorreu antes"/>
+            <FIELD NAME="durante" TYPE="int" LENGTH="1" NOTNULL="true" COMMENT="Se a emoção ocorreu durante"/>
+            <FIELD NAME="depois" TYPE="int" LENGTH="1" NOTNULL="true" COMMENT="Se a emoção ocorreu depois"/>
+        </FIELDS>
+        <KEYS>
+            <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            <KEY NAME="classeaeq_fk" TYPE="foreign" FIELDS="classeaeq_id" REFTABLE="ifcare_classeaeq" REFFIELDS="id" ONDELETE="cascade"/>
+        </KEYS>
+    </TABLE>
+    
+  <!-- <TABLES>
     <TABLE NAME="ifcare_classe_aeq" COMMENT="Tabela para armazenar as classes do AEQ">
       <FIELDS>
         <FIELD NAME="idclasseaeq" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" AUTO="true" SEQUENCE="true" COMMENT="ID da classe AEQ" />
@@ -104,6 +149,6 @@
       </KEYS>
     </TABLE>
 
-  </TABLES>
+  </TABLES> -->
   
 </XMLDB>
