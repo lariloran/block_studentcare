@@ -1,37 +1,40 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="blocks/ifcare/db" VERSION="2024011811" COMMENT="Instalação do banco de dados para o seu plugin" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+<XMLDB PATH="blocks/ifcare/db" VERSION="2024011815" COMMENT="Instalação do banco de dados para o seu plugin" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+<TABLES>
+    <!-- Tabela para CadastroColeta -->
+<TABLE NAME="ifcare_cadastrocoleta" COMMENT="Armazena os cadastros de coletas">
+    <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="nome" TYPE="char" LENGTH="255" NOTNULL="true" COMMENT="Nome da coleta"/>
+        <FIELD NAME="data_inicio" TYPE="datetime" NOTNULL="true" COMMENT="Data e hora de início"/>
+        <FIELD NAME="data_fim" TYPE="datetime" NOTNULL="true" COMMENT="Data e hora de fim"/>
+        <FIELD NAME="descricao" TYPE="text" NOTNULL="false" COMMENT="Descrição da coleta"/>
+        <FIELD NAME="receber_alerta" TYPE="int" LENGTH="1" NOTNULL="true" COMMENT="Se o usuário deve receber alertas"/>
+        <FIELD NAME="notificar_alunos" TYPE="int" LENGTH="1" NOTNULL="true" COMMENT="Se os alunos devem ser notificados"/>
+        <FIELD NAME="curso_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID do curso associado"/>
+        <FIELD NAME="professor_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID do professor que cadastrou"/>
+    </FIELDS>
+    <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="curso_fk" TYPE="foreign" FIELDS="curso_id" REFTABLE="ifcare_curso" REFFIELDS="id" ONDELETE="cascade"/>
+        <KEY NAME="professor_fk" TYPE="foreign" FIELDS="professor_id" REFTABLE="ifcare_professor" REFFIELDS="id" ONDELETE="cascade"/>
+    </KEYS>
+</TABLE>
 
-  <!-- Tabela para CadastroColeta -->
-    <TABLE NAME="ifcare_cadastrocoleta" COMMENT="Armazena os cadastros de coletas">
-        <FIELDS>
-            <FIELD NAME="id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" SEQUENCE="true"/>
-            <FIELD NAME="nome" TYPE="char" LENGTH="255" NOTNULL="true" COMMENT="Nome da coleta"/>
-            <FIELD NAME="data_inicio" TYPE="datetime" NOTNULL="true" COMMENT="Data e hora de início"/>
-            <FIELD NAME="data_fim" TYPE="datetime" NOTNULL="true" COMMENT="Data e hora de fim"/>
-            <FIELD NAME="descricao" TYPE="text" NOTNULL="false" COMMENT="Descrição da coleta"/>
-            <FIELD NAME="receber_alerta" TYPE="int" LENGTH="1" NOTNULL="true" COMMENT="Se o usuário deve receber alertas"/>
-            <FIELD NAME="notificar_alunos" TYPE="int" LENGTH="1" NOTNULL="true" COMMENT="Se os alunos devem ser notificados"/>
-        </FIELDS>
-        <KEYS>
-            <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        </KEYS>
-    </TABLE>
 
     <!-- Tabela para ClasseAeq -->
-    <TABLE NAME="ifcare_classeaeq" COMMENT="Armazena as classes AEQ associadas às coletas">
+    <TABLE NAME="ifcare_classeaeq" COMMENT="Armazena as classes AEQ">
         <FIELDS>
             <FIELD NAME="id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" SEQUENCE="true"/>
-            <FIELD NAME="cadastrocoleta_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID da coleta associada"/>
             <FIELD NAME="nome_classe" TYPE="char" LENGTH="255" NOTNULL="true" COMMENT="Nome da classe AEQ"/>
         </FIELDS>
         <KEYS>
             <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-            <KEY NAME="cadastrocoleta_fk" TYPE="foreign" FIELDS="cadastrocoleta_id" REFTABLE="ifcare_cadastrocoleta" REFFIELDS="id" ONDELETE="cascade"/>
         </KEYS>
     </TABLE>
 
     <!-- Tabela para Emocao -->
-    <TABLE NAME="ifcare_emocao" COMMENT="Armazena as emoções associadas às classes AEQ">
+    <TABLE NAME="ifcare_emocao" COMMENT="Armazena as emoções">
         <FIELDS>
             <FIELD NAME="id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" SEQUENCE="true"/>
             <FIELD NAME="classeaeq_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID da classe AEQ associada"/>
@@ -45,110 +48,55 @@
             <KEY NAME="classeaeq_fk" TYPE="foreign" FIELDS="classeaeq_id" REFTABLE="ifcare_classeaeq" REFFIELDS="id" ONDELETE="cascade"/>
         </KEYS>
     </TABLE>
-    
-  <!-- <TABLES>
-    <TABLE NAME="ifcare_classe_aeq" COMMENT="Tabela para armazenar as classes do AEQ">
-      <FIELDS>
-        <FIELD NAME="idclasseaeq" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" AUTO="true" SEQUENCE="true" COMMENT="ID da classe AEQ" />
-        <FIELD NAME="nome" TYPE="text" NOTNULL="true" COMMENT="Nome da classe AEQ" />
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="idclasseaeq" />
-      </KEYS>
-    </TABLE>
 
-    <TABLE NAME="ifcare_emocao" COMMENT="Tabela para armazenar as emoções">
-      <FIELDS>
-        <FIELD NAME="idemocao" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" AUTO="true" SEQUENCE="true" COMMENT="ID da emoção" />
-        <FIELD NAME="nome" TYPE="text" NOTNULL="true" COMMENT="Nome da emoção" />
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="idemocao" />
-      </KEYS>
-    </TABLE>
+<!-- Tabela para Associar Coletas, Classes e Emoções -->
+<TABLE NAME="coleta" COMMENT="Associação entre coletas, classes AEQ e emoções">
+    <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="cadastrocoleta_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID da coleta associada"/>
+        <FIELD NAME="classeaeq_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID da classe AEQ associada"/>
+        <FIELD NAME="emocao_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID da emoção associada"/>
+    </FIELDS>
+    <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="cadastrocoleta_fk" TYPE="foreign" FIELDS="cadastrocoleta_id" REFTABLE="ifcare_cadastrocoleta" REFFIELDS="id" ONDELETE="cascade"/>
+        <KEY NAME="classeaeq_fk" TYPE="foreign" FIELDS="classeaeq_id" REFTABLE="ifcare_classeaeq" REFFIELDS="id" ONDELETE="cascade"/>
+        <KEY NAME="emocao_fk" TYPE="foreign" FIELDS="emocao_id" REFTABLE="ifcare_emocao" REFFIELDS="id" ONDELETE="cascade"/>
+    </KEYS>
+</TABLE>
 
-    <TABLE NAME="ifcare_momentocoleta" COMMENT="Tabela para armazenar os momentos de coleta">
-      <FIELDS>
-        <FIELD NAME="idmomento" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" AUTO="true" SEQUENCE="true" COMMENT="ID do momento de coleta" />
-        <FIELD NAME="nome" TYPE="text" NOTNULL="true" COMMENT="Nome do momento de coleta" />
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="idmomento" />
-      </KEYS>
-    </TABLE>
 
-    <TABLE NAME="ifcare_cadastrocoleta" COMMENT="Tabela para armazenar dados de cadastro de coleta">
-      <FIELDS>
-        <FIELD NAME="idcadastrocoleta" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" AUTO="true" SEQUENCE="true" COMMENT="ID do cadastro de coleta" />
-        <FIELD NAME="nome" TYPE="text" NOTNULL="true" COMMENT="Nome do cadastro" />
-        <FIELD NAME="datahoraini" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" COMMENT="Data e hora de início" />
-        <FIELD NAME="datahorafim" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" COMMENT="Data e hora de fim" />
-        <FIELD NAME="descricao" TYPE="text" COMMENT="Descrição do cadastro de coleta" />
-        <FIELD NAME="receberalertacoleta" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" COMMENT="Receber alerta de coleta" />
-        <FIELD NAME="notificaralunocoleta" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" COMMENT="Notificar aluno sobre a coleta" />
-        <FIELD NAME="idcurso" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" COMMENT="ID do curso" />
-        <FIELD NAME="listaidemocoes" TYPE="text" COMMENT="Lista de IDs de emoções" />
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="idcadastrocoleta" />
-      </KEYS>
-    </TABLE>
+<!-- Tabela para Perguntas -->
+<TABLE NAME="ifcare_pergunta" COMMENT="Armazena todas as perguntas relacionadas às emoções e classes AEQ">
+    <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="emocao_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID da emoção associada"/>
+        <FIELD NAME="classeaeq_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID da classe AEQ associada"/>
+        <FIELD NAME="pergunta_texto" TYPE="text" NOTNULL="true" COMMENT="Texto da pergunta"/>
+    </FIELDS>
+    <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="emocao_fk" TYPE="foreign" FIELDS="emocao_id" REFTABLE="ifcare_emocao" REFFIELDS="id" ONDELETE="cascade"/>
+        <KEY NAME="classeaeq_fk" TYPE="foreign" FIELDS="classeaeq_id" REFTABLE="ifcare_classeaeq" REFFIELDS="id" ONDELETE="cascade"/>
+    </KEYS>
+</TABLE>
 
-    <TABLE NAME="ifcare_perguntas_aeq" COMMENT="Tabela para armazenar perguntas AEQ">
-      <FIELDS>
-        <FIELD NAME="idperguntaaeq" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" AUTO="true" SEQUENCE="true" COMMENT="ID da pergunta AEQ" />
-        <FIELD NAME="descricao" TYPE="text" NOTNULL="true" COMMENT="Descrição da pergunta AEQ" />
-        <FIELD NAME="idmomentocoleta" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" COMMENT="ID do momento de coleta" />
-        <FIELD NAME="idemocao" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" COMMENT="ID da emoção" />
-        <FIELD NAME="idcoleta" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" COMMENT="ID da coleta" />
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="idperguntaaeq" />
-        <KEY NAME="fk_momentocoleta" TYPE="foreign" FIELDS="idmomentocoleta" REFTABLE="momentocoleta" REFFIELDS="idmomento" ONDELETE="cascade" />
-        <KEY NAME="fk_emocao" TYPE="foreign" FIELDS="idemocao" REFTABLE="emocao" REFFIELDS="idemocao" ONDELETE="cascade" />
-        <KEY NAME="fk_coleta" TYPE="foreign" FIELDS="idcoleta" REFTABLE="coleta" REFFIELDS="idcoleta" ONDELETE="cascade" />
-      </KEYS>
-    </TABLE>
+<TABLE NAME="ifcare_resposta" COMMENT="Armazena as respostas dos alunos às perguntas">
+    <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" SEQUENCE="true" COMMENT="Identificador único da resposta"/>
+        <FIELD NAME="pergunta_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID da pergunta associada"/>
+        <FIELD NAME="aluno_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID do aluno que respondeu"/>
+        <FIELD NAME="coleta_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID da coleta associada"/>
+        <FIELD NAME="resposta" TYPE="int" LENGTH="1" NOTNULL="true" COMMENT="Resposta do aluno na escala Likert (ex: 1-5)"/>
+        <FIELD NAME="data_resposta" TYPE="datetime" NOTNULL="true" COMMENT="Data e hora em que a resposta foi registrada"/>
+    </FIELDS>
+    <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="pergunta_fk" TYPE="foreign" FIELDS="pergunta_id" REFTABLE="ifcare_pergunta" REFFIELDS="id" ONDELETE="cascade"/>
+        <KEY NAME="aluno_fk" TYPE="foreign" FIELDS="aluno_id" REFTABLE="ifcare_aluno" REFFIELDS="id" ONDELETE="cascade"/>
+        <KEY NAME="coleta_fk" TYPE="foreign" FIELDS="coleta_id" REFTABLE="ifcare_cadastrocoleta" REFFIELDS="id" ONDELETE="cascade"/>
+    </KEYS>
+</TABLE>
 
-    <TABLE NAME="ifcare_aluno" COMMENT="Tabela para armazenar dados dos alunos">
-      <FIELDS>
-        <FIELD NAME="idaluno" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" AUTO="true" SEQUENCE="true" COMMENT="ID do aluno" />
-        <FIELD NAME="nome" TYPE="text" NOTNULL="true" COMMENT="Nome do aluno" />
-        <FIELD NAME="email" TYPE="text" NOTNULL="true" COMMENT="Email do aluno" />
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="idaluno" />
-      </KEYS>
-    </TABLE>
-
-    <TABLE NAME="ifcare_classe_emocao" COMMENT="Tabela para associar classes AEQ às emoções">
-      <FIELDS>
-        <FIELD NAME="idclasseaeq" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" COMMENT="ID da classe AEQ" />
-        <FIELD NAME="idemocao" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" COMMENT="ID da emoção" />
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="idclasseaeq, idemocao" />
-        <KEY NAME="fk_classeaeq" TYPE="foreign" FIELDS="idclasseaeq" REFTABLE="classe_aeq" REFFIELDS="idclasseaeq" ONDELETE="cascade" />
-        <KEY NAME="fk_emocao" TYPE="foreign" FIELDS="idemocao" REFTABLE="emocao" REFFIELDS="idemocao" ONDELETE="cascade" />
-      </KEYS>
-    </TABLE>
-
-    <TABLE NAME="ifcare_coleta" COMMENT="Tabela para armazenar as coletas de emoções dos alunos">
-      <FIELDS>
-        <FIELD NAME="idcoleta" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" AUTO="true" SEQUENCE="true" COMMENT="ID da coleta" />
-        <FIELD NAME="idaluno" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" COMMENT="ID do aluno" />
-        <FIELD NAME="respostalikert" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="Resposta no formato Likert" />
-        <FIELD NAME="idcadastrocoleta" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" COMMENT="ID do cadastro de coleta" />
-        <FIELD NAME="idperguntaaeq" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" COMMENT="ID da pergunta AEQ" />
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="idcoleta" />
-        <KEY NAME="fk_aluno" TYPE="foreign" FIELDS="idaluno" REFTABLE="aluno" REFFIELDS="idaluno" ONDELETE="cascade" />
-        <KEY NAME="fk_cadastrocoleta" TYPE="foreign" FIELDS="idcadastrocoleta" REFTABLE="cadastrocoleta" REFFIELDS="idcadastrocoleta" ONDELETE="cascade" />
-        <KEY NAME="fk_perguntaaeq" TYPE="foreign" FIELDS="idperguntaaeq" REFTABLE="perguntas_aeq" REFFIELDS="idperguntaaeq" ONDELETE="cascade" />
-      </KEYS>
-    </TABLE>
-
-  </TABLES> -->
-  
+</TABLES>
 </XMLDB>
