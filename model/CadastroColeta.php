@@ -8,8 +8,8 @@ class CadastroColeta {
     private $descricao;
     private $receberAlerta;
     private $notificarAlunos;
-    private $cursoId;  // Adicionado
-    private $professorId;  // Adicionado
+    private $cursoId;  
+    private $professorId;  
     private $classesAEQ;
 
     public function __construct($nome, $dataInicio, $horaInicio, $dataFim, $horaFim, $descricao, $receberAlerta, $notificarAlunos, $cursoId, $professorId) {
@@ -21,12 +21,11 @@ class CadastroColeta {
         $this->descricao = $descricao;
         $this->receberAlerta = $receberAlerta;
         $this->notificarAlunos = $notificarAlunos;
-        $this->cursoId = $cursoId;  // Atribuição
-        $this->professorId = $professorId;  // Atribuição
+        $this->cursoId = $cursoId; 
+        $this->professorId = $professorId; 
         $this->classesAEQ = [];
     }
 
-    // Getters e Setters para os novos atributos
     public function getCursoId() {
         return $this->cursoId;
     }
@@ -43,10 +42,7 @@ class CadastroColeta {
         $this->professorId = $professorId;
     }
 
-    // Getters e Setters já existentes
-    // ...
 
-    // Método para exibir os dados da coleta
     public function mostrarCadastroColeta() {
         echo "Nome da Coleta: " . $this->nome . PHP_EOL;
         echo "Data Início: " . $this->dataInicio . " " . $this->horaInicio . PHP_EOL;
@@ -54,8 +50,8 @@ class CadastroColeta {
         echo "Descrição: " . $this->descricao . PHP_EOL;
         echo "Receber Alerta: " . ($this->receberAlerta ? 'Sim' : 'Não') . PHP_EOL;
         echo "Notificar Alunos: " . ($this->notificarAlunos ? 'Sim' : 'Não') . PHP_EOL;
-        echo "Curso ID: " . $this->cursoId . PHP_EOL;  // Exibe ID do curso
-        echo "Professor ID: " . $this->professorId . PHP_EOL;  // Exibe ID do professor
+        echo "Curso ID: " . $this->cursoId . PHP_EOL;  
+        echo "Professor ID: " . $this->professorId . PHP_EOL;  
 
         echo "Classes AEQ: " . PHP_EOL;
         foreach ($this->classesAEQ as $classe) {
