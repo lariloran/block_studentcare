@@ -1,9 +1,13 @@
 <?php
-
 require_once("$CFG->libdir/formslib.php");
 
-class cadastrar_form extends moodleform
+class CadastrarForm extends moodleform
 {
+    // Construtor da classe
+    public function __construct() {
+        parent::__construct(); // Chama o construtor da classe pai
+    }
+
     // Define o formulário
     public function definition()
     {
@@ -28,37 +32,47 @@ class cadastrar_form extends moodleform
         $mform->addElement('textarea', 'description', get_string('description', 'block_ifcare'), 'wrap="virtual" rows="5" cols="50"');
         $mform->setType('description', PARAM_TEXT);
 
-        // Define as opções para o select.
-        $options = array(
-            'class1' => get_string('class1', 'block_ifcare'),
-            'class2' => get_string('class2', 'block_ifcare'),
-            'class3' => get_string('class3', 'block_ifcare'),
-        );
+        global $DB;
 
-        // Adiciona o campo select ao formulário.
-        $mform->addElement('select', 'FIELDNAME', get_string('aeqclasses', 'block_ifcare'), $options);
-        $mform->setType('FIELDNAME', PARAM_TEXT);
+          // Consulta à tabela mdl_ifcare_classeaeq.
+    $classes = $DB->get_records('ifcare_classeaeq');
 
-        // Adicione o contêiner para a tabela dinâmica utilizando as classes de layout padrão do Moodle
+    // Definir as opções para o select com os dados da tabela.
+    $options = array();
+    foreach ($classes as $class) {
+        // Criar uma instância da ClasseAeq para cada registro.
+        $classeAeq = new ClasseAeq($class->nome_classe);
+        $options[$class->id] = $classeAeq->getNomeClasse(); // Usa o método getNomeClasse para obter o nome.
+    }
+
+    // Adiciona o campo select ao formulário.
+    $mform->addElement('select', 'FIELDNAME', get_string('aeqclasses', 'block_ifcare'), $options);
+    $mform->setType('FIELDNAME', PARAM_TEXT);
+
+    // Adicione o contêiner para a tabela dinâmica
+    $mform->addElement('html', '<div class="fitem">
+                                    <div class="fitemtitle">Selecione as emoções</div>
+                                    <div class="felement">
+                                        <table id="container-tabela" class="generaltable"></table>
+                                    </div>
+                                </div>');
+
+    // Inclua o JavaScript
+    $PAGE->requires->js('/blocks/ifcare/js/tabela_dinamica.js');
+
+    // (Código restante permanece inalterado)
+
+    // Prepare o JavaScript para buscar as emoções
+    $PAGE->requires->js_init_call('inicializarFormulario', null, true);
+
         $mform->addElement('html', '<div class="fitem">
-                                        <div class="fitemtitle">Selecione as emoções</div> <!-- Espaço vazio à esquerda -->
-                                        <div class="felement">
-                                            <table id="container-tabela" class="generaltable"></table>
-                                        </div>
-                                    </div>');
-
-        // Inclua o JavaScript
-        $PAGE->requires->js('/blocks/ifcare/js/tabela_dinamica.js');
-
-        $mform->addElement('html', '<div class="fitem">
-    <div class="fitemtitle">Resumo das Seleções</div>
-    <div class="felement" id="resumo-selecoes">
-        <ul id="resumo-lista">
-            <!-- Itens do resumo serão inseridos aqui pelo JavaScript -->
-        </ul>
-    </div>
-</div>
-');
+            <div class="fitemtitle">Resumo das Seleções</div>
+            <div class="felement" id="resumo-selecoes">
+                <ul id="resumo-lista">
+                    <!-- Itens do resumo serão inseridos aqui pelo JavaScript -->
+                </ul>
+            </div>
+        </div>');
 
         // Flag "Receber alerta do andamento da coleta"
         $mform->addElement('advcheckbox', 'alertprogress', get_string('alertprogress', 'block_ifcare'), null, array('group' => 1), array(0, 1));
@@ -85,4 +99,22 @@ class cadastrar_form extends moodleform
         return $errors;
     }
 }
-?>
+
+
+
+class ClasseAeq {
+    private $nomeClasse;
+
+    public function __construct($nomeClasse) {
+        $this->nomeClasse = $nomeClasse;
+    }
+
+    public function getNomeClasse() {
+        return $this->nomeClasse;
+    }
+
+    public function setNomeClasse($nomeClasse) {
+        $this->nomeClasse = $nomeClasse;
+    }
+}
+

@@ -1,7 +1,8 @@
 <?php
+
 require_once('../../config.php');
 require_once("$CFG->libdir/formslib.php");
-require_once(__DIR__ . '/coleta/cadastrar_form.php');
+require_once(__DIR__ . '/coleta/CadastrarForm.php');
 
 $courseid = required_param('courseid', PARAM_INT);
 
@@ -79,7 +80,7 @@ function create_section($id, $title, $content)
 
     // Conteúdo da seção
     if ($id == 1) { // Se for a seção Cadastrar
-        $form = new cadastrar_form();
+        $form = new CadastrarForm();
         $form->display();
     } else {
         echo $content; // Para outras seções, apenas exibe o conteúdo

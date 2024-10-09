@@ -28,4 +28,4 @@ class PerguntaAeq {
         return $this->perguntaTexto;
     }
 }
-?>
+
