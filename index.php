@@ -101,10 +101,10 @@ function create_section($id, $title, $content, $courseid)
 }
 
 // Adiciona a seção Cadastrar com formulário
-create_section(1, 'Cadastrar', '', $courseid);
+create_section(1, 'Cadastrar Coleta de emoções', '', $courseid);
 
 // Adiciona a seção Listar com dois itens fictícios
-create_section(2, 'Listar', '
+create_section(2, 'Listar Coletas cadastradas', '
     <ul>
         <li>Item 1: Fake Content 1</li>
         <li>Item 2: Fake Content 2</li>

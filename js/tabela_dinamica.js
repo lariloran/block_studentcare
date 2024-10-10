@@ -3,10 +3,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const containerTabela = document.getElementById('container-tabela');
     const resumoSelecoes = document.getElementById('resumo-selecoes');
 
-    // Armazenar seleções de todas as classes
-    let selecoes = {};
+    let selecoes = {};    // Armazenar seleções de todas as classes
     let dadosSelecoes = []; // Array para armazenar todas as emoções com informações
     let emocoesHidden = {}; // Array para armazenar as emoções selecionadas em um campo oculto
+
     function buscarEmocoes(classeId) {
         return fetch(`http://localhost/blocks/ifcare/api/ifcare_emocao.php?classeaeq_id=${classeId}`)
             .then(response => response.json());
@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function atualizarSelecoes(classe, classeId) {
         const emotionCheckboxes = document.querySelectorAll('.emotion-checkbox');
         selecoes[classe] = [];
-        emocoesHidden[classe] = []; // Certifique-se de que esta inicialização está correta
+        emocoesHidden[classe] = []; 
         dadosSelecoes = []; // Reinicializa o array de seleções
     
         emotionCheckboxes.forEach(checkbox => {
@@ -123,15 +123,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Atualiza as seleções
                 selecoes[classe].push(emocao);
                 // Adiciona o dado selecionado em emocoesHidden
-                emocoesHidden[classe].push(dadoSelecionado); // Agora estamos empurrando o objeto individualmente
+                emocoesHidden[classe].push(dadoSelecionado); 
             }
         });
     
         // Preenche o campo oculto com as seleções
         document.getElementById('emocao_selecionadas').value = JSON.stringify(emocoesHidden);
-    
-        console.log(dadosSelecoes); // Exibe o array completo no console para fins de debug
-    }
+        }
     
 
     choiceDropdown.addEventListener('change', function () {
@@ -147,7 +145,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     function atualizarResumo() {
-        // Limpar o resumo anterior
         resumoSelecoes.innerHTML = '';
 
         // Exibir o resumo com todas as seleções de todas as classes
@@ -157,11 +154,11 @@ document.addEventListener('DOMContentLoaded', function () {
             if (selecoes[classe] && selecoes[classe].length > 0) {
                 const emocoes = selecoes[classe].join(', ');
                 const resumoItem = document.createElement('div');
-                resumoItem.textContent = `Classe: ${classe} | Emoções: ${emocoes}`;
+                resumoItem.textContent = `${classe}: ${emocoes}`;
                 resumoSelecoes.appendChild(resumoItem);
             } else {
                 const resumoItem = document.createElement('div');
-                resumoItem.textContent = `Classe: ${classe} | Emoções: nenhuma seleção`;
+                resumoItem.textContent = `${classe}: Nenhuma emoção selecionada`;
                 resumoSelecoes.appendChild(resumoItem);
             }
         }
@@ -173,9 +170,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const options = choiceDropdown.options;
         for (let i = 0; i < options.length; i++) {
             const classe = options[i].text;
-            selecoes[classe] = [];  // Inicializa com nenhuma seleção
+            selecoes[classe] = [];  
             const resumoItem = document.createElement('div');
-            resumoItem.textContent = `Classe: ${classe} | Emoções: nenhuma seleção`;
+            resumoItem.textContent = `${classe}: Nenhuma emoção selecionada`;
             resumoSelecoes.appendChild(resumoItem);
         }
     }
