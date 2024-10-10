@@ -5,13 +5,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Armazenar seleções de todas as classes
     let selecoes = {};
-
+    let dadosSelecoes = []; // Array para armazenar todas as emoções com informações
+    let emocoesHidden = {}; // Array para armazenar as emoções selecionadas em um campo oculto
     function buscarEmocoes(classeId) {
         return fetch(`http://localhost/blocks/ifcare/api/ifcare_emocao.php?classeaeq_id=${classeId}`)
             .then(response => response.json());
     }
 
-    function renderizarTabela(emocoes, nomeClasse) {
+    function renderizarTabela(emocoes, nomeClasse, classeId) {
         let tabelaHtml = `
         <table>
             <thead>
@@ -31,11 +32,11 @@ document.addEventListener('DOMContentLoaded', function () {
         emocoes.forEach(emocao => {
             tabelaHtml += `
                 <tr>
-                    <td><input type="checkbox" class="emotion-checkbox" data-emocao="${emocao.nome}" data-classe="${nomeClasse}" /></td>
+                    <td><input type="checkbox" class="emotion-checkbox" data-emocao="${emocao.nome}" data-id="${emocao.id}" data-classe="${nomeClasse}" data-classeid="${classeId}" /></td>
                     <td>${emocao.nome}</td>
-                    <td><input type="checkbox" class="time-checkbox" data-tempo="antes" data-emocao="${emocao.nome}" checked /></td>
-                    <td><input type="checkbox" class="time-checkbox" data-tempo="durante" data-emocao="${emocao.nome}" checked /></td>
-                    <td><input type="checkbox" class="time-checkbox" data-tempo="depois" data-emocao="${emocao.nome}" checked /></td>
+                    <td><input type="checkbox" class="time-checkbox" data-tempo="antes" data-emocao="${emocao.nome}" data-id="${emocao.id}" checked /></td>
+                    <td><input type="checkbox" class="time-checkbox" data-tempo="durante" data-emocao="${emocao.nome}" data-id="${emocao.id}" checked /></td>
+                    <td><input type="checkbox" class="time-checkbox" data-tempo="depois" data-emocao="${emocao.nome}" data-id="${emocao.id}" checked /></td>
                 </tr>`;
         });
 
@@ -52,13 +53,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
             timeCheckboxes.forEach(checkbox => {
                 checkbox.addEventListener('change', function () {
-                    // Verifica se todas as checkboxes estão desmarcadas
                     const anyChecked = Array.from(timeCheckboxes).some(checkbox => checkbox.checked);
                     if (!anyChecked) {
-                        // Reverte a alteração
                         this.checked = true;
                     }
-                    atualizarSelecoes(nomeClasse);
+                    atualizarSelecoes(nomeClasse, classeId);
                     atualizarResumo();
                 });
             });
@@ -72,22 +71,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 const row = checkbox.closest('tr');
                 const timeCheckboxes = row.querySelectorAll('.time-checkbox');
                 timeCheckboxes.forEach(timeCheckbox => {
-                    // Marcar "Antes" como checked
-                    if (timeCheckbox.getAttribute('data-tempo') === 'antes') {
-                        timeCheckbox.checked = true;
-                    } else {
-                        timeCheckbox.checked = checked; // Marcar/desmarcar "Durante" e "Depois"
-                    }
+                    timeCheckbox.checked = checked;
                 });
             });
-            atualizarSelecoes(nomeClasse);
+            atualizarSelecoes(nomeClasse, classeId);
             atualizarResumo();
         });
 
         // Adiciona evento de alteração para as checkboxes de emoção
         emotionCheckboxes.forEach(checkbox => {
             checkbox.addEventListener('change', function () {
-                atualizarSelecoes(nomeClasse);
+                atualizarSelecoes(nomeClasse, classeId);
                 atualizarResumo();
             });
         });
@@ -96,17 +90,49 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Atualizar as seleções de uma determinada classe
-    function atualizarSelecoes(classe) {
+    function atualizarSelecoes(classe, classeId) {
         const emotionCheckboxes = document.querySelectorAll('.emotion-checkbox');
         selecoes[classe] = [];
-
+        emocoesHidden[classe] = []; // Certifique-se de que esta inicialização está correta
+        dadosSelecoes = []; // Reinicializa o array de seleções
+    
         emotionCheckboxes.forEach(checkbox => {
             if (checkbox.checked) {
                 const emocao = checkbox.getAttribute('data-emocao');
+                const emocaoId = checkbox.getAttribute('data-id');
+    
+                // Verifica os valores de antes, durante e depois
+                const row = checkbox.closest('tr');
+                const antes = row.querySelector('input[data-tempo="antes"]').checked;
+                const durante = row.querySelector('input[data-tempo="durante"]').checked;
+                const depois = row.querySelector('input[data-tempo="depois"]').checked;
+    
+                // Armazena a emoção e suas informações no array
+                const dadoSelecionado = {
+                    classeId: classeId,
+                    emocaoNome: emocao,
+                    emocaoId: emocaoId,
+                    antes: antes,
+                    durante: durante,
+                    depois: depois
+                };
+    
+                // Armazena a emoção selecionada
+                dadosSelecoes.push(dadoSelecionado);
+    
+                // Atualiza as seleções
                 selecoes[classe].push(emocao);
+                // Adiciona o dado selecionado em emocoesHidden
+                emocoesHidden[classe].push(dadoSelecionado); // Agora estamos empurrando o objeto individualmente
             }
         });
+    
+        // Preenche o campo oculto com as seleções
+        document.getElementById('emocao_selecionadas').value = JSON.stringify(emocoesHidden);
+    
+        console.log(dadosSelecoes); // Exibe o array completo no console para fins de debug
     }
+    
 
     choiceDropdown.addEventListener('change', function () {
         const opcaoSelecionada = choiceDropdown.value;
@@ -114,7 +140,8 @@ document.addEventListener('DOMContentLoaded', function () {
             buscarEmocoes(opcaoSelecionada)
                 .then(emocoes => {
                     const nomeClasse = choiceDropdown.options[choiceDropdown.selectedIndex].text;
-                    renderizarTabela(emocoes, nomeClasse);
+                    const classeId = opcaoSelecionada;
+                    renderizarTabela(emocoes, nomeClasse, classeId);
                 });
         }
     });
@@ -140,6 +167,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    
     // Inicialização - Adiciona mensagens iniciais no quadro de resumo
     function inicializarResumo() {
         const options = choiceDropdown.options;

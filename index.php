@@ -4,7 +4,8 @@ require_once('../../config.php');
 require_once("$CFG->libdir/formslib.php");
 require_once(__DIR__ . '/coleta/CadastrarForm.php');
 
-$courseid = required_param('courseid', PARAM_INT);
+global $COURSE;
+$courseid = $COURSE->id;
 
 // Verifica se o usuário está logado e tem acesso ao curso
 require_login($courseid);
@@ -28,8 +29,7 @@ echo html_writer::start_tag('div', ['class' => 'row']);
 // Alinhamento com o menu secundário
 echo html_writer::start_tag('div', ['class' => 'col-md-12']);
 
-// Função para criar a estrutura da seção com layout semelhante ao de configurações
-function create_section($id, $title, $content)
+function create_section($id, $title, $content, $courseid) 
 {
     echo html_writer::start_tag('li', [
         'id' => "section-$id",
@@ -83,7 +83,7 @@ function create_section($id, $title, $content)
         $mform = new CadastrarForm();
 
         if ($mform->is_cancelled()) {
-            // Lógica para cancelar
+            redirect(new moodle_url("/blocks/ifcare/index.php?courseid=$courseid")); 
         } else if ($data = $mform->get_data()) {
             $mform->process_form($data); // Chame o método aqui
         } else {
@@ -101,7 +101,7 @@ function create_section($id, $title, $content)
 }
 
 // Adiciona a seção Cadastrar com formulário
-create_section(1, 'Cadastrar', '');
+create_section(1, 'Cadastrar', '', $courseid);
 
 // Adiciona a seção Listar com dois itens fictícios
 create_section(2, 'Listar', '
@@ -109,7 +109,7 @@ create_section(2, 'Listar', '
         <li>Item 1: Fake Content 1</li>
         <li>Item 2: Fake Content 2</li>
     </ul>
-');
+',$courseid);
 
 // Fecha o container
 echo html_writer::end_tag('div'); // End col-md-12
