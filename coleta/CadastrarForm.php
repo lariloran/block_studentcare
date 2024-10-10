@@ -57,13 +57,8 @@ class CadastrarForm extends moodleform
                                     </div>
                                 </div>');
 
-    // Inclua o JavaScript
+    // Inclui o JavaScript
     $PAGE->requires->js('/blocks/ifcare/js/tabela_dinamica.js');
-
-    // (Código restante permanece inalterado)
-
-    // Prepare o JavaScript para buscar as emoções
-    $PAGE->requires->js_init_call('inicializarFormulario', null, true);
 
         $mform->addElement('html', '<div class="fitem">
             <div class="fitemtitle">Resumo das Seleções</div>
