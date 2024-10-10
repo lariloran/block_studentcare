@@ -80,8 +80,17 @@ function create_section($id, $title, $content)
 
     // Conteúdo da seção
     if ($id == 1) { // Se for a seção Cadastrar
-        $form = new CadastrarForm();
-        $form->display();
+        $mform = new CadastrarForm();
+
+        if ($mform->is_cancelled()) {
+            // Lógica para cancelar
+        } else if ($data = $mform->get_data()) {
+            $mform->process_form($data); // Chame o método aqui
+        } else {
+            // Exiba o formulário
+            echo $mform->render();
+        }
+        
     } else {
         echo $content; // Para outras seções, apenas exibe o conteúdo
     }
