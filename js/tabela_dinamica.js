@@ -6,11 +6,13 @@ document.addEventListener('DOMContentLoaded', function () {
     // Armazenar seleções de todas as classes
     let selecoes = {};
 
+    // Função para buscar as emoções via API
     function buscarEmocoes(classeId) {
         return fetch(`http://localhost/blocks/ifcare/api/ifcare_emocao.php?classeaeq_id=${classeId}`)
             .then(response => response.json());
     }
 
+    // Função para renderizar a tabela de emoções
     function renderizarTabela(emocoes, nomeClasse) {
         let tabelaHtml = `
         <table>
@@ -111,16 +113,36 @@ document.addEventListener('DOMContentLoaded', function () {
         resumoSelecoes.innerHTML = '';
 
         // Exibir o resumo com todas as seleções de todas as classes
-        for (const classe in selecoes) {
-            if (selecoes[classe].length > 0) {
+        const options = choiceDropdown.options;
+        for (let i = 0; i < options.length; i++) {
+            const classe = options[i].text;
+            if (selecoes[classe] && selecoes[classe].length > 0) {
                 const emocoes = selecoes[classe].join(', ');
                 const resumoItem = document.createElement('div');
                 resumoItem.textContent = `Classe: ${classe} | Emoções: ${emocoes}`;
+                resumoSelecoes.appendChild(resumoItem);
+            } else {
+                const resumoItem = document.createElement('div');
+                resumoItem.textContent = `Classe: ${classe} | Emoções: nenhuma seleção`;
                 resumoSelecoes.appendChild(resumoItem);
             }
         }
     }
 
+    // Inicialização - Adiciona mensagens iniciais no quadro de resumo
+    function inicializarResumo() {
+        // Adicionar todas as classes do select com "nenhuma seleção"
+        const options = choiceDropdown.options;
+        for (let i = 0; i < options.length; i++) {
+            const classe = options[i].text;
+            selecoes[classe] = [];  // Inicializa com nenhuma seleção
+            const resumoItem = document.createElement('div');
+            resumoItem.textContent = `Classe: ${classe} | Emoções: nenhuma seleção`;
+            resumoSelecoes.appendChild(resumoItem);
+        }
+    }
+
     // Inicialização
+    inicializarResumo();
     choiceDropdown.dispatchEvent(new Event('change'));
 });
