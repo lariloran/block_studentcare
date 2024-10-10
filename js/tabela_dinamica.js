@@ -6,13 +6,11 @@ document.addEventListener('DOMContentLoaded', function () {
     // Armazenar seleções de todas as classes
     let selecoes = {};
 
-    // Função para buscar as emoções via API
     function buscarEmocoes(classeId) {
         return fetch(`http://localhost/blocks/ifcare/api/ifcare_emocao.php?classeaeq_id=${classeId}`)
             .then(response => response.json());
     }
 
-    // Função para renderizar a tabela de emoções
     function renderizarTabela(emocoes, nomeClasse) {
         let tabelaHtml = `
         <table>
@@ -31,16 +29,13 @@ document.addEventListener('DOMContentLoaded', function () {
             <tbody>`;
 
         emocoes.forEach(emocao => {
-            // Verifica se a emoção já foi selecionada anteriormente
-            const isChecked = selecoes[nomeClasse] && selecoes[nomeClasse].includes(emocao.nome);
-            
             tabelaHtml += `
                 <tr>
-                    <td><input type="checkbox" class="emotion-checkbox" data-emocao="${emocao.nome}" data-classe="${nomeClasse}" ${isChecked ? 'checked' : ''} /></td>
+                    <td><input type="checkbox" class="emotion-checkbox" data-emocao="${emocao.nome}" data-classe="${nomeClasse}" /></td>
                     <td>${emocao.nome}</td>
-                    <td><input type="checkbox" class="time-checkbox" data-tempo="antes" data-emocao="${emocao.nome}" ${emocao.antes ? 'checked' : ''} /></td>
-                    <td><input type="checkbox" class="time-checkbox" data-tempo="durante" data-emocao="${emocao.nome}" ${emocao.durante ? 'checked' : ''} /></td>
-                    <td><input type="checkbox" class="time-checkbox" data-tempo="depois" data-emocao="${emocao.nome}" ${emocao.depois ? 'checked' : ''} /></td>
+                    <td><input type="checkbox" class="time-checkbox" data-tempo="antes" data-emocao="${emocao.nome}" checked /></td>
+                    <td><input type="checkbox" class="time-checkbox" data-tempo="durante" data-emocao="${emocao.nome}" checked /></td>
+                    <td><input type="checkbox" class="time-checkbox" data-tempo="depois" data-emocao="${emocao.nome}" checked /></td>
                 </tr>`;
         });
 
@@ -51,18 +46,21 @@ document.addEventListener('DOMContentLoaded', function () {
         const emotionCheckboxes = document.querySelectorAll('.emotion-checkbox');
         const allRows = document.querySelectorAll('tbody tr');
 
-        // Função para marcar/desmarcar todos os checkboxes da linha
+        // Função para garantir que pelo menos uma checkbox esteja marcada por linha
         allRows.forEach(row => {
-            const emotionCheckbox = row.querySelector('.emotion-checkbox');
             const timeCheckboxes = row.querySelectorAll('.time-checkbox');
-            
-            emotionCheckbox.addEventListener('change', function () {
-                const checked = emotionCheckbox.checked;
-                timeCheckboxes.forEach(checkbox => {
-                    checkbox.checked = checked;
+
+            timeCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function () {
+                    // Verifica se todas as checkboxes estão desmarcadas
+                    const anyChecked = Array.from(timeCheckboxes).some(checkbox => checkbox.checked);
+                    if (!anyChecked) {
+                        // Reverte a alteração
+                        this.checked = true;
+                    }
+                    atualizarSelecoes(nomeClasse);
+                    atualizarResumo();
                 });
-                atualizarSelecoes(nomeClasse);
-                atualizarResumo();
             });
         });
 
@@ -74,11 +72,24 @@ document.addEventListener('DOMContentLoaded', function () {
                 const row = checkbox.closest('tr');
                 const timeCheckboxes = row.querySelectorAll('.time-checkbox');
                 timeCheckboxes.forEach(timeCheckbox => {
-                    timeCheckbox.checked = checked;
+                    // Marcar "Antes" como checked
+                    if (timeCheckbox.getAttribute('data-tempo') === 'antes') {
+                        timeCheckbox.checked = true;
+                    } else {
+                        timeCheckbox.checked = checked; // Marcar/desmarcar "Durante" e "Depois"
+                    }
                 });
             });
             atualizarSelecoes(nomeClasse);
             atualizarResumo();
+        });
+
+        // Adiciona evento de alteração para as checkboxes de emoção
+        emotionCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                atualizarSelecoes(nomeClasse);
+                atualizarResumo();
+            });
         });
 
         atualizarResumo();
@@ -131,7 +142,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Inicialização - Adiciona mensagens iniciais no quadro de resumo
     function inicializarResumo() {
-        // Adicionar todas as classes do select com "nenhuma seleção"
         const options = choiceDropdown.options;
         for (let i = 0; i < options.length; i++) {
             const classe = options[i].text;
