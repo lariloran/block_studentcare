@@ -31,6 +31,29 @@ echo html_writer::start_tag('div', ['class' => 'col-md-12']);
 
 function create_section($id, $title, $content, $courseid) 
 {
+    global $SESSION;
+    
+    if (isset($SESSION->mensagem_sucesso)) {
+        echo '<div class="alert alert-success alert-dismissible fade show" role="alert">';
+        echo $SESSION->mensagem_sucesso;
+        echo '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+        echo '<span aria-hidden="true">&times;</span>'; // O "X" do botão
+        echo '</button>';
+        echo '</div>';
+        unset($SESSION->mensagem_sucesso); // Limpa a mensagem da sessão
+    }
+    
+    if (isset($SESSION->mensagem_erro)) {
+        echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">';
+        echo $SESSION->mensagem_erro;
+        echo '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+        echo '<span aria-hidden="true">&times;</span>'; // O "X" do botão
+        echo '</button>';
+        echo '</div>';
+        unset($SESSION->mensagem_erro); // Limpa a mensagem da sessão
+    }
+    
+
     echo html_writer::start_tag('li', [
         'id' => "section-$id",
         'class' => 'section course-section main clearfix',
@@ -95,6 +118,9 @@ function create_section($id, $title, $content, $courseid)
         echo $content; // Para outras seções, apenas exibe o conteúdo
     }
 
+
+
+    
     //Modal de confirmação
     
     echo html_writer::end_tag('div'); // End content

@@ -22,7 +22,10 @@ $string['notify_students'] = 'Notificar os alunos';
 $string['submit'] = 'Salvar';
 $string['cancel'] = 'Cancelar';
 
-// Classes do AEQ
+$string['mensagem_sucesso'] = 'Cadastro realizado com sucesso!';
+$string['mensagem_erro'] = 'Erro ao realizar o cadastro. Tente novamente.';
+$string['emocao_selecionada_erro'] = 'Problemas no cadastro das emoções selecionadas.';
+
 $string['class1'] = 'Emoções relacionadas às aulas';
 $string['class2'] = 'Emoções relacionadas aos testes';
 $string['class3'] = 'Emoções relacionadas ao aprendizado';
@@ -45,3 +48,9 @@ $string['before'] = 'Antes';
 
 // Erros
 $string['endtimeerror'] = 'End time must be after the start time.';
+
+
+$string['nameerror'] = 'O nome não pode ser vazio.';
+$string['starttimefutureerror'] = 'A data de início deve ser no futuro.';
+$string['endtimefutureerror'] = 'A data de fim deve ser no futuro.';
+$string['emotionerror'] = 'Você deve selecionar pelo menos uma emoção.';

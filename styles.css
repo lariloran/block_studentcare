@@ -184,3 +184,12 @@
     background-color: #fff2e6;
     /* Cor de fundo mais suave para a terceira classe */
 }
+
+.error {
+    border: 1px solid red;
+}
+
+.error-message {
+    color: red;
+    font-size: 12px;
+}

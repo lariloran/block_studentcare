@@ -1,5 +1,8 @@
 <?php
 require_once("$CFG->libdir/formslib.php");
+require_once("$CFG->libdir/classes/notification.php");
+
+use core\notification;
 
 class CadastrarForm extends moodleform
 {
@@ -77,7 +80,8 @@ class CadastrarForm extends moodleform
         $mform->setDefault('notify_students', 1);
 
   // Botões de Salvar e Cancelar
-$this->add_action_buttons(true, get_string('submit', 'block_ifcare'));
+    $mform->addElement('submit', 'save', get_string('submit', 'block_ifcare'));
+
 
 // Adicionando o modal de confirmação
 $mform->addElement('html', '
@@ -145,7 +149,7 @@ $PAGE->requires->js_amd_inline("
 
     public function process_form($data)
     {
-        global $DB, $USER, $COURSE;
+        global $DB, $USER, $COURSE,$SESSION;
     
         $nome = $data->name;
         $dataInicioFormatada = date('Y-m-d H:i:s', $data->starttime);
@@ -187,13 +191,20 @@ $PAGE->requires->js_amd_inline("
                     }
                 }
             } else {
-                echo "<p>Problemas no cadastro da coleta</p>";
+                $SESSION->mensagem_erro = get_string('mensagem_erro', 'block_ifcare');
             }
-            redirect(new moodle_url("/blocks/ifcare/index.php?courseid=$cursoId")); 
+    
+            // Notifica o usuário sobre o sucesso do cadastro
+            $SESSION->mensagem_sucesso = get_string('mensagem_sucesso', 'block_ifcare');
+            redirect(new moodle_url("/blocks/ifcare/index.php?courseid=$cursoId"));
         } else {
-            echo "Erro ao inserir o registro na tabela ifcare_cadastrocoleta.";
+            // Notifica o usuário sobre o erro na inserção
+            $SESSION->mensagem_erro = get_string('mensagem_erro', 'block_ifcare');
+
+            redirect(new moodle_url("/blocks/ifcare/index.php?courseid=$cursoId"));
         }
     }
+    
 }
 
 class CadastroColeta
