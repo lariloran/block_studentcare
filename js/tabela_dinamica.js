@@ -2,10 +2,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const choiceDropdown = document.querySelector('select[name="FIELDNAME"]');
     const containerTabela = document.getElementById('container-tabela');
     const resumoSelecoes = document.getElementById('resumo-selecoes');
+    const saveButton = document.getElementById('id_save'); // Botão de salvar
 
     let selecoes = {};    // Armazenar seleções de todas as classes
     let dadosSelecoes = []; // Array para armazenar todas as emoções com informações
-    let emocoesHidden = {}; // Array para armazenar as emoções selecionadas em um campo oculto
+    let emocoesHidden = {}; // Armazenar as emoções selecionadas em um campo oculto
 
     function buscarEmocoes(classeId) {
         return fetch(`http://localhost/blocks/ifcare/api/ifcare_emocao.php?classeaeq_id=${classeId}`)
@@ -47,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const emotionCheckboxes = document.querySelectorAll('.emotion-checkbox');
         const allRows = document.querySelectorAll('tbody tr');
 
-        // Função para garantir que pelo menos uma checkbox esteja marcada por linha (antes)
+        // Função para garantir que pelo menos uma checkbox esteja marcada por linha
         allRows.forEach(row => {
             const timeCheckboxes = row.querySelectorAll('.time-checkbox');
 
@@ -55,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 checkbox.addEventListener('change', function () {
                     const anyChecked = Array.from(timeCheckboxes).some(checkbox => checkbox.checked);
                     if (!anyChecked) {
-                        row.querySelector('input[data-tempo="antes"]').checked = true;
+                        this.checked = true;
                     }
                     atualizarSelecoes(nomeClasse, classeId);
                     atualizarResumo();
@@ -63,47 +64,47 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
 
-        // Marcar/desmarcar todas as emoções e tempos quando o select-all for alterado
-        selectAllCheckbox.addEventListener('change', function () {
-            const checked = selectAllCheckbox.checked;
-            emotionCheckboxes.forEach(checkbox => {
-                checkbox.checked = checked;
-                const row = checkbox.closest('tr');
-                const timeCheckboxes = row.querySelectorAll('.time-checkbox');
-                timeCheckboxes.forEach(timeCheckbox => {
-                    timeCheckbox.checked = checked;
+                // Marcar/desmarcar todas as emoções e tempos quando o select-all for alterado
+                selectAllCheckbox.addEventListener('change', function () {
+                    const checked = selectAllCheckbox.checked;
+                    emotionCheckboxes.forEach(checkbox => {
+                        checkbox.checked = checked;
+                        const row = checkbox.closest('tr');
+                        const timeCheckboxes = row.querySelectorAll('.time-checkbox');
+                        timeCheckboxes.forEach(timeCheckbox => {
+                            timeCheckbox.checked = checked;
+                        });
+                    });
+                    atualizarSelecoes(nomeClasse, classeId);
+                    atualizarResumo();
                 });
-            });
-            atualizarSelecoes(nomeClasse, classeId);
-            atualizarResumo();
-        });
-
-        // Alteração de estado da checkbox da emoção
-        emotionCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', function () {
-                const row = checkbox.closest('tr');
-                const timeCheckboxes = row.querySelectorAll('.time-checkbox');
-
-                if (checkbox.checked) {
-                    // Marca todas as checkboxes (Antes, Durante e Depois)
-                    timeCheckboxes.forEach(timeCheckbox => {
-                        timeCheckbox.checked = true;
+        
+                // Alteração de estado da checkbox da emoção
+                emotionCheckboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', function () {
+                        const row = checkbox.closest('tr');
+                        const timeCheckboxes = row.querySelectorAll('.time-checkbox');
+        
+                        if (checkbox.checked) {
+                            // Marca todas as checkboxes (Antes, Durante e Depois)
+                            timeCheckboxes.forEach(timeCheckbox => {
+                                timeCheckbox.checked = true;
+                            });
+                        } else {
+                            // Desmarca todas as checkboxes (exceto "Antes" que sempre precisa estar marcada)
+                            timeCheckboxes.forEach(timeCheckbox => {
+                                timeCheckbox.checked = false;
+                            });
+                            row.querySelector('input[data-tempo="antes"]').checked = true;
+                        }
+                        
+                        atualizarSelecoes(nomeClasse, classeId);
+                        atualizarResumo();
                     });
-                } else {
-                    // Desmarca todas as checkboxes (exceto "Antes" que sempre precisa estar marcada)
-                    timeCheckboxes.forEach(timeCheckbox => {
-                        timeCheckbox.checked = false;
-                    });
-                    row.querySelector('input[data-tempo="antes"]').checked = true;
-                }
-                
-                atualizarSelecoes(nomeClasse, classeId);
+                });
+        
                 atualizarResumo();
-            });
-        });
-
-        atualizarResumo();
-    }
+            }
 
     // Atualizar as seleções de uma determinada classe
     function atualizarSelecoes(classe, classeId) {
@@ -145,6 +146,14 @@ document.addEventListener('DOMContentLoaded', function () {
     
         // Preenche o campo oculto com as seleções
         document.getElementById('emocao_selecionadas').value = JSON.stringify(emocoesHidden);
+        console.log(emocoesHidden);
+        // Atualiza o estado do botão "Salvar"
+        toggleSaveButton();
+    }
+
+    // Habilita ou desabilita o botão "Salvar"
+    function toggleSaveButton() {
+        saveButton.disabled = Object.keys(selecoes).length === 0 || Object.values(selecoes).every(emocoes => emocoes.length === 0);
     }
 
     choiceDropdown.addEventListener('change', function () {

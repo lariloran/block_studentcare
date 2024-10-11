@@ -17,10 +17,14 @@ class CadastrarForm extends moodleform
         global $PAGE, $COURSE, $DB;
         $mform = $this->_form;
 
-        // Campo Nome
-        $mform->addElement('text', 'name', get_string('name', 'block_ifcare'), array('size' => '50'));
-        $mform->setType('name', PARAM_NOTAGS);
-        $mform->addRule('name', null, 'required', null, 'client');
+       // Gerar o nome da coleta no formato COLETA-DATADEHOJEHORAMINUTO
+    $dataAtual = date('Y-m-d H:i'); // Obtém a data e hora atual
+    $nomeColeta = "COLETA-" . date('YmdHi', strtotime($dataAtual)); // Formata conforme necessário
+
+    // Campo Nome (preenchido e congelado)
+    $mform->addElement('text', 'name', get_string('name', 'block_ifcare'), array('size' => '50', 'readonly' => 'readonly'));
+    $mform->setType('name', PARAM_NOTAGS);
+    $mform->setDefault('name', $nomeColeta); // Define o valor padrão
 
         // Campo Data e Hora de Início da coleta
         $mform->addElement('date_time_selector', 'starttime', get_string('starttime', 'block_ifcare'), array('optional' => false));
@@ -34,9 +38,10 @@ class CadastrarForm extends moodleform
         $mform->addElement('textarea', 'description', get_string('description', 'block_ifcare'), 'wrap="virtual" rows="5" cols="50"');
         $mform->setType('description', PARAM_TEXT);
 
-        // Adiciona o campo oculto para as emoções selecionadas com o atributo 'emocao_selecionadas'
-        $mform->addElement('hidden', 'emocao_selecionadas', '', array('id' => 'emocao_selecionadas'));
-        $mform->setType('emocao_selecionadas', PARAM_RAW);
+                // Adiciona o campo oculto para as emoções selecionadas com o atributo 'emocao_selecionadas'
+                $mform->addElement('hidden', 'emocao_selecionadas', '', array('id' => 'emocao_selecionadas'));
+                $mform->setType('emocao_selecionadas', PARAM_RAW);
+                
     
         // Definir as opções para o select com os dados da tabela.
         $classes = $DB->get_records('ifcare_classeaeq');
@@ -61,6 +66,7 @@ class CadastrarForm extends moodleform
         // Inclui o js da tabela dinâmica
         $PAGE->requires->js('/blocks/ifcare/js/tabela_dinamica.js');
 
+
         //div resumo das seleções da tabela
         $mform->addElement('html', '<div class="fitem">
             <div class="fitemtitle">Resumo das Seleções</div>
@@ -80,8 +86,9 @@ class CadastrarForm extends moodleform
         $mform->setDefault('notify_students', 1);
 
   // Botões de Salvar e Cancelar
-    $mform->addElement('submit', 'save', get_string('submit', 'block_ifcare'));
-
+// Botões de Salvar e Cancelar
+$mform->addElement('submit', 'save', get_string('submit', 'block_ifcare'));
+$mform->setType('save', PARAM_ACTION); // Certifique-se de definir o tipo correto
 
 // Adicionando o modal de confirmação
 $mform->addElement('html', '
@@ -108,8 +115,32 @@ $mform->addElement('html', '
 
 $PAGE->requires->js_amd_inline("
     require(['jquery'], function($) {
-        // Variável para rastrear se o formulário foi enviado
         var isFormSubmitted = false;
+        var selectedEmotions = []; // Array para armazenar emoções selecionadas
+
+        // Função para habilitar ou desabilitar o botão de salvar
+        function toggleSaveButton() {
+            $('#id_save').prop('disabled', selectedEmotions.length === 0); // Habilita se houver emoções selecionadas
+        }
+
+        // Atualiza o campo de emoções selecionadas
+        function updateSelectedEmotions() {
+           // $('#emocao_selecionadas').val(JSON.stringify(selectedEmotions)); // Atualiza o campo oculto
+            toggleSaveButton(); // Verifica se deve habilitar o botão de salvar
+        }
+
+        // Adiciona ou remove uma emoção selecionada
+        function handleEmotionSelection(emotionId) {
+            const index = selectedEmotions.indexOf(emotionId);
+            if (index > -1) {
+                // Se a emoção já estiver selecionada, remova-a
+                selectedEmotions.splice(index, 1);
+            } else {
+                // Caso contrário, adicione-a
+                selectedEmotions.push(emotionId);
+            }
+            updateSelectedEmotions(); // Atualiza o campo e verifica o botão
+        }
 
         // Ao clicar no botão de salvar, exibe o modal de confirmação
         $('form.mform').on('submit', function(e) {
@@ -117,13 +148,14 @@ $PAGE->requires->js_amd_inline("
             $('#confirmacaoModal').modal('show'); // Mostra o modal
         });
 
-        // Quando o usuário confirma, envia o formulário manualmente
-        $('#confirmarSalvar').on('click', function() {
-            $('#confirmacaoModal').modal('hide'); // Fecha o modal
-            isFormSubmitted = true; // Marca o formulário como enviado
-            window.onbeforeunload = null; // Remove o alerta de navegação
-            $('form.mform').off('submit').submit(); // Envia o formulário
-        });
+$('#confirmarSalvar').on('click', function() {
+    // Atualiza o campo oculto antes de enviar
+    //$('#emocao_selecionadas').val(JSON.stringify(selectedEmotions)); 
+    $('#confirmacaoModal').modal('hide'); // Fecha o modal
+    isFormSubmitted = true; // Marca o formulário como enviado
+    $('form.mform').off('submit').submit(); // Envia o formulário
+});
+
 
         // Adiciona um evento para prevenir alertas de saída
         window.onbeforeunload = function() {
@@ -131,8 +163,17 @@ $PAGE->requires->js_amd_inline("
                 return 'Você tem certeza que deseja sair?'; // Mensagem de alerta
             }
         };
+
+        // Monitorar mudanças nas emoções selecionadas
+        $('#container-tabela').on('change', 'input[type=checkbox]', function() {
+            handleEmotionSelection($(this).data('id')); // Chama a função para adicionar ou remover a emoção
+        });
+
+        // Inicialmente, desabilita o botão de salvar
+        toggleSaveButton();
     });
 ");
+
 
     }
 
@@ -147,10 +188,10 @@ $PAGE->requires->js_amd_inline("
         return $errors;
     }
 
-    public function process_form($data)
+ public function process_form($data)
     {
         global $DB, $USER, $COURSE,$SESSION;
-    
+
         $nome = $data->name;
         $dataInicioFormatada = date('Y-m-d H:i:s', $data->starttime);
         $dataFimFormatada = date('Y-m-d H:i:s', $data->endtime);
@@ -159,7 +200,7 @@ $PAGE->requires->js_amd_inline("
         $notificarAlunos = $data->notify_students;
         $cursoId = $COURSE->id; 
         $professorId = $USER->id;
-    
+
         $registro = new stdClass();
         $registro->nome = $nome;
         $registro->data_inicio = $dataInicioFormatada;
@@ -169,34 +210,37 @@ $PAGE->requires->js_amd_inline("
         $registro->notificar_alunos = $notificarAlunos;
         $registro->curso_id = $cursoId; 
         $registro->professor_id = $professorId;
-    
+
         $inserted = $DB->insert_record('ifcare_cadastrocoleta', $registro);
-    
+
         if ($inserted) {
             $cadastroColetaId = $inserted;
-    
+
             $emocaoSelecionadas = json_decode($data->emocao_selecionadas, true);
-    
+           
             if (!empty($emocaoSelecionadas)) {
                 foreach ($emocaoSelecionadas as $classe => $emocaoDados) {
                     foreach ($emocaoDados as $dados) {
                         $classeId = isset($dados['classeId']) ? $dados['classeId'] : 'N/A';
                         $emocaoId = isset($dados['emocaoId']) ? $dados['emocaoId'] : 'N/A';
-                        $associacao = new stdClass();
-                        $associacao->cadastrocoleta_id = $cadastroColetaId; 
-                        $associacao->classeaeq_id = $classeId; 
-                        $associacao->emocao_id = $emocaoId; 
-    
-                        $DB->insert_record('ifcare_associacao_classe_emocao_coleta', $associacao);
+            
+                            $associacao = new stdClass();
+                            $associacao->cadastrocoleta_id = $cadastroColetaId; 
+                            $associacao->classeaeq_id = $classeId; 
+                            $associacao->emocao_id = $emocaoId; 
+            
+                            $inserido = $DB->insert_record('ifcare_associacao_classe_emocao_coleta', $associacao);
+
                     }
                 }
             } else {
                 $SESSION->mensagem_erro = get_string('mensagem_erro', 'block_ifcare');
             }
-    
-            // Notifica o usuário sobre o sucesso do cadastro
+
             $SESSION->mensagem_sucesso = get_string('mensagem_sucesso', 'block_ifcare');
             redirect(new moodle_url("/blocks/ifcare/index.php?courseid=$cursoId"));
+
+            
         } else {
             // Notifica o usuário sobre o erro na inserção
             $SESSION->mensagem_erro = get_string('mensagem_erro', 'block_ifcare');
@@ -204,6 +248,7 @@ $PAGE->requires->js_amd_inline("
             redirect(new moodle_url("/blocks/ifcare/index.php?courseid=$cursoId"));
         }
     }
+    
     
 }
 
