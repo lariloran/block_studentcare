@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const emotionCheckboxes = document.querySelectorAll('.emotion-checkbox');
         const allRows = document.querySelectorAll('tbody tr');
 
-        // Função para garantir que pelo menos uma checkbox esteja marcada por linha
+        // Função para garantir que pelo menos uma checkbox esteja marcada por linha (antes)
         allRows.forEach(row => {
             const timeCheckboxes = row.querySelectorAll('.time-checkbox');
 
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 checkbox.addEventListener('change', function () {
                     const anyChecked = Array.from(timeCheckboxes).some(checkbox => checkbox.checked);
                     if (!anyChecked) {
-                        this.checked = true;
+                        row.querySelector('input[data-tempo="antes"]').checked = true;
                     }
                     atualizarSelecoes(nomeClasse, classeId);
                     atualizarResumo();
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
 
-        // Função para marcar/desmarcar todos os checkboxes da tabela
+        // Marcar/desmarcar todas as emoções e tempos quando o select-all for alterado
         selectAllCheckbox.addEventListener('change', function () {
             const checked = selectAllCheckbox.checked;
             emotionCheckboxes.forEach(checkbox => {
@@ -78,9 +78,25 @@ document.addEventListener('DOMContentLoaded', function () {
             atualizarResumo();
         });
 
-        // Adiciona evento de alteração para as checkboxes de emoção
+        // Alteração de estado da checkbox da emoção
         emotionCheckboxes.forEach(checkbox => {
             checkbox.addEventListener('change', function () {
+                const row = checkbox.closest('tr');
+                const timeCheckboxes = row.querySelectorAll('.time-checkbox');
+
+                if (checkbox.checked) {
+                    // Marca todas as checkboxes (Antes, Durante e Depois)
+                    timeCheckboxes.forEach(timeCheckbox => {
+                        timeCheckbox.checked = true;
+                    });
+                } else {
+                    // Desmarca todas as checkboxes (exceto "Antes" que sempre precisa estar marcada)
+                    timeCheckboxes.forEach(timeCheckbox => {
+                        timeCheckbox.checked = false;
+                    });
+                    row.querySelector('input[data-tempo="antes"]').checked = true;
+                }
+                
                 atualizarSelecoes(nomeClasse, classeId);
                 atualizarResumo();
             });
@@ -129,8 +145,7 @@ document.addEventListener('DOMContentLoaded', function () {
     
         // Preenche o campo oculto com as seleções
         document.getElementById('emocao_selecionadas').value = JSON.stringify(emocoesHidden);
-        }
-    
+    }
 
     choiceDropdown.addEventListener('change', function () {
         const opcaoSelecionada = choiceDropdown.value;
@@ -164,7 +179,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    
     // Inicialização - Adiciona mensagens iniciais no quadro de resumo
     function inicializarResumo() {
         const options = choiceDropdown.options;

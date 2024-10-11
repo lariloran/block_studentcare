@@ -76,8 +76,60 @@ class CadastrarForm extends moodleform
         $mform->addElement('advcheckbox', 'notify_students', get_string('notify_students', 'block_ifcare'), null, array('group' => 1), array(0, 1));
         $mform->setDefault('notify_students', 1);
 
-        // Botões de Salvar e Cancelar
-        $this->add_action_buttons(true, get_string('submit', 'block_ifcare'));
+  // Botões de Salvar e Cancelar
+$this->add_action_buttons(true, get_string('submit', 'block_ifcare'));
+
+// Adicionando o modal de confirmação
+$mform->addElement('html', '
+<div class="modal fade" id="confirmacaoModal" tabindex="-1" role="dialog" aria-labelledby="confirmacaoModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmacaoModalLabel">Confirmação</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Tem certeza que deseja salvar esta coleta de emoções?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="confirmarSalvar" class="btn btn-primary">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+');
+
+$PAGE->requires->js_amd_inline("
+    require(['jquery'], function($) {
+        // Variável para rastrear se o formulário foi enviado
+        var isFormSubmitted = false;
+
+        // Ao clicar no botão de salvar, exibe o modal de confirmação
+        $('form.mform').on('submit', function(e) {
+            e.preventDefault(); // Evita o envio imediato do formulário
+            $('#confirmacaoModal').modal('show'); // Mostra o modal
+        });
+
+        // Quando o usuário confirma, envia o formulário manualmente
+        $('#confirmarSalvar').on('click', function() {
+            $('#confirmacaoModal').modal('hide'); // Fecha o modal
+            isFormSubmitted = true; // Marca o formulário como enviado
+            window.onbeforeunload = null; // Remove o alerta de navegação
+            $('form.mform').off('submit').submit(); // Envia o formulário
+        });
+
+        // Adiciona um evento para prevenir alertas de saída
+        window.onbeforeunload = function() {
+            if (!isFormSubmitted) {
+                return 'Você tem certeza que deseja sair?'; // Mensagem de alerta
+            }
+        };
+    });
+");
+
     }
 
     public function validation($data, $files)

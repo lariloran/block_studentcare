@@ -95,6 +95,8 @@ function create_section($id, $title, $content, $courseid)
         echo $content; // Para outras seções, apenas exibe o conteúdo
     }
 
+    //Modal de confirmação
+    
     echo html_writer::end_tag('div'); // End content
     echo html_writer::end_tag('div'); // End section-item
     echo html_writer::end_tag('li'); // End section
