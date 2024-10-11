@@ -8,7 +8,7 @@ class CadastrarForm extends moodleform
 {
     public function __construct()
     {
-        parent::__construct(); 
+        parent::__construct();
     }
 
     // Define o formulário
@@ -17,38 +17,40 @@ class CadastrarForm extends moodleform
         global $PAGE, $COURSE, $DB;
         $mform = $this->_form;
 
-       // Gerar o nome da coleta no formato COLETA-DATADEHOJEHORAMINUTO
-    $dataAtual = date('Y-m-d H:i'); // Obtém a data e hora atual
-    $nomeColeta = "COLETA-" . date('YmdHi', strtotime($dataAtual)); // Formata conforme necessário
+        // Gerar o nome da coleta no formato COLETA-DATADEHOJEHORAMINUTO
+        $dataAtual = date('Y-m-d H:i'); // Obtém a data e hora atual
+        $nomeColeta = "COLETA-" . date('YmdHi', strtotime($dataAtual)); // Formata conforme necessário
 
-    // Campo Nome (preenchido e congelado)
-    $mform->addElement('text', 'name', get_string('name', 'block_ifcare'), array('size' => '50', 'readonly' => 'readonly'));
-    $mform->setType('name', PARAM_NOTAGS);
-    $mform->setDefault('name', $nomeColeta); // Define o valor padrão
+        // Campo Nome (preenchido e congelado)
+        $mform->addElement('text', 'name', get_string('name', 'block_ifcare'), array('size' => '50', 'readonly' => 'readonly'));
+        $mform->setType('name', PARAM_NOTAGS);
+        $mform->setDefault('name', $nomeColeta); // Define o valor padrão
 
         // Campo Data e Hora de Início da coleta
         $mform->addElement('date_time_selector', 'starttime', get_string('starttime', 'block_ifcare'), array('optional' => false));
-        $mform->addRule('starttime', null, 'required', null, 'client');
 
-        // Campo Data e Hora de Fim da coleta
+        // Sempre inicializa o campo com 30 min a mais
+        $current_time = time(); // Timestamp atual
+        $future_time = $current_time + (30 * 60);
         $mform->addElement('date_time_selector', 'endtime', get_string('endtime', 'block_ifcare'), array('optional' => false));
-        $mform->addRule('endtime', null, 'required', null, 'client');
+        $mform->setDefault('endtime', $future_time);
+
 
         // Campo Descrição
         $mform->addElement('textarea', 'description', get_string('description', 'block_ifcare'), 'wrap="virtual" rows="5" cols="50"');
         $mform->setType('description', PARAM_TEXT);
 
-                // Adiciona o campo oculto para as emoções selecionadas com o atributo 'emocao_selecionadas'
-                $mform->addElement('hidden', 'emocao_selecionadas', '', array('id' => 'emocao_selecionadas'));
-                $mform->setType('emocao_selecionadas', PARAM_RAW);
-                
-    
+        // Adiciona o campo oculto para as emoções selecionadas com o atributo 'emocao_selecionadas'
+        $mform->addElement('hidden', 'emocao_selecionadas', '', array('id' => 'emocao_selecionadas'));
+        $mform->setType('emocao_selecionadas', PARAM_RAW);
+
+
         // Definir as opções para o select com os dados da tabela.
         $classes = $DB->get_records('ifcare_classeaeq');
         $options = array();
         foreach ($classes as $class) {
             $classeAeq = new ClasseAeq($class->nome_classe);
-            $options[$class->id] = $classeAeq->getNomeClasse(); 
+            $options[$class->id] = $classeAeq->getNomeClasse();
         }
 
         // Adiciona o campo select ao formulário.
@@ -85,13 +87,13 @@ class CadastrarForm extends moodleform
         $mform->addElement('advcheckbox', 'notify_students', get_string('notify_students', 'block_ifcare'), null, array('group' => 1), array(0, 1));
         $mform->setDefault('notify_students', 1);
 
-  // Botões de Salvar e Cancelar
+        // Botões de Salvar e Cancelar
 // Botões de Salvar e Cancelar
-$mform->addElement('submit', 'save', get_string('submit', 'block_ifcare'));
-$mform->setType('save', PARAM_ACTION); // Certifique-se de definir o tipo correto
+        $mform->addElement('submit', 'save', get_string('submit', 'block_ifcare'));
+        $mform->setType('save', PARAM_ACTION); // Certifique-se de definir o tipo correto
 
-// Adicionando o modal de confirmação
-$mform->addElement('html', '
+        // Adicionando o modal de confirmação
+        $mform->addElement('html', '
 <div class="modal fade" id="confirmacaoModal" tabindex="-1" role="dialog" aria-labelledby="confirmacaoModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -102,7 +104,7 @@ $mform->addElement('html', '
                 </button>
             </div>
             <div class="modal-body">
-                Tem certeza que deseja salvar esta coleta de emoções?
+                Está pronto para salvar esta coleta de emoções?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
@@ -113,7 +115,7 @@ $mform->addElement('html', '
 </div>
 ');
 
-$PAGE->requires->js_amd_inline("
+        $PAGE->requires->js_amd_inline("
     require(['jquery'], function($) {
         var isFormSubmitted = false;
         var selectedEmotions = []; // Array para armazenar emoções selecionadas
@@ -188,9 +190,9 @@ $('#confirmarSalvar').on('click', function() {
         return $errors;
     }
 
- public function process_form($data)
+    public function process_form($data)
     {
-        global $DB, $USER, $COURSE,$SESSION;
+        global $DB, $USER, $COURSE, $SESSION;
 
         $nome = $data->name;
         $dataInicioFormatada = date('Y-m-d H:i:s', $data->starttime);
@@ -198,7 +200,7 @@ $('#confirmarSalvar').on('click', function() {
         $descricao = $data->description;
         $receberAlerta = $data->alertprogress;
         $notificarAlunos = $data->notify_students;
-        $cursoId = $COURSE->id; 
+        $cursoId = $COURSE->id;
         $professorId = $USER->id;
 
         $registro = new stdClass();
@@ -208,29 +210,27 @@ $('#confirmarSalvar').on('click', function() {
         $registro->descricao = $descricao;
         $registro->receber_alerta = $receberAlerta;
         $registro->notificar_alunos = $notificarAlunos;
-        $registro->curso_id = $cursoId; 
+        $registro->curso_id = $cursoId;
         $registro->professor_id = $professorId;
 
         $inserted = $DB->insert_record('ifcare_cadastrocoleta', $registro);
 
         if ($inserted) {
             $cadastroColetaId = $inserted;
-
             $emocaoSelecionadas = json_decode($data->emocao_selecionadas, true);
-           
+
             if (!empty($emocaoSelecionadas)) {
                 foreach ($emocaoSelecionadas as $classe => $emocaoDados) {
                     foreach ($emocaoDados as $dados) {
                         $classeId = isset($dados['classeId']) ? $dados['classeId'] : 'N/A';
                         $emocaoId = isset($dados['emocaoId']) ? $dados['emocaoId'] : 'N/A';
-            
-                            $associacao = new stdClass();
-                            $associacao->cadastrocoleta_id = $cadastroColetaId; 
-                            $associacao->classeaeq_id = $classeId; 
-                            $associacao->emocao_id = $emocaoId; 
-            
-                            $inserido = $DB->insert_record('ifcare_associacao_classe_emocao_coleta', $associacao);
 
+                        $associacao = new stdClass();
+                        $associacao->cadastrocoleta_id = $cadastroColetaId;
+                        $associacao->classeaeq_id = $classeId;
+                        $associacao->emocao_id = $emocaoId;
+
+                        $DB->insert_record('ifcare_associacao_classe_emocao_coleta', $associacao);
                     }
                 }
             } else {
@@ -240,16 +240,14 @@ $('#confirmarSalvar').on('click', function() {
             $SESSION->mensagem_sucesso = get_string('mensagem_sucesso', 'block_ifcare');
             redirect(new moodle_url("/blocks/ifcare/index.php?courseid=$cursoId"));
 
-            
-        } else {
-            // Notifica o usuário sobre o erro na inserção
-            $SESSION->mensagem_erro = get_string('mensagem_erro', 'block_ifcare');
 
+        } else {
+            $SESSION->mensagem_erro = get_string('mensagem_erro', 'block_ifcare');
             redirect(new moodle_url("/blocks/ifcare/index.php?courseid=$cursoId"));
         }
     }
-    
-    
+
+
 }
 
 class CadastroColeta
@@ -264,7 +262,7 @@ class CadastroColeta
     private $notificarAlunos;
     private $cursoId;
     private $professorId;
-    private $classesAEQ; 
+    private $classesAEQ;
 
     public function __construct($nome, $dataInicio, $horaInicio, $dataFim, $horaFim, $descricao, $receberAlerta, $notificarAlunos, $cursoId, $professorId)
     {
@@ -278,7 +276,7 @@ class CadastroColeta
         $this->notificarAlunos = $notificarAlunos;
         $this->cursoId = $cursoId;
         $this->professorId = $professorId;
-        $this->classesAEQ = []; 
+        $this->classesAEQ = [];
     }
 
     public function adicionarClasse($classe, $emoções)
