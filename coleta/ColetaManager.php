@@ -56,10 +56,16 @@ public function listar_coletas($professor_id) {
         $html .= '<p><strong>Notificar Aluno:</strong> ' . ($coleta->notificar_alunos ? 'Sim' : 'Não') . '</p>';
         $html .= '<p><strong>Receber Alerta:</strong> ' . ($coleta->receber_alerta ? 'Sim' : 'Não') . '</p>';
 
-        // Botão para baixar CSV via redirecionamento
-        $html .= '<button class="btn btn-secondary" onclick="downloadCSV(' . $coleta->id . ');">'; 
-        $html .= '<i class="fa fa-file-csv"></i> Baixar CSV';
-        $html .= '</button>';
+// Botão para baixar CSV via redirecionamento
+$html .= '<button class="btn btn-secondary" onclick="downloadCSV(' . $coleta->id . ');">'; 
+$html .= '<i class="fa fa-file-csv"></i> Baixar CSV';
+$html .= '</button>';
+
+// Botão para baixar JSON via redirecionamento
+$html .= '<button class="btn btn-secondary" onclick="downloadJSON(' . $coleta->id . ');">'; 
+$html .= '<i class="fa fa-file-json"></i> Baixar JSON';
+$html .= '</button>';
+
 
         $html .= '</div>'; // Fecha collapse
         $html .= '</div>'; // Fecha accordion-item
@@ -78,7 +84,15 @@ const downloadUrl = "Download.php?coleta_id=" + coletaId;
     }
 </script>';
 
-    
+// Adiciona a função JavaScript para download em JSON
+$html .= '<script>
+    function downloadJSON(coletaId) {
+        const downloadUrl = "Download.php?coleta_id=" + coletaId + "&format=json"; // Passa o formato como parâmetro
+        window.location.href = downloadUrl; // Redireciona para o download
+    }
+</script>';
+
+
     return $html;
 }
 
@@ -146,7 +160,42 @@ const downloadUrl = "Download.php?coleta_id=" + coletaId;
         exit; // Finaliza o script
     }
     
-    
+    // Método para baixar os dados da coleta em JSON
+// Método para baixar os dados da coleta em JSON
+public function download_json($coleta_id) {
+    global $DB;
+
+    // Consulta para obter os dados da coleta específica
+    $sql = "SELECT nome, data_inicio, data_fim, descricao, curso_id, notificar_alunos, receber_alerta 
+            FROM {ifcare_cadastrocoleta} 
+            WHERE id = :coleta_id";
+
+    // Parâmetros da consulta
+    $params = [
+        'coleta_id' => $coleta_id
+    ];
+
+    // Obtém os dados da coleta
+    $coleta = $DB->get_record_sql($sql, $params);
+
+    // Verifica se a coleta foi encontrada
+    if (!$coleta) {
+        echo "Coleta não encontrada.";
+        return;
+    }
+
+    // Limpa qualquer saída anterior
+    ob_clean(); // Limpa o buffer de saída
+
+    // Define o cabeçalho do JSON
+    header('Content-Type: application/json');
+    header('Content-Disposition: attachment; filename="' . $coleta->nome . '.json"');
+
+    // Envia os dados como JSON formatado
+    echo json_encode($coleta, JSON_PRETTY_PRINT);
+    exit; // Finaliza o script
+}
+
 
 }
 ?>
