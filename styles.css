@@ -193,3 +193,45 @@
     color: red;
     font-size: 12px;
 }
+
+/* Ajusta a largura das seções */
+.custom-width {
+    max-width: 800px; /* Limita a largura a 800px, por exemplo */
+    margin: 0 auto; /* Centraliza */
+}
+
+.course-section-header.d-flex {
+    justify-content: space-between; /* Espaça os itens dentro do cabeçalho */
+    padding: 10px; /* Adiciona um espaçamento ao redor do conteúdo do cabeçalho */
+}
+
+.btn-icon {
+    padding: 5px 10px; /* Reduz a área clicável dos ícones */
+}
+
+.sectionname {
+    font-size: 1.2em; /* Ajuste o tamanho do texto do título */
+    padding-left: 10px; /* Adiciona um pequeno espaçamento no início */
+}
+
+.collapse .content {
+    padding: 10px; /* Reduz o espaçamento interno do conteúdo colapsado */
+    margin-top: 10px; /* Reduz o espaço acima do conteúdo */
+}
+
+.course-section-header {
+    justify-content: flex-start; /* Alinha o conteúdo à esquerda */
+    padding: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.sectionname {
+    text-align: left; /* Garante que o texto do título fique alinhado à esquerda */
+    padding-left: 10px; /* Pequeno espaçamento à esquerda, caso queira */
+    flex-grow: 1; /* Faz o título ocupar todo o espaço disponível à esquerda */
+}
+
+.btn-icon {
+    margin-left: auto; /* Garante que o ícone de colapso fique à direita */
+}

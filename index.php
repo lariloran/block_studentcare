@@ -51,11 +51,11 @@ function create_section($id, $title, $content, $courseid)
         echo '</div>';
         unset($SESSION->mensagem_erro); // Limpa a mensagem da sessão
     }
-    
 
+    // Adiciona a classe custom-width para restringir a largura da seção
     echo html_writer::start_tag('li', [
         'id' => "section-$id",
-        'class' => 'section course-section main clearfix',
+        'class' => 'section course-section main clearfix custom-width', // Aqui, adicionamos 'custom-width'
         'data-sectionid' => $id,
         'data-for' => 'section',
         'data-id' => $id,
@@ -71,7 +71,7 @@ function create_section($id, $title, $content, $courseid)
         'data-toggle' => 'collapse',
         'data-for' => 'sectiontoggler',
         'href' => "#coursecontentcollapse$id",
-        'id' => "collapssesection$id",
+        'id' => "collapsesection$id",
         'aria-expanded' => 'false',
         'aria-controls' => "coursecontentcollapse$id",
         'class' => 'btn btn-icon mr-3 icons-collapse-expand justify-content-center collapsed',
@@ -100,35 +100,31 @@ function create_section($id, $title, $content, $courseid)
     echo html_writer::tag('div', '', ['class' => 'section_availability']);
     echo html_writer::end_tag('div'); // End my-3
 
- // Conteúdo da seção
-if ($id == 1) { // Se for a seção Cadastrar
-    $mform = new CadastrarForm();
+    // Conteúdo da seção
+    if ($id == 1) { // Se for a seção Cadastrar
+        $mform = new CadastrarForm();
 
-    // Exiba sempre o formulário sem processá-lo
-    echo $mform->render();
-    
-    // Apenas processe os dados se o formulário for enviado
-    if ($data = $mform->get_data()) {
-        $mform->process_form($data); // Processar os dados do formulário aqui
-    } else if ($mform->is_cancelled()) {
-        // Caso o formulário tenha sido cancelado
-        // Você pode simplesmente não fazer nada ou exibir uma mensagem
-        // echo 'Formulário cancelado'; // Opcional para depuração
+        // Exiba sempre o formulário sem processá-lo
+        echo $mform->render();
+        
+        // Apenas processe os dados se o formulário for enviado
+        if ($data = $mform->get_data()) {
+            $mform->process_form($data); // Processar os dados do formulário aqui
+        } else if ($mform->is_cancelled()) {
+            // Caso o formulário tenha sido cancelado
+            // Você pode simplesmente não fazer nada ou exibir uma mensagem
+            // echo 'Formulário cancelado'; // Opcional para depuração
+        }
+
+    } else {
+        echo $content; // Para outras seções, apenas exibe o conteúdo
     }
-
-} else {
-    echo $content; // Para outras seções, apenas exibe o conteúdo
-}
-
-
-
-    
-    //Modal de confirmação
     
     echo html_writer::end_tag('div'); // End content
     echo html_writer::end_tag('div'); // End section-item
     echo html_writer::end_tag('li'); // End section
 }
+
 
 // Adiciona a seção Cadastrar com formulário
 create_section(1, 'Nova Coleta de Emoções', '', $courseid);
