@@ -127,15 +127,16 @@ function create_section($id, $title, $content, $courseid)
 
 
 // Adiciona a seção Cadastrar com formulário
-create_section(1, 'Nova Coleta de Emoções', '', $courseid);
+create_section(1, '<i class="fa fa-smile-o"></i> Nova Coleta de Emoções', '', $courseid);
 
 // Adiciona a seção Listar com dois itens fictícios
-create_section(2, 'Coletas cadastradas', '
+create_section(2, '<i class="fa fa-list"></i> Coletas cadastradas', '
     <ul>
-        <li>Item 1: Fake Content 1</li>
-        <li>Item 2: Fake Content 2</li>
+        <li><i class="fa fa-file-text-o"></i> Item 1: Fake Content 1</li>
+        <li><i class="fa fa-file-text-o"></i> Item 2: Fake Content 2</li>
     </ul>
 ',$courseid);
+
 
 // Fecha o container
 echo html_writer::end_tag('div'); // End col-md-12

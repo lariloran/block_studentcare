@@ -19,7 +19,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 function block_ifcare_extend_navigation(global_navigation $nav) {
-    $url = new moodle_url('/blocks/ifcare/index.php'); // URL para o índice do ifcare
+    global $COURSE; // Carregar a variável global do curso atual
+    $url = new moodle_url('/blocks/ifcare/index.php', array('courseid' => $COURSE->id)); // Adicionar o courseid à URL
 
     // Adiciona ao menu se o usuário estiver logado e não for um convidado
     if (isloggedin() && !isguestuser()) {
