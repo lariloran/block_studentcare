@@ -6,16 +6,35 @@ use core\notification;
 
 class CadastrarForm extends moodleform
 {
+    
+    public function get_user_courses($userid) {
+        global $DB;
+
+        // Obter todos os cursos em que o usuário está matriculado
+        return enrol_get_users_courses($userid, true); // true para incluir cursos visíveis
+    }
+
     public function __construct()
     {
+        global $COURSE,$PAGE;
+
+        $context = context_course::instance($COURSE->id);
+
+        $PAGE->set_context($context);
+
+        
         parent::__construct();
     }
 
     // Define o formulário
     public function definition()
     {
-        global $PAGE, $COURSE, $DB;
+        global $PAGE, $COURSE, $DB,$USER,$PAGE;
         $mform = $this->_form;
+
+        $context = context_course::instance($COURSE->id);
+
+        $PAGE->set_context($context);
 
         // Gerar o nome da coleta no formato COLETA-DATADEHOJEHORAMINUTO
         $dataAtual = date('Y-m-d H:i'); // Obtém a data e hora atual
@@ -25,6 +44,27 @@ class CadastrarForm extends moodleform
         $mform->addElement('text', 'name', get_string('name', 'block_ifcare'), array('size' => '50', 'readonly' => 'readonly'));
         $mform->setType('name', PARAM_NOTAGS);
         $mform->setDefault('name', $nomeColeta); // Define o valor padrão
+
+        // Adiciona um campo de seleção para cursos
+        $mform->addElement('select', 'courseid', get_string('select_course', 'block_ifcare'), array());
+
+        // Obtém todos os cursos em que o professor está matriculado
+        $cursos = $this->get_user_courses($USER->id); // Chamada corrigida
+        $options = array();
+
+        // Ordena os cursos em ordem alfabética
+        usort($cursos, function($a, $b) {
+            return strcmp($a->fullname, $b->fullname);
+        });
+
+        // Preenche o array de opções com os cursos ordenados
+        foreach ($cursos as $curso) {
+            $options[$curso->id] = $curso->fullname; // Adiciona o curso ao array de opções
+        }
+
+        $mform->getElement('courseid')->loadArray($options); // Carrega as opções para o select
+        $mform->setType('courseid', PARAM_INT);
+
 
         // Campo Data e Hora de Início da coleta
         $mform->addElement('date_time_selector', 'starttime', get_string('starttime', 'block_ifcare'), array('optional' => false));
@@ -91,6 +131,12 @@ class CadastrarForm extends moodleform
 // Botões de Salvar e Cancelar
         $mform->addElement('submit', 'save', get_string('submit', 'block_ifcare'));
         $mform->setType('save', PARAM_ACTION); // Certifique-se de definir o tipo correto
+
+        $mform->addElement('hidden', 'userid', $USER->id);
+$mform->setType('userid', PARAM_INT);
+
+
+
 
         // Adicionando o modal de confirmação
         $mform->addElement('html', '
@@ -159,12 +205,6 @@ $('#confirmarSalvar').on('click', function() {
 });
 
 
-        // Adiciona um evento para prevenir alertas de saída
-        window.onbeforeunload = function() {
-            if (!isFormSubmitted) {
-                return 'Você tem certeza que deseja sair?'; // Mensagem de alerta
-            }
-        };
 
         // Monitorar mudanças nas emoções selecionadas
         $('#container-tabela').on('change', 'input[type=checkbox]', function() {
@@ -178,7 +218,7 @@ $('#confirmarSalvar').on('click', function() {
 
 
     }
-
+    
     public function validation($data, $files)
     {
         $errors = parent::validation($data, $files);
@@ -192,7 +232,14 @@ $('#confirmarSalvar').on('click', function() {
 
     public function process_form($data)
     {
-        global $DB, $USER, $COURSE, $SESSION;
+        global $DB, $SESSION, $COURSE, $PAGE;
+
+        $context = context_course::instance($COURSE->id);
+
+        $PAGE->set_context($context);
+
+        $userid = $data->userid;
+        $courseid = $data->courseid;
 
         $nome = $data->name;
         $dataInicioFormatada = date('Y-m-d H:i:s', $data->starttime);
@@ -200,8 +247,11 @@ $('#confirmarSalvar').on('click', function() {
         $descricao = $data->description;
         $receberAlerta = $data->alertprogress;
         $notificarAlunos = $data->notify_students;
-        $cursoId = $COURSE->id;
-        $professorId = $USER->id;
+        $cursoId = $courseid;
+        $professorId = $userid;
+
+        $dataAtualFormatada = date('Y-m-d H:i:s');
+
 
         $registro = new stdClass();
         $registro->nome = $nome;

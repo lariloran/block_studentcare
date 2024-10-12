@@ -42,25 +42,23 @@ class block_ifcare extends block_base {
         global $OUTPUT;
         global $USER;
         global $COURSE;
-
+    
         if ($this->content !== null) {
             return $this->content;
         }
-
+    
         $this->content = new stdClass();
         $this->content->footer = '';
- 
-        $data = [
-            'formaction' => new moodle_url("/blocks/ifcare/process_form.php"),
-            'userid' => $USER->id,
-            'courseid' => $COURSE->id
-        ];
-        
-        $this->content->text = $OUTPUT->render_from_template('block_ifcare/content', $data);
-       
-
+    
+        // URL para o índice do plugin
+        $url = new moodle_url('/blocks/ifcare/index.php', ['courseid' => $COURSE->id]); 
+    
+        // Texto do link
+        $this->content->text = html_writer::link($url, get_string('manage_collections', 'block_ifcare')); 
+    
         return $this->content;
     }
+    
 
     /**
      * Defines in which pages this block can be added.
@@ -69,11 +67,12 @@ class block_ifcare extends block_base {
      */
     public function applicable_formats() {
         return [
-            'admin' => true,
-            'site-index' => true,
-            'course-view' => true,
-            'mod' => true,
-            'my' => true,
+            'course-view' => false, // Permite em páginas de visualização de cursos
+            'mod' => false,        // Não permite em módulos
+            'site-index' => false, // Não permite no índice do site
+            'admin' => false,      // Não permite em páginas de administração
+            'my' => true,         // Não permite na página "Meu Moodle"
         ];
     }
+    
 }

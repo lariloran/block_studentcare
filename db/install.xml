@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="blocks/ifcare/db" VERSION="2024011815" COMMENT="Instalação do banco de dados para o seu plugin" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+<XMLDB PATH="blocks/ifcare/db" VERSION="2024011816" COMMENT="Instalação do banco de dados para o seu plugin" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
 <TABLES>
     <!-- Tabela para CadastroColeta -->
 <TABLE NAME="ifcare_cadastrocoleta" COMMENT="Armazena os cadastros de coletas">
@@ -13,6 +13,7 @@
         <FIELD NAME="notificar_alunos" TYPE="int" LENGTH="1" NOTNULL="true" COMMENT="Se os alunos devem ser notificados"/>
         <FIELD NAME="curso_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID do curso associado"/>
         <FIELD NAME="professor_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID do professor que cadastrou"/>
+        <FIELD NAME="data_criacao" TYPE="datetime" NOTNULL="true" DEFAULT="CURRENT_TIMESTAMP" COMMENT="Data de criação do registro"/>
     </FIELDS>
     <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -42,6 +43,7 @@
             <FIELD NAME="antes" TYPE="int" LENGTH="1" NOTNULL="true" COMMENT="Se a emoção ocorreu antes"/>
             <FIELD NAME="durante" TYPE="int" LENGTH="1" NOTNULL="true" COMMENT="Se a emoção ocorreu durante"/>
             <FIELD NAME="depois" TYPE="int" LENGTH="1" NOTNULL="true" COMMENT="Se a emoção ocorreu depois"/>
+            <FIELD NAME="data_criacao" TYPE="datetime" NOTNULL="true" DEFAULT="CURRENT_TIMESTAMP" COMMENT="Data de criação do registro"/>
         </FIELDS>
         <KEYS>
             <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -62,6 +64,7 @@
         <KEY NAME="cadastrocoleta_fk" TYPE="foreign" FIELDS="cadastrocoleta_id" REFTABLE="ifcare_cadastrocoleta" REFFIELDS="id" ONDELETE="cascade"/>
         <KEY NAME="classeaeq_fk" TYPE="foreign" FIELDS="classeaeq_id" REFTABLE="ifcare_classeaeq" REFFIELDS="id" ONDELETE="cascade"/>
         <KEY NAME="emocao_fk" TYPE="foreign" FIELDS="emocao_id" REFTABLE="ifcare_emocao" REFFIELDS="id" ONDELETE="cascade"/>
+        <FIELD NAME="data_criacao" TYPE="datetime" NOTNULL="true" DEFAULT="CURRENT_TIMESTAMP" COMMENT="Data de criação do registro"/>    
     </KEYS>
 </TABLE>
 
@@ -73,6 +76,7 @@
         <FIELD NAME="emocao_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID da emoção associada"/>
         <FIELD NAME="classeaeq_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID da classe AEQ associada"/>
         <FIELD NAME="pergunta_texto" TYPE="text" NOTNULL="true" COMMENT="Texto da pergunta"/>
+        <FIELD NAME="data_criacao" TYPE="datetime" NOTNULL="true" DEFAULT="CURRENT_TIMESTAMP" COMMENT="Data de criação do registro"/>
     </FIELDS>
     <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -105,6 +109,7 @@
         <FIELD NAME="cadastrocoleta_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID da coleta associada"/>
         <FIELD NAME="classeaeq_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID da classe AEQ associada"/>
         <FIELD NAME="emocao_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID da emoção associada"/>
+        <FIELD NAME="data_criacao" TYPE="datetime" NOTNULL="true" DEFAULT="CURRENT_TIMESTAMP" COMMENT="Data de criação do registro"/>
     </FIELDS>
     <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

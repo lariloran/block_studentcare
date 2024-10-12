@@ -4,8 +4,7 @@ require_once('../../config.php');
 require_once("$CFG->libdir/formslib.php");
 require_once(__DIR__ . '/coleta/CadastrarForm.php');
 
-global $COURSE;
-$courseid = $COURSE->id;
+$courseid = optional_param('courseid', null, PARAM_INT);
 
 // Verifica se o usuário está logado e tem acesso ao curso
 require_login($courseid);
@@ -14,8 +13,8 @@ require_login($courseid);
 $context = context_course::instance($courseid);
 $PAGE->set_context($context);
 $PAGE->set_url(new moodle_url('/blocks/ifcare/index.php', array('courseid' => $courseid)));
-$PAGE->set_title(get_string('pluginname', 'block_ifcare'));
-$PAGE->set_heading(get_string('pluginname', 'block_ifcare'));
+$PAGE->set_title(get_string('header', 'block_ifcare'));
+$PAGE->set_heading(get_string('header', 'block_ifcare'));
 
 // Adiciona o cabeçalho da página
 echo $OUTPUT->header();
@@ -101,22 +100,25 @@ function create_section($id, $title, $content, $courseid)
     echo html_writer::tag('div', '', ['class' => 'section_availability']);
     echo html_writer::end_tag('div'); // End my-3
 
-    // Conteúdo da seção
-    if ($id == 1) { // Se for a seção Cadastrar
-        $mform = new CadastrarForm();
+ // Conteúdo da seção
+if ($id == 1) { // Se for a seção Cadastrar
+    $mform = new CadastrarForm();
 
-        if ($mform->is_cancelled()) {
-            redirect(new moodle_url("/blocks/ifcare/index.php?courseid=$courseid")); 
-        } else if ($data = $mform->get_data()) {
-            $mform->process_form($data); // Chame o método aqui
-        } else {
-            // Exiba o formulário
-            echo $mform->render();
-        }
-        
-    } else {
-        echo $content; // Para outras seções, apenas exibe o conteúdo
+    // Exiba sempre o formulário sem processá-lo
+    echo $mform->render();
+    
+    // Apenas processe os dados se o formulário for enviado
+    if ($data = $mform->get_data()) {
+        $mform->process_form($data); // Processar os dados do formulário aqui
+    } else if ($mform->is_cancelled()) {
+        // Caso o formulário tenha sido cancelado
+        // Você pode simplesmente não fazer nada ou exibir uma mensagem
+        // echo 'Formulário cancelado'; // Opcional para depuração
     }
+
+} else {
+    echo $content; // Para outras seções, apenas exibe o conteúdo
+}
 
 
 
