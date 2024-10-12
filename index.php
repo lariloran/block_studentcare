@@ -3,6 +3,7 @@
 require_once('../../config.php');
 require_once("$CFG->libdir/formslib.php");
 require_once(__DIR__ . '/coleta/CadastrarForm.php');
+require_once(__DIR__ . '/coleta/ColetaManager.php');
 
 $courseid = optional_param('courseid', null, PARAM_INT);
 
@@ -31,7 +32,8 @@ echo html_writer::start_tag('div', ['class' => 'col-md-12']);
 function create_section($id, $title, $content, $courseid) 
 {
     global $SESSION;
-    
+    global $USER, $COURSE;
+
     if (isset($SESSION->mensagem_sucesso)) {
         echo '<div class="alert alert-success alert-dismissible fade show" role="alert">';
         echo $SESSION->mensagem_sucesso;
@@ -100,25 +102,37 @@ function create_section($id, $title, $content, $courseid)
     echo html_writer::tag('div', '', ['class' => 'section_availability']);
     echo html_writer::end_tag('div'); // End my-3
 
-    // Conteúdo da seção
-    if ($id == 1) { // Se for a seção Cadastrar
-        $mform = new CadastrarForm();
+ // Conteúdo da seção
+if ($id == 1) { // Se for a seção Cadastrar
+    $mform = new CadastrarForm();
 
-        // Exiba sempre o formulário sem processá-lo
-        echo $mform->render();
-        
-        // Apenas processe os dados se o formulário for enviado
-        if ($data = $mform->get_data()) {
-            $mform->process_form($data); // Processar os dados do formulário aqui
-        } else if ($mform->is_cancelled()) {
-            // Caso o formulário tenha sido cancelado
-            // Você pode simplesmente não fazer nada ou exibir uma mensagem
-            // echo 'Formulário cancelado'; // Opcional para depuração
-        }
-
-    } else {
-        echo $content; // Para outras seções, apenas exibe o conteúdo
+    // Exiba sempre o formulário sem processá-lo
+    echo $mform->render();
+    
+    // Apenas processe os dados se o formulário for enviado
+    if ($data = $mform->get_data()) {
+        $mform->process_form($data); // Processar os dados do formulário aqui
+    } else if ($mform->is_cancelled()) {
+        // Caso o formulário tenha sido cancelado
+        // Você pode simplesmente não fazer nada ou exibir uma mensagem
+        // echo 'Formulário cancelado'; // Opcional para depuração
     }
+
+} else if ($id == 2) { // Se for a seção Listar
+    // Instancia o gerenciador de coletas
+    $coletaManager = new ColetaManager();
+
+    // Obtem o professor_id e course_id
+    $professor_id = $USER->id;
+    $course_id = $COURSE->id;
+
+    // Chama o método que lista as coletas e exibe o conteúdo
+    $coletas_html = $coletaManager->listar_coletas($professor_id);
+    echo $coletas_html; // Exibe as coletas cadastradas
+
+} else {
+    echo $content; // Para outras seções, apenas exibe o conteúdo padrão
+}
     
     echo html_writer::end_tag('div'); // End content
     echo html_writer::end_tag('div'); // End section-item
