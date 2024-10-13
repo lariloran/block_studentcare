@@ -816,3 +816,6 @@ VALUES(156, 24, 3, 'Minha desesperança me rouba toda a minha energia.');
 INSERT INTO mysql.mdl_ifcare_pergunta
 (id, emocao_id, classeaeq_id, pergunta_texto)
 VALUES(157, 24, 3, 'Eu me sinto tão resignado que não tenho energia.');
+
+--Executar o cron manualmente
+--php C:\moodle441\server\moodle\admin\cli\scheduled_task.php --execute=block_ifcare\task\process_coleta

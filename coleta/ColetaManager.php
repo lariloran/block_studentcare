@@ -47,7 +47,7 @@ public function listar_coletas($professor_id) {
 
         // Detalhes da coleta
         $html .= '<div id="coleta' . $coleta->id . '" class="collapse accordion-body">';
-        $html .= '<p><strong>Descrição:</strong> ' . format_text($coleta->descricao) . '</p>';
+        $html .= '<p><strong>Descrição:</strong> ' . (!empty($coleta->descricao) ? format_text($coleta->descricao) : '--') . '</p>';
         $html .= '<p><strong>ID do Curso:</strong> ' . format_string($coleta->curso_id) . '</p>';
         $html .= '<p><strong>Data de Início:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_inicio)) . '</p>';
         $html .= '<p><strong>Data de Fim:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_fim)) . '</p>';
@@ -56,15 +56,17 @@ public function listar_coletas($professor_id) {
         $html .= '<p><strong>Notificar Aluno:</strong> ' . ($coleta->notificar_alunos ? 'Sim' : 'Não') . '</p>';
         $html .= '<p><strong>Receber Alerta:</strong> ' . ($coleta->receber_alerta ? 'Sim' : 'Não') . '</p>';
 
-// Botão para baixar CSV via redirecionamento
-$html .= '<button class="btn btn-secondary" onclick="downloadCSV(' . $coleta->id . ');">'; 
+// Botões CSV e JSON
+$html .= '<div class="button-group">';
+$html .= '<button class="btn btn-secondary" onclick="downloadCSV(' . $coleta->id . ');">';
 $html .= '<i class="fa fa-file-csv"></i> Baixar CSV';
 $html .= '</button>';
 
-// Botão para baixar JSON via redirecionamento
-$html .= '<button class="btn btn-secondary" onclick="downloadJSON(' . $coleta->id . ');">'; 
-$html .= '<i class="fa fa-file-json"></i> Baixar JSON';
+$html .= '<button class="btn btn-secondary" onclick="downloadJSON(' . $coleta->id . ');">';
+$html .= '<i class="fa fa-file-json"></i> Baixar JSON'; // Ícone JSON
 $html .= '</button>';
+$html .= '</div>'; // Fecha button-group
+
 
 
         $html .= '</div>'; // Fecha collapse
@@ -256,6 +258,22 @@ public function download_json($coleta_id) {
     .fa {
         margin-right: 8px; /* Espaçamento para o ícone */
     }
+    .button-group {
+    display: flex; /* Alinha os botões lado a lado */
+    gap: 10px; /* Espaço entre os botões */
+    margin-top: 10px; /* Espaçamento superior */
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px; /* Espaço entre o ícone e o texto */
+}
+
+.fa-file-json:before {
+    content: "\f6c0"; /* Substitua com o código Unicode correto para o ícone JSON (se suportado pela sua versão do Font Awesome) */
+}
+
 </style>
 
 <!-- JavaScript (usando jQuery para simplificação) -->

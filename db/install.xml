@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <XMLDB PATH="blocks/ifcare/db" VERSION="2024011816" COMMENT="Instalação do banco de dados para o seu plugin" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
 <TABLES>
-    <!-- Tabela para CadastroColeta -->
 <TABLE NAME="ifcare_cadastrocoleta" COMMENT="Armazena os cadastros de coletas">
     <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" SEQUENCE="true"/>
@@ -14,6 +13,7 @@
         <FIELD NAME="curso_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID do curso associado"/>
         <FIELD NAME="professor_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID do professor que cadastrou"/>
         <FIELD NAME="data_criacao" TYPE="datetime" NOTNULL="true" DEFAULT="CURRENT_TIMESTAMP" COMMENT="Data de criação do registro"/>
+        <FIELD NAME="notificacao_enviada" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" COMMENT="Flag para indicar se a notificação foi enviada"/>
     </FIELDS>
     <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -21,6 +21,7 @@
         <KEY NAME="professor_fk" TYPE="foreign" FIELDS="professor_id" REFTABLE="ifcare_professor" REFFIELDS="id" ONDELETE="cascade"/>
     </KEYS>
 </TABLE>
+
 
 
     <!-- Tabela para ClasseAeq -->

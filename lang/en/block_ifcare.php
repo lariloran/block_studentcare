@@ -29,3 +29,20 @@ $string['starttimefutureerror'] = 'A data de início deve ser no futuro.';
 $string['endtimefutureerror'] = 'A data de fim deve ser no futuro.';
 $string['emotionerror'] = 'Você deve selecionar pelo menos uma emoção.';
 $string['endtimeerror'] = 'A hora de término deve ser posterior à hora de início.';
+
+
+$string['nova_coleta_notificacao'] = 'Uma nova coleta foi criada. Por favor, responda às perguntas relacionadas.';
+$string['coleta_submitted'] = 'Nova Coleta Criada';
+$string['responder_perguntas'] = 'Clique aqui para responder às perguntas.';
+$string['process_coleta'] = 'Processar Coleta'; // ou qualquer outra descrição que você deseje
+
+// Strings para notificação
+$string['notification_subject'] = 'Notificação de Coleta'; // Assunto da notificação
+$string['notification_message'] = 'Caro aluno, esta é uma notificação sobre a coleta. Por favor, verifique as informações relacionadas ao seu curso.'; // Mensagem da notificação
+$string['view_course'] = 'Ver Curso'; // Texto do link para visualizar o curso
+
+
+$string['messageprovider:coleta_criada'] = 'Notificação enviada aos alunos quando uma nova coleta é criada.';
+$string['ifcare:addinstance'] = 'Adicionar uma nova instância do bloco IF Care';
+$string['ifcare:myaddinstance'] = 'Adicionar uma nova instância do bloco IF Care ao painel';
+$string['ifcare:receivenotifications'] = 'Receber notificações sobre coletas criadas no IF Care';
