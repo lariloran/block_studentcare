@@ -65,71 +65,105 @@ $perguntas_json = json_encode(array_values($perguntas));
     </div>
 
     <!-- Controles de navegação -->
-<div id="controls">
-    <button id="voltar-btn" onclick="voltarPergunta()">Voltar</button>
-    <button id="avancar-btn" onclick="avancarPergunta()">Avançar</button>
+    <div id="controls">
+        <button id="voltar-btn" onclick="voltarPergunta()">Voltar</button>
+        <button id="avancar-btn" onclick="avancarPergunta()">Avançar</button>
+    </div>
 </div>
-</div>
-
-
 
 <script>
-    let perguntas = <?php echo $perguntas_json; ?>;
-    let perguntaAtual = 0;
-    let totalPerguntas = perguntas.length;
-    let respostaSelecionada = null;
+let perguntas = <?php echo $perguntas_json; ?>;
+let perguntaAtual = 0;
+let totalPerguntas = perguntas.length;
+let respostaSelecionada = null;
 
-    // Função para capturar o valor do botão clicado
-    function selecionarResposta(valor) {
-        respostaSelecionada = valor;
-        console.log("Resposta selecionada: ", respostaSelecionada);
-    }
+// Array para armazenar a seleção do usuário para cada pergunta
+let respostasSelecionadas = new Array(totalPerguntas).fill(null);
 
-    document.querySelectorAll('.emoji-button').forEach(button => {
-        button.addEventListener('click', function() {
-            selecionarResposta(this.getAttribute('data-value'));
+// Função para capturar o valor do botão clicado ou remover seleção se clicar no mesmo
+function selecionarResposta(valor) {
+    if (respostaSelecionada === valor) {
+        // Se o usuário clicar novamente na mesma resposta, desmarca
+        respostaSelecionada = null;
+        respostasSelecionadas[perguntaAtual] = null;
+        
+        // Remove a classe 'selected' de todos os botões
+        document.querySelectorAll('.emoji-button').forEach(btn => {
+            btn.classList.remove('selected');
         });
+    } else {
+        // Se for uma nova seleção, armazena e aplica a classe 'selected'
+        respostaSelecionada = valor;
+        respostasSelecionadas[perguntaAtual] = valor;
+        
+        // Remove a classe 'selected' de todos os botões e adiciona apenas ao botão clicado
+        document.querySelectorAll('.emoji-button').forEach(btn => {
+            btn.classList.remove('selected');
+        });
+
+        document.querySelector(`.emoji-button[data-value="${valor}"]`).classList.add('selected');
+    }
+}
+
+document.querySelectorAll('.emoji-button').forEach(button => {
+    button.addEventListener('click', function() {
+        selecionarResposta(this.getAttribute('data-value'));
     });
+});
 
-    function mostrarPergunta(index) {
-        if (index >= 0 && index < totalPerguntas) {
-            let perguntaContainer = document.getElementById('pergunta-container');
+// Função para mostrar a pergunta e restaurar a seleção anterior, se houver
+function mostrarPergunta(index) {
+    if (index >= 0 && index < totalPerguntas) {
+        let perguntaContainer = document.getElementById('pergunta-container');
 
-            perguntaContainer.innerHTML = `
-                <p><strong>${perguntas[index].emocao_nome}</strong></p>
-                <p>${perguntas[index].pergunta_texto}</p>
-            `;
+        perguntaContainer.innerHTML = `
+            <p><strong>${perguntas[index].emocao_nome}</strong></p>
+            <p>${perguntas[index].pergunta_texto}</p>
+        `;
 
-            // Atualiza a barra de progresso
-            let progresso = Math.round(((index + 1) / totalPerguntas) * 100);
-            document.getElementById('progress-bar').value = progresso;
-            document.getElementById('progress-text').innerText = `${progresso}%`;
+        // Remove a classe 'selected' de todos os botões
+        document.querySelectorAll('.emoji-button').forEach(btn => {
+            btn.classList.remove('selected');
+        });
+
+        // Restaura a seleção anterior se houver
+        if (respostasSelecionadas[index] !== null) {
+            document.querySelector(`.emoji-button[data-value="${respostasSelecionadas[index]}"]`).classList.add('selected');
+            respostaSelecionada = respostasSelecionadas[index];
         }
-    }
 
-    function avancarPergunta() {
-        if (respostaSelecionada !== null) {
-            if (perguntaAtual < totalPerguntas - 1) {
-                perguntaAtual++;
-                mostrarPergunta(perguntaAtual);
-                respostaSelecionada = null; // Resetar a seleção para a próxima pergunta
-            } else {
-                alert('Você completou todas as perguntas!');
-            }
-        } else {
-            alert('Por favor, selecione uma resposta.');
-        }
+        // Atualiza a barra de progresso
+        let progresso = Math.round(((index + 1) / totalPerguntas) * 100);
+        document.getElementById('progress-bar').value = progresso;
+        document.getElementById('progress-text').innerText = `${progresso}%`;
     }
+}
 
-    function voltarPergunta() {
-        if (perguntaAtual > 0) {
-            perguntaAtual--;
+function avancarPergunta() {
+    if (respostaSelecionada !== null) {
+        if (perguntaAtual < totalPerguntas - 1) {
+            perguntaAtual++;
             mostrarPergunta(perguntaAtual);
+            respostaSelecionada = respostasSelecionadas[perguntaAtual]; // Atualiza a seleção com a próxima pergunta
+        } else {
+            alert('Você completou todas as perguntas!');
         }
+    } else {
+        alert('Por favor, selecione uma resposta antes de avançar.');
     }
+}
 
-    // Exibe a primeira pergunta ao carregar a página
-    mostrarPergunta(perguntaAtual);
+function voltarPergunta() {
+    if (perguntaAtual > 0) {
+        perguntaAtual--;
+        mostrarPergunta(perguntaAtual);
+        respostaSelecionada = respostasSelecionadas[perguntaAtual]; // Atualiza a seleção com a pergunta anterior
+    }
+}
+
+// Exibe a primeira pergunta ao carregar a página
+mostrarPergunta(perguntaAtual);
+
 </script>
 
 <?php
@@ -201,22 +235,22 @@ echo $OUTPUT->footer();
 /* Estilo dos botões de emoji */
 .emoji-button {
     display: flex;
-    flex-direction: column; /* Coloca a imagem e o texto em coluna */
-    align-items: center; /* Centraliza horizontalmente */
-    justify-content: center; /* Centraliza verticalmente */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     background: none;
     border: none;
     cursor: pointer;
     text-align: center;
-    transition: transform 0.2s ease-in-out; /* Animação suave na transformação */
-    margin: 0 10px; /* Espaçamento lateral entre os itens */
+    transition: transform 0.2s ease-in-out;
+    margin: 0 10px;
 }
 
 .emoji-img {
     display: block;
     margin-bottom: 5px;
-    width: 48px;  /* Tamanho ajustado do emoji */
-    height: 48px; 
+    width: 48px;
+    height: 48px;
 }
 
 /* Estilo do texto Likert abaixo dos emojis */
@@ -227,22 +261,20 @@ echo $OUTPUT->footer();
 }
 
 /* Efeito de hover - faz o botão crescer */
-.emoji-button:hover {
-    transform: scale(1.2); /* Aumenta o tamanho em 20% ao passar o mouse */
+.emoji-button:hover, .emoji-button.selected {
+    transform: scale(1.2);
 }
-
 
 /* Botões de navegação */
 #controls {
     display: flex;
-    justify-content: space-between; /* Coloca os botões nas pontas */
-    margin-top: 10px; /* Reduz o espaço entre o modal e os botões */
-    padding: 0 20px; /* Adiciona um espaçamento interno para não encostar nas bordas da tela */
+    justify-content: space-between;
+    margin-top: 10px;
+    padding: 0 20px;
 }
 
-/* Botões de navegação */
 #controls button {
-    background-color: #28a745; /* Cor de fundo do botão (verde, por exemplo) */
+    background-color: #28a745;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -252,8 +284,6 @@ echo $OUTPUT->footer();
 }
 
 #controls button:hover {
-    background-color: #218838; /* Cor de fundo quando o mouse está sobre o botão (um tom mais escuro de verde) */
+    background-color: #218838;
 }
-
-
 </style>
