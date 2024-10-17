@@ -40,64 +40,64 @@ $perguntas_json = json_encode(array_values($perguntas));
     <!-- Pergunta -->
     <div id="pergunta-container"></div>
 
-    <!-- Opções de resposta -->
+    <!-- Botões de resposta (escala Likert com emojis como botões) -->
     <div id="respostas-container">
-    <div id="respostas">
-
-        <label>
-            <input type="radio" name="resposta" value="1">
-        </label>
-        <label>
-            <input type="radio" name="resposta" value="2">
-            <img src="<?php echo $CFG->wwwroot; ?>/blocks/ifcare/pix/emoji1.png" alt="Discordo" width="64" height="64">
-        </label>
-        <label>
-            <input type="radio" name="resposta" value="3">
-            <img src="<?php echo $CFG->wwwroot; ?>/blocks/ifcare/pix/emoji1.png" alt="Neutro" width="64" height="64">
-        </label>
-        <label>
-            <input type="radio" name="resposta" value="4">
-            <img src="<?php echo $CFG->wwwroot; ?>/blocks/ifcare/pix/emoji1.png" alt="Concordo" width="64" height="64">
-        </label>
-        <label>
-            <input type="radio" name="resposta" value="5">
-            <img src="<?php echo $CFG->wwwroot; ?>/blocks/ifcare/pix/emoji1.png" alt="Concordo Totalmente" width="64" height="64">
-        </label>
+        <button class="emoji-button" data-value="1">
+            <img src="<?php echo $CFG->wwwroot; ?>/blocks/ifcare/pix/discordoTotalmente.png" alt="Discordo Totalmente" class="emoji-img">
+            <span>Discordo Totalmente</span>
+        </button>
+        <button class="emoji-button" data-value="2">
+            <img src="<?php echo $CFG->wwwroot; ?>/blocks/ifcare/pix/discordo.png" alt="Discordo" class="emoji-img">
+            <span>Discordo</span>
+        </button>
+        <button class="emoji-button" data-value="3">
+            <img src="<?php echo $CFG->wwwroot; ?>/blocks/ifcare/pix/neutro.png" alt="Neutro" class="emoji-img">
+            <span>Neutro</span>
+        </button>
+        <button class="emoji-button" data-value="4">
+            <img src="<?php echo $CFG->wwwroot; ?>/blocks/ifcare/pix/concordo.png" alt="Concordo" class="emoji-img">
+            <span>Concordo</span>
+        </button>
+        <button class="emoji-button" data-value="5">
+            <img src="<?php echo $CFG->wwwroot; ?>/blocks/ifcare/pix/concordoTotalmente.png" alt="Concordo Totalmente" class="emoji-img">
+            <span>Concordo Totalmente</span>
+        </button>
     </div>
-</div>
-
-
 
     <!-- Controles de navegação -->
-    <div id="controls">
-        <button id="voltar-btn" onclick="voltarPergunta()">Voltar</button>
-        <button id="avancar-btn" onclick="avancarPergunta()">Avançar</button>
-    </div>
+<div id="controls">
+    <button id="voltar-btn" onclick="voltarPergunta()">Voltar</button>
+    <button id="avancar-btn" onclick="avancarPergunta()">Avançar</button>
 </div>
+</div>
+
+
 
 <script>
     let perguntas = <?php echo $perguntas_json; ?>;
     let perguntaAtual = 0;
     let totalPerguntas = perguntas.length;
+    let respostaSelecionada = null;
+
+    // Função para capturar o valor do botão clicado
+    function selecionarResposta(valor) {
+        respostaSelecionada = valor;
+        console.log("Resposta selecionada: ", respostaSelecionada);
+    }
+
+    document.querySelectorAll('.emoji-button').forEach(button => {
+        button.addEventListener('click', function() {
+            selecionarResposta(this.getAttribute('data-value'));
+        });
+    });
 
     function mostrarPergunta(index) {
         if (index >= 0 && index < totalPerguntas) {
             let perguntaContainer = document.getElementById('pergunta-container');
-            let respostasContainer = document.getElementById('respostas-container');
 
             perguntaContainer.innerHTML = `
                 <p><strong>${perguntas[index].emocao_nome}</strong></p>
                 <p>${perguntas[index].pergunta_texto}</p>
-            `;
-
-            respostasContainer.innerHTML = `
-                <div id="respostas">
-                    <label><input type="radio" name="resposta" value="1"> Discordo Totalmente</label>
-                    <label><input type="radio" name="resposta" value="2"> Discordo</label>
-                    <label><input type="radio" name="resposta" value="3"> Neutro</label>
-                    <label><input type="radio" name="resposta" value="4"> Concordo</label>
-                    <label><input type="radio" name="resposta" value="5"> Concordo Totalmente</label>
-                </div>
             `;
 
             // Atualiza a barra de progresso
@@ -108,11 +108,16 @@ $perguntas_json = json_encode(array_values($perguntas));
     }
 
     function avancarPergunta() {
-        if (perguntaAtual < totalPerguntas - 1) {
-            perguntaAtual++;
-            mostrarPergunta(perguntaAtual);
+        if (respostaSelecionada !== null) {
+            if (perguntaAtual < totalPerguntas - 1) {
+                perguntaAtual++;
+                mostrarPergunta(perguntaAtual);
+                respostaSelecionada = null; // Resetar a seleção para a próxima pergunta
+            } else {
+                alert('Você completou todas as perguntas!');
+            }
         } else {
-            alert('Você completou todas as perguntas!');
+            alert('Por favor, selecione uma resposta.');
         }
     }
 
@@ -131,17 +136,18 @@ $perguntas_json = json_encode(array_values($perguntas));
 echo $OUTPUT->footer();
 ?>
 
-<style>/* Centralizar o modal na página */
+<style>
+/* Centralizar o modal na página */
 #quiz-container {
     width: 100%;
-    max-width: 700px; /* Aumentei a largura máxima */
-    margin: 0 auto; /* Centraliza o modal horizontalmente */
+    max-width: 700px;
+    margin: 0 auto;
     height: auto;
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    background-color: #fff; /* Cor de fundo branca para contraste */
+    background-color: #fff;
 }
 
 /* Configuração da barra de progresso */
@@ -155,17 +161,17 @@ echo $OUTPUT->footer();
     width: 100%;
     height: 20px;
     border-radius: 5px;
-    background-color: #e0e0e0; /* Fundo mais claro */
+    background-color: #e0e0e0;
     position: relative;
 }
 
 #progress-bar::-webkit-progress-value {
-    background-color: #4caf50; /* Cor de preenchimento (verde) */
+    background-color: #4caf50;
     border-radius: 5px;
 }
 
 #progress-bar::-moz-progress-bar {
-    background-color: #4caf50; /* Cor de preenchimento (verde) */
+    background-color: #4caf50;
     border-radius: 5px;
 }
 
@@ -175,7 +181,7 @@ echo $OUTPUT->footer();
     left: 50%;
     transform: translateX(-50%);
     font-weight: bold;
-    color: black; /* Cor do texto */
+    color: black;
 }
 
 /* Estilo da pergunta */
@@ -185,44 +191,69 @@ echo $OUTPUT->footer();
     text-align: center;
 }
 
-/* Alinha as imagens e os inputs de rádio */
-#respostas-container label {
-    display: inline-block; /* Mostra tudo na mesma linha */
+/* Alinha os botões emoji em linha */
+#respostas-container {
+    display: flex;
+    justify-content: space-evenly;
+    margin-bottom: 20px;
+}
+
+/* Estilo dos botões de emoji */
+.emoji-button {
+    display: flex;
+    flex-direction: column; /* Coloca a imagem e o texto em coluna */
+    align-items: center; /* Centraliza horizontalmente */
+    justify-content: center; /* Centraliza verticalmente */
+    background: none;
+    border: none;
+    cursor: pointer;
     text-align: center;
-    margin-right: 10px;
+    transition: transform 0.2s ease-in-out; /* Animação suave na transformação */
+    margin: 0 10px; /* Espaçamento lateral entre os itens */
 }
 
-#respostas-container img {
+.emoji-img {
     display: block;
-    margin-top: 5px;
+    margin-bottom: 5px;
+    width: 48px;  /* Tamanho ajustado do emoji */
+    height: 48px; 
 }
 
-#respostas-container input[type="radio"] {
-    margin-bottom: 5px;
+/* Estilo do texto Likert abaixo dos emojis */
+.emoji-button span {
+    font-size: 14px;
+    color: #000;
+    text-align: center;
 }
+
+/* Efeito de hover - faz o botão crescer */
+.emoji-button:hover {
+    transform: scale(1.2); /* Aumenta o tamanho em 20% ao passar o mouse */
+}
+
 
 /* Botões de navegação */
 #controls {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* Coloca os botões nas pontas */
+    margin-top: 10px; /* Reduz o espaço entre o modal e os botões */
+    padding: 0 20px; /* Adiciona um espaçamento interno para não encostar nas bordas da tela */
 }
 
+/* Botões de navegação */
 #controls button {
-    background-color: #007bff;
+    background-color: #28a745; /* Cor de fundo do botão (verde, por exemplo) */
     color: white;
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.2s;
 }
 
 #controls button:hover {
-    background-color: #0056b3;
+    background-color: #218838; /* Cor de fundo quando o mouse está sobre o botão (um tom mais escuro de verde) */
 }
-#respostas-container img {
-    display: block;
-    max-width: 100%;
-    height: auto;
-}
+
 
 </style>
