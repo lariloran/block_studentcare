@@ -818,4 +818,9 @@ INSERT INTO mysql.mdl_ifcare_pergunta
 VALUES(157, 24, 3, 'Eu me sinto tão resignado que não tenho energia.');
 
 --Executar o cron manualmente
---php C:\moodle441\server\moodle\admin\cli\scheduled_task.php --execute=block_ifcare\task\process_coleta
+--C:\moodle441\server\php\php C:\moodle441\server\moodle\admin\cli\scheduled_task.php --execute=block_ifcare\task\process_coleta
+--usuários cadastrados:
+--admin: admin
+--professor: marcia
+--aluno: pedroaluno[Engenharia de Software III], luizaluno[Lógica de Programação]
+-- limpar cache::\moodle441\server\php\php C:\moodle441\server\moodle\admin\cli\purge_caches.php  

@@ -22,13 +22,14 @@ $capabilities = [
         'clonepermissionsfrom' => 'moodle/my:manageblocks'
     ],
 
-    // Capacidade para receber notificações de coletas criadas
-    'block/ifcare:receivenotifications' => [
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_COURSE,  // CONTEXT_BLOCK também pode ser usado se preferir
-        'archetypes' => [
-            'student' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW,
-        ],
+// Capacidade para receber notificações de coletas criadas
+'block/ifcare:receivenotifications' => [
+    'captype' => 'read',
+    'contextlevel' => CONTEXT_COURSE,  // CONTEXT_BLOCK também pode ser usado se preferir
+    'archetypes' => [
+        'student' => CAP_ALLOW,
+        'teacher' => CAP_ALLOW,
     ],
+],
+
 ];

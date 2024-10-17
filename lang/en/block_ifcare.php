@@ -46,3 +46,7 @@ $string['messageprovider:coleta_criada'] = 'Notificação enviada aos alunos qua
 $string['ifcare:addinstance'] = 'Adicionar uma nova instância do bloco IF Care';
 $string['ifcare:myaddinstance'] = 'Adicionar uma nova instância do bloco IF Care ao painel';
 $string['ifcare:receivenotifications'] = 'Receber notificações sobre coletas criadas no IF Care';
+
+$string['view_dashboard'] = 'Visualizar Dashboard das Coletas';
+$string['aeq_manual'] = 'Manual de uso do AEQ';
+
