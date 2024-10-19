@@ -14,7 +14,7 @@
 //             null,
 //             new pix_icon('i/gear', '')
 //         );
-//     }
+//     }    
 // }
 defined('MOODLE_INTERNAL') || die();
 

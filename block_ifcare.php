@@ -21,11 +21,11 @@ class block_ifcare extends block_base {
         $url = new moodle_url('/blocks/ifcare/index.php', ['courseid' => $COURSE->id]);
 
         // Exibe o link para gerenciar as coletas (disponível para professores e administradores)
-        if (has_capability('moodle/course:manageactivities', context_course::instance($COURSE->id))) {
+       // if (has_capability('moodle/course:manageactivities', context_course::instance($COURSE->id))) {
             $this->content->text = html_writer::link($url, get_string('manage_collections', 'block_ifcare')) . '<br>' .
             html_writer::link($url, get_string('view_dashboard', 'block_ifcare')) . '<br>' .
             html_writer::link($url, get_string('aeq_manual', 'block_ifcare'));
-        }
+        //}
 
         // Carregar o arquivo JavaScript AMD para exibir o modal, se necessário
         // Isso vai carregar o arquivo block_ifcare.js quando o bloco for exibido
@@ -35,11 +35,11 @@ class block_ifcare extends block_base {
 
     public function applicable_formats() {
         return [
-            'course-view' => true,
+            'course-view' => false,
             'mod' => false,
             'site-index' => false,
             'admin' => false,
-            'my' => false,
+            'my' => true,
         ];
     }
 }

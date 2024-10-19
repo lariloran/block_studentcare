@@ -12,7 +12,7 @@ echo $OUTPUT->header();
 
 // Busca as perguntas associadas às emoções da coleta
 $perguntas = $DB->get_records_sql("
-    SELECT p.id, p.pergunta_texto, e.nome AS emocao_nome
+    SELECT p.id, p.pergunta_texto, e.nome AS emocao_nome, e.txttooltip AS texto_tooltip
     FROM {ifcare_pergunta} p
     JOIN {ifcare_emocao} e ON e.id = p.emocao_id
     JOIN {ifcare_associacao_classe_emocao_coleta} a ON a.emocao_id = e.id
@@ -120,7 +120,10 @@ function mostrarPergunta(index) {
         perguntaContainer.innerHTML = `
             <p>
                 <strong>${perguntas[index].emocao_nome}</strong>
-                <span class="tooltip-icon" title="Descrição da emoção">&#9432;</span>
+<span class="tooltip-icon">
+    &#9432;
+    <span class="tooltip-text">${perguntas[index].texto_tooltip}</span>
+</span>
             </p>
             <p class="pergunta-texto">${perguntas[index].pergunta_texto}</p>
         `;
@@ -177,25 +180,39 @@ echo $OUTPUT->footer();
 <style>
 /* Estilo do ícone de interrogação ao lado da emoção */
 .tooltip-icon {
-    cursor: pointer; /* Indica que o usuário pode interagir */
-    margin-left: 5px; /* Espaçamento entre o nome da emoção e o ícone */
-    color: #0073e6; /* Cor do ícone */
-    font-size: 16px; /* Tamanho do ícone */
+    position: relative;
+    cursor: pointer;
+    margin-left: 5px;
+    color: #0073e6;
+    font-size: 16px;
+    display: inline-block;
 }
 
-/* Tooltip customizado - efeito ao passar o mouse */
-.tooltip-icon:hover::after {
-    content: attr(title); /* Mostra o texto do atributo 'title' */
-    background-color: #333; /* Cor de fundo do tooltip */
-    color: #fff; /* Cor do texto no tooltip */
-    padding: 5px 10px; /* Espaçamento interno do tooltip */
-    border-radius: 5px; /* Bordas arredondadas */
-    position: absolute; /* Para posicionar o tooltip */
-    z-index: 10; /* Certifica que o tooltip fique por cima */
-    white-space: nowrap; /* Evita que o texto do tooltip quebre linha */
-    margin-left: 10px; /* Afasta o tooltip um pouco do ícone */
+/* Tooltip customizado */
+.tooltip-text {
+    visibility: hidden;
+    background-color: #333;
+    color: #fff;
+    text-align: center; /* Centraliza o texto */
+    padding: 5px;
+    border-radius: 5px;
+    position: absolute;
+    z-index: 1;
+    top: 125%; /* Posiciona o tooltip abaixo do ícone */
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: normal;
+    width: 250px; /* Largura do tooltip */
+    opacity: 0; /* Invisível por padrão */
+    transition: opacity 0.3s ease;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
 }
 
+/* Exibe o tooltip quando o mouse está sobre o ícone */
+.tooltip-icon:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
 
 /* Centralizar o título dentro do modal */
 .titulo-coleta {

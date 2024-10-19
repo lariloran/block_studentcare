@@ -49,4 +49,9 @@ $string['ifcare:receivenotifications'] = 'Receber notificações sobre coletas c
 
 $string['view_dashboard'] = 'Visualizar Dashboard das Coletas';
 $string['aeq_manual'] = 'Manual de uso do AEQ';
+$string['ifcare:addinstance'] = 'Add a new IF Care block';
+$string['welcome_dashboard'] = 'Seja bem-vindo ao IFCARE';
+$string['set_user_notifications'] = 'Configurar notificações para os usuários do IF Care';
 
+
+$string['ifcare:viewmanageoptions'] = 'View and manage IF Care options';

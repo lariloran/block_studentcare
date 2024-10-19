@@ -1,16 +1,16 @@
 <?php
+
 $messageproviders = array(
 
-    // Provedor para notificação de criação de coleta.
+    // Provedor de notificação para quando uma nova coleta for criada
     'coleta_criada' => array(
-        'capability'  => 'block/ifcare:receivenotifications',  // Capacidade para receber a notificação.
+        'capability'  => 'block/ifcare:receivenotifications',
     ),
 );
 
-// Configurações padrão para os métodos de notificação.
 $defaultmessageoutputs = array(
     'coleta_criada' => array(
-        'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDIN,  // Habilita por padrão o envio por e-mail.
-        'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDIN,  // Habilita por padrão o envio por pop-up.
+        'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDIN,  // Ativa e-mail por padrão
+        'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDIN,  // Ativa popup por padrão
     ),
 );
