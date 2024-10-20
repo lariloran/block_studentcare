@@ -41,6 +41,7 @@
             <FIELD NAME="id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" SEQUENCE="true"/>
             <FIELD NAME="classeaeq_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID da classe AEQ associada"/>
             <FIELD NAME="nome" TYPE="char" LENGTH="255" NOTNULL="true" COMMENT="Nome da emoção"/>
+            <FIELD NAME="textoTooltip" TYPE="char" LENGTH="255" NOTNULL="true" COMMENT="Texto descritivo do Tooltip"/>
             <FIELD NAME="antes" TYPE="int" LENGTH="1" NOTNULL="true" COMMENT="Se a emoção ocorreu antes"/>
             <FIELD NAME="durante" TYPE="int" LENGTH="1" NOTNULL="true" COMMENT="Se a emoção ocorreu durante"/>
             <FIELD NAME="depois" TYPE="int" LENGTH="1" NOTNULL="true" COMMENT="Se a emoção ocorreu depois"/>

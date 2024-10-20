@@ -7,7 +7,6 @@ $context = context_course::instance($COURSE->id);  // Contexto do curso
 $PAGE->set_url('/blocks/ifcare/view.php', array('coletaid' => $coletaid));
 $PAGE->set_context($context);
 $PAGE->set_title("Coleta de Emoções");
-$PAGE->set_heading("Coleta de Emoções");
 
 echo $OUTPUT->header();
 
@@ -31,6 +30,8 @@ $perguntas_json = json_encode(array_values($perguntas));
 ?>
 
 <div id="quiz-container">
+<div class="titulo-coleta">Coleta de Emoções</div>
+
     <!-- Barra de progresso -->
     <div id="progress-bar-container">
         <progress id="progress-bar" value="0" max="100"></progress>
@@ -111,14 +112,17 @@ document.querySelectorAll('.emoji-button').forEach(button => {
     });
 });
 
-// Função para mostrar a pergunta e restaurar a seleção anterior, se houver
 function mostrarPergunta(index) {
     if (index >= 0 && index < totalPerguntas) {
         let perguntaContainer = document.getElementById('pergunta-container');
 
+        // Adicionando um ícone de interrogação com tooltip ao lado da emoção
         perguntaContainer.innerHTML = `
-            <p><strong>${perguntas[index].emocao_nome}</strong></p>
-            <p>${perguntas[index].pergunta_texto}</p>
+            <p>
+                <strong>${perguntas[index].emocao_nome}</strong>
+                <span class="tooltip-icon" title="Descrição da emoção">&#9432;</span>
+            </p>
+            <p class="pergunta-texto">${perguntas[index].pergunta_texto}</p>
         `;
 
         // Remove a classe 'selected' de todos os botões
@@ -171,6 +175,38 @@ echo $OUTPUT->footer();
 ?>
 
 <style>
+/* Estilo do ícone de interrogação ao lado da emoção */
+.tooltip-icon {
+    cursor: pointer; /* Indica que o usuário pode interagir */
+    margin-left: 5px; /* Espaçamento entre o nome da emoção e o ícone */
+    color: #0073e6; /* Cor do ícone */
+    font-size: 16px; /* Tamanho do ícone */
+}
+
+/* Tooltip customizado - efeito ao passar o mouse */
+.tooltip-icon:hover::after {
+    content: attr(title); /* Mostra o texto do atributo 'title' */
+    background-color: #333; /* Cor de fundo do tooltip */
+    color: #fff; /* Cor do texto no tooltip */
+    padding: 5px 10px; /* Espaçamento interno do tooltip */
+    border-radius: 5px; /* Bordas arredondadas */
+    position: absolute; /* Para posicionar o tooltip */
+    z-index: 10; /* Certifica que o tooltip fique por cima */
+    white-space: nowrap; /* Evita que o texto do tooltip quebre linha */
+    margin-left: 10px; /* Afasta o tooltip um pouco do ícone */
+}
+
+
+/* Centralizar o título dentro do modal */
+.titulo-coleta {
+    text-align: center;
+    font-size: 24px; /* Tamanho da fonte */
+    font-weight: bold; /* Deixa o título em negrito */
+    margin-bottom: 20px; /* Espaço abaixo do título */
+    color: #333; /* Cor do texto, ajuste conforme necessário */
+}
+
+
 /* Centralizar o modal na página */
 #quiz-container {
     width: 100%;
