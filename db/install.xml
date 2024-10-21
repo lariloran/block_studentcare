@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="blocks/ifcare/db" VERSION="2024011816" COMMENT="Instalação do banco de dados para o seu plugin" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+<XMLDB PATH="blocks/ifcare/db" VERSION="2024011832" COMMENT="Instalação do banco de dados para o seu plugin" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
 <TABLES>
 <TABLE NAME="ifcare_cadastrocoleta" COMMENT="Armazena os cadastros de coletas">
     <FIELDS>
@@ -120,6 +120,24 @@
         <KEY NAME="emocao_fk" TYPE="foreign" FIELDS="emocao_id" REFTABLE="ifcare_emocao" REFFIELDS="id" ONDELETE="cascade"/>
     </KEYS>
 </TABLE>
+
+<TABLE NAME="ifcare_tcle_resposta" COMMENT="Armazena se o aluno aceitou ou não o TCLE">
+    <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" SEQUENCE="true" COMMENT="Identificador único"/>
+        <FIELD NAME="aluno_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID do aluno que respondeu"/>
+        <FIELD NAME="coleta_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID da coleta associada"/>
+        <FIELD NAME="tcle_aceito" TYPE="int" LENGTH="1" NOTNULL="true" COMMENT="Flag indicando se o TCLE foi aceito (1 para aceito, 0 para não aceito)"/>
+        <FIELD NAME="data_resposta" TYPE="datetime" NOTNULL="true" DEFAULT="CURRENT_TIMESTAMP" COMMENT="Data e hora em que o aceite foi registrado"/>
+        <FIELD NAME="curso_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID do curso associado"/>
+    </FIELDS>
+    <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="aluno_fk" TYPE="foreign" FIELDS="aluno_id" REFTABLE="ifcare_aluno" REFFIELDS="id" ONDELETE="cascade"/>
+        <KEY NAME="coleta_fk" TYPE="foreign" FIELDS="coleta_id" REFTABLE="ifcare_cadastrocoleta" REFFIELDS="id" ONDELETE="cascade"/>
+        <KEY NAME="curso_fk" TYPE="foreign" FIELDS="curso_id" REFTABLE="course" REFFIELDS="id" ONDELETE="cascade"/>
+    </KEYS>
+</TABLE>
+
 
 
 </TABLES>

@@ -8,7 +8,92 @@ $PAGE->set_url('/blocks/ifcare/view.php', array('coletaid' => $coletaid));
 $PAGE->set_context($context);
 $PAGE->set_title("Coleta de Emoções");
 
+$userid = $USER->id; // Obtém o ID do aluno
+
+// Adiciona o evento de aceitação ou recusa do TCLE
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Captura a resposta do TCLE do formulário
+    $tcle_aceito = optional_param('tcle_aceito', 0, PARAM_INT);
+
+    // Verifica se já existe uma resposta do TCLE para este usuário e esta coleta
+    $tcle_exists = $DB->record_exists('ifcare_tcle_resposta', ['aluno_id' => $userid, 'coleta_id' => $coletaid]);
+
+    if (!$tcle_exists) {
+        // Insere a resposta na tabela ifcare_tcle_resposta
+        $DB->insert_record('ifcare_tcle_resposta', (object)[
+            'aluno_id' => $userid,
+            'coleta_id' => $coletaid,
+            'tcle_aceito' => $tcle_aceito,
+            'data_resposta' => date('Y-m-d H:i:s')
+        ]);
+    }
+
+    // Redireciona conforme a resposta do TCLE
+    if ($tcle_aceito == 1) {
+        // Usuário aceitou o TCLE, exibe as perguntas
+        echo "<script>document.getElementById('tcle-container').style.display = 'none';</script>";
+        echo "<script>document.getElementById('progress-bar-container').style.display = 'block';</script>";
+        echo "<script>document.getElementById('pergunta-container').style.display = 'block';</script>";
+        echo "<script>document.getElementById('respostas-container').style.display = 'flex';</script>";
+        echo "<script>document.getElementById('controls').style.display = 'flex';</script>";
+    } else {
+        // Usuário não aceitou o TCLE, redireciona para o dashboard
+        redirect($CFG->wwwroot . '/my', 'Você deve aceitar o TCLE para continuar.');
+    }
+}
+
 echo $OUTPUT->header();
+
+// Busca os detalhes da coleta, incluindo as datas de início e fim
+$coleta = $DB->get_record('ifcare_cadastrocoleta', ['id' => $coletaid], '*', MUST_EXIST);
+
+// Verifica se a coleta ainda está dentro do prazo
+$agora = time(); // Timestamp atual
+
+echo '<style>
+/* Estilo para mensagens de aviso */
+.mensagem-aviso {
+    color: #ff0000;
+    background-color: #ffe6e6;
+    border: 1px solid #ff6666;
+    padding: 15px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+/* Estilo para mensagens de sucesso */
+.mensagem-sucesso {
+    color: #006600;
+    background-color: #e6ffe6;
+    border: 1px solid #66cc66;
+    padding: 15px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+</style>';
+
+if ($agora < strtotime($coleta->data_inicio)) {
+    echo "<div class='mensagem-sucesso'>A coleta ainda não começou. Ela estará disponível a partir de " . date('d/m/Y H:i', strtotime($coleta->data_inicio)) . ".</div>";
+    echo $OUTPUT->footer();
+    return;
+}
+
+if ($agora > strtotime($coleta->data_fim)) {
+    echo "<div class='mensagem-aviso'>O prazo para responder a esta coleta expirou em " . date('d/m/Y H:i', strtotime($coleta->data_fim)) . ".</div>";
+    echo $OUTPUT->footer();
+    return;
+}
 
 // Busca as perguntas associadas às emoções da coleta
 $perguntas = $DB->get_records_sql("
@@ -25,24 +110,44 @@ if (!$perguntas) {
     exit;
 }
 
+// Adiciona o TCLE como uma etapa inicial
+$tcle = [
+    'id' => 0,
+    'pergunta_texto' => 'Você aceita participar desta coleta de emoções, sabendo que suas respostas (incluindo seu nome e e-mail) serão usadas para fins acadêmicos e pedagógicos?',
+    'emocao_nome' => 'Termo de Consentimento Livre e Esclarecido (TCLE)',
+    'texto_tooltip' => 'As informações coletadas serão usadas para melhorar práticas pedagógicas e prevenir a evasão e desmotivação.'
+];
+
+
 // Convertemos as perguntas em JSON para facilitar a manipulação com JavaScript
 $perguntas_json = json_encode(array_values($perguntas));
+
 ?>
 
 <div id="quiz-container">
-<div class="titulo-coleta">Coleta de Emoções</div>
+    <div class="titulo-coleta">Coleta de Emoções</div>
 
-    <!-- Barra de progresso -->
-    <div id="progress-bar-container">
+    <!-- TCLE -->
+    <div id="tcle-container">
+        <p><strong>Termo de Consentimento Livre e Esclarecido (TCLE)</strong></p>
+        <p>Você aceita participar desta coleta de emoções, sabendo que suas respostas (incluindo seu nome e e-mail) serão usadas para fins acadêmicos e pedagógicos?</p>
+        <div id="respostas-tcle">
+            <button class="emoji-button" id="aceito-btn">Aceito</button>
+            <button class="emoji-button" id="nao-aceito-btn">Não Aceito</button>
+        </div>
+    </div>
+
+    <!-- Barra de progresso (inicialmente oculta) -->
+    <div id="progress-bar-container" style="display:none;">
         <progress id="progress-bar" value="0" max="100"></progress>
         <span id="progress-text">0%</span>
     </div>
 
-    <!-- Pergunta -->
-    <div id="pergunta-container"></div>
+    <!-- Perguntas (inicialmente oculto até o TCLE ser aceito) -->
+    <div id="pergunta-container" style="display:none;"></div>
 
     <!-- Botões de resposta (escala Likert com emojis como botões) -->
-    <div id="respostas-container">
+    <div id="respostas-container" style="display:none;">
         <button class="emoji-button" data-value="1">
             <img src="<?php echo $CFG->wwwroot; ?>/blocks/ifcare/pix/discordoTotalmente.png" alt="Discordo Totalmente" class="emoji-img">
             <span>Discordo Totalmente</span>
@@ -66,7 +171,7 @@ $perguntas_json = json_encode(array_values($perguntas));
     </div>
 
     <!-- Controles de navegação -->
-    <div id="controls">
+    <div id="controls" style="display:none;">
         <button id="voltar-btn" onclick="voltarPergunta()">Voltar</button>
         <button id="avancar-btn" onclick="avancarPergunta()">Avançar</button>
     </div>
@@ -77,31 +182,43 @@ let perguntas = <?php echo $perguntas_json; ?>;
 let perguntaAtual = 0;
 let totalPerguntas = perguntas.length;
 let respostaSelecionada = null;
-
-// Array para armazenar a seleção do usuário para cada pergunta
 let respostasSelecionadas = new Array(totalPerguntas).fill(null);
+
+// Evento para aceitar ou recusar o TCLE
+document.getElementById('aceito-btn').addEventListener('click', function() {
+    document.getElementById('tcle-container').style.display = 'none';
+    document.getElementById('progress-bar-container').style.display = 'block'; // Mostra a barra de progresso
+    document.getElementById('pergunta-container').style.display = 'block';
+    document.getElementById('respostas-container').style.display = 'flex';
+    document.getElementById('controls').style.display = 'flex';
+    mostrarPergunta(perguntaAtual);
+});
+
+document.getElementById('nao-aceito-btn').addEventListener('click', function() {
+    alert('Você deve aceitar o TCLE para continuar.');
+    window.location.href = '<?php echo $CFG->wwwroot; ?>/my'; // Redireciona para a página inicial do usuário
+});
 
 // Função para capturar o valor do botão clicado ou remover seleção se clicar no mesmo
 function selecionarResposta(valor) {
     if (respostaSelecionada === valor) {
-        // Se o usuário clicar novamente na mesma resposta, desmarca
+        // Se o emoji clicado já estiver selecionado, desmarca a resposta
         respostaSelecionada = null;
         respostasSelecionadas[perguntaAtual] = null;
-        
+
         // Remove a classe 'selected' de todos os botões
         document.querySelectorAll('.emoji-button').forEach(btn => {
             btn.classList.remove('selected');
         });
     } else {
-        // Se for uma nova seleção, armazena e aplica a classe 'selected'
+        // Se for uma nova seleção, armazena a resposta e aplica a classe 'selected'
         respostaSelecionada = valor;
         respostasSelecionadas[perguntaAtual] = valor;
-        
-        // Remove a classe 'selected' de todos os botões e adiciona apenas ao botão clicado
+
+        // Remove a classe 'selected' de todos os botões e adiciona à resposta selecionada
         document.querySelectorAll('.emoji-button').forEach(btn => {
             btn.classList.remove('selected');
         });
-
         document.querySelector(`.emoji-button[data-value="${valor}"]`).classList.add('selected');
     }
 }
@@ -115,15 +232,13 @@ document.querySelectorAll('.emoji-button').forEach(button => {
 function mostrarPergunta(index) {
     if (index >= 0 && index < totalPerguntas) {
         let perguntaContainer = document.getElementById('pergunta-container');
-
-        // Adicionando um ícone de interrogação com tooltip ao lado da emoção
         perguntaContainer.innerHTML = `
             <p>
                 <strong>${perguntas[index].emocao_nome}</strong>
-<span class="tooltip-icon">
-    &#9432;
-    <span class="tooltip-text">${perguntas[index].texto_tooltip}</span>
-</span>
+                <span class="tooltip-icon">
+                    &#9432;
+                    <span class="tooltip-text">${perguntas[index].texto_tooltip}</span>
+                </span>
             </p>
             <p class="pergunta-texto">${perguntas[index].pergunta_texto}</p>
         `;
@@ -147,11 +262,10 @@ function mostrarPergunta(index) {
 }
 
 function avancarPergunta() {
-    if (respostaSelecionada !== null) {
+    if (respostasSelecionadas[perguntaAtual] !== null) {
         if (perguntaAtual < totalPerguntas - 1) {
             perguntaAtual++;
             mostrarPergunta(perguntaAtual);
-            respostaSelecionada = respostasSelecionadas[perguntaAtual]; // Atualiza a seleção com a próxima pergunta
         } else {
             alert('Você completou todas as perguntas!');
         }
@@ -164,12 +278,8 @@ function voltarPergunta() {
     if (perguntaAtual > 0) {
         perguntaAtual--;
         mostrarPergunta(perguntaAtual);
-        respostaSelecionada = respostasSelecionadas[perguntaAtual]; // Atualiza a seleção com a pergunta anterior
     }
 }
-
-// Exibe a primeira pergunta ao carregar a página
-mostrarPergunta(perguntaAtual);
 
 </script>
 
@@ -177,52 +287,17 @@ mostrarPergunta(perguntaAtual);
 echo $OUTPUT->footer();
 ?>
 
+
 <style>
-/* Estilo do ícone de interrogação ao lado da emoção */
-.tooltip-icon {
-    position: relative;
-    cursor: pointer;
-    margin-left: 5px;
-    color: #0073e6;
-    font-size: 16px;
-    display: inline-block;
-}
-
-/* Tooltip customizado */
-.tooltip-text {
-    visibility: hidden;
-    background-color: #333;
-    color: #fff;
-    text-align: center; /* Centraliza o texto */
-    padding: 5px;
-    border-radius: 5px;
-    position: absolute;
-    z-index: 1;
-    top: 125%; /* Posiciona o tooltip abaixo do ícone */
-    left: 50%;
-    transform: translateX(-50%);
-    white-space: normal;
-    width: 250px; /* Largura do tooltip */
-    opacity: 0; /* Invisível por padrão */
-    transition: opacity 0.3s ease;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
-}
-
-/* Exibe o tooltip quando o mouse está sobre o ícone */
-.tooltip-icon:hover .tooltip-text {
-    visibility: visible;
-    opacity: 1;
-}
 
 /* Centralizar o título dentro do modal */
 .titulo-coleta {
     text-align: center;
-    font-size: 24px; /* Tamanho da fonte */
-    font-weight: bold; /* Deixa o título em negrito */
-    margin-bottom: 20px; /* Espaço abaixo do título */
-    color: #333; /* Cor do texto, ajuste conforme necessário */
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
 }
-
 
 /* Centralizar o modal na página */
 #quiz-container {
@@ -249,7 +324,6 @@ echo $OUTPUT->footer();
     height: 20px;
     border-radius: 5px;
     background-color: #e0e0e0;
-    position: relative;
 }
 
 #progress-bar::-webkit-progress-value {
@@ -276,6 +350,42 @@ echo $OUTPUT->footer();
     margin-bottom: 20px;
     font-size: 18px;
     text-align: center;
+}
+
+/* Estilo do ícone de interrogação ao lado da emoção */
+.tooltip-icon {
+    position: relative;
+    cursor: pointer;
+    margin-left: 5px;
+    color: #0073e6;
+    font-size: 16px;
+    display: inline-block;
+}
+
+/* Tooltip customizado */
+.tooltip-text {
+    visibility: hidden;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 5px;
+    border-radius: 5px;
+    position: absolute;
+    z-index: 1;
+    top: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: normal;
+    width: 250px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Exibe o tooltip quando o mouse está sobre o ícone */
+.tooltip-icon:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
 }
 
 /* Alinha os botões emoji em linha */
@@ -339,4 +449,5 @@ echo $OUTPUT->footer();
 #controls button:hover {
     background-color: #218838;
 }
+
 </style>

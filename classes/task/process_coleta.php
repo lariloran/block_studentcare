@@ -46,6 +46,14 @@ class process_coleta extends \core\task\scheduled_task
     private function enviar_notificacao($coleta) {
         global $DB, $CFG;
     
+        // Busca o nome da disciplina (curso) usando o curso_id da coleta
+        $curso = $DB->get_record('course', ['id' => $coleta->curso_id], 'fullname');
+        $nome_disciplina = $curso ? $curso->fullname : 'Disciplina desconhecida';
+
+        // Formata a data final da coleta
+        $data_fim_formatada = date('d/m/Y H:i', strtotime($coleta->data_fim));
+
+        // Busca os alunos matriculados no curso
         $enrols = $DB->get_records_sql("
             SELECT u.id, u.email
             FROM {user_enrolments} ue
@@ -60,15 +68,14 @@ class process_coleta extends \core\task\scheduled_task
             $eventdata->name = 'coleta_criada';
             $eventdata->userfrom = \core_user::get_noreply_user();
             $eventdata->userto = $aluno->id;
-            $eventdata->subject = "Nova coleta de emoções criada: " . $coleta->nome;
-            $eventdata->fullmessage = "A coleta \"{$coleta->nome}\" foi criada e está pronta para ser realizada.";
+            $eventdata->subject = "Nova coleta de emoções: " . $coleta->nome;
+            $eventdata->fullmessage = "A coleta \"{$coleta->nome}\" da disciplina {$nome_disciplina} foi criada e está pronta para ser realizada até {$data_fim_formatada}.";
             $eventdata->fullmessageformat = FORMAT_PLAIN;
-            $eventdata->fullmessagehtml = "<p>A coleta <strong>{$coleta->nome}</strong> foi criada e está pronta para ser realizada. <a href='{$CFG->wwwroot}/blocks/ifcare/view.php?coletaid={$coleta->id}'>Clique aqui</a> para mais informações.</p>";
-            $eventdata->smallmessage = "Coleta \"{$coleta->nome}\" foi criada. <a href='{$CFG->wwwroot}/blocks/ifcare/view.php?coletaid={$coleta->id}'>Clique aqui</a>";
+            $eventdata->fullmessagehtml = "<p>A coleta de emoções para a disciplina <strong>{$nome_disciplina}</strong> está pronta para ser realizada até <strong>{$data_fim_formatada}</strong>. <a href='{$CFG->wwwroot}/blocks/ifcare/view.php?coletaid={$coleta->id}'>Clique aqui</a> para mais informações.</p>";
+            $eventdata->smallmessage = "Coleta \"{$coleta->nome}\" da disciplina {$nome_disciplina} foi criada. <a href='{$CFG->wwwroot}/blocks/ifcare/view.php?coletaid={$coleta->id}'>Clique aqui</a>";
             $eventdata->notification = 1;
     
             message_send($eventdata);
         }
     }
-    
 }
