@@ -49,6 +49,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 echo $OUTPUT->header();
 
+echo '<style>
+/* Estilo para mensagens de aviso */
+.mensagem-aviso {
+    color: #ff0000;
+    background-color: #ffe6e6;
+    border: 1px solid #ff6666;
+    padding: 15px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+/* Estilo para mensagens de sucesso */
+.mensagem-sucesso {
+    color: #006600;
+    background-color: #e6ffe6;
+    border: 1px solid #66cc66;
+    padding: 15px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+</style>';
+
 // Busca os detalhes da coleta, incluindo as datas de início e fim
 $coleta = $DB->get_record('ifcare_cadastrocoleta', ['id' => $coletaid], '*', MUST_EXIST);
 
@@ -142,9 +175,33 @@ $perguntas_json = json_encode(array_values($perguntas));
     </div>
 </div>
 
+<div id="modal-erro" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="fecharModal('modal-erro')">&times;</span>
+        <h2>Atenção</h2>
+        <p>Por favor, selecione uma resposta antes de avançar.</p>
+        <button class="modal-btn" onclick="fecharModal('modal-erro')">Entendido</button>
+    </div>
+</div>
+
+<div id="modal-sucesso" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="fecharModal('modal-sucesso')">&times;</span>
+        <h2>Coleta Concluída</h2>
+        <p>Você completou todas as perguntas da coleta. Obrigado por participar!</p>
+        <button class="modal-btn" onclick="fecharModal('modal-sucesso')">Fechar</button>
+        <button class="modal-btn" onclick="irParaHome()">Ir para Home</button>
+    </div>
+</div>
+
 <script>
 let perguntas = <?php echo $perguntas_json; ?>;
 let perguntaAtual = 0;
+
+// Função para redirecionar para a página inicial do Moodle
+function irParaHome() {
+    window.location.href = '<?php echo $CFG->wwwroot; ?>'; // Redireciona para o dashboard ou página inicial do Moodle
+}
 
 // Função para exibir a primeira pergunta após o carregamento da página
 window.onload = function() {
@@ -198,6 +255,32 @@ document.querySelectorAll('.emoji-button').forEach(button => {
     });
 });
 
+
+// Função para exibir o modal
+function abrirModal(modalId) {
+    document.getElementById(modalId).style.display = 'block';
+}
+
+// Função para fechar o modal
+function fecharModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
+
+// Função para avançar para a próxima pergunta
+function avancarPergunta() {
+    if (respostasSelecionadas[perguntaAtual] !== null) {
+        if (perguntaAtual < totalPerguntas - 1) {
+            perguntaAtual++;
+            mostrarPergunta(perguntaAtual);
+        } else {
+            abrirModal('modal-sucesso'); // Exibe o modal de sucesso ao concluir a coleta
+        }
+    } else {
+        abrirModal('modal-erro'); // Exibe o modal de erro se não houver resposta selecionada
+    }
+}
+
+// Função para exibir a pergunta atual (já existente no seu código)
 function mostrarPergunta(index) {
     if (index >= 0 && index < totalPerguntas) {
         let perguntaContainer = document.getElementById('pergunta-container');
@@ -229,20 +312,6 @@ function mostrarPergunta(index) {
         document.getElementById('progress-text').innerText = `${progresso}%`;
     }
 }
-
-function avancarPergunta() {
-    if (respostasSelecionadas[perguntaAtual] !== null) {
-        if (perguntaAtual < totalPerguntas - 1) {
-            perguntaAtual++;
-            mostrarPergunta(perguntaAtual);
-        } else {
-            alert('Você completou todas as perguntas!');
-        }
-    } else {
-        alert('Por favor, selecione uma resposta antes de avançar.');
-    }
-}
-
 function voltarPergunta() {
     if (perguntaAtual > 0) {
         perguntaAtual--;
@@ -258,6 +327,74 @@ echo $OUTPUT->footer();
 
 
 <style>
+
+    
+.modal {
+    display: none; /* Oculto por padrão */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fundo escuro */
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    text-align: center;
+    border-radius: 10px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Container para alinhar os botões juntos */
+.modal-btn-container {
+    display: inline-flex; /* Usar inline-flex para garantir que o container se ajuste ao conteúdo dos botões */
+    justify-content: center;
+    gap: 20px; /* Espaçamento de 20px entre os botões */
+    margin-top: 20px;
+    width: auto; /* Garante que o container não se expanda */
+}
+
+/* Estilo dos botões no modal */
+.modal-btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: auto; /* Garante que o botão tenha largura baseada no conteúdo */
+    min-width: 100px; /* Define uma largura mínima para os botões */
+    text-align: center;
+    display: inline-block; /* Garante que o botão se comporte como um elemento inline-block */
+    margin-bottom: 4px;
+}
+
+.modal-btn:hover {
+    background-color: #45a049;
+}
+
 
 /* Centralizar o título dentro do modal */
 .titulo-coleta {
