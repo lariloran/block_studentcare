@@ -10,61 +10,41 @@ $PAGE->set_title("Coleta de Emoções");
 
 $userid = $USER->id; // Obtém o ID do aluno
 
+// Verifica se já existe uma resposta do TCLE para este usuário e curso
+$tcle_records = $DB->get_records('ifcare_tcle_resposta', ['aluno_id' => $userid, 'curso_id' => $COURSE->id]);
+
+// Verifica se algum dos registros tem o TCLE aceito
+$tcle_aceito = false;
+foreach ($tcle_records as $record) {
+    if ($record->tcle_aceito == 1) {
+        $tcle_aceito = true;
+        break;
+    }
+}
+
 // Adiciona o evento de aceitação ou recusa do TCLE
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Captura a resposta do TCLE do formulário
-    $tcle_aceito = optional_param('tcle_aceito', 0, PARAM_INT);
+    $tcle_aceito_form = optional_param('tcle_aceito', 0, PARAM_INT);
 
-    // Verifica se já existe uma resposta do TCLE para este usuário e esta coleta
-    $tcle_exists = $DB->record_exists('ifcare_tcle_resposta', ['aluno_id' => $userid, 'coleta_id' => $coletaid]);
-
-    if (!$tcle_exists) {
+    if (empty($tcle_records)) {
         // Insere a resposta na tabela ifcare_tcle_resposta
         $DB->insert_record('ifcare_tcle_resposta', (object)[
             'aluno_id' => $userid,
             'coleta_id' => $coletaid,
-            'tcle_aceito' => $tcle_aceito,
+            'tcle_aceito' => $tcle_aceito_form,
             'curso_id' => $COURSE->id,  // Adiciona o ID do curso
             'data_resposta' => date('Y-m-d H:i:s')
         ]);
     }
 
-    // Redireciona conforme a resposta do TCLE
-    if ($tcle_aceito == 1) {
-        // Usuário aceitou o TCLE, exibe as perguntas
-        echo "<script>
-            window.onload = function() {
-                var tcleContainer = document.getElementById('tcle-container');
-                var progressBarContainer = document.getElementById('progress-bar-container');
-                var perguntaContainer = document.getElementById('pergunta-container');
-                var respostasContainer = document.getElementById('respostas-container');
-                var controlsContainer = document.getElementById('controls');
-    
-                if (tcleContainer) {
-                    tcleContainer.style.display = 'none';
-                }
-                if (progressBarContainer) {
-                    progressBarContainer.style.display = 'block';
-                }
-                if (perguntaContainer) {
-                    perguntaContainer.style.display = 'block';
-                }
-                if (respostasContainer) {
-                    respostasContainer.style.display = 'flex';
-                }
-                if (controlsContainer) {
-                    controlsContainer.style.display = 'flex';
-                }
-                 mostrarPergunta(perguntaAtual);
-
-            };
-        </script>";
+    // Se o aluno aceitou o TCLE, recarrega a página para exibir as perguntas
+    if ($tcle_aceito_form == 1) {
+        redirect($PAGE->url);
     } else {
         // Usuário não aceitou o TCLE, redireciona para o dashboard
         redirect($CFG->wwwroot . '/my', 'Você deve aceitar o TCLE para continuar.');
     }
-    
-    
 }
 
 echo $OUTPUT->header();
@@ -74,39 +54,6 @@ $coleta = $DB->get_record('ifcare_cadastrocoleta', ['id' => $coletaid], '*', MUS
 
 // Verifica se a coleta ainda está dentro do prazo
 $agora = time(); // Timestamp atual
-
-echo '<style>
-/* Estilo para mensagens de aviso */
-.mensagem-aviso {
-    color: #ff0000;
-    background-color: #ffe6e6;
-    border: 1px solid #ff6666;
-    padding: 15px;
-    text-align: center;
-    font-size: 18px;
-    font-weight: bold;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    max-width: 600px;
-    margin: 20px auto;
-}
-
-/* Estilo para mensagens de sucesso */
-.mensagem-sucesso {
-    color: #006600;
-    background-color: #e6ffe6;
-    border: 1px solid #66cc66;
-    padding: 15px;
-    text-align: center;
-    font-size: 18px;
-    font-weight: bold;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    max-width: 600px;
-    margin: 20px auto;
-}
-
-</style>';
 
 if ($agora < strtotime($coleta->data_inicio)) {
     echo "<div class='mensagem-sucesso'>A coleta ainda não começou. Ela estará disponível a partir de " . date('d/m/Y H:i', strtotime($coleta->data_inicio)) . ".</div>";
@@ -135,48 +82,37 @@ if (!$perguntas) {
     exit;
 }
 
-// Adiciona o TCLE como uma etapa inicial
-$tcle = [
-    'id' => 0,
-    'pergunta_texto' => 'Você aceita participar desta coleta de emoções, sabendo que suas respostas (incluindo seu nome e e-mail) serão usadas para fins acadêmicos e pedagógicos?',
-    'emocao_nome' => 'Termo de Consentimento Livre e Esclarecido (TCLE)',
-    'texto_tooltip' => 'As informações coletadas serão usadas para melhorar práticas pedagógicas e prevenir a evasão e desmotivação.'
-];
-
-
 // Convertemos as perguntas em JSON para facilitar a manipulação com JavaScript
 $perguntas_json = json_encode(array_values($perguntas));
-
 ?>
 
 <div id="quiz-container">
     <div class="titulo-coleta">Coleta de Emoções</div>
 
-<div id="tcle-container">
-<form id="tcle-form" method="POST">
-    <input type="hidden" id="tcle_aceito" name="tcle_aceito" value="0">
-    <p><strong>Termo de Consentimento Livre e Esclarecido (TCLE)</strong></p>
-    <p>Você aceita participar desta coleta de emoções, sabendo que suas respostas (incluindo seu nome e e-mail) serão usadas para fins acadêmicos e pedagógicos?</p>
-    <div id="respostas-tcle">
-        <button class="emoji-button" id="aceito-btn" type="button" onclick="enviarResposta(1)">Aceito</button>
-        <button class="emoji-button" id="nao-aceito-btn" type="button" onclick="enviarResposta(0)">Não Aceito</button>
+    <!-- TCLE Container (Só será exibido se o usuário ainda não aceitou) -->
+    <div id="tcle-container" style="display: <?php echo $tcle_aceito ? 'none' : 'block'; ?>;">
+        <form id="tcle-form" method="POST">
+            <input type="hidden" id="tcle_aceito" name="tcle_aceito" value="0">
+            <p><strong>Termo de Consentimento Livre e Esclarecido (TCLE)</strong></p>
+            <p>Você aceita participar desta coleta de emoções, sabendo que suas respostas (incluindo seu nome e e-mail) serão usadas para fins acadêmicos e pedagógicos?</p>
+            <div id="respostas-tcle">
+                <button class="emoji-button" id="aceito-btn" type="button" onclick="enviarResposta(1)">Aceito</button>
+                <button class="emoji-button" id="nao-aceito-btn" type="button" onclick="enviarResposta(0)">Não Aceito</button>
+            </div>
+        </form>
     </div>
-    </form>
-</div>
-
-
 
     <!-- Barra de progresso (inicialmente oculta) -->
-    <div id="progress-bar-container" style="display:none;">
+    <div id="progress-bar-container" style="display: <?php echo $tcle_aceito ? 'block' : 'none'; ?>;">
         <progress id="progress-bar" value="0" max="100"></progress>
         <span id="progress-text">0%</span>
     </div>
 
     <!-- Perguntas (inicialmente oculto até o TCLE ser aceito) -->
-    <div id="pergunta-container" style="display:none;"></div>
+    <div id="pergunta-container" style="display: <?php echo $tcle_aceito ? 'block' : 'none'; ?>;"></div>
 
     <!-- Botões de resposta (escala Likert com emojis como botões) -->
-    <div id="respostas-container" style="display:none;">
+    <div id="respostas-container" style="display: <?php echo $tcle_aceito ? 'flex' : 'none'; ?>;">
         <button class="emoji-button" data-value="1">
             <img src="<?php echo $CFG->wwwroot; ?>/blocks/ifcare/pix/discordoTotalmente.png" alt="Discordo Totalmente" class="emoji-img">
             <span>Discordo Totalmente</span>
@@ -200,7 +136,7 @@ $perguntas_json = json_encode(array_values($perguntas));
     </div>
 
     <!-- Controles de navegação -->
-    <div id="controls" style="display:none;">
+    <div id="controls" style="display: <?php echo $tcle_aceito ? 'flex' : 'none'; ?>;">
         <button id="voltar-btn" onclick="voltarPergunta()">Voltar</button>
         <button id="avancar-btn" onclick="avancarPergunta()">Avançar</button>
     </div>
@@ -209,10 +145,18 @@ $perguntas_json = json_encode(array_values($perguntas));
 <script>
 let perguntas = <?php echo $perguntas_json; ?>;
 let perguntaAtual = 0;
+
+// Função para exibir a primeira pergunta após o carregamento da página
+window.onload = function() {
+    if (<?php echo json_encode($tcle_aceito); ?>) {
+        mostrarPergunta(perguntaAtual);
+    }
+};
+
+
 let totalPerguntas = perguntas.length;
 let respostaSelecionada = null;
 let respostasSelecionadas = new Array(totalPerguntas).fill(null);
-
 
 document.getElementById('nao-aceito-btn').addEventListener('click', function() {
     alert('Você deve aceitar o TCLE para continuar.');
@@ -224,7 +168,7 @@ function enviarResposta(valor) {
     document.getElementById('tcle-form').submit();
 }
 
-// Função para capturar o valor do botão clicado ou remover seleção se clicar no mesmo
+// Função para capturar o valor do botão clicado ou remover a seleção se clicar no mesmo
 function selecionarResposta(valor) {
     if (respostaSelecionada === valor) {
         // Se o emoji clicado já estiver selecionado, desmarca a resposta
@@ -305,12 +249,12 @@ function voltarPergunta() {
         mostrarPergunta(perguntaAtual);
     }
 }
-
 </script>
 
 <?php
 echo $OUTPUT->footer();
 ?>
+
 
 
 <style>
