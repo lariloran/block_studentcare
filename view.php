@@ -24,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'aluno_id' => $userid,
             'coleta_id' => $coletaid,
             'tcle_aceito' => $tcle_aceito,
+            'curso_id' => $COURSE->id,  // Adiciona o ID do curso
             'data_resposta' => date('Y-m-d H:i:s')
         ]);
     }
@@ -31,15 +32,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Redireciona conforme a resposta do TCLE
     if ($tcle_aceito == 1) {
         // Usuário aceitou o TCLE, exibe as perguntas
-        echo "<script>document.getElementById('tcle-container').style.display = 'none';</script>";
-        echo "<script>document.getElementById('progress-bar-container').style.display = 'block';</script>";
-        echo "<script>document.getElementById('pergunta-container').style.display = 'block';</script>";
-        echo "<script>document.getElementById('respostas-container').style.display = 'flex';</script>";
-        echo "<script>document.getElementById('controls').style.display = 'flex';</script>";
+        echo "<script>
+            window.onload = function() {
+                var tcleContainer = document.getElementById('tcle-container');
+                var progressBarContainer = document.getElementById('progress-bar-container');
+                var perguntaContainer = document.getElementById('pergunta-container');
+                var respostasContainer = document.getElementById('respostas-container');
+                var controlsContainer = document.getElementById('controls');
+    
+                if (tcleContainer) {
+                    tcleContainer.style.display = 'none';
+                }
+                if (progressBarContainer) {
+                    progressBarContainer.style.display = 'block';
+                }
+                if (perguntaContainer) {
+                    perguntaContainer.style.display = 'block';
+                }
+                if (respostasContainer) {
+                    respostasContainer.style.display = 'flex';
+                }
+                if (controlsContainer) {
+                    controlsContainer.style.display = 'flex';
+                }
+                 mostrarPergunta(perguntaAtual);
+
+            };
+        </script>";
     } else {
         // Usuário não aceitou o TCLE, redireciona para o dashboard
         redirect($CFG->wwwroot . '/my', 'Você deve aceitar o TCLE para continuar.');
     }
+    
+    
 }
 
 echo $OUTPUT->header();
@@ -127,15 +152,19 @@ $perguntas_json = json_encode(array_values($perguntas));
 <div id="quiz-container">
     <div class="titulo-coleta">Coleta de Emoções</div>
 
-    <!-- TCLE -->
-    <div id="tcle-container">
-        <p><strong>Termo de Consentimento Livre e Esclarecido (TCLE)</strong></p>
-        <p>Você aceita participar desta coleta de emoções, sabendo que suas respostas (incluindo seu nome e e-mail) serão usadas para fins acadêmicos e pedagógicos?</p>
-        <div id="respostas-tcle">
-            <button class="emoji-button" id="aceito-btn">Aceito</button>
-            <button class="emoji-button" id="nao-aceito-btn">Não Aceito</button>
-        </div>
+<div id="tcle-container">
+<form id="tcle-form" method="POST">
+    <input type="hidden" id="tcle_aceito" name="tcle_aceito" value="0">
+    <p><strong>Termo de Consentimento Livre e Esclarecido (TCLE)</strong></p>
+    <p>Você aceita participar desta coleta de emoções, sabendo que suas respostas (incluindo seu nome e e-mail) serão usadas para fins acadêmicos e pedagógicos?</p>
+    <div id="respostas-tcle">
+        <button class="emoji-button" id="aceito-btn" type="button" onclick="enviarResposta(1)">Aceito</button>
+        <button class="emoji-button" id="nao-aceito-btn" type="button" onclick="enviarResposta(0)">Não Aceito</button>
     </div>
+    </form>
+</div>
+
+
 
     <!-- Barra de progresso (inicialmente oculta) -->
     <div id="progress-bar-container" style="display:none;">
@@ -184,20 +213,16 @@ let totalPerguntas = perguntas.length;
 let respostaSelecionada = null;
 let respostasSelecionadas = new Array(totalPerguntas).fill(null);
 
-// Evento para aceitar ou recusar o TCLE
-document.getElementById('aceito-btn').addEventListener('click', function() {
-    document.getElementById('tcle-container').style.display = 'none';
-    document.getElementById('progress-bar-container').style.display = 'block'; // Mostra a barra de progresso
-    document.getElementById('pergunta-container').style.display = 'block';
-    document.getElementById('respostas-container').style.display = 'flex';
-    document.getElementById('controls').style.display = 'flex';
-    mostrarPergunta(perguntaAtual);
-});
 
 document.getElementById('nao-aceito-btn').addEventListener('click', function() {
     alert('Você deve aceitar o TCLE para continuar.');
     window.location.href = '<?php echo $CFG->wwwroot; ?>/my'; // Redireciona para a página inicial do usuário
 });
+
+function enviarResposta(valor) {
+    document.getElementById('tcle_aceito').value = valor;
+    document.getElementById('tcle-form').submit();
+}
 
 // Função para capturar o valor do botão clicado ou remover seleção se clicar no mesmo
 function selecionarResposta(valor) {
