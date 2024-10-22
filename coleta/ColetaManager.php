@@ -4,166 +4,171 @@ class ColetaManager {
     // Método para obter as coletas de um professor
     public function get_coletas_by_professor($professor_id) {
         global $DB;
-        
+
         // Consulta para buscar as coletas do professor específico
         $sql = "SELECT id, nome, data_inicio, data_fim, descricao, curso_id, notificar_alunos, receber_alerta 
                 FROM {ifcare_cadastrocoleta} 
                 WHERE professor_id = :professor_id
                 ORDER BY data_inicio DESC";
-        
-        // Parâmetros da consulta
-        $params = [
-            'professor_id' => $professor_id
-        ];
-        
-        // Executa a consulta e retorna os registros
+
+        $params = ['professor_id' => $professor_id];
+
+        return $DB->get_records_sql($sql, $params);
+    }
+
+    // Método para obter as perguntas associadas à coleta
+    private function obter_perguntas_associadas($coleta_id) {
+        global $DB;
+
+        $sql = "SELECT CONCAT(assoc.id, '-', emocao.id, '-', pergunta.id) AS unique_id, 
+                       classe.nome_classe, 
+                       emocao.nome AS emocao_nome, 
+                       pergunta.pergunta_texto
+                FROM {ifcare_associacao_classe_emocao_coleta} assoc
+                JOIN {ifcare_classeaeq} classe ON classe.id = assoc.classeaeq_id
+                JOIN {ifcare_emocao} emocao ON emocao.id = assoc.emocao_id
+                JOIN {ifcare_pergunta} pergunta ON pergunta.emocao_id = emocao.id
+                WHERE assoc.cadastrocoleta_id = :coleta_id";
+
+        $params = ['coleta_id' => $coleta_id];
         return $DB->get_records_sql($sql, $params);
     }
 
     // Método para gerar a lista de coletas em HTML
-// Método para gerar a lista de coletas em HTML
-public function listar_coletas($professor_id) {
-    global $DB; // Certifique-se de usar o objeto DB para realizar consultas
-    
-    // Obtém as coletas
-    $coletas = $this->get_coletas_by_professor($professor_id);
-    
-    if (empty($coletas)) {
-        return "<p>Nenhuma coleta cadastrada.</p>";
-    }
+    public function listar_coletas($professor_id) {
+        global $DB;
 
-    // Inicia a lista HTML
-    $html = '<div class="accordion">';
+        $coletas = $this->get_coletas_by_professor($professor_id);
 
-    // Adiciona uma variável JavaScript com os dados das coletas
-    $html .= '<script>const coletasData = ' . json_encode(array_values($coletas)) . ';</script>';
+        if (empty($coletas)) {
+            return "<p>Nenhuma coleta cadastrada.</p>";
+        }
 
-    // Itera pelas coletas e cria os itens da lista
-    foreach ($coletas as $coleta) {
-        // Busca o nome do curso (disciplina) a partir do curso_id
-        $curso = $DB->get_record('course', ['id' => $coleta->curso_id], 'fullname');
-        $curso_nome = $curso ? format_string($curso->fullname) : 'Disciplina não encontrada';
+        $html = '<div class="accordion">';
+        foreach ($coletas as $coleta) {
+            $curso = $DB->get_record('course', ['id' => $coleta->curso_id], 'fullname');
+            $curso_nome = $curso ? format_string($curso->fullname) : 'Disciplina não encontrada';
+            $coleta->curso_nome = $curso_nome;
 
-        $html .= '<div class="accordion-item">';
-        $html .= '<div class="accordion-header">';
-        $html .= '<button class="accordion-button" type="button" data-toggle="collapse" data-target="#coleta' . $coleta->id . '" aria-expanded="false" aria-controls="coleta' . $coleta->id . '">';
-        $html .= '<i class="fa fa-plus"></i> ' . format_string($coleta->nome) . ' - (' . date('d/m/Y H:i', strtotime($coleta->data_inicio)) . ')';
-        $html .= '</button>';
+            $html .= '<div class="accordion-item">';
+            $html .= '<div class="accordion-header">';
+            $html .= '<button class="accordion-button" type="button" onclick="abrirModal(' . $coleta->id . ');" aria-expanded="false">';
+            $html .= '<i class="fa fa-plus"></i> ' . format_string($coleta->nome) . ' - (' . date('d/m/Y H:i', strtotime($coleta->data_inicio)) . ')';
+            $html .= '</button>';
+            $html .= '</div>';
+
+            $html .= '<div id="coleta' . $coleta->id . '" class="collapse accordion-body">';
+            $html .= '<p><strong>Descrição:</strong> ' . (!empty($coleta->descricao) ? format_text($coleta->descricao) : '--') . '</p>';
+            $html .= '<p><strong>Disciplina:</strong> ' . $curso_nome . '</p>';
+            $html .= '<p><strong>Data de Início:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_inicio)) . '</p>';
+            $html .= '<p><strong>Data de Fim:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_fim)) . '</p>';
+            $html .= '<p><strong>Notificar Aluno:</strong> ' . ($coleta->notificar_alunos == 1 ? 'Sim' : 'Não') . '</p>';
+            $html .= '<p><strong>Receber Alerta:</strong> ' . ($coleta->receber_alerta == 1 ? 'Sim' : 'Não') . '</p>';
+            $html .= '</div>';
+            $html .= '</div>';
+        }
+
         $html .= '</div>';
+        $html .= '<script>const coletasData = ' . json_encode(array_values($coletas)) . ';</script>';
+        $html .= '<script>
+            function abrirModal(coletaId) {
+                const coleta = coletasData.find(c => c.id == coletaId);
+                
+                document.getElementById("modalColetaNome").textContent = coleta.nome;
+                document.getElementById("modalColetaDescricao").textContent = coleta.descricao ? coleta.descricao : "--";
+                document.getElementById("modalColetaDisciplina").textContent = coleta.curso_nome ? coleta.curso_nome : "Disciplina não encontrada";
+                document.getElementById("modalColetaInicio").textContent = new Date(coleta.data_inicio).toLocaleString();
+                document.getElementById("modalColetaFim").textContent = new Date(coleta.data_fim).toLocaleString();
+                document.getElementById("modalNotificarAlunos").textContent = coleta.notificar_alunos == 1 ? "Sim" : "Não";
+                document.getElementById("modalReceberAlerta").textContent = coleta.receber_alerta == 1 ? "Sim" : "Não";
 
-        // Detalhes da coleta
-        $html .= '<div id="coleta' . $coleta->id . '" class="collapse accordion-body">';
-        $html .= '<p><strong>Descrição:</strong> ' . (!empty($coleta->descricao) ? format_text($coleta->descricao) : '--') . '</p>';
-        $html .= '<p><strong>Disciplina:</strong> ' . $curso_nome . '</p>';  // Mostra o nome da disciplina aqui
-        $html .= '<p><strong>Data de Início:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_inicio)) . '</p>';
-        $html .= '<p><strong>Data de Fim:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_fim)) . '</p>';
+                document.getElementById("downloadCSV").setAttribute("data-id", coleta.id);
+                document.getElementById("downloadJSON").setAttribute("data-id", coleta.id);
 
-    // Adiciona as informações de notificação
-$html .= '<p><strong>Notificar Aluno:</strong> ' . ($coleta->notificar_alunos == 1 ? 'Sim' : 'Não') . '</p>';
-$html .= '<p><strong>Receber Alerta:</strong> ' . ($coleta->receber_alerta == 1 ? 'Sim' : 'Não') . '</p>';
+                document.getElementById("coletaModal").style.display = "block";
+            }
 
+            document.querySelector(".close").onclick = function() {
+                document.getElementById("coletaModal").style.display = "none";
+            };
 
-        // Botões CSV e JSON
-        $html .= '<div class="button-group">';
-        $html .= '<button class="btn btn-secondary" onclick="downloadCSV(' . $coleta->id . ');">';
-        $html .= '<i class="fa fa-file-csv"></i> Baixar CSV';
-        $html .= '</button>';
+            window.onclick = function(event) {
+                if (event.target == document.getElementById("coletaModal")) {
+                    document.getElementById("coletaModal").style.display = "none";
+                }
+            };
 
-        $html .= '<button class="btn btn-secondary" onclick="downloadJSON(' . $coleta->id . ');">';
-        $html .= '<i class="fa fa-file-json"></i> Baixar JSON';
-        $html .= '</button>';
-        $html .= '</div>'; // Fecha button-group
+            document.getElementById("downloadCSV").onclick = function() {
+                const coletaId = this.getAttribute("data-id");
+                const downloadUrl = "Download.php?coleta_id=" + coletaId + "&format=csv";
+                window.location.href = downloadUrl;
+            };
 
-        $html .= '</div>'; // Fecha collapse
-        $html .= '</div>'; // Fecha accordion-item
+            document.getElementById("downloadJSON").onclick = function() {
+                const coletaId = this.getAttribute("data-id");
+                const downloadUrl = "Download.php?coleta_id=" + coletaId + "&format=json";
+                window.location.href = downloadUrl;
+            };
+        </script>';
+
+        return $html;
     }
 
-    // Fecha a lista
-    $html .= '</div>';
-    
-    // Adiciona a função JavaScript
-    $html .= '<script>
-        function downloadCSV(coletaId) {
-            const downloadUrl = "Download.php?coleta_id=" + coletaId;
-            window.location.href = downloadUrl; // Redireciona para o download
-        }
-    </script>';
-
-    // Adiciona a função JavaScript para download em JSON
-    $html .= '<script>
-        function downloadJSON(coletaId) {
-            const downloadUrl = "Download.php?coleta_id=" + coletaId + "&format=json"; // Passa o formato como parâmetro
-            window.location.href = downloadUrl; // Redireciona para o download
-        }
-    </script>';
-
-    return $html;
-}
-
-
-    // Método para baixar os dados da coleta em CSV// Método para baixar os dados da coleta em CSV
+    // Método para baixar os dados da coleta em CSV
     public function download_csv($coleta_id) {
         global $DB;
-    
-        // Consulta para obter os dados da coleta específica
+
         $sql = "SELECT id, nome, data_inicio, data_fim, descricao, curso_id, notificar_alunos, receber_alerta 
                 FROM {ifcare_cadastrocoleta} 
                 WHERE id = :coleta_id";
-    
-        // Parâmetros da consulta
-        $params = [
-            'coleta_id' => $coleta_id
-        ];
-    
-        // Obtém os dados da coleta
+        $params = ['coleta_id' => $coleta_id];
         $coleta = $DB->get_record_sql($sql, $params);
-    
-        // Verifica se a coleta foi encontrada
+
+        $curso = $DB->get_record('course', ['id' => $coleta->curso_id], 'fullname');
+        $curso_nome = $curso ? format_string($curso->fullname) : 'Disciplina não encontrada';
+
         if (!$coleta) {
             echo "Coleta não encontrada.";
             return;
         }
-    
-        // Limpa qualquer saída anterior
-        ob_clean(); // Limpa o buffer de saída
-    
-        // Define o cabeçalho do CSV
+
+        // Busca perguntas associadas
+        $perguntas = $this->obter_perguntas_associadas($coleta_id);
+
+        ob_clean();
+
         header('Content-Type: text/csv; charset=utf-8');
         header('Content-Disposition: attachment; filename="' . mb_convert_encoding($coleta->nome, 'UTF-8') . '.csv"');
-    
-        // Abre o manipulador de saída
+
         $output = fopen('php://output', 'w');
-    
-        // Adiciona o BOM para UTF-8
         fputs($output, "\xEF\xBB\xBF");
-    
-        // Escreve o cabeçalho do CSV
-        fputcsv($output, [
-            mb_convert_encoding('Nome', 'UTF-8'),
-            mb_convert_encoding('Data de Início', 'UTF-8'),
-            mb_convert_encoding('Data de Fim', 'UTF-8'),
-            mb_convert_encoding('Descrição', 'UTF-8'),
-            mb_convert_encoding('ID do Curso', 'UTF-8'),
-            mb_convert_encoding('Notificar Aluno', 'UTF-8'),
-            mb_convert_encoding('Receber Alerta', 'UTF-8')
-        ]);
-    
-        // Escreve os dados da coleta
+
+        // Escreve cabeçalho do CSV
+        fputcsv($output, ['Nome', 'Data de Início', 'Data de Fim', 'Descrição', 'Disciplina', 'Notificar Aluno', 'Receber Alerta']);
         fputcsv($output, [
             mb_convert_encoding($coleta->nome, 'UTF-8'),
             date('d/m/Y H:i', strtotime($coleta->data_inicio)),
             date('d/m/Y H:i', strtotime($coleta->data_fim)),
             mb_convert_encoding($coleta->descricao, 'UTF-8'),
-            $coleta->curso_id,
+            $curso_nome,
             $coleta->notificar_alunos ? 'Sim' : 'Não',
             $coleta->receber_alerta ? 'Sim' : 'Não'
         ]);
-    
-        // Fecha o manipulador
+
+        // Escreve perguntas associadas
+        fputcsv($output, ['Classe AEQ', 'Emoção', 'Pergunta']);
+        foreach ($perguntas as $pergunta) {
+            fputcsv($output, [
+                mb_convert_encoding($pergunta->nome_classe, 'UTF-8'),
+                mb_convert_encoding($pergunta->emocao_nome, 'UTF-8'),
+                mb_convert_encoding($pergunta->pergunta_texto, 'UTF-8')
+            ]);
+        }
+
         fclose($output);
-        exit; // Finaliza o script
+        exit;
     }
-    
+
     // Método para baixar os dados da coleta em JSON
 // Método para baixar os dados da coleta em JSON
 public function download_json($coleta_id) {
@@ -174,61 +179,85 @@ public function download_json($coleta_id) {
             FROM {ifcare_cadastrocoleta} 
             WHERE id = :coleta_id";
 
-    // Parâmetros da consulta
-    $params = [
-        'coleta_id' => $coleta_id
-    ];
-
-    // Obtém os dados da coleta
+    $params = ['coleta_id' => $coleta_id];
     $coleta = $DB->get_record_sql($sql, $params);
 
-    // Verifica se a coleta foi encontrada
     if (!$coleta) {
         echo "Coleta não encontrada.";
         return;
     }
 
-    // Limpa qualquer saída anterior
-    ob_clean(); // Limpa o buffer de saída
+    $curso = $DB->get_record('course', ['id' => $coleta->curso_id], 'fullname');
+    $curso_nome = $curso ? format_string($curso->fullname) : 'Disciplina não encontrada';
+
+    // Busca perguntas associadas
+    $perguntas = $this->obter_perguntas_associadas($coleta_id);
+
+    ob_clean();
 
     // Define o cabeçalho do JSON
     header('Content-Type: application/json');
     header('Content-Disposition: attachment; filename="' . $coleta->nome . '.json"');
 
-    // Envia os dados como JSON formatado
-    echo json_encode($coleta, JSON_PRETTY_PRINT);
-    exit; // Finaliza o script
-}
+    // Inclui o nome da disciplina e as perguntas no JSON de saída
+    $coleta->curso_nome = $curso_nome;
+    $coleta->perguntas = $perguntas;
 
+    // Envia os dados como JSON formatado, sem escapar caracteres Unicode
+    echo json_encode($coleta, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    exit;
+}
 
 }
 ?>
 
-<!-- CSS -->
-<style>body {
+<!-- Modal HTML -->
+<div id="coletaModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="modalColetaNome"></h2>
+        <p><strong>Descrição:</strong> <span id="modalColetaDescricao"></span></p>
+        <p><strong>Disciplina:</strong> <span id="modalColetaDisciplina"></span></p>
+        <p><strong>Data de Início:</strong> <span id="modalColetaInicio"></span></p>
+        <p><strong>Data de Fim:</strong> <span id="modalColetaFim"></span></p>
+        <p><strong>Notificar Aluno:</strong> <span id="modalNotificarAlunos"></span></p>
+        <p><strong>Receber Alerta:</strong> <span id="modalReceberAlerta"></span></p>
+
+        <!-- Botões para baixar CSV e JSON -->
+        <div class="button-group">
+            <button id="downloadCSV" class="btn btn-secondary">
+                <i class="fa fa-file-csv"></i> Baixar CSV
+            </button>
+            <button id="downloadJSON" class="btn btn-secondary">
+                <i class="fa fa-file-json"></i> Baixar JSON
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- CSS do modal e do accordion -->
+<style>
+body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
     color: #333;
 }
 
-/* Estilo do container do accordion */
 .accordion {
-    max-width: 700px; /* Alinhado ao quiz-container */
+    max-width: 700px;
     margin: 20px auto;
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
-    background: #fff; /* Fundo branco */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background: #fff;
 }
 
-/* Estilo de cada item do accordion */
 .accordion-item {
-    border-bottom: 1px solid #ddd; /* Linha entre itens */
+    border-bottom: 1px solid #ddd;
 }
 
-/* Estilo do cabeçalho do accordion com cor mais neutra */
 .accordion-header {
-    background: #f0f0f0; /* Cinza claro em vez de azul */
+    background: #f0f0f0;
     color: #333;
     padding: 12px;
     cursor: pointer;
@@ -236,44 +265,34 @@ public function download_json($coleta_id) {
 }
 
 .accordion-header:hover {
-    background: #d8f3dc; /* Verde claro ao passar o mouse, combinando com os botões */
+    background: #d8f3dc;
 }
 
-/* Estilo do botão do accordion */
 .accordion-button {
     width: 100%;
     text-align: left;
     border: none;
     background: none;
-    font-size: 15px; /* Fonte um pouco maior */
+    font-size: 15px;
     color: #333;
 }
 
-/* Corpo do accordion */
 .accordion-body {
     padding: 12px;
-    background: #f9f9f9; /* Fundo cinza claro */
+    background: #f9f9f9;
     transition: max-height 0.3s ease;
 }
 
-/* Margens nos parágrafos dentro do accordion */
 .accordion-body p {
     margin: 8px 0;
     font-size: 14px;
     color: #333;
 }
 
-/* Estilo dos botões */
-.button-group {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-}
-
 .btn {
     display: inline-flex;
     align-items: center;
-    background-color: #4CAF50; /* Verde para combinar com o view.php */
+    background-color: #4CAF50;
     color: white;
     padding: 10px 20px;
     border: none;
@@ -283,26 +302,47 @@ public function download_json($coleta_id) {
 }
 
 .btn:hover {
-    background-color: #45a049; /* Hover verde mais escuro */
+    background-color: #45a049;
 }
 
-/* Ícones dos botões */
-.btn .fa {
-    margin-right: 8px;
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
-.fa-file-json:before {
-    content: "\f6c0";
+.modal-content {
+    background-color: white;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 600px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Tamanho do ícone */
-.fa {
-    font-size: 14px;
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
 }
 
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
 </style>
 
-<!-- JavaScript (usando jQuery para simplificação) -->
+<!-- JavaScript -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
