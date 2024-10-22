@@ -10,78 +10,78 @@ INSERT INTO mysql.mdl_ifcare_classeaeq
 VALUES(3, 'EMOÇÕES RELACIONADAS ÀS ATIVIDADES AVALIATIVAS');
 
 -- EMOTIONS-CLASS
-INSERT INTO mysql.mdl_ifcare_emocao
-(id, classeaeq_id, nome, antes, durante, depois)
-VALUES(1, 1, 'Prazer', 1, 1, 1);
-INSERT INTO mysql.mdl_ifcare_emocao
-(id, classeaeq_id, nome, antes, durante, depois)
-VALUES(2, 1, 'Esperança', 1, 1, 1);
-INSERT INTO mysql.mdl_ifcare_emocao
-(id, classeaeq_id, nome, antes, durante, depois)
-VALUES(3, 1, 'Orgulho', 1, 1, 1);
-INSERT INTO mysql.mdl_ifcare_emocao
-(id, classeaeq_id, nome, antes, durante, depois)
-VALUES(4, 1, 'Raiva', 1, 1, 1);
-INSERT INTO mysql.mdl_ifcare_emocao
-(id, classeaeq_id, nome, antes, durante, depois)
-VALUES(5, 1, 'Ansiedade', 1, 1, 1);
-INSERT INTO mysql.mdl_ifcare_emocao
-(id, classeaeq_id, nome, antes, durante, depois)
-VALUES(6, 1, 'Vergonha', 1, 1, 1);
-INSERT INTO mysql.mdl_ifcare_emocao
-(id, classeaeq_id, nome, antes, durante, depois)
-VALUES(7, 1, 'Desespero', 1, 1, 1);
-INSERT INTO mysql.mdl_ifcare_emocao
-(id, classeaeq_id, nome, antes, durante, depois)
-VALUES(8, 1, 'Tédio', 1, 1, 1);
-INSERT INTO mysql.mdl_ifcare_emocao
-(id, classeaeq_id, nome, antes, durante, depois)
-VALUES(9, 2, 'Prazer', 1, 1, 1);
-INSERT INTO mysql.mdl_ifcare_emocao
-(id, classeaeq_id, nome, antes, durante, depois)
-VALUES(10, 2, 'Esperança', 1, 1, 1);
-INSERT INTO mysql.mdl_ifcare_emocao
-(id, classeaeq_id, nome, antes, durante, depois)
-VALUES(11, 2, 'Orgulho', 1, 1, 1);
-INSERT INTO mysql.mdl_ifcare_emocao
-(id, classeaeq_id, nome, antes, durante, depois)
-VALUES(12, 2, 'Raiva', 1, 1, 1);
-INSERT INTO mysql.mdl_ifcare_emocao
-(id, classeaeq_id, nome, antes, durante, depois)
-VALUES(13, 2, 'Ansiedade', 1, 1, 1);
-INSERT INTO mysql.mdl_ifcare_emocao
-(id, classeaeq_id, nome, antes, durante, depois)
-VALUES(14, 2, 'Vergonha', 1, 1, 1);
-INSERT INTO mysql.mdl_ifcare_emocao
-(id, classeaeq_id, nome, antes, durante, depois)
-VALUES(15, 2, 'Desespero', 1, 1, 1);
-INSERT INTO mysql.mdl_ifcare_emocao
-(id, classeaeq_id, nome, antes, durante, depois)
-VALUES(16, 2, 'Tédio', 1, 1, 1);
-INSERT INTO mysql.mdl_ifcare_emocao
-(id, classeaeq_id, nome, antes, durante, depois)
-VALUES(17, 3, 'Prazer', 1, 1, 1);
-INSERT INTO mysql.mdl_ifcare_emocao
-(id, classeaeq_id, nome, antes, durante, depois)
-VALUES(18, 3, 'Esperança', 1, 1, 1);
-INSERT INTO mysql.mdl_ifcare_emocao
-(id, classeaeq_id, nome, antes, durante, depois)
-VALUES(19, 3, 'Orgulho', 1, 1, 1);
-INSERT INTO mysql.mdl_ifcare_emocao
-(id, classeaeq_id, nome, antes, durante, depois)
-VALUES(20, 3, 'Alívio', 1, 1, 1);
-INSERT INTO mysql.mdl_ifcare_emocao
-(id, classeaeq_id, nome, antes, durante, depois)
-VALUES(21, 3, 'Raiva', 1, 1, 1);
-INSERT INTO mysql.mdl_ifcare_emocao
-(id, classeaeq_id, nome, antes, durante, depois)
-VALUES(22, 3, 'Ansiedade', 1, 1, 1);
-INSERT INTO mysql.mdl_ifcare_emocao
-(id, classeaeq_id, nome, antes, durante, depois)
-VALUES(23, 3, 'Vergonha', 1, 1, 1);
-INSERT INTO mysql.mdl_ifcare_emocao
-(id, classeaeq_id, nome, antes, durante, depois)
-VALUES(24, 3, 'Desespero', 1, 1, 1);
+INSERT INTO mdl_ifcare_emocao
+(id, classeaeq_id, nome, txttooltip, antes, durante, depois)
+VALUES(1, 1, 'Prazer', 'Uma sensação de satisfação e bem-estar, normalmente associada a experiências agradáveis e positivas.', 1, 1, 1);
+INSERT INTO mdl_ifcare_emocao
+(id, classeaeq_id, nome, txttooltip, antes, durante, depois)
+VALUES(2, 1, 'Esperança', 'Um sentimento otimista sobre o futuro, acreditando que algo bom vai acontecer.', 1, 1, 1);
+INSERT INTO mdl_ifcare_emocao
+(id, classeaeq_id, nome, txttooltip, antes, durante, depois)
+VALUES(3, 1, 'Orgulho', 'Um sentimento de satisfação consigo mesmo ou com os outros por realizações, sucesso ou habilidades.', 1, 1, 1);
+INSERT INTO mdl_ifcare_emocao
+(id, classeaeq_id, nome, txttooltip, antes, durante, depois)
+VALUES(4, 1, 'Raiva', 'Uma emoção intensa, muitas vezes resultante de frustração ou injustiça, que pode levar a ações impulsivas.', 1, 1, 1);
+INSERT INTO mdl_ifcare_emocao
+(id, classeaeq_id, nome, txttooltip, antes, durante, depois)
+VALUES(5, 1, 'Ansiedade', 'Um sentimento de preocupação, nervosismo ou medo sobre eventos futuros ou situações incertas.', 1, 1, 1);
+INSERT INTO mdl_ifcare_emocao
+(id, classeaeq_id, nome, txttooltip, antes, durante, depois)
+VALUES(6, 1, 'Vergonha', 'Um sentimento desconfortável ou doloroso causado pela percepção de que algo que você fez ou disse foi errado ou embaraçoso.', 1, 1, 1);
+INSERT INTO mdl_ifcare_emocao
+(id, classeaeq_id, nome, txttooltip, antes, durante, depois)
+VALUES(7, 1, 'Desespero', 'Um sentimento de completa falta de esperança, onde parece que não há soluções ou saídas para uma situação difícil.', 1, 1, 1);
+INSERT INTO mdl_ifcare_emocao
+(id, classeaeq_id, nome, txttooltip, antes, durante, depois)
+VALUES(8, 1, 'Tédio', 'Um estado de falta de interesse ou estímulo, muitas vezes associado à repetição ou à ausência de desafios.', 1, 1, 1);
+INSERT INTO mdl_ifcare_emocao
+(id, classeaeq_id, nome, txttooltip, antes, durante, depois)
+VALUES(9, 2, 'Prazer', 'Uma sensação de satisfação e bem-estar, normalmente associada a experiências agradáveis e positivas.', 1, 1, 1);
+INSERT INTO mdl_ifcare_emocao
+(id, classeaeq_id, nome, txttooltip, antes, durante, depois)
+VALUES(10, 2, 'Esperança', 'Um sentimento otimista sobre o futuro, acreditando que algo bom vai acontecer.', 1, 1, 1);
+INSERT INTO mdl_ifcare_emocao
+(id, classeaeq_id, nome, txttooltip, antes, durante, depois)
+VALUES(11, 2, 'Orgulho', 'Um sentimento de satisfação consigo mesmo ou com os outros por realizações, sucesso ou habilidades.', 1, 1, 1);
+INSERT INTO mdl_ifcare_emocao
+(id, classeaeq_id, nome, txttooltip, antes, durante, depois)
+VALUES(12, 2, 'Raiva', 'Uma emoção intensa, muitas vezes resultante de frustração ou injustiça, que pode levar a ações impulsivas.', 1, 1, 1);
+INSERT INTO mdl_ifcare_emocao
+(id, classeaeq_id, nome, txttooltip, antes, durante, depois)
+VALUES(13, 2, 'Ansiedade', 'Um sentimento de preocupação, nervosismo ou medo sobre eventos futuros ou situações incertas.', 1, 1, 1);
+INSERT INTO mdl_ifcare_emocao
+(id, classeaeq_id, nome, txttooltip, antes, durante, depois)
+VALUES(14, 2, 'Vergonha', 'Um sentimento desconfortável ou doloroso causado pela percepção de que algo que você fez ou disse foi errado ou embaraçoso.', 1, 1, 1);
+INSERT INTO mdl_ifcare_emocao
+(id, classeaeq_id, nome, txttooltip, antes, durante, depois)
+VALUES(15, 2, 'Desespero', 'Um sentimento de completa falta de esperança, onde parece que não há soluções ou saídas para uma situação difícil.', 1, 1, 1);
+INSERT INTO mdl_ifcare_emocao
+(id, classeaeq_id, nome, txttooltip, antes, durante, depois)
+VALUES(16, 2, 'Tédio', 'Um estado de falta de interesse ou estímulo, muitas vezes associado à repetição ou à ausência de desafios.', 1, 1, 1);
+INSERT INTO mdl_ifcare_emocao
+(id, classeaeq_id, nome, txttooltip, antes, durante, depois)
+VALUES(17, 3, 'Prazer', 'Uma sensação de satisfação e bem-estar, normalmente associada a experiências agradáveis e positivas.', 1, 1, 1);
+INSERT INTO mdl_ifcare_emocao
+(id, classeaeq_id, nome, txttooltip, antes, durante, depois)
+VALUES(18, 3, 'Esperança', 'Um sentimento otimista sobre o futuro, acreditando que algo bom vai acontecer.', 1, 1, 1);
+INSERT INTO mdl_ifcare_emocao
+(id, classeaeq_id, nome, txttooltip, antes, durante, depois)
+VALUES(19, 3, 'Orgulho', 'Um sentimento de satisfação consigo mesmo ou com os outros por realizações, sucesso ou habilidades.', 1, 1, 1);
+INSERT INTO mdl_ifcare_emocao
+(id, classeaeq_id, nome, txttooltip, antes, durante, depois)
+VALUES(20, 3, 'Alívio', 'Um sentimento de tranquilidade e conforto que surge quando uma situação estressante, difícil ou dolorosa chega ao fim ou é resolvida.', 1, 1, 1);
+INSERT INTO mdl_ifcare_emocao
+(id, classeaeq_id, nome, txttooltip, antes, durante, depois)
+VALUES(21, 3, 'Raiva', 'Uma emoção intensa, muitas vezes resultante de frustração ou injustiça, que pode levar a ações impulsivas.', 1, 1, 1);
+INSERT INTO mdl_ifcare_emocao
+(id, classeaeq_id, nome, txttooltip, antes, durante, depois)
+VALUES(22, 3, 'Ansiedade', 'Um sentimento de preocupação, nervosismo ou medo sobre eventos futuros ou situações incertas.', 1, 1, 1);
+INSERT INTO mdl_ifcare_emocao
+(id, classeaeq_id, nome, txttooltip, antes, durante, depois)
+VALUES(23, 3, 'Vergonha', 'Um sentimento desconfortável ou doloroso causado pela percepção de que algo que você fez ou disse foi errado ou embaraçoso.', 1, 1, 1);
+INSERT INTO mdl_ifcare_emocao
+(id, classeaeq_id, nome, txttooltip, antes, durante, depois)
+VALUES(24, 3, 'Desespero', 'Um sentimento de completa falta de esperança, onde parece que não há soluções ou saídas para uma situação difícil.', 1, 1, 1);
 
 
 --CLASS RELATED

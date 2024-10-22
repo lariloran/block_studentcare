@@ -10,8 +10,10 @@ $PAGE->set_title("Coleta de Emoções");
 
 $userid = $USER->id; // Obtém o ID do aluno
 
+$coletaR = $DB->get_record('ifcare_cadastrocoleta', ['id' => $coletaid]);
+
 // Verifica se já existe uma resposta do TCLE para este usuário e curso
-$tcle_records = $DB->get_records('ifcare_tcle_resposta', ['aluno_id' => $userid, 'curso_id' => $COURSE->id]);
+$tcle_records = $DB->get_records('ifcare_tcle_resposta', ['aluno_id' => $userid, 'curso_id' => $coletaR->curso_id]);
 
 // Verifica se algum dos registros tem o TCLE aceito
 $tcle_aceito = false;
@@ -24,26 +26,68 @@ foreach ($tcle_records as $record) {
 
 // Adiciona o evento de aceitação ou recusa do TCLE
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Captura a resposta do TCLE do formulário
-    $tcle_aceito_form = optional_param('tcle_aceito', 0, PARAM_INT);
+    // Verifica se os dados são uma requisição JSON para salvar respostas ou uma aceitação de TCLE
+    $input = file_get_contents('php://input');
+    $data = json_decode($input, true);
 
-    if (empty($tcle_records)) {
-        // Insere a resposta na tabela ifcare_tcle_resposta
-        $DB->insert_record('ifcare_tcle_resposta', (object)[
-            'aluno_id' => $userid,
-            'coleta_id' => $coletaid,
-            'tcle_aceito' => $tcle_aceito_form,
-            'curso_id' => $COURSE->id,  // Adiciona o ID do curso
-            'data_resposta' => date('Y-m-d H:i:s')
-        ]);
+    // Verifica se é uma requisição para salvar respostas
+    if (isset($data['coleta_id']) && isset($data['aluno_id']) && isset($data['respostas'])) {
+        try {
+            $coletaid = $data['coleta_id'];
+            $alunoid = $data['aluno_id'];
+            $respostas = $data['respostas']; // Array com as respostas do aluno
+
+            foreach ($respostas as $pergunta_id => $resposta) {
+                if ($resposta !== null) {
+                    // Verifica se a pergunta existe no banco de dados
+                    $pergunta = $DB->get_record('ifcare_pergunta', ['id' => $pergunta_id]);
+            
+                    if ($pergunta) {
+                        // Prepara o objeto de resposta
+                        $nova_resposta = new stdClass();
+                        $nova_resposta->pergunta_id = $pergunta->id;
+                        $nova_resposta->aluno_id = $alunoid;
+                        $nova_resposta->coleta_id = $coletaid;
+                        $nova_resposta->resposta = $resposta;
+                        $nova_resposta->data_resposta = date('Y-m-d H:i:s');
+            
+                        // Insere no banco de dados
+                        $DB->insert_record('ifcare_resposta', $nova_resposta);
+                    }
+                }
+            }
+
+            // Retorna uma resposta de sucesso em JSON
+            header('Content-Type: application/json');
+            echo json_encode(['success' => true]);
+            exit;
+
+        } catch (Exception $e) {
+            // Em caso de erro, retorna a mensagem de erro em JSON
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            exit;
+        }
     }
 
-    // Se o aluno aceitou o TCLE, recarrega a página para exibir as perguntas
-    if ($tcle_aceito_form == 1) {
-        redirect($PAGE->url);
-    } else {
-        // Usuário não aceitou o TCLE, redireciona para o dashboard
-        redirect($CFG->wwwroot . '/my', 'Você deve aceitar o TCLE para continuar.');
+    // Verifica se a aceitação do TCLE foi enviada
+    $tcle_aceito_form = optional_param('tcle_aceito', 0, PARAM_INT);
+    if ($tcle_aceito_form == 1 || $tcle_aceito_form == 0) {
+        if (empty($tcle_records)) {
+            $DB->insert_record('ifcare_tcle_resposta', (object)[
+                'aluno_id' => $userid,
+                'coleta_id' => $coletaid,
+                'tcle_aceito' => $tcle_aceito_form,
+                'curso_id' => $coletaR->curso_id,
+                'data_resposta' => date('Y-m-d H:i:s')
+            ]);
+        }
+
+        // Redireciona conforme a resposta do TCLE
+        if ($tcle_aceito_form == 1) {
+            redirect($PAGE->url); // Recarrega a página para exibir as perguntas
+        } else {
+            redirect($CFG->wwwroot . '/my'); // Redireciona para o dashboard se não aceitar
+        }
     }
 }
 
@@ -79,23 +123,17 @@ echo '<style>
     max-width: 600px;
     margin: 20px auto;
 }
-
 </style>';
 
-// Busca os detalhes da coleta, incluindo as datas de início e fim
-$coleta = $DB->get_record('ifcare_cadastrocoleta', ['id' => $coletaid], '*', MUST_EXIST);
-
 // Verifica se a coleta ainda está dentro do prazo
-$agora = time(); // Timestamp atual
-
-if ($agora < strtotime($coleta->data_inicio)) {
-    echo "<div class='mensagem-sucesso'>A coleta ainda não começou. Ela estará disponível a partir de " . date('d/m/Y H:i', strtotime($coleta->data_inicio)) . ".</div>";
+$agora = time();
+if ($agora < strtotime($coletaR->data_inicio)) {
+    echo "<div class='mensagem-sucesso'>A coleta ainda não começou. Ela estará disponível a partir de " . date('d/m/Y H:i', strtotime($coletaR->data_inicio)) . ".</div>";
     echo $OUTPUT->footer();
     return;
 }
-
-if ($agora > strtotime($coleta->data_fim)) {
-    echo "<div class='mensagem-aviso'>O prazo para responder a esta coleta expirou em " . date('d/m/Y H:i', strtotime($coleta->data_fim)) . ".</div>";
+if ($agora > strtotime($coletaR->data_fim)) {
+    echo "<div class='mensagem-aviso'>O prazo para responder a esta coleta expirou em " . date('d/m/Y H:i', strtotime($coletaR->data_fim)) . ".</div>";
     echo $OUTPUT->footer();
     return;
 }
@@ -115,37 +153,36 @@ if (!$perguntas) {
     exit;
 }
 
-// Convertemos as perguntas em JSON para facilitar a manipulação com JavaScript
+// Converte as perguntas para JSON
 $perguntas_json = json_encode(array_values($perguntas));
 ?>
 
+<!-- Exibição do TCLE (se ainda não aceito) -->
+<div id="tcle-container" style="display: <?php echo $tcle_aceito ? 'none' : 'block'; ?>;">
+    <form id="tcle-form" method="POST" class="tcle-form">
+        <input type="hidden" id="tcle_aceito" name="tcle_aceito" value="0">
+        <p class="tcle-title"><strong>Termo de Consentimento Livre e Esclarecido (TCLE)</strong></p>
+        <p class="tcle-description">
+            Você aceita participar desta coleta de emoções, sabendo que suas respostas (incluindo seu nome e e-mail) serão usadas para fins acadêmicos e pedagógicos?
+        </p>
+        <div id="respostas-tcle" class="respostas-tcle">
+            <button class="buttonTcle" id="aceito-btn" type="button" onclick="enviarResposta(1)">Aceito</button>
+            <button class="buttonTcle" id="nao-aceito-btn" type="button" onclick="enviarResposta(0)">Não Aceito</button>
+        </div>
+    </form>
+</div>
+
+<!-- Exibição do questionário -->
+<?php if ($tcle_aceito): ?>
 <div id="quiz-container">
     <div class="titulo-coleta">Coleta de Emoções</div>
-
-    <!-- TCLE Container (Só será exibido se o usuário ainda não aceitou) -->
-    <div id="tcle-container" style="display: <?php echo $tcle_aceito ? 'none' : 'block'; ?>;">
-        <form id="tcle-form" method="POST">
-            <input type="hidden" id="tcle_aceito" name="tcle_aceito" value="0">
-            <p><strong>Termo de Consentimento Livre e Esclarecido (TCLE)</strong></p>
-            <p>Você aceita participar desta coleta de emoções, sabendo que suas respostas (incluindo seu nome e e-mail) serão usadas para fins acadêmicos e pedagógicos?</p>
-            <div id="respostas-tcle">
-                <button class="emoji-button" id="aceito-btn" type="button" onclick="enviarResposta(1)">Aceito</button>
-                <button class="emoji-button" id="nao-aceito-btn" type="button" onclick="enviarResposta(0)">Não Aceito</button>
-            </div>
-        </form>
-    </div>
-
-    <!-- Barra de progresso (inicialmente oculta) -->
-    <div id="progress-bar-container" style="display: <?php echo $tcle_aceito ? 'block' : 'none'; ?>;">
+    <div id="progress-bar-container">
         <progress id="progress-bar" value="0" max="100"></progress>
         <span id="progress-text">0%</span>
     </div>
+    <div id="pergunta-container"></div>
 
-    <!-- Perguntas (inicialmente oculto até o TCLE ser aceito) -->
-    <div id="pergunta-container" style="display: <?php echo $tcle_aceito ? 'block' : 'none'; ?>;"></div>
-
-    <!-- Botões de resposta (escala Likert com emojis como botões) -->
-    <div id="respostas-container" style="display: <?php echo $tcle_aceito ? 'flex' : 'none'; ?>;">
+    <div id="respostas-container">
         <button class="emoji-button" data-value="1">
             <img src="<?php echo $CFG->wwwroot; ?>/blocks/ifcare/pix/discordoTotalmente.png" alt="Discordo Totalmente" class="emoji-img">
             <span>Discordo Totalmente</span>
@@ -168,13 +205,14 @@ $perguntas_json = json_encode(array_values($perguntas));
         </button>
     </div>
 
-    <!-- Controles de navegação -->
-    <div id="controls" style="display: <?php echo $tcle_aceito ? 'flex' : 'none'; ?>;">
+    <div id="controls">
         <button id="voltar-btn" onclick="voltarPergunta()">Voltar</button>
         <button id="avancar-btn" onclick="avancarPergunta()">Avançar</button>
     </div>
 </div>
+<?php endif; ?>
 
+<!-- Modais de erro e sucesso -->
 <div id="modal-erro" class="modal">
     <div class="modal-content">
         <span class="close" onclick="fecharModal('modal-erro')">&times;</span>
@@ -197,27 +235,55 @@ $perguntas_json = json_encode(array_values($perguntas));
 <script>
 let perguntas = <?php echo $perguntas_json; ?>;
 let perguntaAtual = 0;
+let totalPerguntas = perguntas.length;
+let respostasSelecionadas = {};
 
-// Função para redirecionar para a página inicial do Moodle
-function irParaHome() {
-    window.location.href = '<?php echo $CFG->wwwroot; ?>'; // Redireciona para o dashboard ou página inicial do Moodle
+// Função para exibir uma pergunta
+function mostrarPergunta(index) {
+    let pergunta = perguntas[index];
+    let perguntaContainer = document.getElementById('pergunta-container');
+    if (!perguntaContainer) {
+        console.error("O elemento 'pergunta-container' não foi encontrado.");
+        return;
+    }
+
+    perguntaContainer.innerHTML = `
+        <p>
+            <strong>${pergunta.emocao_nome}</strong>
+            <span class="tooltip-icon">
+                &#9432;
+                <span class="tooltip-text">${pergunta.texto_tooltip}</span>
+            </span>
+        </p>
+        <p class="pergunta-texto">${pergunta.pergunta_texto}</p>
+    `;
+
+    document.querySelectorAll('.emoji-button').forEach(btn => {
+        btn.classList.remove('selected');
+    });
+
+    if (respostasSelecionadas[pergunta.id] !== undefined) {
+        document.querySelector(`.emoji-button[data-value="${respostasSelecionadas[pergunta.id]}"]`).classList.add('selected');
+    }
+
+    let progresso = Math.round(((index + 1) / totalPerguntas) * 100);
+    document.getElementById('progress-bar').value = progresso;
+    document.getElementById('progress-text').innerText = `${progresso}%`;
 }
 
-// Função para exibir a primeira pergunta após o carregamento da página
-window.onload = function() {
-    if (<?php echo json_encode($tcle_aceito); ?>) {
-        mostrarPergunta(perguntaAtual);
-    }
-};
+// Função para capturar resposta
+document.querySelectorAll('.emoji-button').forEach(button => {
+    button.addEventListener('click', function() {
+        let valor = this.getAttribute('data-value');
+        let pergunta = perguntas[perguntaAtual];
 
+        respostasSelecionadas[pergunta.id] = valor;
 
-let totalPerguntas = perguntas.length;
-let respostaSelecionada = null;
-let respostasSelecionadas = new Array(totalPerguntas).fill(null);
-
-document.getElementById('nao-aceito-btn').addEventListener('click', function() {
-    alert('Você deve aceitar o TCLE para continuar.');
-    window.location.href = '<?php echo $CFG->wwwroot; ?>/my'; // Redireciona para a página inicial do usuário
+        document.querySelectorAll('.emoji-button').forEach(btn => {
+            btn.classList.remove('selected');
+        });
+        this.classList.add('selected');
+    });
 });
 
 function enviarResposta(valor) {
@@ -225,110 +291,131 @@ function enviarResposta(valor) {
     document.getElementById('tcle-form').submit();
 }
 
-// Função para capturar o valor do botão clicado ou remover a seleção se clicar no mesmo
-function selecionarResposta(valor) {
-    if (respostaSelecionada === valor) {
-        // Se o emoji clicado já estiver selecionado, desmarca a resposta
-        respostaSelecionada = null;
-        respostasSelecionadas[perguntaAtual] = null;
-
-        // Remove a classe 'selected' de todos os botões
-        document.querySelectorAll('.emoji-button').forEach(btn => {
-            btn.classList.remove('selected');
-        });
-    } else {
-        // Se for uma nova seleção, armazena a resposta e aplica a classe 'selected'
-        respostaSelecionada = valor;
-        respostasSelecionadas[perguntaAtual] = valor;
-
-        // Remove a classe 'selected' de todos os botões e adiciona à resposta selecionada
-        document.querySelectorAll('.emoji-button').forEach(btn => {
-            btn.classList.remove('selected');
-        });
-        document.querySelector(`.emoji-button[data-value="${valor}"]`).classList.add('selected');
-    }
-}
-
-document.querySelectorAll('.emoji-button').forEach(button => {
-    button.addEventListener('click', function() {
-        selecionarResposta(this.getAttribute('data-value'));
-    });
-});
-
-
-// Função para exibir o modal
-function abrirModal(modalId) {
-    document.getElementById(modalId).style.display = 'block';
-}
-
-// Função para fechar o modal
-function fecharModal(modalId) {
-    document.getElementById(modalId).style.display = 'none';
-}
-
-// Função para avançar para a próxima pergunta
 function avancarPergunta() {
-    if (respostasSelecionadas[perguntaAtual] !== null) {
+    if (respostasSelecionadas[perguntas[perguntaAtual].id] !== undefined) {
         if (perguntaAtual < totalPerguntas - 1) {
             perguntaAtual++;
             mostrarPergunta(perguntaAtual);
         } else {
-            abrirModal('modal-sucesso'); // Exibe o modal de sucesso ao concluir a coleta
+            enviarRespostas();
         }
     } else {
-        abrirModal('modal-erro'); // Exibe o modal de erro se não houver resposta selecionada
+        abrirModal('modal-erro');
     }
 }
 
-// Função para exibir a pergunta atual (já existente no seu código)
-function mostrarPergunta(index) {
-    if (index >= 0 && index < totalPerguntas) {
-        let perguntaContainer = document.getElementById('pergunta-container');
-        perguntaContainer.innerHTML = `
-            <p>
-                <strong>${perguntas[index].emocao_nome}</strong>
-                <span class="tooltip-icon">
-                    &#9432;
-                    <span class="tooltip-text">${perguntas[index].texto_tooltip}</span>
-                </span>
-            </p>
-            <p class="pergunta-texto">${perguntas[index].pergunta_texto}</p>
-        `;
-
-        // Remove a classe 'selected' de todos os botões
-        document.querySelectorAll('.emoji-button').forEach(btn => {
-            btn.classList.remove('selected');
-        });
-
-        // Restaura a seleção anterior se houver
-        if (respostasSelecionadas[index] !== null) {
-            document.querySelector(`.emoji-button[data-value="${respostasSelecionadas[index]}"]`).classList.add('selected');
-            respostaSelecionada = respostasSelecionadas[index];
-        }
-
-        // Atualiza a barra de progresso
-        let progresso = Math.round(((index + 1) / totalPerguntas) * 100);
-        document.getElementById('progress-bar').value = progresso;
-        document.getElementById('progress-text').innerText = `${progresso}%`;
-    }
-}
 function voltarPergunta() {
     if (perguntaAtual > 0) {
         perguntaAtual--;
         mostrarPergunta(perguntaAtual);
     }
 }
+
+function enviarRespostas() {
+    const dadosRespostas = {
+        coleta_id: <?php echo $coletaid; ?>,
+        aluno_id: <?php echo $userid; ?>,
+        respostas: respostasSelecionadas
+    };
+
+    fetch(window.location.href, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dadosRespostas)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            abrirModal('modal-sucesso');
+        } else {
+            console.error('Erro ao salvar as respostas:', data.error);
+        }
+    })
+    .catch(error => console.error('Erro na requisição:', error));
+}
+
+function abrirModal(modalId) {
+    document.getElementById(modalId).style.display = 'block';
+}
+
+function fecharModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
+
+function irParaHome() {
+    window.location.href = '<?php echo $CFG->wwwroot; ?>';
+}
+
+window.onload = function() {
+    if (<?php echo json_encode($tcle_aceito); ?>) {
+        mostrarPergunta(perguntaAtual);
+    }
+};
 </script>
 
 <?php
 echo $OUTPUT->footer();
 ?>
 
+</script>
+
 
 
 <style>
+    /* Estilo para o container do TCLE */
+#tcle-container {
+    text-align: center;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+}
 
-    
+/* Estilo para o título do TCLE */
+.tcle-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+/* Estilo para a descrição do TCLE */
+.tcle-description {
+    font-size: 16px;
+    margin-bottom: 20px;
+    color: #555;
+}
+
+/* Alinhar os botões lado a lado */
+.respostas-tcle {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* Espaçamento entre os botões */
+}
+
+/* Estilo dos botões TCLE */
+.buttonTcle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+}
+
+.buttonTcle:hover {
+    background-color: #45a049;
+}
+
 .modal {
     display: none; /* Oculto por padrão */
     position: fixed;
