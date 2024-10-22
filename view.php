@@ -12,6 +12,98 @@ $userid = $USER->id; // Obtém o ID do aluno
 
 $coletaR = $DB->get_record('ifcare_cadastrocoleta', ['id' => $coletaid]);
 
+// Verifica se o aluno já respondeu a esta coleta
+$respostasExistentes = $DB->get_records('ifcare_resposta', ['coleta_id' => $coletaid, 'aluno_id' => $userid]);
+
+if ($respostasExistentes) {
+    // Se o aluno já respondeu, exibe o modal informando
+    echo $OUTPUT->header();
+    echo '
+    
+    <script>
+function irParaHome() {
+    window.location.href = "' . $CFG->wwwroot . '";
+}
+</script>
+    <style>
+/* Estilo para o modal quando o aluno já respondeu à coleta */
+.modal {
+    display: none; /* Oculto por padrão */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fundo escuro */
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra para destaque */
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal h2 {
+    color: #000000;
+    font-size: 24px;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.modal p {
+    font-size: 16px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.modal-btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.modal-btn:hover {
+    background-color: #45a049;
+}
+</style>
+    <div id="modal-ja-respondido" class="modal" style="display:block;">
+        <div class="modal-content">
+            <span class="close" onclick="irParaHome()">&times;</span>
+            <h2>Coleta já Respondida</h2>
+            <p>Você já respondeu a esta coleta de emoções. Obrigado pela sua participação!</p>
+            <button class="modal-btn" onclick="irParaHome()">Ir para Home</button>
+        </div>
+    </div>';
+    echo $OUTPUT->footer();
+    return;
+}
+
 // Verifica se já existe uma resposta do TCLE para este usuário e curso
 $tcle_records = $DB->get_records('ifcare_tcle_resposta', ['aluno_id' => $userid, 'curso_id' => $coletaR->curso_id]);
 
@@ -35,13 +127,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $coletaid = $data['coleta_id'];
             $alunoid = $data['aluno_id'];
+            
+            // Verifica se o usuário já respondeu a essa coleta
+            $respostasExistentes = $DB->get_records('ifcare_resposta', ['coleta_id' => $coletaid, 'aluno_id' => $alunoid]);
+
+            if ($respostasExistentes) {
+                // Se já respondeu, retorne uma mensagem de erro
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'error' => 'Você já respondeu a essa coleta.']);
+                exit;
+            }
+
             $respostas = $data['respostas']; // Array com as respostas do aluno
 
             foreach ($respostas as $pergunta_id => $resposta) {
                 if ($resposta !== null) {
                     // Verifica se a pergunta existe no banco de dados
                     $pergunta = $DB->get_record('ifcare_pergunta', ['id' => $pergunta_id]);
-            
+
                     if ($pergunta) {
                         // Prepara o objeto de resposta
                         $nova_resposta = new stdClass();
@@ -50,7 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $nova_resposta->coleta_id = $coletaid;
                         $nova_resposta->resposta = $resposta;
                         $nova_resposta->data_resposta = date('Y-m-d H:i:s');
-            
+
                         // Insere no banco de dados
                         $DB->insert_record('ifcare_resposta', $nova_resposta);
                     }
@@ -64,6 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         } catch (Exception $e) {
             // Em caso de erro, retorna a mensagem de erro em JSON
+            header('Content-Type: application/json');
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
             exit;
         }
@@ -238,6 +342,11 @@ let perguntaAtual = 0;
 let totalPerguntas = perguntas.length;
 let respostasSelecionadas = {};
 
+// Função para redirecionar para a página inicial do Moodle
+function irParaHome() {
+    window.location.href = '<?php echo $CFG->wwwroot; ?>'; // Redireciona para o dashboard ou página inicial do Moodle
+}
+
 // Função para exibir uma pergunta
 function mostrarPergunta(index) {
     let pergunta = perguntas[index];
@@ -291,18 +400,7 @@ function enviarResposta(valor) {
     document.getElementById('tcle-form').submit();
 }
 
-function avancarPergunta() {
-    if (respostasSelecionadas[perguntas[perguntaAtual].id] !== undefined) {
-        if (perguntaAtual < totalPerguntas - 1) {
-            perguntaAtual++;
-            mostrarPergunta(perguntaAtual);
-        } else {
-            enviarRespostas();
-        }
-    } else {
-        abrirModal('modal-erro');
-    }
-}
+
 
 function voltarPergunta() {
     if (perguntaAtual > 0) {
@@ -311,11 +409,39 @@ function voltarPergunta() {
     }
 }
 
+let coletaConcluida = false; // Variável para controlar se a coleta já foi concluída
+
+// Função para avançar para a próxima pergunta
+function avancarPergunta() {
+    if (coletaConcluida) {
+        abrirModal('modal-sucesso'); // Se já foi concluído, abre o modal novamente
+        return;
+    }
+
+    if (respostasSelecionadas[perguntas[perguntaAtual].id] !== undefined) {
+        if (perguntaAtual < totalPerguntas - 1) {
+            perguntaAtual++;
+            mostrarPergunta(perguntaAtual);
+        } else {
+            // Enviar as respostas quando todas as perguntas forem respondidas
+            enviarRespostas();
+        }
+    } else {
+        abrirModal('modal-erro'); // Exibe o modal de erro se nenhuma resposta for selecionada
+    }
+}
+
+// Função para enviar as respostas para o backend
 function enviarRespostas() {
+    if (coletaConcluida) {
+        abrirModal('modal-sucesso'); // Se já foi concluído, abre o modal novamente
+        return;
+    }
+
     const dadosRespostas = {
         coleta_id: <?php echo $coletaid; ?>,
         aluno_id: <?php echo $userid; ?>,
-        respostas: respostasSelecionadas
+        respostas: respostasSelecionadas // Enviar o objeto com respostas associadas ao ID da pergunta
     };
 
     fetch(window.location.href, {
@@ -328,13 +454,13 @@ function enviarRespostas() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            abrirModal('modal-sucesso');
+            coletaConcluida = true; // Marca a coleta como concluída
+            abrirModal('modal-sucesso'); // Exibe o modal de sucesso ao concluir a coleta
         } else {
             console.error('Erro ao salvar as respostas:', data.error);
         }
-    })
-    .catch(error => console.error('Erro na requisição:', error));
-}
+    });}
+
 
 function abrirModal(modalId) {
     document.getElementById(modalId).style.display = 'block';
@@ -342,10 +468,6 @@ function abrirModal(modalId) {
 
 function fecharModal(modalId) {
     document.getElementById(modalId).style.display = 'none';
-}
-
-function irParaHome() {
-    window.location.href = '<?php echo $CFG->wwwroot; ?>';
 }
 
 window.onload = function() {
