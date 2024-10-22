@@ -23,6 +23,8 @@ class ColetaManager {
     // Método para gerar a lista de coletas em HTML
 // Método para gerar a lista de coletas em HTML
 public function listar_coletas($professor_id) {
+    global $DB; // Certifique-se de usar o objeto DB para realizar consultas
+    
     // Obtém as coletas
     $coletas = $this->get_coletas_by_professor($professor_id);
     
@@ -38,6 +40,10 @@ public function listar_coletas($professor_id) {
 
     // Itera pelas coletas e cria os itens da lista
     foreach ($coletas as $coleta) {
+        // Busca o nome do curso (disciplina) a partir do curso_id
+        $curso = $DB->get_record('course', ['id' => $coleta->curso_id], 'fullname');
+        $curso_nome = $curso ? format_string($curso->fullname) : 'Disciplina não encontrada';
+
         $html .= '<div class="accordion-item">';
         $html .= '<div class="accordion-header">';
         $html .= '<button class="accordion-button" type="button" data-toggle="collapse" data-target="#coleta' . $coleta->id . '" aria-expanded="false" aria-controls="coleta' . $coleta->id . '">';
@@ -48,26 +54,25 @@ public function listar_coletas($professor_id) {
         // Detalhes da coleta
         $html .= '<div id="coleta' . $coleta->id . '" class="collapse accordion-body">';
         $html .= '<p><strong>Descrição:</strong> ' . (!empty($coleta->descricao) ? format_text($coleta->descricao) : '--') . '</p>';
-        $html .= '<p><strong>ID do Curso:</strong> ' . format_string($coleta->curso_id) . '</p>';
+        $html .= '<p><strong>Disciplina:</strong> ' . $curso_nome . '</p>';  // Mostra o nome da disciplina aqui
         $html .= '<p><strong>Data de Início:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_inicio)) . '</p>';
         $html .= '<p><strong>Data de Fim:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_fim)) . '</p>';
 
-        // Adiciona as informações de notificação
-        $html .= '<p><strong>Notificar Aluno:</strong> ' . ($coleta->notificar_alunos ? 'Sim' : 'Não') . '</p>';
-        $html .= '<p><strong>Receber Alerta:</strong> ' . ($coleta->receber_alerta ? 'Sim' : 'Não') . '</p>';
-
-// Botões CSV e JSON
-$html .= '<div class="button-group">';
-$html .= '<button class="btn btn-secondary" onclick="downloadCSV(' . $coleta->id . ');">';
-$html .= '<i class="fa fa-file-csv"></i> Baixar CSV';
-$html .= '</button>';
-
-$html .= '<button class="btn btn-secondary" onclick="downloadJSON(' . $coleta->id . ');">';
-$html .= '<i class="fa fa-file-json"></i> Baixar JSON'; // Ícone JSON
-$html .= '</button>';
-$html .= '</div>'; // Fecha button-group
+    // Adiciona as informações de notificação
+$html .= '<p><strong>Notificar Aluno:</strong> ' . ($coleta->notificar_alunos == 1 ? 'Sim' : 'Não') . '</p>';
+$html .= '<p><strong>Receber Alerta:</strong> ' . ($coleta->receber_alerta == 1 ? 'Sim' : 'Não') . '</p>';
 
 
+        // Botões CSV e JSON
+        $html .= '<div class="button-group">';
+        $html .= '<button class="btn btn-secondary" onclick="downloadCSV(' . $coleta->id . ');">';
+        $html .= '<i class="fa fa-file-csv"></i> Baixar CSV';
+        $html .= '</button>';
+
+        $html .= '<button class="btn btn-secondary" onclick="downloadJSON(' . $coleta->id . ');">';
+        $html .= '<i class="fa fa-file-json"></i> Baixar JSON';
+        $html .= '</button>';
+        $html .= '</div>'; // Fecha button-group
 
         $html .= '</div>'; // Fecha collapse
         $html .= '</div>'; // Fecha accordion-item
@@ -76,24 +81,21 @@ $html .= '</div>'; // Fecha button-group
     // Fecha a lista
     $html .= '</div>';
     
-// Adiciona a função JavaScript
-$html .= '<script>
-    function downloadCSV(coletaId) {
+    // Adiciona a função JavaScript
+    $html .= '<script>
+        function downloadCSV(coletaId) {
+            const downloadUrl = "Download.php?coleta_id=" + coletaId;
+            window.location.href = downloadUrl; // Redireciona para o download
+        }
+    </script>';
 
-const downloadUrl = "Download.php?coleta_id=" + coletaId;
-                window.location.href = downloadUrl; // Redireciona para o download
-
-    }
-</script>';
-
-// Adiciona a função JavaScript para download em JSON
-$html .= '<script>
-    function downloadJSON(coletaId) {
-        const downloadUrl = "Download.php?coleta_id=" + coletaId + "&format=json"; // Passa o formato como parâmetro
-        window.location.href = downloadUrl; // Redireciona para o download
-    }
-</script>';
-
+    // Adiciona a função JavaScript para download em JSON
+    $html .= '<script>
+        function downloadJSON(coletaId) {
+            const downloadUrl = "Download.php?coleta_id=" + coletaId + "&format=json"; // Passa o formato como parâmetro
+            window.location.href = downloadUrl; // Redireciona para o download
+        }
+    </script>';
 
     return $html;
 }
@@ -203,75 +205,99 @@ public function download_json($coleta_id) {
 ?>
 
 <!-- CSS -->
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
-        color: #333;
-    }
+<style>body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+}
 
-    .accordion {
-        max-width: 600px; /* Limitar a largura do acordeão */
-        margin: 20px auto; /* Centralizar o acordeão */
-        border-radius: 8px; /* Cantos arredondados */
-        overflow: hidden; /* Esconde bordas no colapso */
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
-        background: #fff; /* Fundo branco */
-    }
+/* Estilo do container do accordion */
+.accordion {
+    max-width: 700px; /* Alinhado ao quiz-container */
+    margin: 20px auto;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    background: #fff; /* Fundo branco */
+}
 
-    .accordion-item {
-        border-bottom: 1px solid #ddd; /* Linha entre itens */
-    }
+/* Estilo de cada item do accordion */
+.accordion-item {
+    border-bottom: 1px solid #ddd; /* Linha entre itens */
+}
 
-    .accordion-header {
-        background: #b3d7ff; /* Cor de fundo suave */
-        color: #333; /* Texto escuro */
-        padding: 10px; /* Padding para o cabeçalho */
-        cursor: pointer; /* Cursor de pointer para indicar que é clicável */
-        transition: background 0.3s; /* Transição suave para a cor de fundo */
-    }
+/* Estilo do cabeçalho do accordion com cor mais neutra */
+.accordion-header {
+    background: #f0f0f0; /* Cinza claro em vez de azul */
+    color: #333;
+    padding: 12px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
 
-    .accordion-header:hover {
-        background: #99c2ff; /* Cor de fundo ao passar o mouse */
-    }
+.accordion-header:hover {
+    background: #d8f3dc; /* Verde claro ao passar o mouse, combinando com os botões */
+}
 
-    .accordion-button {
-        width: 100%; /* Largura total do botão */
-        text-align: left; /* Alinhamento à esquerda */
-        border: none; /* Sem borda */
-        background: none; /* Sem fundo */
-        font-size: 14px; /* Tamanho da fonte reduzido */
-        color: #333; /* Texto escuro */
-    }
+/* Estilo do botão do accordion */
+.accordion-button {
+    width: 100%;
+    text-align: left;
+    border: none;
+    background: none;
+    font-size: 15px; /* Fonte um pouco maior */
+    color: #333;
+}
 
-    .accordion-body {
-        padding: 10px; /* Padding para o corpo */
-        background: #f9f9f9; /* Fundo cinza claro */
-        transition: max-height 0.2s ease-out; /* Transição para altura máxima */
-    }
+/* Corpo do accordion */
+.accordion-body {
+    padding: 12px;
+    background: #f9f9f9; /* Fundo cinza claro */
+    transition: max-height 0.3s ease;
+}
 
-    .accordion-body p {
-        margin: 4px 0; /* Margem reduzida nos parágrafos */
-        font-size: 13px; /* Tamanho da fonte dos parágrafos */
-    }
+/* Margens nos parágrafos dentro do accordion */
+.accordion-body p {
+    margin: 8px 0;
+    font-size: 14px;
+    color: #333;
+}
 
-    .fa {
-        margin-right: 8px; /* Espaçamento para o ícone */
-    }
-    .button-group {
-    display: flex; /* Alinha os botões lado a lado */
-    gap: 10px; /* Espaço entre os botões */
-    margin-top: 10px; /* Espaçamento superior */
+/* Estilo dos botões */
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
 }
 
 .btn {
     display: inline-flex;
     align-items: center;
-    gap: 5px; /* Espaço entre o ícone e o texto */
+    background-color: #4CAF50; /* Verde para combinar com o view.php */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #45a049; /* Hover verde mais escuro */
+}
+
+/* Ícones dos botões */
+.btn .fa {
+    margin-right: 8px;
 }
 
 .fa-file-json:before {
-    content: "\f6c0"; /* Substitua com o código Unicode correto para o ícone JSON (se suportado pela sua versão do Font Awesome) */
+    content: "\f6c0";
+}
+
+/* Tamanho do ícone */
+.fa {
+    font-size: 14px;
 }
 
 </style>
