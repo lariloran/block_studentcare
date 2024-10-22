@@ -177,24 +177,46 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   function atualizarResumo() {
-    resumoSelecoes.innerHTML = "";
+    resumoSelecoes.innerHTML = ""; // Limpa o conteúdo do resumo
 
-    // Exibir o resumo com todas as seleções de todas as classes
+    // Itera sobre as classes disponíveis no dropdown
     const options = choiceDropdown.options;
     for (let i = 0; i < options.length; i++) {
-      const classe = options[i].text;
-      if (selecoes[classe] && selecoes[classe].length > 0) {
-        const emocoes = selecoes[classe].join(", ");
-        const resumoItem = document.createElement("div");
-        resumoItem.textContent = `${classe}: ${emocoes}`;
-        resumoSelecoes.appendChild(resumoItem);
-      } else {
-        const resumoItem = document.createElement("div");
-        resumoItem.textContent = `${classe}: Nenhuma emoção selecionada`;
-        resumoSelecoes.appendChild(resumoItem);
-      }
+        const classe = options[i].text;
+        const divClasse = document.createElement("div");
+        divClasse.classList.add("classe-resumo");
+
+        // Adiciona um título sutil para cada classe
+        const tituloClasse = document.createElement("strong");
+        tituloClasse.textContent = `${classe}:`;
+        tituloClasse.style.fontWeight = 'bold'; // Aumenta a espessura da fonte para destacar
+        tituloClasse.style.color = '#5a9e6f'; // Verde mais suave
+        tituloClasse.style.fontSize = '1em'; // Fonte sutil
+
+        // Adiciona o título ao div da classe
+        divClasse.appendChild(tituloClasse);
+
+        // Verifica se há emoções selecionadas para essa classe
+        if (selecoes[classe] && selecoes[classe].length > 0) {
+            // Lista as emoções selecionadas com uma cor discreta
+            const emocoes = selecoes[classe].join(", ");
+            const emocoesSpan = document.createElement("span");
+            emocoesSpan.textContent = ` ${emocoes}`;
+            emocoesSpan.style.color = "#555"; // Tom de cinza mais neutro
+            divClasse.appendChild(emocoesSpan);
+        } else {
+            // Caso não tenha emoções selecionadas, exibe uma mensagem em cinza claro
+            const semEmocoes = document.createElement("span");
+            semEmocoes.textContent = " Nenhuma emoção selecionada";
+            semEmocoes.style.color = "#999"; // Tom mais discreto de cinza
+            divClasse.appendChild(semEmocoes);
+        }
+
+        // Adiciona o resumo ao container
+        resumoSelecoes.appendChild(divClasse);
     }
-  }
+}
+
 
   // Inicialização - Adiciona mensagens iniciais no quadro de resumo
   function inicializarResumo() {
