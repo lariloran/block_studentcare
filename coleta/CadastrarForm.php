@@ -42,26 +42,33 @@ class CadastrarForm extends moodleform
         $nomeColeta = "COLETA-" . date('YmdHi', strtotime($dataAtual)); // Formata conforme necessário
 
 
-// Obtém todos os cursos em que o professor está matriculado
-$cursos = $this->get_user_courses($USER->id); 
-$options = array();
 
-if (!empty($cursos)) {
-    // Ordena os cursos em ordem alfabética
-    usort($cursos, function($a, $b) {
-        return strcmp($a->fullname, $b->fullname);
-    });
+        // Campo Nome (preenchido e congelado)
+        $mform->addElement('text', 'name', get_string('name', 'block_ifcare'), array('size' => '50', 'readonly' => 'readonly'));
+        $mform->setType('name', PARAM_NOTAGS);
+        $mform->setDefault('name', $nomeColeta); // Define o valor padrão
 
-    // Preenche o array de opções com os cursos ordenados
-    foreach ($cursos as $curso) {
-        $options[$curso->id] = $curso->fullname; // Adiciona o curso ao array de opções
-    }
-} else {
-   // $options[0] = get_string('nocourses', 'block_ifcare'); // Mensagem de erro caso não haja cursos
-}
 
-$mform->addElement('select', 'courseid', get_string('select_course', 'block_ifcare'), $options); 
-$mform->setType('courseid', PARAM_INT);
+        // Obtém todos os cursos em que o professor está matriculado
+        $cursos = $this->get_user_courses($USER->id); 
+        $options = array();
+
+        if (!empty($cursos)) {
+            // Ordena os cursos em ordem alfabética
+            usort($cursos, function($a, $b) {
+                return strcmp($a->fullname, $b->fullname);
+            });
+
+            // Preenche o array de opções com os cursos ordenados
+            foreach ($cursos as $curso) {
+                $options[$curso->id] = $curso->fullname; // Adiciona o curso ao array de opções
+            }
+        } else {
+        // $options[0] = get_string('nocourses', 'block_ifcare'); // Mensagem de erro caso não haja cursos
+        }
+
+        $mform->addElement('select', 'courseid', get_string('select_course', 'block_ifcare'), $options); 
+        $mform->setType('courseid', PARAM_INT);
 
 
         // Adiciona um campo de seleção para seções (inicialmente vazio)

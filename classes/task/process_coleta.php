@@ -30,6 +30,10 @@ class process_coleta extends \core\task\scheduled_task
             foreach ($coletas as $coleta) {
                 mtrace("Processando coleta: " . $coleta->nome);
 
+                $curso = $DB->get_record('course', ['id' => $coleta->curso_id]);
+ 
+                $this->adicionar_recurso_url($coleta, $curso);
+
                 // Envia notificações para alunos matriculados
                 $this->enviar_notificacao($coleta);
 
@@ -99,7 +103,7 @@ class process_coleta extends \core\task\scheduled_task
     
         // Dados do recurso URL que será criado na primeira seção
         $urlparams->section = $first_section_num; // Sempre na primeira seção
-        $urlparams->name = "Coleta: {$coleta->nome}";
+        $urlparams->name = "{$coleta->nome}";
         $urlparams->intro = "Acesse a coleta de emoções: <a href='{$CFG->wwwroot}/blocks/ifcare/view.php?coletaid={$coleta->id}'>Clique aqui</a>";
         $urlparams->introformat = FORMAT_HTML;
         $urlparams->externalurl = "{$CFG->wwwroot}/blocks/ifcare/view.php?coletaid={$coleta->id}";
@@ -164,8 +168,6 @@ class process_coleta extends \core\task\scheduled_task
             message_send($eventdata);
         }
     
-        // Adiciona o recurso URL em todas as seções do curso
-        $this->adicionar_recurso_url($coleta, $curso);
     }
     
     

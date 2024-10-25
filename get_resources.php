@@ -7,13 +7,16 @@ $sectionnum = required_param('sectionid', PARAM_INT);
 
 $response = ['resources' => ''];
 
+// Adiciona a primeira opção vazia
+$response['resources'] .= "<option value=''>Não vincular a nenhuma atividade/recurso</option>";
+
 try {
     // Obtém as informações do curso
     $modinfo = get_fast_modinfo($courseid);
 
     // Verifica se a seção existe
     if (!isset($modinfo->get_sections()[$sectionnum])) {
-        throw new Exception("Seção não encontrada.");
+        throw new Exception("Não há atividade/recurso nesta seção.");
     }
 
     $section_modules = $modinfo->get_sections()[$sectionnum];
