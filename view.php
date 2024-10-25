@@ -11,6 +11,7 @@ $PAGE->set_title("Coleta de Emoções");
 $userid = $USER->id; // Obtém o ID do aluno
 
 $coletaR = $DB->get_record('ifcare_cadastrocoleta', ['id' => $coletaid]);
+$cursoR = $DB->get_record('course', ['id' => $coletaR->curso_id]);
 
 // Verifica se o aluno já respondeu a esta coleta
 $respostasExistentes = $DB->get_records('ifcare_resposta', ['coleta_id' => $coletaid, 'aluno_id' => $userid]);
@@ -175,7 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Verifica se a aceitação do TCLE foi enviada
     $tcle_aceito_form = optional_param('tcle_aceito', 0, PARAM_INT);
-    if ($tcle_aceito_form == 1 || $tcle_aceito_form == 0) {
+    if ($tcle_aceito_form == 1) {
         if (empty($tcle_records)) {
             $DB->insert_record('ifcare_tcle_resposta', (object)[
                 'aluno_id' => $userid,
@@ -185,13 +186,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'data_resposta' => date('Y-m-d H:i:s')
             ]);
         }
+        redirect($PAGE->url); // Recarrega a página para exibir as perguntas
 
-        // Redireciona conforme a resposta do TCLE
-        if ($tcle_aceito_form == 1) {
-            redirect($PAGE->url); // Recarrega a página para exibir as perguntas
-        } else {
-            redirect($CFG->wwwroot . '/my'); // Redireciona para o dashboard se não aceitar
-        }
+    }else{
+        redirect($CFG->wwwroot . '/my'); // Redireciona para o dashboard se não aceitar
     }
 }
 
@@ -267,7 +265,7 @@ $perguntas_json = json_encode(array_values($perguntas));
         <input type="hidden" id="tcle_aceito" name="tcle_aceito" value="0">
         <p class="tcle-title"><strong>Termo de Consentimento Livre e Esclarecido (TCLE)</strong></p>
         <p class="tcle-description">
-            Você aceita participar desta coleta de emoções, sabendo que suas respostas (incluindo seu nome e e-mail) serão usadas para fins acadêmicos e pedagógicos?
+        Ao participar desta coleta de emoções e das demais para a disciplina <strong><?php echo $cursoR->fullname; ?></strong>, você permite o uso de suas respostas (incluindo nome e e-mail) para fins acadêmicos e pedagógicos, contribuindo para pesquisas que visam melhorar o processo de ensino e aprendizagem.
         </p>
         <div id="respostas-tcle" class="respostas-tcle">
             <button class="buttonTcle" id="aceito-btn" type="button" onclick="enviarResposta(1)">Aceito</button>
@@ -311,6 +309,8 @@ $perguntas_json = json_encode(array_values($perguntas));
 
     <div id="controls">
         <button id="voltar-btn" onclick="voltarPergunta()">Voltar</button>
+        <a href="https://poa.ifrs.edu.br/index.php/editais-2/apoio-academico" target="_blank" id="ajuda-emocional-link">Precisa de ajuda emocional?</a>
+
         <button id="avancar-btn" onclick="avancarPergunta()">Avançar</button>
     </div>
 </div>
@@ -486,6 +486,23 @@ echo $OUTPUT->footer();
 
 
 <style>
+
+#ajuda-emocional-link {
+    color: #0073e6; /* Cor azul suave */
+    font-size: 16px;
+    text-decoration: none; /* Remove o sublinhado padrão */
+    margin: 0 15px; /* Espaçamento ao redor do link */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.3s ease;
+}
+
+#ajuda-emocional-link:hover {
+    color: #005bb5; /* Escurece a cor ao passar o mouse */
+    text-decoration: underline; /* Mostra o sublinhado ao passar o mouse */
+}
+
     /* Estilo para o container do TCLE */
 #tcle-container {
     text-align: center;

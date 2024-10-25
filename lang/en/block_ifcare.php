@@ -13,6 +13,14 @@ $string['emotions'] = 'Selecione uma ou mais emoções';
 $string['momentblock'] = 'Selecione um bloco';
 $string['alertprogress'] = 'Receber alerta do andamento da coleta';
 $string['notify_students'] = 'Notificar os alunos';
+$string['select_section'] = 'Seleciona uma seção';
+$string['select_resource'] = 'Selecione a atividade/recurso';
+
+$string['select_course'] = 'Selecione o curso';
+$string['select_section'] = 'Selecione a seção';
+$string['select_resource'] = 'Selecione o recurso ou atividade';
+$string['loading_sections'] = 'Carregando seções...';
+
 
 $string['submit'] = 'Salvar';
 $string['cancel'] = 'Cancelar';

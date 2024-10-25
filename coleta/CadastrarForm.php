@@ -9,10 +9,11 @@ class CadastrarForm extends moodleform
     
     public function get_user_courses($userid) {
         global $DB;
-
-        // Obter todos os cursos em que o usuário está matriculado
+    
+        // Obter todos os cursos em que o usuário está matriculado e visíveis
         return enrol_get_users_courses($userid, true); // true para incluir cursos visíveis
     }
+    
 
     public function __construct()
     {
@@ -40,30 +41,43 @@ class CadastrarForm extends moodleform
         $dataAtual = date('Y-m-d H:i'); // Obtém a data e hora atual
         $nomeColeta = "COLETA-" . date('YmdHi', strtotime($dataAtual)); // Formata conforme necessário
 
-        // Campo Nome (preenchido e congelado)
-        $mform->addElement('text', 'name', get_string('name', 'block_ifcare'), array('size' => '50', 'readonly' => 'readonly'));
-        $mform->setType('name', PARAM_NOTAGS);
-        $mform->setDefault('name', $nomeColeta); // Define o valor padrão
 
-        // Adiciona um campo de seleção para cursos
-        $mform->addElement('select', 'courseid', get_string('select_course', 'block_ifcare'), array());
+// Obtém todos os cursos em que o professor está matriculado
+$cursos = $this->get_user_courses($USER->id); 
+$options = array();
 
-        // Obtém todos os cursos em que o professor está matriculado
-        $cursos = $this->get_user_courses($USER->id); // Chamada corrigida
-        $options = array();
+if (!empty($cursos)) {
+    // Ordena os cursos em ordem alfabética
+    usort($cursos, function($a, $b) {
+        return strcmp($a->fullname, $b->fullname);
+    });
 
-        // Ordena os cursos em ordem alfabética
-        usort($cursos, function($a, $b) {
-            return strcmp($a->fullname, $b->fullname);
-        });
+    // Preenche o array de opções com os cursos ordenados
+    foreach ($cursos as $curso) {
+        $options[$curso->id] = $curso->fullname; // Adiciona o curso ao array de opções
+    }
+} else {
+   // $options[0] = get_string('nocourses', 'block_ifcare'); // Mensagem de erro caso não haja cursos
+}
 
-        // Preenche o array de opções com os cursos ordenados
-        foreach ($cursos as $curso) {
-            $options[$curso->id] = $curso->fullname; // Adiciona o curso ao array de opções
-        }
+$mform->addElement('select', 'courseid', get_string('select_course', 'block_ifcare'), $options); 
+$mform->setType('courseid', PARAM_INT);
 
-        $mform->getElement('courseid')->loadArray($options); // Carrega as opções para o select
-        $mform->setType('courseid', PARAM_INT);
+
+        // Adiciona um campo de seleção para seções (inicialmente vazio)
+        $mform->addElement('select', 'sectionid', get_string('select_section', 'block_ifcare'), array());
+        $mform->setType('sectionid', PARAM_INT);
+
+        // Adiciona um campo de seleção para recursos/atividades (inicialmente vazio)
+        $mform->addElement('select', 'resourceid', get_string('select_resource', 'block_ifcare'), array());
+        $mform->setType('resourceid', PARAM_INT);
+
+        // Inclui o script JavaScript para fazer a chamada AJAX
+        $PAGE->requires->js(new moodle_url('/blocks/ifcare/js/dynamicform.js'));
+
+
+
+
 
 
         // Campo Data e Hora de Início da coleta
