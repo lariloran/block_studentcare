@@ -111,7 +111,6 @@ if ($id == 1) { // Se for a seção Cadastrar
     
  // Apenas processe os dados se o formulário for enviado
  if ($data = $mform->get_data()) {
-    error_log(print_r($data, true)); // Salva o conteúdo de $data no log de erro do servidor
     $mform->process_form($data);
 }
 

@@ -8,8 +8,6 @@ class block_ifcare extends block_base {
     public function get_content() {
         global $OUTPUT, $USER, $COURSE, $DB, $PAGE;
 
-        $PAGE->requires->js_call_amd('block_ifcare/block_ifcare', 'init');
-
         if ($this->content !== null) {
             return $this->content;
         }

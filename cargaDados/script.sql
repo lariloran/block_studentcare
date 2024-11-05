@@ -1,13 +1,13 @@
 -- AEQ CLASS
 INSERT INTO mysql.mdl_ifcare_classeaeq
 (id, nome_classe)
-VALUES(1, 'EMOÇÕES RELACIONADAS ÀS AULAS');
+VALUES(1, 'Emoções Relacionadas às aulas');
 INSERT INTO mysql.mdl_ifcare_classeaeq
 (id, nome_classe)
-VALUES(2, 'EMOÇÕES RELACIONADAS AO APRENDIZADO');
+VALUES(2, 'Emoções Relacionadas ao aprendizado');
 INSERT INTO mysql.mdl_ifcare_classeaeq
 (id, nome_classe)
-VALUES(3, 'EMOÇÕES RELACIONADAS ÀS ATIVIDADES AVALIATIVAS');
+VALUES(3, 'Emoções Relacionadas às atividades avaliativas');
 
 -- EMOTIONS-CLASS
 INSERT INTO mdl_ifcare_emocao

@@ -37,10 +37,12 @@ class CadastrarForm extends moodleform
 
         $PAGE->set_context($context);
 
-        // Gerar o nome da coleta no formato COLETA-DATADEHOJEHORAMINUTO
-        $dataAtual = date('Y-m-d H:i'); // Obtém a data e hora atual
-        $nomeColeta = "COLETA-" . date('YmdHi', strtotime($dataAtual)); // Formata conforme necessário
-
+        $dataAtual = date('Y-m-d H:i:s'); // Obtém a data e hora atual
+        $microsegundos = explode(' ', microtime())[0] * 1000; // Obtém os microsegundos e converte para milissegundos
+        $milissegundos = str_pad((int)$microsegundos, 3, '0', STR_PAD_LEFT); // Formata para garantir 3 dígitos
+        
+        $nomeColeta = "COLETA-" . date('YmdHis') . $milissegundos; // Formata conforme necessário, incluindo os milissegundos
+        
 
 
         // Campo Nome (preenchido e congelado)
@@ -123,15 +125,13 @@ class CadastrarForm extends moodleform
         $mform->setType('emocoes', PARAM_INT);
 
 
-        //div resumo das seleções da tabela
-        $mform->addElement('html', '<div class="fitem">
-            <div class="fitemtitle">Resumo das Seleções</div>
-            <div class="felement" id="resumo-selecoes">
-                <ul id="resumo-lista">
-                    <!-- Itens do resumo serão inseridos aqui pelo JavaScript -->
-                </ul>
+        // Div para resumo das seleções, agora exibindo balões para cada emoção selecionada
+        $mform->addElement('html', '
+            <div class="fitem">
+                <div class="fitemtitle">Resumo das Seleções</div>
+                    <div id="emocoes-selecionadas" class="selected-emotions-container"></div>
             </div>
-        </div>');
+        ');
 
         // Flag "Receber alerta do andamento da coleta"
         $mform->addElement('advcheckbox', 'alertprogress', get_string('alertprogress', 'block_ifcare'), null, array('group' => 1), array(0, 1));
@@ -147,35 +147,9 @@ class CadastrarForm extends moodleform
 
         $mform->addElement('hidden', 'userid', $USER->id);
         $mform->setType('userid', PARAM_INT);
-
-
-
-        
+    
         // Inclui o script JavaScript para fazer a chamada AJAX
         $PAGE->requires->js(new moodle_url('/blocks/ifcare/js/dynamicform.js'));
-
-        // Adicionando o modal de confirmação
-        $mform->addElement('html', '
-        <div class="modal fade" id="confirmacaoModal" tabindex="-1" role="dialog" aria-labelledby="confirmacaoModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="confirmacaoModalLabel">Confirmação</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        Está pronto para salvar esta coleta de emoções?
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="button" id="confirmarSalvar" class="btn btn-primary">Confirmar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        ');
 
     }
     
@@ -231,7 +205,6 @@ class CadastrarForm extends moodleform
     
             // Processar as emoções selecionadas para cada classe AEQ
             $emocaoSelecionadas = json_decode($data->emocao_selecionadas, true);
-            error_log(print_r($emocaoSelecionadas, true)); // Salva o conteúdo de $data no log de erro do servidor
     
             // Verificar se $emocaoSelecionadas é um array antes de tentar iterar
             if (is_array($emocaoSelecionadas) && !empty($emocaoSelecionadas)) {

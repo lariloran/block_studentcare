@@ -107,7 +107,7 @@ class process_coleta extends \core\task\scheduled_task
 
         // Dados do recurso URL que será criado na seção especificada
         $urlparams->section = $section_id; // Utiliza a seção definida na coleta
-        $urlparams->name = "{$coleta->nome}";
+        $urlparams->name = "IFCare - Como você está se sentindo hoje? Responda a coleta e ajude-nos a entender melhor suas emoções!";
         $urlparams->intro = "Acesse a coleta de emoções: <a href='{$CFG->wwwroot}/blocks/ifcare/view.php?coletaid={$coleta->id}'>Clique aqui</a>";
         $urlparams->introformat = FORMAT_HTML;
         $urlparams->externalurl = "{$CFG->wwwroot}/blocks/ifcare/view.php?coletaid={$coleta->id}";
@@ -161,12 +161,14 @@ class process_coleta extends \core\task\scheduled_task
             $eventdata->name = 'coleta_criada';
             $eventdata->userfrom = \core_user::get_noreply_user();
             $eventdata->userto = $aluno->id;
-            $eventdata->subject = "Nova coleta de emoções: " . $coleta->nome;
-            $eventdata->fullmessage = "A coleta \"{$coleta->nome}\" da disciplina {$nome_disciplina} foi criada e está pronta para ser realizada até {$data_fim_formatada}.";
+            $eventdata->subject = "IFCare - Compartilhe suas emoções sobre a disciplina de {$nome_disciplina}";
+            $eventdata->fullmessage = "Olá! Uma coleta de emoções para a disciplina {$nome_disciplina} foi criada e está disponível até {$data_fim_formatada} para você responder. Sua opinião é muito importante. Por favor, participe!";
             $eventdata->fullmessageformat = FORMAT_PLAIN;
-            $eventdata->fullmessagehtml = "<p>A coleta de emoções para a disciplina <strong>{$nome_disciplina}</strong> está pronta para ser realizada até <strong>{$data_fim_formatada}</strong>. <a href='{$CFG->wwwroot}/blocks/ifcare/view.php?coletaid={$coleta->id}'>Clique aqui</a> para mais informações.</p>";
-            $eventdata->smallmessage = "Coleta \"{$coleta->nome}\" da disciplina {$nome_disciplina} foi criada. <a href='{$CFG->wwwroot}/blocks/ifcare/view.php?coletaid={$coleta->id}'>Clique aqui</a>";
-            $eventdata->notification = 1;
+            $eventdata->fullmessagehtml = "<p>Olá!</p>
+            <p>Uma coleta de emoções para a disciplina <strong>{$nome_disciplina}</strong> foi criada e está disponível até <strong>{$data_fim_formatada}</strong> para você responder.</p>
+            <p>Sua opinião é muito importante para nós. <a href='{$CFG->wwwroot}/blocks/ifcare/view.php?coletaid={$coleta->id}'>Clique aqui</a> para compartilhar suas emoções e nos ajudar a melhorar sua experiência de aprendizado.</p>";
+            $eventdata->smallmessage = "Uma coleta de emoções para a disciplina {$nome_disciplina} foi criada e está disponível até {$data_fim_formatada}. <a href='{$CFG->wwwroot}/blocks/ifcare/view.php?coletaid={$coleta->id}'>Clique aqui</a> para participar.";
+             $eventdata->notification = 1;
     
             // Envia a notificação
             message_send($eventdata);
