@@ -31,7 +31,8 @@ $string['mensagem_erro'] = 'Erro ao realizar o cadastro. Tente novamente.';
 
 $string['manage_collections'] = 'Gerenciar Coletas'; // Texto do link
 
-
+$string['aeq_manual_title'] = 'Achievement Emotions Questionnaire (AEQ) Manual';
+$string['aeq_manual_heading'] = 'AEQ Manual';
 $string['nameerror'] = 'O nome não pode ser vazio.';
 $string['starttimefutureerror'] = 'A data de início deve ser no futuro.';
 $string['endtimefutureerror'] = 'A data de fim deve ser no futuro.';
@@ -56,7 +57,7 @@ $string['ifcare:myaddinstance'] = 'Adicionar uma nova instância do bloco IF Car
 $string['ifcare:receivenotifications'] = 'Receber notificações sobre coletas criadas no IF Care';
 
 $string['view_dashboard'] = 'Visualizar Dashboard das Coletas';
-$string['aeq_manual'] = 'Manual de uso do AEQ';
+$string['aeq_manual'] = 'Conheça o AEQ e o IFCare';
 $string['ifcare:addinstance'] = 'Add a new IF Care block';
 $string['welcome_dashboard'] = 'Seja bem-vindo ao IFCARE';
 $string['set_user_notifications'] = 'Configurar notificações para os usuários do IF Care';
