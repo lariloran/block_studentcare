@@ -79,14 +79,7 @@ class CadastrarForm extends moodleform
         $mform->addElement('select', 'resourceid', get_string('select_resource', 'block_ifcare'), array());
         $mform->setType('resourceid', PARAM_INT);
 
-        // Inclui o script JavaScript para fazer a chamada AJAX
-        $PAGE->requires->js(new moodle_url('/blocks/ifcare/js/dynamicform.js'));
-
-
-
-
-
-
+       
         // Campo Data e Hora de Início da coleta
         $mform->addElement('date_time_selector', 'starttime', get_string('starttime', 'block_ifcare'), array('optional' => false));
 
@@ -104,6 +97,15 @@ class CadastrarForm extends moodleform
         // Adiciona o campo oculto para as emoções selecionadas com o atributo 'emocao_selecionadas'
         $mform->addElement('hidden', 'emocao_selecionadas', '', array('id' => 'emocao_selecionadas'));
         $mform->setType('emocao_selecionadas', PARAM_RAW);
+
+// Campo oculto para setor com ID definido
+$mform->addElement('hidden', 'setor', '', array('id' => 'setor'));
+$mform->setType('setor', PARAM_INT);
+
+// Campo oculto para recurso com ID definido
+$mform->addElement('hidden', 'recurso', '', array('id' => 'recurso'));
+$mform->setType('recurso', PARAM_INT);
+
 
 
         // Definir as opções para o select com os dados da tabela.
@@ -149,13 +151,11 @@ class CadastrarForm extends moodleform
         $mform->setDefault('notify_students', 1);
 
         // Botões de Salvar e Cancelar
-// Botões de Salvar e Cancelar
         $mform->addElement('submit', 'save', get_string('submit', 'block_ifcare'));
         $mform->setType('save', PARAM_ACTION); // Certifique-se de definir o tipo correto
 
         $mform->addElement('hidden', 'userid', $USER->id);
-$mform->setType('userid', PARAM_INT);
-
+        $mform->setType('userid', PARAM_INT);
 
 
 
@@ -181,6 +181,8 @@ $mform->setType('userid', PARAM_INT);
     </div>
 </div>
 ');
+
+
 
         $PAGE->requires->js_amd_inline("
     require(['jquery'], function($) {
@@ -220,6 +222,9 @@ $mform->setType('userid', PARAM_INT);
 $('#confirmarSalvar').on('click', function() {
     // Atualiza o campo oculto antes de enviar
     //$('#emocao_selecionadas').val(JSON.stringify(selectedEmotions)); 
+    $('#setor').val($('#id_sectionid').val());
+    $('#recurso').val($('#id_resourceid').val());
+
     $('#confirmacaoModal').modal('hide'); // Fecha o modal
     isFormSubmitted = true; // Marca o formulário como enviado
     $('form.mform').off('submit').submit(); // Envia o formulário
@@ -236,7 +241,8 @@ $('#confirmarSalvar').on('click', function() {
         toggleSaveButton();
     });
 ");
-
+        // Inclui o script JavaScript para fazer a chamada AJAX
+        $PAGE->requires->js(new moodle_url('/blocks/ifcare/js/dynamicform.js'));
 
     }
     
@@ -254,14 +260,12 @@ $('#confirmarSalvar').on('click', function() {
     public function process_form($data)
     {
         global $DB, $SESSION, $COURSE, $PAGE;
-
+    
         $context = context_course::instance($COURSE->id);
-
         $PAGE->set_context($context);
-
+    
         $userid = $data->userid;
         $courseid = $data->courseid;
-
         $nome = $data->name;
         $dataInicioFormatada = date('Y-m-d H:i:s', $data->starttime);
         $dataFimFormatada = date('Y-m-d H:i:s', $data->endtime);
@@ -270,9 +274,8 @@ $('#confirmarSalvar').on('click', function() {
         $notificarAlunos = $data->notify_students;
         $cursoId = $courseid;
         $professorId = $userid;
-
-        $dataAtualFormatada = date('Y-m-d H:i:s');
-
+        $sectionId = !empty($data->setor) ? $data->setor : 0;  // Usa 'setor' em vez de 'sectionid'
+        $resourceId = !empty($data->recurso) ? $data->recurso : 0; // Corrige para 'resourceid'
 
         $registro = new stdClass();
         $registro->nome = $nome;
@@ -283,41 +286,41 @@ $('#confirmarSalvar').on('click', function() {
         $registro->notificar_alunos = $notificarAlunos;
         $registro->curso_id = $cursoId;
         $registro->professor_id = $professorId;
-
+        $registro->section_id = $sectionId;  // Inserir seção
+        $registro->resource_id = $resourceId;  // Inserir recurso/atividade
+    
         $inserted = $DB->insert_record('ifcare_cadastrocoleta', $registro);
-
+    
         if ($inserted) {
             $cadastroColetaId = $inserted;
             $emocaoSelecionadas = json_decode($data->emocao_selecionadas, true);
-
+    
             if (!empty($emocaoSelecionadas)) {
                 foreach ($emocaoSelecionadas as $classe => $emocaoDados) {
                     foreach ($emocaoDados as $dados) {
                         $classeId = isset($dados['classeId']) ? $dados['classeId'] : 'N/A';
                         $emocaoId = isset($dados['emocaoId']) ? $dados['emocaoId'] : 'N/A';
-
+    
                         $associacao = new stdClass();
                         $associacao->cadastrocoleta_id = $cadastroColetaId;
                         $associacao->classeaeq_id = $classeId;
                         $associacao->emocao_id = $emocaoId;
-
+    
                         $DB->insert_record('ifcare_associacao_classe_emocao_coleta', $associacao);
                     }
                 }
             } else {
                 $SESSION->mensagem_erro = get_string('mensagem_erro', 'block_ifcare');
             }
-
+    
             $SESSION->mensagem_sucesso = get_string('mensagem_sucesso', 'block_ifcare');
             redirect(new moodle_url("/blocks/ifcare/index.php?courseid=$cursoId"));
-
-
         } else {
             $SESSION->mensagem_erro = get_string('mensagem_erro', 'block_ifcare');
             redirect(new moodle_url("/blocks/ifcare/index.php?courseid=$cursoId"));
         }
     }
-
+    
 
 }
 

@@ -109,10 +109,13 @@ if ($id == 1) { // Se for a seção Cadastrar
     // Exiba sempre o formulário sem processá-lo
     echo $mform->render();
     
-    // Apenas processe os dados se o formulário for enviado
-    if ($data = $mform->get_data()) {
-        $mform->process_form($data); // Processar os dados do formulário aqui
-    } else if ($mform->is_cancelled()) {
+ // Apenas processe os dados se o formulário for enviado
+ if ($data = $mform->get_data()) {
+    error_log(print_r($data, true)); // Salva o conteúdo de $data no log de erro do servidor
+    $mform->process_form($data);
+}
+
+ else if ($mform->is_cancelled()) {
         // Caso o formulário tenha sido cancelado
         // Você pode simplesmente não fazer nada ou exibir uma mensagem
         // echo 'Formulário cancelado'; // Opcional para depuração

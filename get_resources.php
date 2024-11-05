@@ -5,10 +5,7 @@ require_login();
 $courseid = required_param('courseid', PARAM_INT);
 $sectionnum = required_param('sectionid', PARAM_INT);
 
-$response = ['resources' => ''];
-
-// Adiciona a primeira opção vazia
-$response['resources'] .= "<option value=''>Não vincular a nenhuma atividade/recurso</option>";
+$response = ['resources' => []]; // Inicialize como um array para armazenar os recursos
 
 try {
     // Obtém as informações do curso
@@ -21,19 +18,32 @@ try {
 
     $section_modules = $modinfo->get_sections()[$sectionnum];
 
+    // Adiciona a primeira opção vazia para "Não vincular a nenhuma atividade/recurso"
+    $response['resources'][] = [
+        'value' => '',
+        'name' => 'Não vincular a nenhuma atividade/recurso'
+    ];
+
     // Itera pelos módulos da seção
     foreach ($section_modules as $cmid) {
         $mod = $modinfo->cms[$cmid];
         
         // Verifica se o módulo está visível
         if ($mod->uservisible) {
-            $response['resources'] .= "<option value='{$cmid}'>{$mod->name}</option>";
+            $response['resources'][] = [
+                'value' => $cmid,
+                'name' => $mod->name
+            ];
         }
     }
 } catch (Exception $e) {
-    // Se ocorrer um erro, retorna a mensagem no console (para fins de debug)
-    $response['resources'] = "<option value=''>{$e->getMessage()}</option>";
+    // Se ocorrer um erro, adiciona a mensagem como um recurso
+    $response['resources'][] = [
+        'value' => '',
+        'name' => $e->getMessage()
+    ];
 }
 
 // Retorna a resposta como JSON
 echo json_encode($response);
+exit;
