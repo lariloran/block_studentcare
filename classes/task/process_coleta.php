@@ -74,12 +74,12 @@ class process_coleta extends \core\task\scheduled_task
             $sections[0] = []; // Adiciona manualmente a seção zero, pois ela sempre existe
         }
     
-        // Garantir que o recurso seja sempre adicionado à primeira seção (seção 0)
-        reset($sections); // Reseta o array para garantir que começamos da primeira seção
-        $first_section_num = key($sections); // Obtém o número da primeira seção
+        // Utilizar a seção armazenada na coleta
+        $section_id = $coleta->section_id;
+
     
         mtrace("Total de seções encontradas: " . count($sections));
-        mtrace("Processando a primeira seção disponível: Seção {$first_section_num}");
+        mtrace("Processando a seção especificada: Seção {$section_id}");
     
         // Preparar os dados do recurso URL
         $urlparams = new \stdClass();
@@ -101,25 +101,29 @@ class process_coleta extends \core\task\scheduled_task
         // Definir o valor de 'display' para evitar os warnings
         $urlparams->display = 0;  // 0: Exibir no mesmo frame (padrão)
     
-        // Dados do recurso URL que será criado na primeira seção
-        $urlparams->section = $first_section_num; // Sempre na primeira seção
+        // Condição de conclusão: estudantes devem marcar manualmente como concluído
+        $urlparams->completion = 1; // 1 = Atividade pode ser marcada como concluída manualmente
+        $urlparams->completionview = 0; // 0 = Visualização da atividade não é obrigatória para marcar como concluída
+
+        // Dados do recurso URL que será criado na seção especificada
+        $urlparams->section = $section_id; // Utiliza a seção definida na coleta
         $urlparams->name = "{$coleta->nome}";
         $urlparams->intro = "Acesse a coleta de emoções: <a href='{$CFG->wwwroot}/blocks/ifcare/view.php?coletaid={$coleta->id}'>Clique aqui</a>";
         $urlparams->introformat = FORMAT_HTML;
         $urlparams->externalurl = "{$CFG->wwwroot}/blocks/ifcare/view.php?coletaid={$coleta->id}";
         $urlparams->timemodified = time();
     
-        mtrace("Preparando para adicionar o recurso URL na primeira seção (Seção {$first_section_num})");
+        mtrace("Preparando para adicionar o recurso URL na seção especificada (Seção {$section_id})");
         mtrace("Nome do recurso: {$urlparams->name}");
         mtrace("URL: {$urlparams->externalurl}");
     
-        // Criar a URL como um recurso dentro da primeira seção
-        $cmid = \add_moduleinfo((object) $urlparams, $curso, null); // Agora a função será encontrada após o require
+        // Criar a URL como um recurso dentro da seção especificada
+        $cmid = \add_moduleinfo((object) $urlparams, $curso, null);
     
         if ($cmid) {
-            mtrace("Recurso URL adicionado com sucesso na seção {$first_section_num} para a coleta: {$coleta->nome}");
+            mtrace("Recurso URL adicionado com sucesso na seção {$section_id} para a coleta: {$coleta->nome}");
         } else {
-            mtrace("Falha ao adicionar recurso URL na seção {$first_section_num}.");
+            mtrace("Falha ao adicionar recurso URL na seção {$section_id}.");
         }
     
         mtrace("Finalizando a adição de recurso URL para a coleta: {$coleta->nome}");

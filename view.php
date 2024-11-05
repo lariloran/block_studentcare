@@ -189,7 +189,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         redirect($PAGE->url); // Recarrega a página para exibir as perguntas
 
     }else{
-        redirect($CFG->wwwroot . '/my'); // Redireciona para o dashboard se não aceitar
+        redirect(new moodle_url("/course/view.php", ['id' => intval($coletaR->curso_id)]));
+
+        //redirect($CFG->wwwroot . '/my'); // Redireciona para o dashboard se não aceitar
     }
 }
 
