@@ -15,7 +15,6 @@ $context = context_course::instance($courseid);
 $PAGE->set_context($context);
 $PAGE->set_url(new moodle_url('/blocks/ifcare/index.php', array('courseid' => $courseid)));
 $PAGE->set_title(get_string('header', 'block_ifcare'));
-$PAGE->set_heading(get_string('header', 'block_ifcare'));
 
 // Adiciona o cabeçalho da página
 echo $OUTPUT->header();
