@@ -220,11 +220,6 @@ public function download_json($coleta_id) {
 
 <style>
 
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    color: #333;
-}
 
 .accordion {
     max-width: 700px;

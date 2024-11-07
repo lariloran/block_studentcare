@@ -21,7 +21,7 @@ if ($respostasExistentes) {
     
     <script>
 function irParaHome() {
-    window.location.href = "' . $CFG->wwwroot . '";
+    window.location.href = "' . new moodle_url("/course/view.php", ['id' => intval($coletaR->curso_id)]) . '";
 }
 </script>
     <style>
@@ -96,7 +96,7 @@ function irParaHome() {
             <span class="close" onclick="irParaHome()">&times;</span>
             <h2>Coleta já Respondida</h2>
             <p>Você já respondeu a esta coleta de emoções. Obrigado pela sua participação!</p>
-            <button class="modal-btn" onclick="irParaHome()">Ir para Home</button>
+            <button class="modal-btn" onclick="irParaHome()">Voltar para o curso</button>
         </div>
     </div>';
     echo $OUTPUT->footer();
@@ -310,7 +310,7 @@ $perguntas_json = json_encode(array_values($perguntas));
         <h2>Coleta Concluída</h2>
         <p>Você completou todas as perguntas da coleta. Obrigado por participar!</p>
         <button class="modal-btn" onclick="fecharModal('modal-sucesso')">Fechar</button>
-        <button class="modal-btn" onclick="irParaHome()">Ir para Home</button>
+        <button class="modal-btn" onclick="irParaHome()">Voltar para o curso</button>
     </div>
 </div>
 
@@ -321,8 +321,9 @@ let totalPerguntas = perguntas.length;
 let respostasSelecionadas = {};
 
 function irParaHome() {
-    window.location.href = '<?php echo $CFG->wwwroot; ?>'; 
+    window.location.href = '<?php echo new moodle_url("/course/view.php", ['id' => intval($coletaR->curso_id)]); ?>';
 }
+
 
 function mostrarPergunta(index) {
     let pergunta = perguntas[index];
@@ -733,4 +734,5 @@ echo $OUTPUT->footer();
 #controls button:hover {
     background-color: #218838;
 }
+
 </style>

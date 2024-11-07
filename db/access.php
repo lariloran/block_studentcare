@@ -6,6 +6,7 @@ $capabilities = [
         'riskbitmask' => RISK_SPAM | RISK_XSS,
         'archetypes' => [
             'manager' => CAP_ALLOW,
+            'user' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
             'student' => CAP_PREVENT,
         ],
