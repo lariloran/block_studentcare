@@ -35,7 +35,6 @@ class register_form extends moodleform
 
         $PAGE->set_context($context);
 
-        $dataAtual = date('Y-m-d H:i:s'); 
         $microsegundos = explode(' ', microtime())[0] * 1000; 
         $milissegundos = str_pad((int)$microsegundos, 3, '0', STR_PAD_LEFT); 
         
@@ -142,30 +141,31 @@ class register_form extends moodleform
         $context = context_course::instance($COURSE->id);
         $PAGE->set_context($context);
     
-        $userid = $data->userid;
-        $courseid = $data->courseid;
-        $nome = $data->name;
-        $dataInicioFormatada = date('Y-m-d H:i:s', $data->starttime);
-        $dataFimFormatada = date('Y-m-d H:i:s', $data->endtime);
-        $descricao = $data->description;
-        $receberAlerta = $data->alertprogress;
-        $notificarAlunos = $data->notify_students;
-        $cursoId = $courseid;
-        $professorId = $userid;
-        $sectionId = !empty($data->setor) ? $data->setor : 0;
-        $resourceId = !empty($data->recurso) ? $data->recurso : 0;
+            // Sanitização de campos numéricos e texto
+        $userid = clean_param($data->userid, PARAM_INT);
+        $courseid = clean_param($data->courseid, PARAM_INT);
+        $nome = clean_param($data->name, PARAM_TEXT);
+        $dataInicioFormatada = clean_param(date('Y-m-d H:i:s', $data->starttime), PARAM_TEXT);
+        $dataFimFormatada = clean_param(date('Y-m-d H:i:s', $data->endtime), PARAM_TEXT);
+        $descricao = clean_param($data->description, PARAM_TEXT);
+        $receberAlerta = clean_param($data->alertprogress, PARAM_INT);
+        $notificarAlunos = clean_param($data->notify_students, PARAM_INT);
+        $sectionId = clean_param($data->setor, PARAM_INT);
+        $resourceId = clean_param($data->recurso, PARAM_INT);
+
     
         $registro = new stdClass();
-        $registro->nome = $nome;
-        $registro->data_inicio = $dataInicioFormatada;
-        $registro->data_fim = $dataFimFormatada;
-        $registro->descricao = $descricao;
-        $registro->receber_alerta = $receberAlerta;
-        $registro->notificar_alunos = $notificarAlunos;
-        $registro->curso_id = $cursoId;
-        $registro->professor_id = $professorId;
-        $registro->section_id = $sectionId;
-        $registro->resource_id = $resourceId;
+        $registro->nome = clean_param($nome, PARAM_TEXT);
+        $registro->data_inicio = clean_param($dataInicioFormatada, PARAM_TEXT);
+        $registro->data_fim = clean_param($dataFimFormatada, PARAM_TEXT);
+        $registro->descricao = clean_param($descricao, PARAM_TEXT);
+        $registro->receber_alerta = clean_param($receberAlerta, PARAM_INT);
+        $registro->notificar_alunos = clean_param($notificarAlunos, PARAM_INT);
+        $registro->curso_id = clean_param($courseid, PARAM_INT);
+        $registro->professor_id = clean_param($userid, PARAM_INT);
+        $registro->section_id = clean_param($sectionId, PARAM_INT);
+        $registro->resource_id = clean_param($resourceId, PARAM_INT);
+
     
         $inserted = $DB->insert_record('ifcare_cadastrocoleta', $registro);
     
@@ -173,7 +173,11 @@ class register_form extends moodleform
             $cadastroColetaId = $inserted;
     
             $emocaoSelecionadas = json_decode($data->emocao_selecionadas, true);
-    
+            if (!is_array($emocaoSelecionadas)) {
+                $SESSION->mensagem_erro = get_string('mensagem_erro', 'block_ifcare');
+                redirect(new moodle_url("/blocks/ifcare/index.php", ['courseid' => $courseid]));
+            }
+            
             if (is_array($emocaoSelecionadas) && !empty($emocaoSelecionadas)) {
                 foreach ($emocaoSelecionadas as $classeAeqId => $emocoes) {
                     if (is_array($emocoes)) {
@@ -192,10 +196,10 @@ class register_form extends moodleform
             }
     
             $SESSION->mensagem_sucesso = get_string('mensagem_sucesso', 'block_ifcare');
-            redirect(new moodle_url("/blocks/ifcare/index.php?courseid=$cursoId"));
+            redirect(new moodle_url("/blocks/ifcare/index.php?courseid=$courseid"));
         } else {
             $SESSION->mensagem_erro = get_string('mensagem_erro', 'block_ifcare');
-            redirect(new moodle_url("/blocks/ifcare/index.php?courseid=$cursoId"));
+            redirect(new moodle_url("/blocks/ifcare/index.php?courseid=$courseid"));
         }
     }
 }

@@ -20,84 +20,81 @@ if (!$is_enrolled) {
     redirect(new moodle_url('/course/view.php', ['id' => $COURSE->id]));
     exit;
 }
-$respostasExistentes = $DB->get_records('ifcare_resposta', ['coleta_id' => $coletaid, 'usuario_id' => $userid]);
+$respostasExistentes = $DB->get_records('ifcare_resposta', [
+    'coleta_id' => $coletaid,
+    'usuario_id' => $userid
+]);
 
 if ($respostasExistentes) {
     echo $OUTPUT->header();
-    echo '
     
+    $redirectUrl = new moodle_url("/course/view.php", ['id' => intval($coletaR->curso_id)]);
+    echo '
     <script>
-function irParaHome() {
-    window.location.href = "' . new moodle_url("/course/view.php", ['id' => intval($coletaR->curso_id)]) . '";
-}
-</script>
+        function irParaHome() {
+            window.location.href = "' . htmlspecialchars($redirectUrl) . '";
+        }
+    </script>
     <style>
-/* Estilo para o modal quando o usuario já respondeu à coleta */
-.modal {
-    display: none; /* Oculto por padrão */
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Fundo escuro */
-}
-
-.modal-content {
-    background-color: #fff;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 500px;
-    text-align: center;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra para destaque */
-}
-
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.close:hover,
-.close:focus {
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-.modal h2 {
-    color: #000000;
-    font-size: 24px;
-    margin-bottom: 15px;
-    font-weight: bold;
-}
-
-.modal p {
-    font-size: 16px;
-    margin-bottom: 20px;
-    color: #333;
-}
-
-.modal-btn {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.modal-btn:hover {
-    background-color: #45a049;
-}
-</style>
+        /* Estilo para o modal quando o usuario já respondeu à coleta */
+        .modal {
+            display: none; /* Oculto por padrão */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Fundo escuro */
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra para destaque */
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .modal h2 {
+            color: #000000;
+            font-size: 24px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .modal p {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .modal-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .modal-btn:hover {
+            background-color: #45a049;
+        }
+    </style>
     <div id="modal-ja-respondido" class="modal" style="display:block;">
         <div class="modal-content">
             <span class="close" onclick="irParaHome()">&times;</span>
@@ -106,9 +103,11 @@ function irParaHome() {
             <button class="modal-btn" onclick="irParaHome()">Voltar para o curso</button>
         </div>
     </div>';
+    
     echo $OUTPUT->footer();
     return;
 }
+
 
 $tcle_records = $DB->get_records('ifcare_tcle_resposta', ['usuario_id' => $userid, 'curso_id' => $coletaR->curso_id]);
 
@@ -126,8 +125,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (isset($data['coleta_id']) && isset($data['usuario_id']) && isset($data['respostas'])) {
         try {
-            $coletaid = $data['coleta_id'];
-            $usuarioid = $data['usuario_id'];
+            $coletaid = clean_param($data['coleta_id'], PARAM_INT);
+            $usuarioid = clean_param($data['usuario_id'], PARAM_INT);
 
             $respostasExistentes = $DB->get_records('ifcare_resposta', ['coleta_id' => $coletaid, 'usuario_id' => $usuarioid]);
 
@@ -138,11 +137,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $respostas = $data['respostas'];
-
             foreach ($respostas as $pergunta_id => $resposta) {
+                $pergunta_id = clean_param($pergunta_id, PARAM_INT);
+                $resposta = clean_param($resposta, PARAM_TEXT);
+            
                 if ($resposta !== null) {
                     $pergunta = $DB->get_record('ifcare_pergunta', ['id' => $pergunta_id]);
-
                     if ($pergunta) {
                         $nova_resposta = new stdClass();
                         $nova_resposta->pergunta_id = $pergunta->id;
@@ -150,11 +150,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $nova_resposta->coleta_id = $coletaid;
                         $nova_resposta->resposta = $resposta;
                         $nova_resposta->data_resposta = date('Y-m-d H:i:s');
-
+            
                         $DB->insert_record('ifcare_resposta', $nova_resposta);
                     }
                 }
             }
+            
 
             header('Content-Type: application/json');
             echo json_encode(['success' => true]);

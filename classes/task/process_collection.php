@@ -23,10 +23,16 @@ class process_collection extends \core\task\scheduled_task
                 AND c.notificar_alunos = 1
                 AND c.notificacao_enviada = 0";
 
-        $coletas = $DB->get_records_sql($sql, [
-            'agora' => date('Y-m-d H:i:s', $agora),
-            'agora_fim' => date('Y-m-d H:i:s', $agora),
-        ]);
+        // Dentro de `execute`, ao buscar coletas
+        try {
+            $coletas = $DB->get_records_sql($sql, [
+                'agora' => date('Y-m-d H:i:s', $agora),
+                'agora_fim' => date('Y-m-d H:i:s', $agora),
+            ]);
+        } catch (\dml_exception $e) {
+            mtrace("Erro ao buscar coletas: " . $e->getMessage());
+            return;
+        }
 
         if (!empty($coletas)) {
             foreach ($coletas as $coleta) {
@@ -52,6 +58,9 @@ class process_collection extends \core\task\scheduled_task
     private function adicionar_recurso_url($coleta, $curso)
     {
         global $DB, $USER, $CFG;
+
+        $coleta->curso_id = clean_param($coleta->curso_id, PARAM_INT);
+        $section_id = clean_param($coleta->section_id, PARAM_INT);
 
         // Incluir a biblioteca de módulos do Moodle para usar add_moduleinfo()
         require_once($CFG->dirroot . '/course/modlib.php');
@@ -89,6 +98,12 @@ class process_collection extends \core\task\scheduled_task
         $urlparams->course = $curso->id;
         $urlparams->module = $DB->get_field('modules', 'id', ['name' => 'url']); // ID do módulo de tipo 'url'
 
+                // Dentro de `adicionar_recurso_url`
+        if (empty($curso) || empty($urlparams->module)) {
+            mtrace("Erro ao obter dados do curso ou módulo.");
+            return;
+        }
+
         // Verificar se o módulo URL foi encontrado
         if (!$urlparams->module) {
             mtrace("Erro: Não foi possível encontrar o módulo do tipo 'url' no banco de dados.");
@@ -116,13 +131,13 @@ class process_collection extends \core\task\scheduled_task
         $data_fim_formatada = date('d/m/Y H:i', strtotime($coleta->data_fim));
 
         // Define a descrição com destaque em negrito para a palavra "Aberto"
-        $urlparams->intro = "A coleta está <strong>aberta</strong> de {$data_inicio_formatada} até {$data_fim_formatada}. Participe e nos ajude a compreender melhor suas emoções!";
+        $urlparams->intro = clean_text("A coleta está <strong>aberta</strong> de {$data_inicio_formatada} até {$data_fim_formatada}. Participe e nos ajude a compreender melhor suas emoções!", FORMAT_HTML);
         $urlparams->introformat = FORMAT_HTML;
 
         // Define a opção para exibir a descrição na página do curso
         $urlparams->showdescription = 1; // Define para mostrar a descrição por padrão
         $urlparams->introformat = FORMAT_HTML;
-        $urlparams->externalurl = "{$CFG->wwwroot}/blocks/ifcare/view.php?coletaid={$coleta->id}";
+        $urlparams->externalurl = clean_param("{$CFG->wwwroot}/blocks/ifcare/view.php?coletaid={$coleta->id}", PARAM_URL);
         $urlparams->timemodified = time();
 
         mtrace("Preparando para adicionar o recurso URL na seção especificada (Seção {$section_id})");
@@ -145,6 +160,8 @@ class process_collection extends \core\task\scheduled_task
     private function enviar_notificacao($coleta)
     {
         global $DB, $CFG;
+        $curso_id = clean_param($coleta->curso_id, PARAM_INT);
+
 
         // Busca todas as informações do curso usando o curso_id da coleta
         $curso = $DB->get_record('course', ['id' => $coleta->curso_id]);
