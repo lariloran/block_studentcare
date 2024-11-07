@@ -112,36 +112,47 @@ require(["jquery"], function ($) {
   }
 
   function renderSelectedEmotions() {
-    var emotionContainer = $("#emocoes-selecionadas");
-    emotionContainer.empty();
+    var emotionContainer = $('#emocoes-selecionadas');
 
+    // Itera sobre todas as classes e emoções selecionadas para exibir o resumo completo
     Object.keys(selecoes).forEach(function (classeId) {
-      var emocoes = selecoes[classeId];
-      emocoes.forEach(function (emocaoId) {
-        var emotionName = $(
-          '#id_emocoes option[value="' + emocaoId + '"]'
-        ).text();
+        var emocoes = selecoes[classeId];
+        emocoes.forEach(function (emocaoId) {
+            // Verifica se a emoção já foi adicionada ao resumo
+            if (!emotionContainer.find('.emotion-tag[data-id="' + emocaoId + '"]').length) {
+                // Obtém o nome da emoção atual de acordo com seu ID
+                var emotionName = $('#id_emocoes option[value="' + emocaoId + '"]').text();
 
-        if (emotionName) {
-          var tag = $("<div>").addClass("emotion-tag").text(emotionName);
-          var closeButton = $("<span>").addClass("close-btn").text("×");
+                if (emotionName) {
+                    var tag = $('<div>').addClass('emotion-tag').attr('data-id', emocaoId).text(emotionName);
+                    var closeButton = $('<span>').addClass('close-btn').text('×');
 
-          closeButton.on("click", function () {
-            selecoes[classeId] = selecoes[classeId].filter(function (e) {
-              return e !== emocaoId;
-            });
+                    // Permite remover uma emoção específica do resumo ao clicar no botão de fechar
+                    closeButton.on('click', function () {
+                        // Remove a emoção do objeto selecoes
+                        selecoes[classeId] = selecoes[classeId].filter(function (e) {
+                            return e !== emocaoId;
+                        });
 
-            $("#id_emocoes").val(selecoes[classeId]);
-            $("#emocao_selecionadas").val(JSON.stringify(selecoes));
-            renderSelectedEmotions();
-          });
+                        // Remove a tag visual
+                        tag.remove();
 
-          tag.append(closeButton);
-          emotionContainer.append(tag);
-        }
-      });
+                        // Atualiza o campo oculto com as emoções restantes
+                        $('#emocao_selecionadas').val(JSON.stringify(selecoes));
+
+                        // Desmarca a emoção no campo select
+                        $('#id_emocoes option[value="' + emocaoId + '"]').prop('selected', false);
+                    });
+
+                    tag.append(closeButton);
+                    emotionContainer.append(tag);
+                }
+            }
+        });
     });
-  }
+}
+
+
 
   require(["core/notification"], function (notification) {
     $("form.mform").on("submit", function (e) {
