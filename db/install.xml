@@ -89,19 +89,18 @@
     </KEYS>
 </TABLE>
 
-<TABLE NAME="ifcare_resposta" COMMENT="Armazena as respostas dos alunos às perguntas">
+<TABLE NAME="ifcare_resposta" COMMENT="Armazena as respostas dos usuários às perguntas">
     <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" SEQUENCE="true" COMMENT="Identificador único da resposta"/>
         <FIELD NAME="pergunta_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID da pergunta associada"/>
-        <FIELD NAME="aluno_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID do aluno que respondeu"/>
+        <FIELD NAME="usuario_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID do usuário que respondeu"/>
         <FIELD NAME="coleta_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID da coleta associada"/>
-        <FIELD NAME="resposta" TYPE="int" LENGTH="1" NOTNULL="true" COMMENT="Resposta do aluno na escala Likert (ex: 1-5)"/>
+        <FIELD NAME="resposta" TYPE="int" LENGTH="1" NOTNULL="true" COMMENT="Resposta do usuário na escala Likert (ex: 1-5)"/>
         <FIELD NAME="data_resposta" TYPE="datetime" NOTNULL="true" COMMENT="Data e hora em que a resposta foi registrada"/>
     </FIELDS>
     <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="pergunta_fk" TYPE="foreign" FIELDS="pergunta_id" REFTABLE="ifcare_pergunta" REFFIELDS="id" ONDELETE="cascade"/>
-        <KEY NAME="aluno_fk" TYPE="foreign" FIELDS="aluno_id" REFTABLE="ifcare_aluno" REFFIELDS="id" ONDELETE="cascade"/>
         <KEY NAME="coleta_fk" TYPE="foreign" FIELDS="coleta_id" REFTABLE="ifcare_cadastrocoleta" REFFIELDS="id" ONDELETE="cascade"/>
     </KEYS>
 </TABLE>
@@ -123,10 +122,10 @@
     </KEYS>
 </TABLE>
 
-<TABLE NAME="ifcare_tcle_resposta" COMMENT="Armazena se o aluno aceitou ou não o TCLE">
+<TABLE NAME="ifcare_tcle_resposta" COMMENT="Armazena se o usuário aceitou ou não o TCLE">
     <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" SEQUENCE="true" COMMENT="Identificador único"/>
-        <FIELD NAME="aluno_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID do aluno que respondeu"/>
+        <FIELD NAME="usuario_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID do usuário que respondeu"/>
         <FIELD NAME="coleta_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID da coleta associada"/>
         <FIELD NAME="tcle_aceito" TYPE="int" LENGTH="1" NOTNULL="true" COMMENT="Flag indicando se o TCLE foi aceito (1 para aceito, 0 para não aceito)"/>
         <FIELD NAME="data_resposta" TYPE="datetime" NOTNULL="true" DEFAULT="CURRENT_TIMESTAMP" COMMENT="Data e hora em que o aceite foi registrado"/>
@@ -134,7 +133,6 @@
     </FIELDS>
     <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="aluno_fk" TYPE="foreign" FIELDS="aluno_id" REFTABLE="ifcare_aluno" REFFIELDS="id" ONDELETE="cascade"/>
         <KEY NAME="coleta_fk" TYPE="foreign" FIELDS="coleta_id" REFTABLE="ifcare_cadastrocoleta" REFFIELDS="id" ONDELETE="cascade"/>
         <KEY NAME="curso_fk" TYPE="foreign" FIELDS="curso_id" REFTABLE="course" REFFIELDS="id" ONDELETE="cascade"/>
     </KEYS>

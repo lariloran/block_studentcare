@@ -20,7 +20,7 @@ if (!$is_enrolled) {
     redirect(new moodle_url('/course/view.php', ['id' => $COURSE->id]));
     exit;
 }
-$respostasExistentes = $DB->get_records('ifcare_resposta', ['coleta_id' => $coletaid, 'aluno_id' => $userid]);
+$respostasExistentes = $DB->get_records('ifcare_resposta', ['coleta_id' => $coletaid, 'usuario_id' => $userid]);
 
 if ($respostasExistentes) {
     echo $OUTPUT->header();
@@ -32,7 +32,7 @@ function irParaHome() {
 }
 </script>
     <style>
-/* Estilo para o modal quando o aluno já respondeu à coleta */
+/* Estilo para o modal quando o usuario já respondeu à coleta */
 .modal {
     display: none; /* Oculto por padrão */
     position: fixed;
@@ -110,7 +110,7 @@ function irParaHome() {
     return;
 }
 
-$tcle_records = $DB->get_records('ifcare_tcle_resposta', ['aluno_id' => $userid, 'curso_id' => $coletaR->curso_id]);
+$tcle_records = $DB->get_records('ifcare_tcle_resposta', ['usuario_id' => $userid, 'curso_id' => $coletaR->curso_id]);
 
 $tcle_aceito = false;
 foreach ($tcle_records as $record) {
@@ -124,12 +124,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input = file_get_contents('php://input');
     $data = json_decode($input, true);
 
-    if (isset($data['coleta_id']) && isset($data['aluno_id']) && isset($data['respostas'])) {
+    if (isset($data['coleta_id']) && isset($data['usuario_id']) && isset($data['respostas'])) {
         try {
             $coletaid = $data['coleta_id'];
-            $alunoid = $data['aluno_id'];
+            $usuarioid = $data['usuario_id'];
 
-            $respostasExistentes = $DB->get_records('ifcare_resposta', ['coleta_id' => $coletaid, 'aluno_id' => $alunoid]);
+            $respostasExistentes = $DB->get_records('ifcare_resposta', ['coleta_id' => $coletaid, 'usuario_id' => $usuarioid]);
 
             if ($respostasExistentes) {
                 header('Content-Type: application/json');
@@ -146,7 +146,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     if ($pergunta) {
                         $nova_resposta = new stdClass();
                         $nova_resposta->pergunta_id = $pergunta->id;
-                        $nova_resposta->aluno_id = $alunoid;
+                        $nova_resposta->usuario_id = $usuarioid;
                         $nova_resposta->coleta_id = $coletaid;
                         $nova_resposta->resposta = $resposta;
                         $nova_resposta->data_resposta = date('Y-m-d H:i:s');
@@ -171,7 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($tcle_aceito_form == 1) {
         if (empty($tcle_records)) {
             $DB->insert_record('ifcare_tcle_resposta', (object) [
-                'aluno_id' => $userid,
+                'usuario_id' => $userid,
                 'coleta_id' => $coletaid,
                 'tcle_aceito' => $tcle_aceito_form,
                 'curso_id' => $coletaR->curso_id,
@@ -426,7 +426,7 @@ $perguntas_json = json_encode(array_values($perguntas));
 
         const dadosRespostas = {
             coleta_id: <?php echo $coletaid; ?>,
-            aluno_id: <?php echo $userid; ?>,
+            usuario_id: <?php echo $userid; ?>,
             respostas: respostasSelecionadas
         };
 

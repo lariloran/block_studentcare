@@ -169,12 +169,12 @@ class process_collection extends \core\task\scheduled_task
             ['courseid' => $coleta->curso_id]
         );
 
-        foreach ($enrols as $aluno) {
+        foreach ($enrols as $usuario) {
             $eventdata = new \core\message\message();
             $eventdata->component = 'block_ifcare';
             $eventdata->name = 'created_collection';
             $eventdata->userfrom = \core_user::get_noreply_user();
-            $eventdata->userto = $aluno->id;
+            $eventdata->userto = $usuario->id;
             $eventdata->subject = "IFCare - Compartilhe suas emoções sobre a disciplina de {$nome_disciplina}";
             $eventdata->fullmessage = "Olá! Uma coleta de emoções para a disciplina {$nome_disciplina} foi criada e está disponível até {$data_fim_formatada} para você responder. Sua opinião é muito importante. Por favor, participe!";
             $eventdata->fullmessageformat = FORMAT_PLAIN;
