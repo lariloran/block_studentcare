@@ -8,7 +8,7 @@ class block_ifcare extends block_base
 
     public function get_content()
     {
-        global $USER, $DB;
+        global $USER, $DB, $COURSE;
 
         if ($this->content !== null) {
             return $this->content;
@@ -17,9 +17,8 @@ class block_ifcare extends block_base
         $this->content = new stdClass;
         $this->content->footer = '';
 
-        // URLs para navegação dentro do bloco
-        $url_index = new moodle_url('/blocks/ifcare/index.php');
-        $url_manual_aeq = new moodle_url('/blocks/ifcare/manual_aeq.php');
+        $url_index = new moodle_url('/blocks/ifcare/index.php', ['courseid' => $COURSE->id]);
+        $url_manual_aeq = new moodle_url('/blocks/ifcare/manual_aeq.php', ['courseid' => $COURSE->id]);
 
         // Obtém todos os cursos em que o usuário está inscrito
         $user_courses = enrol_get_users_courses($USER->id);
