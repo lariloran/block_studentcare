@@ -2,13 +2,13 @@
 require_once('../../config.php');
 require_login();
 
-$coletaid = required_param('coletaid', PARAM_INT); 
-$context = context_course::instance($COURSE->id);  
+$coletaid = required_param('coletaid', PARAM_INT);
+$context = context_course::instance($COURSE->id);
 $PAGE->set_url('/blocks/ifcare/view.php', array('coletaid' => $coletaid));
 $PAGE->set_context($context);
 $PAGE->set_title("Coleta de Emoções");
 
-$userid = $USER->id; 
+$userid = $USER->id;
 
 $coletaR = $DB->get_record('ifcare_cadastrocoleta', ['id' => $coletaid]);
 $cursoR = $DB->get_record('course', ['id' => $coletaR->curso_id]);
@@ -128,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $coletaid = $data['coleta_id'];
             $alunoid = $data['aluno_id'];
-            
+
             $respostasExistentes = $DB->get_records('ifcare_resposta', ['coleta_id' => $coletaid, 'aluno_id' => $alunoid]);
 
             if ($respostasExistentes) {
@@ -137,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit;
             }
 
-            $respostas = $data['respostas']; 
+            $respostas = $data['respostas'];
 
             foreach ($respostas as $pergunta_id => $resposta) {
                 if ($resposta !== null) {
@@ -170,7 +170,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $tcle_aceito_form = optional_param('tcle_aceito', 0, PARAM_INT);
     if ($tcle_aceito_form == 1) {
         if (empty($tcle_records)) {
-            $DB->insert_record('ifcare_tcle_resposta', (object)[
+            $DB->insert_record('ifcare_tcle_resposta', (object) [
                 'aluno_id' => $userid,
                 'coleta_id' => $coletaid,
                 'tcle_aceito' => $tcle_aceito_form,
@@ -178,8 +178,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'data_resposta' => date('Y-m-d H:i:s')
             ]);
         }
-        redirect($PAGE->url); 
-    }else{
+        redirect($PAGE->url);
+    } else {
         redirect(new moodle_url("/course/view.php", ['id' => intval($coletaR->curso_id)]));
     }
 }
@@ -252,7 +252,10 @@ $perguntas_json = json_encode(array_values($perguntas));
         <input type="hidden" id="tcle_aceito" name="tcle_aceito" value="0">
         <p class="tcle-title"><strong>Termo de Consentimento Livre e Esclarecido (TCLE)</strong></p>
         <p class="tcle-description">
-        Ao participar desta coleta de emoções e das demais para a disciplina <strong><?php echo $cursoR->fullname; ?></strong>, você permite o uso de suas respostas (incluindo nome e e-mail) para fins acadêmicos e pedagógicos, contribuindo para pesquisas que visam melhorar o processo de ensino e aprendizagem.
+            Sua participação nesta coleta de emoções para a disciplina <strong><?php echo $cursoR->fullname; ?></strong>
+            é muito importante para nós. Ao responder, você autoriza o uso das suas respostas (incluindo seu nome e
+            e-mail) para fins acadêmicos e pedagógicos, contribuindo para pesquisas que buscam aprimorar o ensino e a
+            aprendizagem, promovendo um ambiente educacional mais acolhedor e eficaz. Agradecemos sua colaboração!
         </p>
         <div id="respostas-tcle" class="respostas-tcle">
             <button class="buttonTcle" id="aceito-btn" type="button" onclick="enviarResposta(1)">Aceito</button>
@@ -262,44 +265,47 @@ $perguntas_json = json_encode(array_values($perguntas));
 </div>
 
 <?php if ($tcle_aceito): ?>
-<div id="quiz-container">
-    <div class="titulo-coleta">Coleta de Emoções</div>
-    <div id="progress-bar-container">
-        <progress id="progress-bar" value="0" max="100"></progress>
-        <span id="progress-text">0%</span>
-    </div>
-    <div id="pergunta-container"></div>
+    <div id="quiz-container">
+        <div class="titulo-coleta">Coleta de Emoções</div>
+        <div id="progress-bar-container">
+            <progress id="progress-bar" value="0" max="100"></progress>
+            <span id="progress-text">0%</span>
+        </div>
+        <div id="pergunta-container"></div>
 
-    <div id="respostas-container">
-        <button class="emoji-button" data-value="1">
-            <img src="<?php echo $CFG->wwwroot; ?>/blocks/ifcare/pix/discordoTotalmente.png" alt="Discordo Totalmente" class="emoji-img">
-            <span>Discordo Totalmente</span>
-        </button>
-        <button class="emoji-button" data-value="2">
-            <img src="<?php echo $CFG->wwwroot; ?>/blocks/ifcare/pix/discordo.png" alt="Discordo" class="emoji-img">
-            <span>Discordo</span>
-        </button>
-        <button class="emoji-button" data-value="3">
-            <img src="<?php echo $CFG->wwwroot; ?>/blocks/ifcare/pix/neutro.png" alt="Neutro" class="emoji-img">
-            <span>Neutro</span>
-        </button>
-        <button class="emoji-button" data-value="4">
-            <img src="<?php echo $CFG->wwwroot; ?>/blocks/ifcare/pix/concordo.png" alt="Concordo" class="emoji-img">
-            <span>Concordo</span>
-        </button>
-        <button class="emoji-button" data-value="5">
-            <img src="<?php echo $CFG->wwwroot; ?>/blocks/ifcare/pix/concordoTotalmente.png" alt="Concordo Totalmente" class="emoji-img">
-            <span>Concordo Totalmente</span>
-        </button>
-    </div>
+        <div id="respostas-container">
+            <button class="emoji-button" data-value="1">
+                <img src="<?php echo $CFG->wwwroot; ?>/blocks/ifcare/pix/discordoTotalmente.png" alt="Discordo Totalmente"
+                    class="emoji-img">
+                <span>Discordo Totalmente</span>
+            </button>
+            <button class="emoji-button" data-value="2">
+                <img src="<?php echo $CFG->wwwroot; ?>/blocks/ifcare/pix/discordo.png" alt="Discordo" class="emoji-img">
+                <span>Discordo</span>
+            </button>
+            <button class="emoji-button" data-value="3">
+                <img src="<?php echo $CFG->wwwroot; ?>/blocks/ifcare/pix/neutro.png" alt="Neutro" class="emoji-img">
+                <span>Neutro</span>
+            </button>
+            <button class="emoji-button" data-value="4">
+                <img src="<?php echo $CFG->wwwroot; ?>/blocks/ifcare/pix/concordo.png" alt="Concordo" class="emoji-img">
+                <span>Concordo</span>
+            </button>
+            <button class="emoji-button" data-value="5">
+                <img src="<?php echo $CFG->wwwroot; ?>/blocks/ifcare/pix/concordoTotalmente.png" alt="Concordo Totalmente"
+                    class="emoji-img">
+                <span>Concordo Totalmente</span>
+            </button>
+        </div>
 
-    <div id="controls">
-        <button id="voltar-btn" onclick="voltarPergunta()">Voltar</button>
-        <a href="https://poa.ifrs.edu.br/index.php/editais-2/apoio-academico" target="_blank" id="ajuda-emocional-link">Precisa de ajuda emocional?</a>
+        <div id="controls">
+            <button id="voltar-btn" onclick="voltarPergunta()">Voltar</button>
+            <a href="https://poa.ifrs.edu.br/index.php/editais-2/apoio-academico" target="_blank"
+                id="ajuda-emocional-link">Precisa de ajuda emocional?</a>
 
-        <button id="avancar-btn" onclick="avancarPergunta()">Avançar</button>
+            <button id="avancar-btn" onclick="avancarPergunta()">Avançar</button>
+        </div>
     </div>
-</div>
 <?php endif; ?>
 
 <div id="modal-erro" class="modal">
@@ -322,25 +328,25 @@ $perguntas_json = json_encode(array_values($perguntas));
 </div>
 
 <script>
-let perguntas = <?php echo $perguntas_json; ?>;
-let perguntaAtual = 0;
-let totalPerguntas = perguntas.length;
-let respostasSelecionadas = {};
+    let perguntas = <?php echo $perguntas_json; ?>;
+    let perguntaAtual = 0;
+    let totalPerguntas = perguntas.length;
+    let respostasSelecionadas = {};
 
-function irParaHome() {
-    window.location.href = '<?php echo new moodle_url("/course/view.php", ['id' => intval($coletaR->curso_id)]); ?>';
-}
-
-
-function mostrarPergunta(index) {
-    let pergunta = perguntas[index];
-    let perguntaContainer = document.getElementById('pergunta-container');
-    if (!perguntaContainer) {
-        console.error("O elemento 'pergunta-container' não foi encontrado.");
-        return;
+    function irParaHome() {
+        window.location.href = '<?php echo new moodle_url("/course/view.php", ['id' => intval($coletaR->curso_id)]); ?>';
     }
 
-    perguntaContainer.innerHTML = `
+
+    function mostrarPergunta(index) {
+        let pergunta = perguntas[index];
+        let perguntaContainer = document.getElementById('pergunta-container');
+        if (!perguntaContainer) {
+            console.error("O elemento 'pergunta-container' não foi encontrado.");
+            return;
+        }
+
+        perguntaContainer.innerHTML = `
         <p>
             <strong>${pergunta.emocao_nome}</strong>
             <span class="tooltip-icon">
@@ -351,110 +357,111 @@ function mostrarPergunta(index) {
         <p class="pergunta-texto">${pergunta.pergunta_texto}</p>
     `;
 
-    document.querySelectorAll('.emoji-button').forEach(btn => {
-        btn.classList.remove('selected');
-    });
-
-    if (respostasSelecionadas[pergunta.id] !== undefined) {
-        document.querySelector(`.emoji-button[data-value="${respostasSelecionadas[pergunta.id]}"]`).classList.add('selected');
-    }
-
-    let progresso = Math.round(((index + 1) / totalPerguntas) * 100);
-    document.getElementById('progress-bar').value = progresso;
-    document.getElementById('progress-text').innerText = `${progresso}%`;
-}
-
-document.querySelectorAll('.emoji-button').forEach(button => {
-    button.addEventListener('click', function() {
-        let valor = this.getAttribute('data-value');
-        let pergunta = perguntas[perguntaAtual];
-
-        respostasSelecionadas[pergunta.id] = valor;
-
         document.querySelectorAll('.emoji-button').forEach(btn => {
             btn.classList.remove('selected');
         });
-        this.classList.add('selected');
+
+        if (respostasSelecionadas[pergunta.id] !== undefined) {
+            document.querySelector(`.emoji-button[data-value="${respostasSelecionadas[pergunta.id]}"]`).classList.add('selected');
+        }
+
+        let progresso = Math.round(((index + 1) / totalPerguntas) * 100);
+        document.getElementById('progress-bar').value = progresso;
+        document.getElementById('progress-text').innerText = `${progresso}%`;
+    }
+
+    document.querySelectorAll('.emoji-button').forEach(button => {
+        button.addEventListener('click', function () {
+            let valor = this.getAttribute('data-value');
+            let pergunta = perguntas[perguntaAtual];
+
+            respostasSelecionadas[pergunta.id] = valor;
+
+            document.querySelectorAll('.emoji-button').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            this.classList.add('selected');
+        });
     });
-});
 
-function enviarResposta(valor) {
-    document.getElementById('tcle_aceito').value = valor;
-    document.getElementById('tcle-form').submit();
-}
-
-
-
-function voltarPergunta() {
-    if (perguntaAtual > 0) {
-        perguntaAtual--;
-        mostrarPergunta(perguntaAtual);
-    }
-}
-
-let coletaConcluida = false; 
-
-function avancarPergunta() {
-    if (coletaConcluida) {
-        abrirModal('modal-sucesso'); 
-        return;
+    function enviarResposta(valor) {
+        document.getElementById('tcle_aceito').value = valor;
+        document.getElementById('tcle-form').submit();
     }
 
-    if (respostasSelecionadas[perguntas[perguntaAtual].id] !== undefined) {
-        if (perguntaAtual < totalPerguntas - 1) {
-            perguntaAtual++;
+
+
+    function voltarPergunta() {
+        if (perguntaAtual > 0) {
+            perguntaAtual--;
             mostrarPergunta(perguntaAtual);
-        } else {
-            enviarRespostas();
         }
-    } else {
-        abrirModal('modal-erro'); 
-    }
-}
-
-function enviarRespostas() {
-    if (coletaConcluida) {
-        abrirModal('modal-sucesso');
-        return;
     }
 
-    const dadosRespostas = {
-        coleta_id: <?php echo $coletaid; ?>,
-        aluno_id: <?php echo $userid; ?>,
-        respostas: respostasSelecionadas 
+    let coletaConcluida = false;
+
+    function avancarPergunta() {
+        if (coletaConcluida) {
+            abrirModal('modal-sucesso');
+            return;
+        }
+
+        if (respostasSelecionadas[perguntas[perguntaAtual].id] !== undefined) {
+            if (perguntaAtual < totalPerguntas - 1) {
+                perguntaAtual++;
+                mostrarPergunta(perguntaAtual);
+            } else {
+                enviarRespostas();
+            }
+        } else {
+            abrirModal('modal-erro');
+        }
+    }
+
+    function enviarRespostas() {
+        if (coletaConcluida) {
+            abrirModal('modal-sucesso');
+            return;
+        }
+
+        const dadosRespostas = {
+            coleta_id: <?php echo $coletaid; ?>,
+            aluno_id: <?php echo $userid; ?>,
+            respostas: respostasSelecionadas
+        };
+
+        fetch(window.location.href, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dadosRespostas)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    coletaConcluida = true;
+                    abrirModal('modal-sucesso');
+                } else {
+                    console.error('Erro ao salvar as respostas:', data.error);
+                }
+            });
+    }
+
+
+    function abrirModal(modalId) {
+        document.getElementById(modalId).style.display = 'block';
+    }
+
+    function fecharModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+
+    window.onload = function () {
+        if (<?php echo json_encode($tcle_aceito); ?>) {
+            mostrarPergunta(perguntaAtual);
+        }
     };
-
-    fetch(window.location.href, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(dadosRespostas)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            coletaConcluida = true; 
-            abrirModal('modal-sucesso'); 
-        } else {
-            console.error('Erro ao salvar as respostas:', data.error);
-        }
-    });}
-
-
-function abrirModal(modalId) {
-    document.getElementById(modalId).style.display = 'block';
-}
-
-function fecharModal(modalId) {
-    document.getElementById(modalId).style.display = 'none';
-}
-
-window.onload = function() {
-    if (<?php echo json_encode($tcle_aceito); ?>) {
-        mostrarPergunta(perguntaAtual);
-    }
-};
 </script>
 
 <?php
@@ -466,280 +473,279 @@ echo $OUTPUT->footer();
 
 
 <style>
+    #ajuda-emocional-link {
+        color: #0073e6;
+        font-size: 16px;
+        text-decoration: none;
+        margin: 0 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: color 0.3s ease;
+    }
 
-#ajuda-emocional-link {
-    color: #0073e6; 
-    font-size: 16px;
-    text-decoration: none; 
-    margin: 0 15px; 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: color 0.3s ease;
-}
+    #ajuda-emocional-link:hover {
+        color: #005bb5;
+        text-decoration: underline;
+    }
 
-#ajuda-emocional-link:hover {
-    color: #005bb5; 
-    text-decoration: underline; 
-}
+    #tcle-container {
+        text-align: center;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+    }
 
-#tcle-container {
-    text-align: center;
-    margin: 0 auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    max-width: 600px;
-}
+    .tcle-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #333;
+    }
 
-.tcle-title {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 15px;
-    color: #333;
-}
+    .tcle-description {
+        font-size: 16px;
+        margin-bottom: 20px;
+        color: #555;
+    }
 
-.tcle-description {
-    font-size: 16px;
-    margin-bottom: 20px;
-    color: #555;
-}
+    .respostas-tcle {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
 
-.respostas-tcle {
-    display: flex;
-    justify-content: center;
-    gap: 20px; 
-}
+    .buttonTcle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: transform 0.2s ease-in-out;
+    }
 
-.buttonTcle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: transform 0.2s ease-in-out;
-}
+    .buttonTcle:hover {
+        background-color: #45a049;
+    }
 
-.buttonTcle:hover {
-    background-color: #45a049;
-}
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
 
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); 
-}
+    .modal-content {
+        background-color: #fff;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 500px;
+        text-align: center;
+        border-radius: 10px;
+    }
 
-.modal-content {
-    background-color: #fff;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 500px;
-    text-align: center;
-    border-radius: 10px;
-}
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
 
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-}
+    .close:hover,
+    .close:focus {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
+    }
 
-.close:hover,
-.close:focus {
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
-}
+    .modal-btn-container {
+        display: inline-flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 20px;
+        width: auto;
+    }
 
-.modal-btn-container {
-    display: inline-flex;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 20px;
-    width: auto;
-}
+    .modal-btn {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        width: auto;
+        min-width: 100px;
+        text-align: center;
+        display: inline-block;
+        margin-bottom: 4px;
+    }
 
-.modal-btn {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    width: auto; 
-    min-width: 100px; 
-    text-align: center;
-    display: inline-block;
-    margin-bottom: 4px;
-}
+    .modal-btn:hover {
+        background-color: #45a049;
+    }
 
-.modal-btn:hover {
-    background-color: #45a049;
-}
+    .titulo-coleta {
+        text-align: center;
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #333;
+    }
 
-.titulo-coleta {
-    text-align: center;
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    color: #333;
-}
+    #quiz-container {
+        width: 100%;
+        max-width: 700px;
+        margin: 0 auto;
+        height: auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+    }
 
-#quiz-container {
-    width: 100%;
-    max-width: 700px;
-    margin: 0 auto;
-    height: auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
-}
+    #progress-bar-container {
+        position: relative;
+        text-align: center;
+        margin-bottom: 20px;
+    }
 
-#progress-bar-container {
-    position: relative;
-    text-align: center;
-    margin-bottom: 20px;
-}
+    #progress-bar {
+        width: 100%;
+        height: 20px;
+        border-radius: 5px;
+        background-color: #e0e0e0;
+    }
 
-#progress-bar {
-    width: 100%;
-    height: 20px;
-    border-radius: 5px;
-    background-color: #e0e0e0;
-}
+    #progress-bar::-webkit-progress-value {
+        background-color: #4caf50;
+        border-radius: 5px;
+    }
 
-#progress-bar::-webkit-progress-value {
-    background-color: #4caf50;
-    border-radius: 5px;
-}
+    #progress-bar::-moz-progress-bar {
+        background-color: #4caf50;
+        border-radius: 5px;
+    }
 
-#progress-bar::-moz-progress-bar {
-    background-color: #4caf50;
-    border-radius: 5px;
-}
+    #progress-text {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        font-weight: bold;
+        color: black;
+    }
 
-#progress-text {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    font-weight: bold;
-    color: black;
-}
+    #pergunta-container {
+        margin-bottom: 20px;
+        font-size: 18px;
+        text-align: center;
+    }
 
-#pergunta-container {
-    margin-bottom: 20px;
-    font-size: 18px;
-    text-align: center;
-}
+    .tooltip-icon {
+        position: relative;
+        cursor: pointer;
+        margin-left: 5px;
+        color: #0073e6;
+        font-size: 16px;
+        display: inline-block;
+    }
 
-.tooltip-icon {
-    position: relative;
-    cursor: pointer;
-    margin-left: 5px;
-    color: #0073e6;
-    font-size: 16px;
-    display: inline-block;
-}
+    .tooltip-text {
+        visibility: hidden;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        padding: 5px;
+        border-radius: 5px;
+        position: absolute;
+        z-index: 1;
+        top: 125%;
+        left: 50%;
+        transform: translateX(-50%);
+        white-space: normal;
+        width: 250px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
 
-.tooltip-text {
-    visibility: hidden;
-    background-color: #333;
-    color: #fff;
-    text-align: center;
-    padding: 5px;
-    border-radius: 5px;
-    position: absolute;
-    z-index: 1;
-    top: 125%;
-    left: 50%;
-    transform: translateX(-50%);
-    white-space: normal;
-    width: 250px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-}
+    .tooltip-icon:hover .tooltip-text {
+        visibility: visible;
+        opacity: 1;
+    }
 
-.tooltip-icon:hover .tooltip-text {
-    visibility: visible;
-    opacity: 1;
-}
+    #respostas-container {
+        display: flex;
+        justify-content: space-evenly;
+        margin-bottom: 20px;
+    }
 
-#respostas-container {
-    display: flex;
-    justify-content: space-evenly;
-    margin-bottom: 20px;
-}
+    .emoji-button {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: none;
+        border: none;
+        cursor: pointer;
+        text-align: center;
+        transition: transform 0.2s ease-in-out;
+        margin: 0 10px;
+    }
 
-.emoji-button {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: none;
-    border: none;
-    cursor: pointer;
-    text-align: center;
-    transition: transform 0.2s ease-in-out;
-    margin: 0 10px;
-}
+    .emoji-img {
+        display: block;
+        margin-bottom: 5px;
+        width: 48px;
+        height: 48px;
+    }
 
-.emoji-img {
-    display: block;
-    margin-bottom: 5px;
-    width: 48px;
-    height: 48px;
-}
+    .emoji-button span {
+        font-size: 14px;
+        color: #000;
+        text-align: center;
+    }
 
-.emoji-button span {
-    font-size: 14px;
-    color: #000;
-    text-align: center;
-}
+    .emoji-button:hover,
+    .emoji-button.selected {
+        transform: scale(1.2);
+    }
 
-.emoji-button:hover, .emoji-button.selected {
-    transform: scale(1.2);
-}
+    #controls {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+        padding: 0 20px;
+    }
 
-#controls {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-    padding: 0 20px;
-}
+    #controls button {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
 
-#controls button {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-#controls button:hover {
-    background-color: #218838;
-}
-
+    #controls button:hover {
+        background-color: #218838;
+    }
 </style>
