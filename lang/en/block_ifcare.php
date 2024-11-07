@@ -55,8 +55,6 @@ $string['messageprovider:coleta_criada'] = 'Notificação enviada aos alunos qua
 $string['ifcare:addinstance'] = 'Adicionar uma nova instância do bloco IF Care';
 $string['ifcare:myaddinstance'] = 'Adicionar uma nova instância do bloco IF Care ao painel';
 $string['ifcare:receivenotifications'] = 'Receber notificações sobre coletas criadas no IF Care';
-$string['ifcare:manage'] = 'Gerenciar o IFCare';
-$string['ifcare:view'] = 'Gerenciar o IFCare';
 $string['ifcare:managecollections'] = 'Gerenciar o IFCare';
 $string['student_message'] = 'Olá, este é um bloco do plugin IFCare!';
 
