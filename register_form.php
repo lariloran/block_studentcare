@@ -4,14 +4,13 @@ require_once("$CFG->libdir/classes/notification.php");
 
 use core\notification;
 
-class CadastrarForm extends moodleform
+class register_form extends moodleform
 {
     
     public function get_user_courses($userid) {
         global $DB;
     
-        // Obter todos os cursos em que o usuário está matriculado e visíveis
-        return enrol_get_users_courses($userid, true); // true para incluir cursos visíveis
+        return enrol_get_users_courses($userid, true); 
     }
     
 
@@ -27,7 +26,6 @@ class CadastrarForm extends moodleform
         parent::__construct();
     }
 
-    // Define o formulário
     public function definition()
     {
         global $PAGE, $COURSE, $DB,$USER,$PAGE;
@@ -37,78 +35,59 @@ class CadastrarForm extends moodleform
 
         $PAGE->set_context($context);
 
-        $dataAtual = date('Y-m-d H:i:s'); // Obtém a data e hora atual
-        $microsegundos = explode(' ', microtime())[0] * 1000; // Obtém os microsegundos e converte para milissegundos
-        $milissegundos = str_pad((int)$microsegundos, 3, '0', STR_PAD_LEFT); // Formata para garantir 3 dígitos
+        $dataAtual = date('Y-m-d H:i:s'); 
+        $microsegundos = explode(' ', microtime())[0] * 1000; 
+        $milissegundos = str_pad((int)$microsegundos, 3, '0', STR_PAD_LEFT); 
         
-        $nomeColeta = "COLETA-" . date('YmdHis') . $milissegundos; // Formata conforme necessário, incluindo os milissegundos
+        $nomeColeta = "COLETA-" . date('YmdHis') . $milissegundos; 
         
-
-
-        // Campo Nome (preenchido e congelado)
         $mform->addElement('text', 'name', get_string('name', 'block_ifcare'), array('size' => '50', 'readonly' => 'readonly'));
         $mform->setType('name', PARAM_NOTAGS);
-        $mform->setDefault('name', $nomeColeta); // Define o valor padrão
+        $mform->setDefault('name', $nomeColeta); 
 
-
-        // Obtém todos os cursos em que o professor está matriculado
         $cursos = $this->get_user_courses($USER->id); 
         $options = array();
 
         if (!empty($cursos)) {
-            // Ordena os cursos em ordem alfabética
             usort($cursos, function($a, $b) {
                 return strcmp($a->fullname, $b->fullname);
             });
 
-            // Preenche o array de opções com os cursos ordenados
             foreach ($cursos as $curso) {
-                $options[$curso->id] = $curso->fullname; // Adiciona o curso ao array de opções
+                $options[$curso->id] = $curso->fullname; 
             }
         } else {
-        // $options[0] = get_string('nocourses', 'block_ifcare'); // Mensagem de erro caso não haja cursos
+       
         }
 
         $mform->addElement('select', 'courseid', get_string('select_course', 'block_ifcare'), $options); 
         $mform->setType('courseid', PARAM_INT);
 
-
-        // Adiciona um campo de seleção para seções (inicialmente vazio)
         $mform->addElement('select', 'sectionid', get_string('select_section', 'block_ifcare'), array());
         $mform->setType('sectionid', PARAM_INT);
 
-        // Adiciona um campo de seleção para recursos/atividades (inicialmente vazio)
         $mform->addElement('select', 'resourceid', get_string('select_resource', 'block_ifcare'), array());
         $mform->setType('resourceid', PARAM_INT);
 
-       
-        // Campo Data e Hora de Início da coleta
         $mform->addElement('date_time_selector', 'starttime', get_string('starttime', 'block_ifcare'), array('optional' => false));
 
-        // Sempre inicializa o campo com 30 min a mais
-        $current_time = time(); // Timestamp atual
+        $current_time = time(); 
         $future_time = $current_time + (30 * 60);
         $mform->addElement('date_time_selector', 'endtime', get_string('endtime', 'block_ifcare'), array('optional' => false));
         $mform->setDefault('endtime', $future_time);
 
-
-        // Campo Descrição
         $mform->addElement('textarea', 'description', get_string('description', 'block_ifcare'), 'wrap="virtual" rows="5" cols="50"');
         $mform->setType('description', PARAM_TEXT);
 
-        // Adiciona o campo oculto para as emoções selecionadas com o atributo 'emocao_selecionadas'
         $mform->addElement('hidden', 'emocao_selecionadas', '', array('id' => 'emocao_selecionadas'));
         $mform->setType('emocao_selecionadas', PARAM_RAW);
 
-        // Campo oculto para setor com ID definido
         $mform->addElement('hidden', 'setor', '', array('id' => 'setor'));
         $mform->setType('setor', PARAM_INT);
 
-        // Campo oculto para recurso com ID definido
         $mform->addElement('hidden', 'recurso', '', array('id' => 'recurso'));
         $mform->setType('recurso', PARAM_INT);
 
-        // Definir as opções para o select com os dados da tabela.
         $classes2 = $DB->get_records('ifcare_classeaeq');
         $options2 = array();
         foreach ($classes2 as $class) {
@@ -116,16 +95,12 @@ class CadastrarForm extends moodleform
             $options2[$class->id] = $classeAeq2->getNomeClasse();
         }
 
-        // Adiciona o campo select ao formulário com o nome correto.
         $mform->addElement('select', 'classe_aeq', get_string('aeqclasses', 'block_ifcare'), $options2);
         $mform->setType('classe_aeq', PARAM_TEXT);
 
-        // Adiciona o campo select múltiplo para selecionar as emoções com tamanho ajustado
         $mform->addElement('select', 'emocoes', get_string('emotions', 'block_ifcare'), array(), array('multiple' => 'multiple', 'size' => 8));
         $mform->setType('emocoes', PARAM_INT);
 
-
-        // Div para resumo das seleções, agora exibindo balões para cada emoção selecionada
         $mform->addElement('html', '
             <div class="fitem">
                 <div class="fitemtitle">Resumo das Seleções</div>
@@ -133,22 +108,18 @@ class CadastrarForm extends moodleform
             </div>
         ');
 
-        // Flag "Receber alerta do andamento da coleta"
         $mform->addElement('advcheckbox', 'alertprogress', get_string('alertprogress', 'block_ifcare'), null, array('group' => 1), array(0, 1));
         $mform->setDefault('alertprogress', 1);
 
-        // Flag "Notificar os alunos"
         $mform->addElement('advcheckbox', 'notify_students', get_string('notify_students', 'block_ifcare'), null, array('group' => 1), array(0, 1));
         $mform->setDefault('notify_students', 1);
 
-        // Botões de Salvar e Cancelar
         $mform->addElement('submit', 'save', get_string('submit', 'block_ifcare'));
-        $mform->setType('save', PARAM_ACTION); // Certifique-se de definir o tipo correto
+        $mform->setType('save', PARAM_ACTION);
 
         $mform->addElement('hidden', 'userid', $USER->id);
         $mform->setType('userid', PARAM_INT);
     
-        // Inclui o script JavaScript para fazer a chamada AJAX
         $PAGE->requires->js(new moodle_url('/blocks/ifcare/js/dynamicform.js'));
 
     }
@@ -171,7 +142,6 @@ class CadastrarForm extends moodleform
         $context = context_course::instance($COURSE->id);
         $PAGE->set_context($context);
     
-        // Recuperar os dados do formulário
         $userid = $data->userid;
         $courseid = $data->courseid;
         $nome = $data->name;
@@ -185,7 +155,6 @@ class CadastrarForm extends moodleform
         $sectionId = !empty($data->setor) ? $data->setor : 0;
         $resourceId = !empty($data->recurso) ? $data->recurso : 0;
     
-        // Criar um novo registro na tabela de coletas
         $registro = new stdClass();
         $registro->nome = $nome;
         $registro->data_inicio = $dataInicioFormatada;
@@ -203,21 +172,17 @@ class CadastrarForm extends moodleform
         if ($inserted) {
             $cadastroColetaId = $inserted;
     
-            // Processar as emoções selecionadas para cada classe AEQ
             $emocaoSelecionadas = json_decode($data->emocao_selecionadas, true);
     
-            // Verificar se $emocaoSelecionadas é um array antes de tentar iterar
             if (is_array($emocaoSelecionadas) && !empty($emocaoSelecionadas)) {
                 foreach ($emocaoSelecionadas as $classeAeqId => $emocoes) {
-                    // Verificar se $emocoes também é um array antes de iterar
                     if (is_array($emocoes)) {
                         foreach ($emocoes as $emocaoId) {
                             $associacao = new stdClass();
                             $associacao->cadastrocoleta_id = $cadastroColetaId;
-                            $associacao->classeaeq_id = $classeAeqId; // Classe AEQ atual
+                            $associacao->classeaeq_id = $classeAeqId; 
                             $associacao->emocao_id = $emocaoId;
     
-                            // Inserir a associação na tabela
                             $DB->insert_record('ifcare_associacao_classe_emocao_coleta', $associacao);
                         }
                     }
@@ -233,14 +198,6 @@ class CadastrarForm extends moodleform
             redirect(new moodle_url("/blocks/ifcare/index.php?courseid=$cursoId"));
         }
     }
-    
-    
-    
-    
-    
-    
-    
-
 }
 
 class CadastroColeta

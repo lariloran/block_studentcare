@@ -29,9 +29,9 @@ $capabilities = [
             'editingteacher' => CAP_ALLOW,
         ],
     ],
-    'block/ifcare:managecollections' => [  // Capacidade para gerenciar coletas no bloco
+    'block/ifcare:managecollections' => [  
         'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,  // Aplicada no contexto do sistema, pois é usada no painel
+        'contextlevel' => CONTEXT_SYSTEM,  
         'archetypes' => [
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,

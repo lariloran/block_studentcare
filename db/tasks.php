@@ -1,9 +1,9 @@
 <?php
 $tasks = [
     [
-        'classname' => 'block_ifcare\task\process_coleta',
+        'classname' => 'block_ifcare\task\process_collection',
         'blocking' => 0,
-        'minute' => '*/1', // A cada 10 minutos
+        'minute' => '*/1', 
         'hour' => '*',
         'day' => '*',
         'dayofweek' => '*',

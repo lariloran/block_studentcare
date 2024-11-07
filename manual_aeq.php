@@ -4,7 +4,6 @@ require_login();
 
 global $PAGE, $OUTPUT;
 
-// Definir o contexto da página e o título
 $courseid = optional_param('courseid', 0, PARAM_INT);
 $context = context_system::instance();
 $PAGE->set_context($context);
@@ -12,10 +11,8 @@ $PAGE->set_url('/blocks/ifcare/manual_aeq.php', array('courseid' => $courseid));
 $PAGE->set_title(get_string('aeq_manual_title', 'block_ifcare'));
 $PAGE->set_pagelayout('standard');
 
-// Renderizar o conteúdo da página
 echo $OUTPUT->header();
 
-// Incluir CSS personalizado
 echo '<style>
     .faq-container {
         max-width: 1200px;
@@ -123,20 +120,16 @@ echo '<style>
     }
 </style>';
 
-// Iniciar o container de FAQ
 echo html_writer::start_div('faq-container');
 
-// Barra de pesquisa
 echo html_writer::start_div('faq-search');
 echo html_writer::empty_tag('input', array('type' => 'text', 'id' => 'faqSearch', 'placeholder' => 'Pesquise pelo título ou conteúdo...'));
 echo html_writer::end_div();
 
-// Título do FAQ
 echo html_writer::start_div('faq-header');
 echo html_writer::tag('h3', 'Como podemos ajudar?');
 echo html_writer::end_div();
 
-// Grid de tópicos do FAQ
 echo html_writer::start_div('faq-topics');
 
 echo html_writer::start_div('faq-topic', array('onclick' => 'openModal("O que é o AEQ?", "<p>O <strong>AEQ (Achievement Emotions Questionnaire)</strong> é um instrumento desenvolvido para medir as emoções acadêmicas dos alunos. Ele está estruturado em três classes principais:</p><ul><li><em>Emoções relacionadas às aulas</em>: Refere-se a como os alunos se sentem durante as aulas, incluindo emoções como <strong>diversão</strong> e <strong>tédio</strong>.</li><li><em>Emoções relacionadas às provas</em>: Incluem emoções como <strong>ansiedade</strong> e <strong>orgulho</strong>, e são ligadas à preparação e realização de avaliações.</li><li><em>Emoções relacionadas ao aprendizado</em>: Emoções como <strong>esperança</strong> e <strong>frustração</strong> surgem durante o processo de aprendizado.</li></ul><p>Cada classe é composta por um conjunto de emoções, incluindo diversão, esperança, orgulho, raiva, ansiedade, vergonha, tédio, e desânimo. O objetivo do AEQ é entender como essas emoções influenciam o envolvimento e desempenho dos estudantes.</p>")'));
@@ -164,10 +157,8 @@ echo html_writer::tag('div', '😁', array('class' => 'faq-topic-icon'));
 echo html_writer::tag('div', 'Principais funcionalidades do plugin IFCare', array('class' => 'faq-topic-title'));
 echo html_writer::end_div();
 
-// Fechar grid de tópicos do FAQ
 echo html_writer::end_div();
 
-// Fechar container de FAQ
 echo html_writer::end_div();
 
 // Modal HTML
@@ -179,7 +170,6 @@ echo '<div id="emotionModal" class="modal">
     </div>
 </div>';
 
-// JavaScript para modal e barra de pesquisa
 echo html_writer::script('function openModal(title, description) {
     document.getElementById("modalTitle").innerText = title;
     document.getElementById("modalDescription").innerHTML = description;
@@ -208,5 +198,4 @@ document.getElementById("faqSearch").addEventListener("input", function() {
     }
 });');
 
-// Rodapé da página
 echo $OUTPUT->footer();

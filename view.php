@@ -2,22 +2,20 @@
 require_once('../../config.php');
 require_login();
 
-$coletaid = required_param('coletaid', PARAM_INT); // Recebe o ID da coleta
-$context = context_course::instance($COURSE->id);  // Contexto do curso
+$coletaid = required_param('coletaid', PARAM_INT); 
+$context = context_course::instance($COURSE->id);  
 $PAGE->set_url('/blocks/ifcare/view.php', array('coletaid' => $coletaid));
 $PAGE->set_context($context);
 $PAGE->set_title("Coleta de Emoções");
 
-$userid = $USER->id; // Obtém o ID do aluno
+$userid = $USER->id; 
 
 $coletaR = $DB->get_record('ifcare_cadastrocoleta', ['id' => $coletaid]);
 $cursoR = $DB->get_record('course', ['id' => $coletaR->curso_id]);
 
-// Verifica se o aluno já respondeu a esta coleta
 $respostasExistentes = $DB->get_records('ifcare_resposta', ['coleta_id' => $coletaid, 'aluno_id' => $userid]);
 
 if ($respostasExistentes) {
-    // Se o aluno já respondeu, exibe o modal informando
     echo $OUTPUT->header();
     echo '
     
@@ -105,10 +103,8 @@ function irParaHome() {
     return;
 }
 
-// Verifica se já existe uma resposta do TCLE para este usuário e curso
 $tcle_records = $DB->get_records('ifcare_tcle_resposta', ['aluno_id' => $userid, 'curso_id' => $coletaR->curso_id]);
 
-// Verifica se algum dos registros tem o TCLE aceito
 $tcle_aceito = false;
 foreach ($tcle_records as $record) {
     if ($record->tcle_aceito == 1) {
@@ -117,37 +113,30 @@ foreach ($tcle_records as $record) {
     }
 }
 
-// Adiciona o evento de aceitação ou recusa do TCLE
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Verifica se os dados são uma requisição JSON para salvar respostas ou uma aceitação de TCLE
     $input = file_get_contents('php://input');
     $data = json_decode($input, true);
 
-    // Verifica se é uma requisição para salvar respostas
     if (isset($data['coleta_id']) && isset($data['aluno_id']) && isset($data['respostas'])) {
         try {
             $coletaid = $data['coleta_id'];
             $alunoid = $data['aluno_id'];
             
-            // Verifica se o usuário já respondeu a essa coleta
             $respostasExistentes = $DB->get_records('ifcare_resposta', ['coleta_id' => $coletaid, 'aluno_id' => $alunoid]);
 
             if ($respostasExistentes) {
-                // Se já respondeu, retorne uma mensagem de erro
                 header('Content-Type: application/json');
                 echo json_encode(['success' => false, 'error' => 'Você já respondeu a essa coleta.']);
                 exit;
             }
 
-            $respostas = $data['respostas']; // Array com as respostas do aluno
+            $respostas = $data['respostas']; 
 
             foreach ($respostas as $pergunta_id => $resposta) {
                 if ($resposta !== null) {
-                    // Verifica se a pergunta existe no banco de dados
                     $pergunta = $DB->get_record('ifcare_pergunta', ['id' => $pergunta_id]);
 
                     if ($pergunta) {
-                        // Prepara o objeto de resposta
                         $nova_resposta = new stdClass();
                         $nova_resposta->pergunta_id = $pergunta->id;
                         $nova_resposta->aluno_id = $alunoid;
@@ -155,26 +144,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $nova_resposta->resposta = $resposta;
                         $nova_resposta->data_resposta = date('Y-m-d H:i:s');
 
-                        // Insere no banco de dados
                         $DB->insert_record('ifcare_resposta', $nova_resposta);
                     }
                 }
             }
 
-            // Retorna uma resposta de sucesso em JSON
             header('Content-Type: application/json');
             echo json_encode(['success' => true]);
             exit;
 
         } catch (Exception $e) {
-            // Em caso de erro, retorna a mensagem de erro em JSON
             header('Content-Type: application/json');
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
             exit;
         }
     }
 
-    // Verifica se a aceitação do TCLE foi enviada
     $tcle_aceito_form = optional_param('tcle_aceito', 0, PARAM_INT);
     if ($tcle_aceito_form == 1) {
         if (empty($tcle_records)) {
@@ -186,12 +171,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'data_resposta' => date('Y-m-d H:i:s')
             ]);
         }
-        redirect($PAGE->url); // Recarrega a página para exibir as perguntas
-
+        redirect($PAGE->url); 
     }else{
         redirect(new moodle_url("/course/view.php", ['id' => intval($coletaR->curso_id)]));
-
-        //redirect($CFG->wwwroot . '/my'); // Redireciona para o dashboard se não aceitar
     }
 }
 
@@ -229,7 +211,6 @@ echo '<style>
 }
 </style>';
 
-// Verifica se a coleta ainda está dentro do prazo
 $agora = time();
 if ($agora < strtotime($coletaR->data_inicio)) {
     echo "<div class='mensagem-sucesso'>A coleta ainda não começou. Ela estará disponível a partir de " . date('d/m/Y H:i', strtotime($coletaR->data_inicio)) . ".</div>";
@@ -242,7 +223,6 @@ if ($agora > strtotime($coletaR->data_fim)) {
     return;
 }
 
-// Busca as perguntas associadas às emoções da coleta
 $perguntas = $DB->get_records_sql("
     SELECT p.id, p.pergunta_texto, e.nome AS emocao_nome, e.txttooltip AS texto_tooltip
     FROM {ifcare_pergunta} p
@@ -257,11 +237,9 @@ if (!$perguntas) {
     exit;
 }
 
-// Converte as perguntas para JSON
 $perguntas_json = json_encode(array_values($perguntas));
 ?>
 
-<!-- Exibição do TCLE (se ainda não aceito) -->
 <div id="tcle-container" style="display: <?php echo $tcle_aceito ? 'none' : 'block'; ?>;">
     <form id="tcle-form" method="POST" class="tcle-form">
         <input type="hidden" id="tcle_aceito" name="tcle_aceito" value="0">
@@ -276,7 +254,6 @@ $perguntas_json = json_encode(array_values($perguntas));
     </form>
 </div>
 
-<!-- Exibição do questionário -->
 <?php if ($tcle_aceito): ?>
 <div id="quiz-container">
     <div class="titulo-coleta">Coleta de Emoções</div>
@@ -318,7 +295,6 @@ $perguntas_json = json_encode(array_values($perguntas));
 </div>
 <?php endif; ?>
 
-<!-- Modais de erro e sucesso -->
 <div id="modal-erro" class="modal">
     <div class="modal-content">
         <span class="close" onclick="fecharModal('modal-erro')">&times;</span>
@@ -344,12 +320,10 @@ let perguntaAtual = 0;
 let totalPerguntas = perguntas.length;
 let respostasSelecionadas = {};
 
-// Função para redirecionar para a página inicial do Moodle
 function irParaHome() {
-    window.location.href = '<?php echo $CFG->wwwroot; ?>'; // Redireciona para o dashboard ou página inicial do Moodle
+    window.location.href = '<?php echo $CFG->wwwroot; ?>'; 
 }
 
-// Função para exibir uma pergunta
 function mostrarPergunta(index) {
     let pergunta = perguntas[index];
     let perguntaContainer = document.getElementById('pergunta-container');
@@ -382,7 +356,6 @@ function mostrarPergunta(index) {
     document.getElementById('progress-text').innerText = `${progresso}%`;
 }
 
-// Função para capturar resposta
 document.querySelectorAll('.emoji-button').forEach(button => {
     button.addEventListener('click', function() {
         let valor = this.getAttribute('data-value');
@@ -411,12 +384,11 @@ function voltarPergunta() {
     }
 }
 
-let coletaConcluida = false; // Variável para controlar se a coleta já foi concluída
+let coletaConcluida = false; 
 
-// Função para avançar para a próxima pergunta
 function avancarPergunta() {
     if (coletaConcluida) {
-        abrirModal('modal-sucesso'); // Se já foi concluído, abre o modal novamente
+        abrirModal('modal-sucesso'); 
         return;
     }
 
@@ -425,25 +397,23 @@ function avancarPergunta() {
             perguntaAtual++;
             mostrarPergunta(perguntaAtual);
         } else {
-            // Enviar as respostas quando todas as perguntas forem respondidas
             enviarRespostas();
         }
     } else {
-        abrirModal('modal-erro'); // Exibe o modal de erro se nenhuma resposta for selecionada
+        abrirModal('modal-erro'); 
     }
 }
 
-// Função para enviar as respostas para o backend
 function enviarRespostas() {
     if (coletaConcluida) {
-        abrirModal('modal-sucesso'); // Se já foi concluído, abre o modal novamente
+        abrirModal('modal-sucesso');
         return;
     }
 
     const dadosRespostas = {
         coleta_id: <?php echo $coletaid; ?>,
         aluno_id: <?php echo $userid; ?>,
-        respostas: respostasSelecionadas // Enviar o objeto com respostas associadas ao ID da pergunta
+        respostas: respostasSelecionadas 
     };
 
     fetch(window.location.href, {
@@ -456,8 +426,8 @@ function enviarRespostas() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            coletaConcluida = true; // Marca a coleta como concluída
-            abrirModal('modal-sucesso'); // Exibe o modal de sucesso ao concluir a coleta
+            coletaConcluida = true; 
+            abrirModal('modal-sucesso'); 
         } else {
             console.error('Erro ao salvar as respostas:', data.error);
         }
@@ -490,10 +460,10 @@ echo $OUTPUT->footer();
 <style>
 
 #ajuda-emocional-link {
-    color: #0073e6; /* Cor azul suave */
+    color: #0073e6; 
     font-size: 16px;
-    text-decoration: none; /* Remove o sublinhado padrão */
-    margin: 0 15px; /* Espaçamento ao redor do link */
+    text-decoration: none; 
+    margin: 0 15px; 
     display: flex;
     align-items: center;
     justify-content: center;
@@ -501,11 +471,10 @@ echo $OUTPUT->footer();
 }
 
 #ajuda-emocional-link:hover {
-    color: #005bb5; /* Escurece a cor ao passar o mouse */
-    text-decoration: underline; /* Mostra o sublinhado ao passar o mouse */
+    color: #005bb5; 
+    text-decoration: underline; 
 }
 
-    /* Estilo para o container do TCLE */
 #tcle-container {
     text-align: center;
     margin: 0 auto;
@@ -517,7 +486,6 @@ echo $OUTPUT->footer();
     max-width: 600px;
 }
 
-/* Estilo para o título do TCLE */
 .tcle-title {
     font-size: 18px;
     font-weight: bold;
@@ -525,21 +493,18 @@ echo $OUTPUT->footer();
     color: #333;
 }
 
-/* Estilo para a descrição do TCLE */
 .tcle-description {
     font-size: 16px;
     margin-bottom: 20px;
     color: #555;
 }
 
-/* Alinhar os botões lado a lado */
 .respostas-tcle {
     display: flex;
     justify-content: center;
-    gap: 20px; /* Espaçamento entre os botões */
+    gap: 20px; 
 }
 
-/* Estilo dos botões TCLE */
 .buttonTcle {
     display: flex;
     align-items: center;
@@ -558,14 +523,14 @@ echo $OUTPUT->footer();
 }
 
 .modal {
-    display: none; /* Oculto por padrão */
+    display: none;
     position: fixed;
     z-index: 1;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Fundo escuro */
+    background-color: rgba(0, 0, 0, 0.5); 
 }
 
 .modal-content {
@@ -594,16 +559,14 @@ echo $OUTPUT->footer();
     cursor: pointer;
 }
 
-/* Container para alinhar os botões juntos */
 .modal-btn-container {
-    display: inline-flex; /* Usar inline-flex para garantir que o container se ajuste ao conteúdo dos botões */
+    display: inline-flex;
     justify-content: center;
-    gap: 20px; /* Espaçamento de 20px entre os botões */
+    gap: 20px;
     margin-top: 20px;
-    width: auto; /* Garante que o container não se expanda */
+    width: auto;
 }
 
-/* Estilo dos botões no modal */
 .modal-btn {
     background-color: #4CAF50;
     color: white;
@@ -612,10 +575,10 @@ echo $OUTPUT->footer();
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    width: auto; /* Garante que o botão tenha largura baseada no conteúdo */
-    min-width: 100px; /* Define uma largura mínima para os botões */
+    width: auto; 
+    min-width: 100px; 
     text-align: center;
-    display: inline-block; /* Garante que o botão se comporte como um elemento inline-block */
+    display: inline-block;
     margin-bottom: 4px;
 }
 
@@ -623,8 +586,6 @@ echo $OUTPUT->footer();
     background-color: #45a049;
 }
 
-
-/* Centralizar o título dentro do modal */
 .titulo-coleta {
     text-align: center;
     font-size: 24px;
@@ -633,7 +594,6 @@ echo $OUTPUT->footer();
     color: #333;
 }
 
-/* Centralizar o modal na página */
 #quiz-container {
     width: 100%;
     max-width: 700px;
@@ -646,7 +606,6 @@ echo $OUTPUT->footer();
     background-color: #fff;
 }
 
-/* Configuração da barra de progresso */
 #progress-bar-container {
     position: relative;
     text-align: center;
@@ -679,14 +638,12 @@ echo $OUTPUT->footer();
     color: black;
 }
 
-/* Estilo da pergunta */
 #pergunta-container {
     margin-bottom: 20px;
     font-size: 18px;
     text-align: center;
 }
 
-/* Estilo do ícone de interrogação ao lado da emoção */
 .tooltip-icon {
     position: relative;
     cursor: pointer;
@@ -696,7 +653,6 @@ echo $OUTPUT->footer();
     display: inline-block;
 }
 
-/* Tooltip customizado */
 .tooltip-text {
     visibility: hidden;
     background-color: #333;
@@ -716,20 +672,17 @@ echo $OUTPUT->footer();
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Exibe o tooltip quando o mouse está sobre o ícone */
 .tooltip-icon:hover .tooltip-text {
     visibility: visible;
     opacity: 1;
 }
 
-/* Alinha os botões emoji em linha */
 #respostas-container {
     display: flex;
     justify-content: space-evenly;
     margin-bottom: 20px;
 }
 
-/* Estilo dos botões de emoji */
 .emoji-button {
     display: flex;
     flex-direction: column;
@@ -750,19 +703,16 @@ echo $OUTPUT->footer();
     height: 48px;
 }
 
-/* Estilo do texto Likert abaixo dos emojis */
 .emoji-button span {
     font-size: 14px;
     color: #000;
     text-align: center;
 }
 
-/* Efeito de hover - faz o botão crescer */
 .emoji-button:hover, .emoji-button.selected {
     transform: scale(1.2);
 }
 
-/* Botões de navegação */
 #controls {
     display: flex;
     justify-content: space-between;
@@ -783,5 +733,4 @@ echo $OUTPUT->footer();
 #controls button:hover {
     background-color: #218838;
 }
-
 </style>

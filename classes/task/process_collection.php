@@ -1,10 +1,10 @@
 <?php
 namespace block_ifcare\task;
 
-class process_coleta extends \core\task\scheduled_task
+class process_collection extends \core\task\scheduled_task
 {
     public function get_name() {
-        return get_string('process_coleta', 'block_ifcare');
+        return get_string('process_collection', 'block_ifcare');
     }
 
     public function execute() {

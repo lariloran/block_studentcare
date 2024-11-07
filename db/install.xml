@@ -26,9 +26,6 @@
     </KEYS>
 </TABLE>
 
-
-
-
     <!-- Tabela para ClasseAeq -->
     <TABLE NAME="ifcare_classeaeq" COMMENT="Armazena as classes AEQ">
         <FIELDS>
@@ -142,8 +139,5 @@
         <KEY NAME="curso_fk" TYPE="foreign" FIELDS="curso_id" REFTABLE="course" REFFIELDS="id" ONDELETE="cascade"/>
     </KEYS>
 </TABLE>
-
-
-
 </TABLES>
 </XMLDB>

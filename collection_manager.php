@@ -1,11 +1,9 @@
 <?php
-class ColetaManager {
+class collection_manager {
 
-    // Método para obter as coletas de um professor
     public function get_coletas_by_professor($professor_id) {
         global $DB;
 
-        // Consulta para buscar as coletas do professor específico
         $sql = "SELECT id, nome, data_inicio, data_fim, descricao, curso_id, notificar_alunos, receber_alerta 
                 FROM {ifcare_cadastrocoleta} 
                 WHERE professor_id = :professor_id
@@ -16,7 +14,6 @@ class ColetaManager {
         return $DB->get_records_sql($sql, $params);
     }
 
-    // Método para obter as perguntas associadas à coleta
     private function obter_perguntas_associadas($coleta_id) {
         global $DB;
 
@@ -34,7 +31,6 @@ class ColetaManager {
         return $DB->get_records_sql($sql, $params);
     }
 
-    // Método para gerar a lista de coletas em HTML
     public function listar_coletas($professor_id) {
         global $DB;
 
@@ -100,13 +96,13 @@ class ColetaManager {
 
             document.getElementById("downloadCSV").onclick = function() {
                 const coletaId = this.getAttribute("data-id");
-                const downloadUrl = "Download.php?coleta_id=" + coletaId + "&format=csv";
+                const downloadUrl = "download.php?coleta_id=" + coletaId + "&format=csv";
                 window.location.href = downloadUrl;
             };
 
             document.getElementById("downloadJSON").onclick = function() {
                 const coletaId = this.getAttribute("data-id");
-                const downloadUrl = "Download.php?coleta_id=" + coletaId + "&format=json";
+                const downloadUrl = "download.php?coleta_id=" + coletaId + "&format=json";
                 window.location.href = downloadUrl;
             };
         </script>';
@@ -114,7 +110,6 @@ class ColetaManager {
         return $html;
     }
 
-    // Método para baixar os dados da coleta em CSV
     public function download_csv($coleta_id) {
         global $DB;
 
@@ -132,7 +127,6 @@ class ColetaManager {
             return;
         }
 
-        // Busca perguntas associadas
         $perguntas = $this->obter_perguntas_associadas($coleta_id);
 
         ob_clean();
@@ -143,7 +137,6 @@ class ColetaManager {
         $output = fopen('php://output', 'w');
         fputs($output, "\xEF\xBB\xBF");
 
-        // Escreve cabeçalho do CSV
         fputcsv($output, ['Nome', 'Data de Início', 'Data de Fim', 'Descrição', 'Disciplina', 'Notificar Aluno', 'Receber Alerta']);
         fputcsv($output, [
             mb_convert_encoding($coleta->nome, 'UTF-8'),
@@ -155,7 +148,6 @@ class ColetaManager {
             $coleta->receber_alerta ? 'Sim' : 'Não'
         ]);
 
-        // Escreve perguntas associadas
         fputcsv($output, ['Classe AEQ', 'Emoção', 'Pergunta']);
         foreach ($perguntas as $pergunta) {
             fputcsv($output, [
@@ -169,12 +161,9 @@ class ColetaManager {
         exit;
     }
 
-    // Método para baixar os dados da coleta em JSON
-// Método para baixar os dados da coleta em JSON
 public function download_json($coleta_id) {
     global $DB;
 
-    // Consulta para obter os dados da coleta específica
     $sql = "SELECT nome, data_inicio, data_fim, descricao, curso_id, notificar_alunos, receber_alerta 
             FROM {ifcare_cadastrocoleta} 
             WHERE id = :coleta_id";
@@ -190,20 +179,16 @@ public function download_json($coleta_id) {
     $curso = $DB->get_record('course', ['id' => $coleta->curso_id], 'fullname');
     $curso_nome = $curso ? format_string($curso->fullname) : 'Disciplina não encontrada';
 
-    // Busca perguntas associadas
     $perguntas = $this->obter_perguntas_associadas($coleta_id);
 
     ob_clean();
 
-    // Define o cabeçalho do JSON
     header('Content-Type: application/json');
     header('Content-Disposition: attachment; filename="' . $coleta->nome . '.json"');
 
-    // Inclui o nome da disciplina e as perguntas no JSON de saída
     $coleta->curso_nome = $curso_nome;
     $coleta->perguntas = $perguntas;
 
-    // Envia os dados como JSON formatado, sem escapar caracteres Unicode
     echo json_encode($coleta, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     exit;
 }
@@ -211,7 +196,6 @@ public function download_json($coleta_id) {
 }
 ?>
 
-<!-- Modal HTML -->
 <div id="coletaModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
@@ -223,7 +207,6 @@ public function download_json($coleta_id) {
         <p><strong>Notificar Aluno:</strong> <span id="modalNotificarAlunos"></span></p>
         <p><strong>Receber Alerta:</strong> <span id="modalReceberAlerta"></span></p>
 
-        <!-- Botões para baixar CSV e JSON -->
         <div class="button-group">
             <button id="downloadCSV" class="btn btn-secondary">
                 <i class="fa fa-file-csv"></i> Baixar CSV
@@ -235,8 +218,8 @@ public function download_json($coleta_id) {
     </div>
 </div>
 
-<!-- CSS do modal e do accordion -->
 <style>
+
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
@@ -342,7 +325,6 @@ body {
 }
 </style>
 
-<!-- JavaScript -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
