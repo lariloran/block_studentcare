@@ -13,6 +13,13 @@ $userid = $USER->id;
 $coletaR = $DB->get_record('ifcare_cadastrocoleta', ['id' => $coletaid]);
 $cursoR = $DB->get_record('course', ['id' => $coletaR->curso_id]);
 
+$is_enrolled = is_enrolled(context_course::instance($coletaR->curso_id), $userid);
+
+// Se o usuário não estiver inscrito no curso, redireciona para o curso atual
+if (!$is_enrolled) {
+    redirect(new moodle_url('/course/view.php', ['id' => $COURSE->id]));
+    exit;
+}
 $respostasExistentes = $DB->get_records('ifcare_resposta', ['coleta_id' => $coletaid, 'aluno_id' => $userid]);
 
 if ($respostasExistentes) {

@@ -1,7 +1,7 @@
 <?php
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2024011854; 
+$plugin->version   = 2024011855; 
 $plugin->requires  = 2023061300; // Requer Moodle 4.4.1+
 $plugin->component = 'block_ifcare';
 $plugin->maturity  = MATURITY_STABLE;

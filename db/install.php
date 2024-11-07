@@ -2,6 +2,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+
 function xmldb_block_ifcare_install() {
     global $DB;
 

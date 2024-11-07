@@ -1,14 +1,12 @@
 <?php
 
 $messageproviders = array(
-    'created_collection' => array(
+    'created_collection' => [
         'capability'  => 'block/ifcare:receivenotifications',
-    ),
-);
-
-$defaultmessageoutputs = array(
-    'created_collection' => array(
-        'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDIN,  
-        'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDIN,  
-    ),
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'airnotifier' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+        ],
+    ],
 );
