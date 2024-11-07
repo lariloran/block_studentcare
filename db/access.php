@@ -1,35 +1,51 @@
 <?php
 $capabilities = [
-    // Capacidade para adicionar instâncias do bloco ao curso
-    'block/ifcare:addinstance' => [
-        'riskbitmask' => RISK_SPAM | RISK_XSS,  // Definindo os riscos adequados
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_BLOCK,
-        'archetypes' => [
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        ],
-        'clonepermissionsfrom' => 'moodle/site:manageblocks'
-    ],
-
-    // Capacidade para adicionar instâncias do bloco ao painel do usuário (My Home)
     'block/ifcare:myaddinstance' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
+        'riskbitmask' => RISK_SPAM | RISK_XSS,
         'archetypes' => [
-            'user' => CAP_ALLOW
+            'manager' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'student' => CAP_PREVENT,
         ],
-        'clonepermissionsfrom' => 'moodle/my:manageblocks'
     ],
-
-// Capacidade para receber notificações de coletas criadas
-'block/ifcare:receivenotifications' => [
-    'captype' => 'read',
-    'contextlevel' => CONTEXT_COURSE,  // CONTEXT_BLOCK também pode ser usado se preferir
-    'archetypes' => [
-        'student' => CAP_ALLOW,
-        'teacher' => CAP_ALLOW,
+    'block/ifcare:addinstance' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+        'riskbitmask' => RISK_SPAM | RISK_XSS,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'student' => CAP_PREVENT,
+        ],
     ],
-],
-
+    'block/ifcare:view' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_BLOCK,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'student' => CAP_PREVENT,
+        ],
+    ],
+    'block/ifcare:receivenotifications' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => [
+            'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+        ],
+    ],
+    'block/ifcare:managecollections' => [  // Nova capacidade
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+        'archetypes' => [
+            'guest' => CAP_PREVENT,
+            'student' => CAP_PREVENT,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ],
+    ],
 ];

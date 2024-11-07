@@ -19,23 +19,33 @@ try {
     $section_modules = $modinfo->get_sections()[$sectionnum];
 
     // Adiciona a primeira opção vazia para "Não vincular a nenhuma atividade/recurso"
-    $response['resources'][] = [
+    $default_option = [
         'value' => '',
         'name' => 'Não vincular a nenhuma atividade/recurso'
     ];
+    $response['resources'][] = $default_option;
 
     // Itera pelos módulos da seção
+    $resources = []; // Array temporário para os recursos a serem ordenados
     foreach ($section_modules as $cmid) {
         $mod = $modinfo->cms[$cmid];
         
         // Verifica se o módulo está visível
         if ($mod->uservisible) {
-            $response['resources'][] = [
+            $resources[] = [
                 'value' => $cmid,
                 'name' => $mod->name
             ];
         }
     }
+
+    // Ordena os recursos alfabeticamente pelo nome
+    usort($resources, function ($a, $b) {
+        return strcmp($a['name'], $b['name']);
+    });
+
+    // Adiciona os recursos ordenados após a opção padrão
+    $response['resources'] = array_merge([$default_option], $resources);
 } catch (Exception $e) {
     // Se ocorrer um erro, adiciona a mensagem como um recurso
     $response['resources'][] = [
