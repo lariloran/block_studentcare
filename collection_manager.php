@@ -34,6 +34,31 @@ class collection_manager
         return $DB->get_records_sql($sql, $params);
     }
 
+    public function excluir_coleta($coleta_id)
+{
+    global $DB;
+
+    // Inicia transação para garantir a consistência dos dados
+    $transaction = $DB->start_delegated_transaction();
+
+    try {
+        // Excluir as respostas dos alunos relacionadas à coleta
+        $DB->delete_records('ifcare_resposta', ['coleta_id' => $coleta_id]);
+
+        // Excluir as associações de classe e emoção
+        $DB->delete_records('ifcare_associacao_classe_emocao_coleta', ['cadastrocoleta_id' => $coleta_id]);
+
+        // Excluir a própria coleta
+        $DB->delete_records('ifcare_cadastrocoleta', ['id' => $coleta_id]);
+
+        // Confirma a transação
+        $transaction->allow_commit();
+    } catch (Exception $e) {
+        // Em caso de erro, desfaz a transação
+        $transaction->rollback($e);
+        throw $e;
+    }
+}
 
     public function listar_coletas($professor_id)
     {
@@ -620,7 +645,6 @@ function filtrarColetas() {
         <p><strong>Notificar Aluno:</strong> <span id="modalNotificarAlunos"></span></p>
         <p><strong>Receber Alerta:</strong> <span id="modalReceberAlerta"></span></p>
         <p><strong>Recurso/Atividade vinculado:</strong> <span id="modalRecursoNome"></span></p>
-        <!-- Novo campo para o tipo de recurso -->
 
         <div class="button-group">
             <button id="downloadCSV" class="btn-coleta btn-coleta-secondary">
@@ -629,9 +653,64 @@ function filtrarColetas() {
             <button id="downloadJSON" class="btn-coleta btn-coleta-secondary">
                 <i class="fa fa-file-code"></i> Baixar JSON
             </button>
+            <!-- Botão de Exclusão -->
+            <button id="deleteColeta" class="btn-coleta btn-coleta-secondary" onclick="confirmarExclusao()">
+                <i class="fa fa-trash"></i> Excluir
+            </button>
         </div>
     </div>
 </div>
 
+<!-- Modal de confirmação de exclusão -->
+<div id="confirmDeleteModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="fecharConfirmacao()">&times;</span>
+        <h2>Confirmação de Exclusão</h2>
+        <p>Tem certeza de que deseja excluir a coleta "<span id="confirmColetaNome"></span>"? Todos os dados, incluindo as respostas dos alunos, serão removidos permanentemente.</p>
+        <button class="btn-coleta" onclick="excluirColetaConfirmado()">Sim, excluir</button>
+        <button class="btn-coleta" onclick="fecharConfirmacao()">Cancelar</button>
+    </div>
+</div>
 
+<script>
+let coletaIdParaExclusao = null;
+
+// Função para confirmar a exclusão
+function confirmarExclusao() {
+    const coletaNome = document.getElementById("modalColetaNome").textContent;
+    document.getElementById("confirmColetaNome").textContent = coletaNome;
+    coletaIdParaExclusao = document.getElementById("modalColetaUrl").getAttribute("href").split("=").pop();
+    document.getElementById("confirmDeleteModal").style.display = "block";
+}
+
+// Fechar o modal de confirmação
+function fecharConfirmacao() {
+    document.getElementById("confirmDeleteModal").style.display = "none";
+}
+
+// Função para excluir a coleta confirmada
+function excluirColetaConfirmado() {
+    fecharConfirmacao();
+
+    $.ajax({
+        url: M.cfg.wwwroot + "/blocks/ifcare/delete_collection.php",
+        type: "POST",
+        data: { coleta_id: coletaIdParaExclusao },
+        success: function(response) {
+            alert("Coleta excluída com sucesso!");
+            location.reload(); // Recarrega a página para atualizar a lista de coletas
+        },
+        error: function() {
+            alert("Erro ao excluir a coleta.");
+        }
+    });
+}
+
+// Fecha o modal ao clicar fora dele
+window.onclick = function(event) {
+    if (event.target == document.getElementById("confirmDeleteModal")) {
+        fecharConfirmacao();
+    }
+}
+</script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
