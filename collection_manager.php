@@ -291,6 +291,11 @@ class collection_manager
                 document.getElementById("modalReceberAlerta").textContent = coleta.receber_alerta == 1 ? "Sim" : "Não";
                 document.getElementById("modalRecursoNome").textContent = coleta.recurso_nome;
     
+                const coletaUrl = `${M.cfg.wwwroot}/blocks/ifcare/view.php?coletaid=${coleta.id}`;
+                const modalColetaUrlElement = document.getElementById("modalColetaUrl");
+                modalColetaUrlElement.href = coletaUrl;
+                modalColetaUrlElement.textContent = coleta.nome;
+
                 document.getElementById("downloadCSV").setAttribute("data-id", coleta.id);
                 document.getElementById("downloadJSON").setAttribute("data-id", coleta.id);
         
@@ -499,13 +504,14 @@ class collection_manager
     <div class="modal-content">
         <span class="close">&times;</span>
         <h2 id="modalColetaNome"></h2>
-        <p><strong>Descrição:</strong> <span id="modalColetaDescricao"></span></p>
+        <p><strong>Preview Coleta:</strong> <a id="modalColetaUrl" href="#" target="_blank">Link da Coleta</a></p>
         <p><strong>Disciplina:</strong> <span id="modalColetaDisciplina"></span></p>
         <p><strong>Data de Início:</strong> <span id="modalColetaInicio"></span></p>
         <p><strong>Data de Fim:</strong> <span id="modalColetaFim"></span></p>
+        <p><strong>Descrição:</strong> <span id="modalColetaDescricao"></span></p>
         <p><strong>Notificar Aluno:</strong> <span id="modalNotificarAlunos"></span></p>
         <p><strong>Receber Alerta:</strong> <span id="modalReceberAlerta"></span></p>
-        <p><strong>Tipo de Recurso/Atividade:</strong> <span id="modalRecursoNome"></span></p> <!-- Novo campo para o tipo de recurso -->
+        <p><strong>Recurso/Atividade vinculado:</strong> <span id="modalRecursoNome"></span></p> <!-- Novo campo para o tipo de recurso -->
 
         <div class="button-group">
             <button id="downloadCSV" class="btn-coleta btn-coleta-secondary">
