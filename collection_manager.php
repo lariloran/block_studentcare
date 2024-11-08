@@ -39,30 +39,235 @@ class collection_manager
     {
         global $DB;
     
+        // Inclui o CSS inline
+        $html = '<style>
+            .accordion {
+                max-width: 700px;
+                margin: 20px auto;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                background: #fff;
+            }
+            .accordion-item {
+                border-bottom: 1px solid #ddd;
+            }
+            .accordion-header {
+                background: #f0f0f0;
+                color: #333;
+                padding: 12px;
+                cursor: pointer;
+                transition: background 0.3s ease;
+            }
+            .accordion-header:hover {
+                background: #d8f3dc;
+            }
+            .accordion-button {
+                width: 100%;
+                text-align: left;
+                border: none;
+                background: none;
+                font-size: 15px;
+                color: #333;
+            }
+            .accordion-body {
+                padding: 12px;
+                background: #f9f9f9;
+                transition: max-height 0.3s ease;
+            }
+            .accordion-body p {
+                margin: 8px 0;
+                font-size: 14px;
+                color: #333;
+            }
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                background-color: #4CAF50;
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+            .btn:hover {
+                background-color: #45a049;
+            }
+            .modal {
+                display: none;
+                position: fixed;
+                z-index: 1;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                overflow: auto;
+                background-color: rgba(0, 0, 0, 0.5);
+            }
+            .modal-content {
+                background-color: white;
+                margin: 15% auto;
+                padding: 20px;
+                border-radius: 10px;
+                width: 80%;
+                max-width: 600px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            }
+            .close {
+                color: #aaa;
+                float: right;
+                font-size: 28px;
+                font-weight: bold;
+            }
+            .close:hover,
+            .close:focus {
+                color: black;
+                text-decoration: none;
+                cursor: pointer;
+            }
+            .card-list {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 20px;
+                justify-content: center;
+                margin-top: 20px;
+            }
+            .card {
+                background: #fff;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                padding: 20px;
+                max-width: 300px;
+                text-align: left;
+                transition: transform 0.3s;
+            }
+            .card:hover {
+                transform: scale(1.05);
+            }
+            .card h3 {
+                font-size: 18px;
+                margin-bottom: 10px;
+                color: #333;
+            }
+            .card p {
+                margin: 5px 0;
+                font-size: 14px;
+                color: #555;
+            }
+            .card .btn {
+                margin-top: 10px;
+                background-color: #4CAF50;
+                color: white;
+                padding: 8px 16px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+            .card .btn:hover {
+                background-color: #45a049;
+            }
+            .filter-container {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                margin: 20px 0;
+                padding: 10px 15px;
+                background: #f9f9f9;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+            .filter-container label {
+                font-size: 16px;
+                color: #333;
+                font-weight: bold;
+            }
+            .filter-container select {
+                padding: 8px 12px;
+                font-size: 16px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                transition: border-color 0.3s;
+                background-color: #fff;
+                color: #333;
+            }
+            .filter-container select:focus {
+                border-color: #4CAF50;
+                outline: none;
+            }
+            .filter-container button {
+                padding: 8px 16px;
+                font-size: 16px;
+                color: white;
+                background-color: #4CAF50;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s, transform 0.2s;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            }
+            .filter-container button:hover {
+                background-color: #45a049;
+            }
+            .filter-container button:active {
+                transform: scale(0.98);
+            }
+            .filter-container button .icon {
+                font-size: 14px;
+            }
+        </style>';
+    
+        // Filtro de ordenação
+        $html .= '<div class="filter-container">
+                    <label for="orderBy">Ordenar por:</label>
+                    <select id="orderBy" onchange="ordenarColetas()">
+                        <option value="nome">Nome da Coleta</option>
+                        <option value="data_inicio">Data de Início</option>
+                        <option value="data_fim">Data de Fim</option>
+                        <option value="curso_nome">Disciplina</option>
+                    </select>
+                    <button id="orderDirection" onclick="toggleOrderDirection()">Ascendente <i class="icon fa fa-arrow-up"></i></button>
+                 </div>';
+    
+        // Container para a listagem de coletas
+        $html .= '<div class="card-list" id="coletasContainer">';
+    
+        // Busca as coletas do professor
         $coletas = $this->get_coletas_by_professor($professor_id);
     
+        // Verifica se há coletas
         if (empty($coletas)) {
             return "<p>Nenhuma coleta cadastrada.</p>";
         }
     
-        // Estrutura de cartões para exibir as coletas
-        $html = '<div class="card-list">';
+        // Adiciona as coletas ao HTML
         foreach ($coletas as $coleta) {
             $curso = $DB->get_record('course', ['id' => $coleta->curso_id], 'fullname');
             $curso_nome = $curso ? format_string($curso->fullname) : 'Disciplina não encontrada';
             $coleta->curso_nome = $curso_nome;
     
-            $html .= '<div class="card">';
-            $html .= '<h3>' . format_string($coleta->nome) . '</h3>';
-            $html .= '<p><strong>Disciplina:</strong> ' . $curso_nome . '</p>';
-            $html .= '<p><strong>Data de Início:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_inicio)) . '</p>';
-            $html .= '<p><strong>Data de Fim:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_fim)) . '</p>';
-            $html .= '<button class="btn" onclick="abrirModal(' . $coleta->id . ')">Detalhes</button>';
-            $html .= '</div>';
+            $html .= '<div class="card" 
+                         data-nome="' . format_string($coleta->nome) . '" 
+                         data-data_inicio="' . $coleta->data_inicio . '" 
+                         data-data_fim="' . $coleta->data_fim . '" 
+                         data-curso_nome="' . $curso_nome . '">
+                        <h3>' . format_string($coleta->nome) . '</h3>
+                        <p><strong>Disciplina:</strong> ' . $curso_nome . '</p>
+                        <p><strong>Data de Início:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_inicio)) . '</p>
+                        <p><strong>Data de Fim:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_fim)) . '</p>
+                        <button class="btn" onclick="abrirModal(' . $coleta->id . ')">Detalhes</button>
+                     </div>';
         }
-        $html .= '</div>';
     
-        // Script para manipular o modal e os downloads
+        $html .= '</div>'; // Fecha o div card-list
+    
+        // Scripts JavaScript para modal e ordenação
         $html .= '<script>const coletasData = ' . json_encode(array_values($coletas)) . ';</script>';
         $html .= '<script>
             function abrirModal(coletaId) {
@@ -109,6 +314,7 @@ class collection_manager
     }
     
 
+
     public function download_csv($coleta_id)
     {
         global $DB;
@@ -151,7 +357,7 @@ class collection_manager
         header('Content-Disposition: attachment; filename="' . mb_convert_encoding($coleta->nome, 'UTF-8') . '.csv"');
 
         $output = fopen('php://output', 'w');
-        fputs($output, "\xEF\xBB\xBF"); 
+        fputs($output, "\xEF\xBB\xBF");
 
         fputcsv($output, ['Nome', 'Data de Início', 'Data de Fim', 'Descrição', 'Disciplina', 'Notificar Aluno', 'Receber Alerta']);
         fputcsv($output, [
@@ -167,7 +373,7 @@ class collection_manager
         fputcsv($output, ['ID da Pergunta', 'Classe AEQ', 'Emoção', 'Pergunta']);
         foreach ($perguntas as $pergunta) {
             fputcsv($output, [
-                $pergunta->pergunta_id, 
+                $pergunta->pergunta_id,
                 mb_convert_encoding($pergunta->nome_classe, 'UTF-8'),
                 mb_convert_encoding($pergunta->emocao_nome, 'UTF-8'),
                 mb_convert_encoding($pergunta->pergunta_texto, 'UTF-8')
@@ -177,9 +383,9 @@ class collection_manager
         fputcsv($output, ['Usuario', 'Email', 'Role', 'ID da Pergunta', 'Resposta', 'Data de Resposta']);
         foreach ($respostas as $resposta) {
             fputcsv($output, [
-                mb_convert_encoding($resposta->usuario, 'UTF-8'), 
-                mb_convert_encoding($resposta->email, 'UTF-8'), 
-                mb_convert_encoding($resposta->role_name, 'UTF-8'), 
+                mb_convert_encoding($resposta->usuario, 'UTF-8'),
+                mb_convert_encoding($resposta->email, 'UTF-8'),
+                mb_convert_encoding($resposta->role_name, 'UTF-8'),
                 $resposta->pergunta_id, // ID da pergunta
                 $resposta->resposta, // Resposta do aluno
                 date('d/m/Y H:i', strtotime($resposta->data_resposta)) // Data da resposta
@@ -193,28 +399,28 @@ class collection_manager
     public function download_json($coleta_id)
     {
         global $DB;
-    
+
         $sql = "SELECT nome, data_inicio, data_fim, descricao, curso_id, notificar_alunos, receber_alerta 
                 FROM {ifcare_cadastrocoleta} 
                 WHERE id = :coleta_id";
-    
+
         $params = ['coleta_id' => $coleta_id];
         $coleta = $DB->get_record_sql($sql, $params);
-    
+
         if (!$coleta) {
             echo "Coleta não encontrada.";
             return;
         }
-    
+
         $curso = $DB->get_record('course', ['id' => $coleta->curso_id], 'fullname');
         $curso_nome = $curso ? format_string($curso->fullname) : 'Disciplina não encontrada';
-    
+
         // Obtendo perguntas associadas
         $perguntas = $this->obter_perguntas_associadas($coleta_id);
-    
+
         // Obtendo o contexto do curso
         $context = context_course::instance($coleta->curso_id);
-    
+
         // Obtendo respostas dos alunos com função
         $sql_respostas = "SELECT r.id, a.username AS usuario, a.email, p.id AS pergunta_id, p.pergunta_texto, r.resposta, r.data_resposta, 
                           ra.roleid, role.shortname AS role_name
@@ -225,16 +431,16 @@ class collection_manager
                           JOIN {role} role ON role.id = ra.roleid
                           WHERE r.coleta_id = :coleta_id
                           AND ra.contextid = :contextid";
-    
+
         $params['contextid'] = $context->id;
-    
+
         $respostas = $DB->get_records_sql($sql_respostas, $params);
-    
+
         ob_clean();
-    
+
         header('Content-Type: application/json');
         header('Content-Disposition: attachment; filename="' . $coleta->nome . '.json"');
-    
+
         // Preparando os dados para o JSON
         $coleta_data = [
             'nome' => $coleta->nome,
@@ -247,7 +453,7 @@ class collection_manager
             'perguntas' => [],
             'respostas' => []
         ];
-    
+
         // Adicionando perguntas ao JSON
         foreach ($perguntas as $pergunta) {
             $coleta_data['perguntas'][] = [
@@ -257,7 +463,7 @@ class collection_manager
                 'texto_pergunta' => $pergunta->pergunta_texto
             ];
         }
-    
+
         // Adicionando respostas ao JSON
         foreach ($respostas as $resposta) {
             $coleta_data['respostas'][] = [
@@ -269,11 +475,11 @@ class collection_manager
                 'data_resposta' => $resposta->data_resposta
             ];
         }
-    
+
         echo json_encode($coleta_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
         exit;
     }
-    
+
 
 
 }
@@ -304,9 +510,66 @@ class collection_manager
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+    let isAscending = true;
+
+    function toggleOrderDirection() {
+        isAscending = !isAscending;
+        const button = document.getElementById('orderDirection');
+
+        // Atualiza o texto do botão
+        button.innerText = isAscending ? 'Ascendente ' : 'Descendente ';
+
+        // Verifica se o ícone já existe ou precisa ser criado
+        let icon = button.querySelector('.icon');
+        if (!icon) {
+            icon = document.createElement('i');
+            icon.classList.add('icon');
+            button.appendChild(icon);
+        }
+
+        // Atualiza a classe do ícone para mostrar a direção correta
+        icon.className = isAscending ? 'icon fa fa-arrow-up' : 'icon fa fa-arrow-down';
+
+        ordenarColetas(); // Chama a função para ordenar as coletas
+    }
+
+
+    function ordenarColetas() {
+        const orderBy = document.getElementById('orderBy').value;
+        const container = document.getElementById('coletasContainer');
+        const cards = Array.from(container.getElementsByClassName('card'));
+
+        cards.sort((a, b) => {
+            let valA = a.getAttribute('data-' + orderBy);
+            let valB = b.getAttribute('data-' + orderBy);
+
+            if (orderBy === 'data_inicio' || orderBy === 'data_fim') {
+                valA = new Date(valA);
+                valB = new Date(valB);
+            } else {
+                valA = valA.toLowerCase();
+                valB = valB.toLowerCase();
+            }
+
+            if (isAscending) {
+                return valA < valB ? -1 : valA > valB ? 1 : 0;
+            } else {
+                return valA > valB ? -1 : valA < valB ? 1 : 0;
+            }
+        });
+
+        container.innerHTML = '';
+        cards.forEach(card => container.appendChild(card));
+    }
+
+
     $(document).ready(function () {
         $('.accordion-button').click(function () {
             $(this).find('i').toggleClass('fa-plus fa-minus');
         });
     });
+</script>
+
+<script>
+
 </script>
