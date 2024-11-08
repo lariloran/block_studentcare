@@ -126,23 +126,26 @@ class collection_manager
                 text-decoration: none;
                 cursor: pointer;
             }
-            .card-list {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 20px;
-                justify-content: center;
-                margin-top: 20px;
-            }
-            .card {
-                background: #fff;
-                border: 1px solid #ddd;
-                border-radius: 8px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                padding: 20px;
-                max-width: 300px;
-                text-align: left;
-                transition: transform 0.3s;
-            }
+.card-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 300px;
+    min-height: 200px; /* Define uma altura mínima */
+    text-align: left;
+    transition: transform 0.3s;
+}
+
             .card:hover {
                 transform: scale(1.05);
             }
@@ -169,62 +172,97 @@ class collection_manager
             .card .btn-coleta:hover {
                 background-color: #45a049;
             }
-            .filter-container-coleta {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 10px;
-                margin: 20px 0;
-                padding: 10px 15px;
-                background: #f9f9f9;
-                border: 1px solid #ddd;
-                border-radius: 8px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            }
-            .filter-container-coleta label {
-                font-size: 16px;
-                color: #333;
-                font-weight: bold;
-            }
-            .filter-container-coleta select {
-                padding: 8px 12px;
-                font-size: 16px;
-                border: 1px solid #ddd;
-                border-radius: 5px;
-                transition: border-color 0.3s;
-                background-color: #fff;
-                color: #333;
-            }
-            .filter-container-coleta select:focus {
-                border-color: #4CAF50;
-                outline: none;
-            }
-            .filter-container-coleta button {
-                padding: 8px 16px;
-                font-size: 16px;
-                color: white;
-                background-color: #4CAF50;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                transition: background-color 0.3s, transform 0.2s;
-                display: flex;
-                align-items: center;
-                gap: 5px;
-            }
-            .filter-container-coleta button:hover {
-                background-color: #45a049;
-            }
-            .filter-container-coleta button:active {
-                transform: scale(0.98);
-            }
-            .filter-container-coleta button .icon {
-                font-size: 14px;
-            }
+              .filter-container-coleta {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        margin: 20px 0;
+        padding: 10px 15px;
+        background: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        flex-wrap: wrap; /* Permite que os elementos se ajustem em telas menores */
+    }
+    .filter-container-coleta label {
+        font-size: 16px;
+        color: #333;
+        font-weight: bold;
+    }
+    .filter-container-coleta input[type="text"] {
+        padding: 8px 12px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        transition: border-color 0.3s;
+        background-color: #fff;
+        color: #333;
+        flex-grow: 1; /* Faz o input crescer para ocupar mais espaço */
+        max-width: 250px; /* Limita o tamanho máximo do input */
+    }
+    .filter-container-coleta input[type="text"]:focus {
+        border-color: #4CAF50;
+        outline: none;
+    }
+    .filter-container-coleta select {
+        padding: 8px 12px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        transition: border-color 0.3s;
+        background-color: #fff;
+        color: #333;
+    }
+    .filter-container-coleta select:focus {
+        border-color: #4CAF50;
+        outline: none;
+    }
+    .filter-container-coleta button {
+        padding: 8px 16px;
+        font-size: 16px;
+        color: white;
+        background-color: #4CAF50;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .filter-container-coleta button:hover {
+        background-color: #45a049;
+    }
+    .filter-container-coleta button:active {
+        transform: scale(0.98);
+    }
+    .filter-container-coleta button .icon {
+        font-size: 14px;
+    }
+                .btn-coleta,
+.btn-coleta-ativo {
+    display: inline-flex;
+    align-items: center;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.btn-coleta-ativo:hover {
+    background-color: #45a049;
+}
+
         </style>';
 
-   
+
         $html .= '<div class="filter-container-coleta">
+                    <label for="searchBox">Buscar:</label>
+                    <input type="text" id="searchBox" placeholder="Buscar por nome, disciplina, descrição, tipo de recurso..." onkeyup="filtrarColetas()">
+                    
                     <label for="orderBy">Ordenar por:</label>
                     <select id="orderBy" onchange="ordenarColetas()">
                         <option value="nome">Nome da Coleta</option>
@@ -233,34 +271,34 @@ class collection_manager
                         <option value="curso_nome">Disciplina</option>
                     </select>
                     <button id="orderDirection" onclick="toggleOrderDirection()">Ascendente <i class="icon fa fa-arrow-up"></i></button>
-                  </div>';
-    
+                </div>';
+
         $html .= '<div class="card-list" id="coletasContainer">';
-    
+
         $coletas = $this->get_coletas_by_professor($professor_id);
-    
+
         if (empty($coletas)) {
             return "<p>Nenhuma coleta cadastrada.</p>";
         }
-    
+
         foreach ($coletas as $coleta) {
             $curso = $DB->get_record('course', ['id' => $coleta->curso_id], 'fullname');
             $curso_nome = $curso ? format_string($curso->fullname) : 'Disciplina não encontrada';
             $coleta->curso_nome = $curso_nome;
-    
+
             // Busca o tipo e o nome do recurso/atividade
             $resource_info = '--';
             $module = $DB->get_record('course_modules', ['id' => $coleta->resource_id], 'module');
-    
+
             if ($module) {
                 $mod_info = $DB->get_record('modules', ['id' => $module->module], 'name');
                 if ($mod_info) {
                     $resource_info = ucfirst($mod_info->name);
                 }
             }
-    
+
             $coleta->recurso_nome = $resource_info;
-    
+
             $html .= '<div class="card" 
                          data-nome="' . format_string($coleta->nome) . '" 
                          data-data_inicio="' . $coleta->data_inicio . '" 
@@ -274,11 +312,79 @@ class collection_manager
                         <button class="btn-coleta" onclick="abrirModal(' . $coleta->id . ')">Detalhes</button>
                      </div>';
         }
-    
+
         $html .= '</div>';
-    
+
         $html .= '<script>const coletasData = ' . json_encode(array_values($coletas)) . ';</script>';
         $html .= '<script>
+            let isAscending = true;
+
+            function toggleOrderDirection() {
+                isAscending = !isAscending;
+                const button = document.getElementById("orderDirection");
+                button.innerText = isAscending ? "Ascendente " : "Descendente ";
+                let icon = button.querySelector(".icon");
+                if (!icon) {
+                    icon = document.createElement("i");
+                    icon.classList.add("icon");
+                    button.appendChild(icon);
+                }
+                icon.className = isAscending ? "icon fa fa-arrow-up" : "icon fa fa-arrow-down";
+                ordenarColetas();
+            }
+
+            function ordenarColetas() {
+                const orderBy = document.getElementById("orderBy").value;
+                const container = document.getElementById("coletasContainer");
+                const cards = Array.from(container.getElementsByClassName("card"));
+
+                cards.sort((a, b) => {
+                    let valA = a.getAttribute("data-" + orderBy);
+                    let valB = b.getAttribute("data-" + orderBy);
+
+                    if (orderBy === "data_inicio" || orderBy === "data_fim") {
+                        valA = new Date(valA);
+                        valB = new Date(valB);
+                    } else {
+                        valA = valA.toLowerCase();
+                        valB = valB.toLowerCase();
+                    }
+
+                    if (isAscending) {
+                        return valA < valB ? -1 : valA > valB ? 1 : 0;
+                    } else {
+                        return valA > valB ? -1 : valA < valB ? 1 : 0;
+                    }
+                });
+
+                container.innerHTML = "";
+                cards.forEach(card => container.appendChild(card));
+            }
+function filtrarColetas() {
+    const searchTerm = document.getElementById("searchBox").value.toLowerCase();
+    const container = document.getElementById("coletasContainer");
+    const cards = Array.from(container.getElementsByClassName("card"));
+
+    cards.forEach(card => {
+        const nome = card.getAttribute("data-nome")?.toLowerCase() || "";
+        const cursoNome = card.getAttribute("data-curso_nome")?.toLowerCase() || "";
+        const descricao = card.getAttribute("data-descricao")?.toLowerCase() || "";
+        const recursoNome = card.getAttribute("data-recurso_nome")?.toLowerCase() || "";
+
+        const matches = nome.includes(searchTerm) || 
+                        cursoNome.includes(searchTerm) || 
+                        descricao.includes(searchTerm) || 
+                        recursoNome.includes(searchTerm);
+
+        // Usa `visibility: hidden` para manter o layout e evitar lacunas
+        card.style.visibility = matches ? "visible" : "hidden";
+        card.style.position = matches ? "static" : "absolute";
+    });
+}
+
+
+
+
             function abrirModal(coletaId) {
                 const coleta = coletasData.find(c => c.id == coletaId);
         
@@ -323,8 +429,10 @@ class collection_manager
             const downloadUrl = "download.php?coleta_id=" + coletaId + "&format=json";
             window.location.href = downloadUrl;
         };
+
+  
         </script>';
-    
+
         return $html;
     }
 
@@ -511,7 +619,8 @@ class collection_manager
         <p><strong>Descrição:</strong> <span id="modalColetaDescricao"></span></p>
         <p><strong>Notificar Aluno:</strong> <span id="modalNotificarAlunos"></span></p>
         <p><strong>Receber Alerta:</strong> <span id="modalReceberAlerta"></span></p>
-        <p><strong>Recurso/Atividade vinculado:</strong> <span id="modalRecursoNome"></span></p> <!-- Novo campo para o tipo de recurso -->
+        <p><strong>Recurso/Atividade vinculado:</strong> <span id="modalRecursoNome"></span></p>
+        <!-- Novo campo para o tipo de recurso -->
 
         <div class="button-group">
             <button id="downloadCSV" class="btn-coleta btn-coleta-secondary">
@@ -526,67 +635,3 @@ class collection_manager
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    let isAscending = true;
-
-    function toggleOrderDirection() {
-        isAscending = !isAscending;
-        const button = document.getElementById('orderDirection');
-
-        // Atualiza o texto do botão
-        button.innerText = isAscending ? 'Ascendente ' : 'Descendente ';
-
-        // Verifica se o ícone já existe ou precisa ser criado
-        let icon = button.querySelector('.icon');
-        if (!icon) {
-            icon = document.createElement('i');
-            icon.classList.add('icon');
-            button.appendChild(icon);
-        }
-
-        // Atualiza a classe do ícone para mostrar a direção correta
-        icon.className = isAscending ? 'icon fa fa-arrow-up' : 'icon fa fa-arrow-down';
-
-        ordenarColetas(); // Chama a função para ordenar as coletas
-    }
-
-
-    function ordenarColetas() {
-        const orderBy = document.getElementById('orderBy').value;
-        const container = document.getElementById('coletasContainer');
-        const cards = Array.from(container.getElementsByClassName('card'));
-
-        cards.sort((a, b) => {
-            let valA = a.getAttribute('data-' + orderBy);
-            let valB = b.getAttribute('data-' + orderBy);
-
-            if (orderBy === 'data_inicio' || orderBy === 'data_fim') {
-                valA = new Date(valA);
-                valB = new Date(valB);
-            } else {
-                valA = valA.toLowerCase();
-                valB = valB.toLowerCase();
-            }
-
-            if (isAscending) {
-                return valA < valB ? -1 : valA > valB ? 1 : 0;
-            } else {
-                return valA > valB ? -1 : valA < valB ? 1 : 0;
-            }
-        });
-
-        container.innerHTML = '';
-        cards.forEach(card => container.appendChild(card));
-    }
-
-
-    $(document).ready(function () {
-        $('.accordion-button').click(function () {
-            $(this).find('i').toggleClass('fa-plus fa-minus');
-        });
-    });
-</script>
-
-<script>
-
-</script>
