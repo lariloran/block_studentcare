@@ -80,7 +80,7 @@ class collection_manager
                 font-size: 14px;
                 color: #333;
             }
-            .btn {
+            .btn-coleta {
                 display: inline-flex;
                 align-items: center;
                 background-color: #4CAF50;
@@ -91,7 +91,7 @@ class collection_manager
                 cursor: pointer;
                 transition: background-color 0.3s ease;
             }
-            .btn:hover {
+            .btn-coleta:hover {
                 background-color: #45a049;
             }
             .modal {
@@ -156,7 +156,7 @@ class collection_manager
                 font-size: 14px;
                 color: #555;
             }
-            .card .btn {
+            .card .btn-coleta {
                 margin-top: 10px;
                 background-color: #4CAF50;
                 color: white;
@@ -166,10 +166,10 @@ class collection_manager
                 cursor: pointer;
                 transition: background-color 0.3s;
             }
-            .card .btn:hover {
+            .card .btn-coleta:hover {
                 background-color: #45a049;
             }
-            .filter-container {
+            .filter-container-coleta {
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -181,12 +181,12 @@ class collection_manager
                 border-radius: 8px;
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             }
-            .filter-container label {
+            .filter-container-coleta label {
                 font-size: 16px;
                 color: #333;
                 font-weight: bold;
             }
-            .filter-container select {
+            .filter-container-coleta select {
                 padding: 8px 12px;
                 font-size: 16px;
                 border: 1px solid #ddd;
@@ -195,11 +195,11 @@ class collection_manager
                 background-color: #fff;
                 color: #333;
             }
-            .filter-container select:focus {
+            .filter-container-coleta select:focus {
                 border-color: #4CAF50;
                 outline: none;
             }
-            .filter-container button {
+            .filter-container-coleta button {
                 padding: 8px 16px;
                 font-size: 16px;
                 color: white;
@@ -212,19 +212,19 @@ class collection_manager
                 align-items: center;
                 gap: 5px;
             }
-            .filter-container button:hover {
+            .filter-container-coleta button:hover {
                 background-color: #45a049;
             }
-            .filter-container button:active {
+            .filter-container-coleta button:active {
                 transform: scale(0.98);
             }
-            .filter-container button .icon {
+            .filter-container-coleta button .icon {
                 font-size: 14px;
             }
         </style>';
     
         // Filtro de ordenação
-        $html .= '<div class="filter-container">
+        $html .= '<div class="filter-container-coleta">
                     <label for="orderBy">Ordenar por:</label>
                     <select id="orderBy" onchange="ordenarColetas()">
                         <option value="nome">Nome da Coleta</option>
@@ -261,7 +261,7 @@ class collection_manager
                         <p><strong>Disciplina:</strong> ' . $curso_nome . '</p>
                         <p><strong>Data de Início:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_inicio)) . '</p>
                         <p><strong>Data de Fim:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_fim)) . '</p>
-                        <button class="btn" onclick="abrirModal(' . $coleta->id . ')">Detalhes</button>
+                        <button class="btn-coleta" onclick="abrirModal(' . $coleta->id . ')">Detalhes</button>
                      </div>';
         }
     
@@ -497,10 +497,10 @@ class collection_manager
         <p><strong>Receber Alerta:</strong> <span id="modalReceberAlerta"></span></p>
 
         <div class="button-group">
-            <button id="downloadCSV" class="btn btn-secondary">
+            <button id="downloadCSV" class="btn-coleta btn-coleta-secondary">
                 <i class="fa fa-file-csv"></i> Baixar CSV
             </button>
-            <button id="downloadJSON" class="btn btn-secondary">
+            <button id="downloadJSON" class="btn-coleta btn-coleta-secondary">
                 <i class="fa fa-file-code"></i> Baixar JSON
             </button>
         </div>
