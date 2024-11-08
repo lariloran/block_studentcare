@@ -131,7 +131,7 @@ class process_collection extends \core\task\scheduled_task
         $data_fim_formatada = date('d/m/Y H:i', strtotime($coleta->data_fim));
 
         // Define a descrição com destaque em negrito para a palavra "Aberto"
-        $urlparams->intro = clean_text("A coleta está <strong>aberta</strong> de {$data_inicio_formatada} até {$data_fim_formatada}. Participe e nos ajude a compreender melhor suas emoções!", FORMAT_HTML);
+        $urlparams->intro = clean_text("Responda esta coleta <strong>até</strong> {$data_fim_formatada}. Participe e nos ajude a compreender melhor suas emoções!", FORMAT_HTML);
         $urlparams->introformat = FORMAT_HTML;
 
         // Define a opção para exibir a descrição na página do curso
