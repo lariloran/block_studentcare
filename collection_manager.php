@@ -38,43 +38,36 @@ class collection_manager
     public function listar_coletas($professor_id)
     {
         global $DB;
-
+    
         $coletas = $this->get_coletas_by_professor($professor_id);
-
+    
         if (empty($coletas)) {
             return "<p>Nenhuma coleta cadastrada.</p>";
         }
-
-        $html = '<div class="accordion">';
+    
+        // Estrutura de cartões para exibir as coletas
+        $html = '<div class="card-list">';
         foreach ($coletas as $coleta) {
             $curso = $DB->get_record('course', ['id' => $coleta->curso_id], 'fullname');
             $curso_nome = $curso ? format_string($curso->fullname) : 'Disciplina não encontrada';
             $coleta->curso_nome = $curso_nome;
-
-            $html .= '<div class="accordion-item">';
-            $html .= '<div class="accordion-header">';
-            $html .= '<button class="accordion-button" type="button" onclick="abrirModal(' . $coleta->id . ');" aria-expanded="false">';
-            $html .= '<i class="fa fa-plus"></i> ' . format_string($coleta->nome) . ' - (' . date('d/m/Y H:i', strtotime($coleta->data_inicio)) . ')';
-            $html .= '</button>';
-            $html .= '</div>';
-
-            $html .= '<div id="coleta' . $coleta->id . '" class="collapse accordion-body">';
-            $html .= '<p><strong>Descrição:</strong> ' . (!empty($coleta->descricao) ? format_text($coleta->descricao) : '--') . '</p>';
+    
+            $html .= '<div class="card">';
+            $html .= '<h3>' . format_string($coleta->nome) . '</h3>';
             $html .= '<p><strong>Disciplina:</strong> ' . $curso_nome . '</p>';
             $html .= '<p><strong>Data de Início:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_inicio)) . '</p>';
             $html .= '<p><strong>Data de Fim:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_fim)) . '</p>';
-            $html .= '<p><strong>Notificar Aluno:</strong> ' . ($coleta->notificar_alunos == 1 ? 'Sim' : 'Não') . '</p>';
-            $html .= '<p><strong>Receber Alerta:</strong> ' . ($coleta->receber_alerta == 1 ? 'Sim' : 'Não') . '</p>';
-            $html .= '</div>';
+            $html .= '<button class="btn" onclick="abrirModal(' . $coleta->id . ')">Detalhes</button>';
             $html .= '</div>';
         }
-
         $html .= '</div>';
+    
+        // Script para manipular o modal e os downloads
         $html .= '<script>const coletasData = ' . json_encode(array_values($coletas)) . ';</script>';
         $html .= '<script>
             function abrirModal(coletaId) {
                 const coleta = coletasData.find(c => c.id == coletaId);
-                
+    
                 document.getElementById("modalColetaNome").textContent = coleta.nome;
                 document.getElementById("modalColetaDescricao").textContent = coleta.descricao ? coleta.descricao : "--";
                 document.getElementById("modalColetaDisciplina").textContent = coleta.curso_nome ? coleta.curso_nome : "Disciplina não encontrada";
@@ -82,38 +75,39 @@ class collection_manager
                 document.getElementById("modalColetaFim").textContent = new Date(coleta.data_fim).toLocaleString();
                 document.getElementById("modalNotificarAlunos").textContent = coleta.notificar_alunos == 1 ? "Sim" : "Não";
                 document.getElementById("modalReceberAlerta").textContent = coleta.receber_alerta == 1 ? "Sim" : "Não";
-
+    
                 document.getElementById("downloadCSV").setAttribute("data-id", coleta.id);
                 document.getElementById("downloadJSON").setAttribute("data-id", coleta.id);
-
+    
                 document.getElementById("coletaModal").style.display = "block";
             }
-
-            document.querySelector(".close").onclick = function() {
+    
+            document.querySelector(".close").onclick = function () {
                 document.getElementById("coletaModal").style.display = "none";
             };
-
-            window.onclick = function(event) {
+    
+            window.onclick = function (event) {
                 if (event.target == document.getElementById("coletaModal")) {
                     document.getElementById("coletaModal").style.display = "none";
                 }
             };
-
+    
             document.getElementById("downloadCSV").onclick = function() {
                 const coletaId = this.getAttribute("data-id");
                 const downloadUrl = "download.php?coleta_id=" + coletaId + "&format=csv";
                 window.location.href = downloadUrl;
             };
-
+    
             document.getElementById("downloadJSON").onclick = function() {
                 const coletaId = this.getAttribute("data-id");
                 const downloadUrl = "download.php?coleta_id=" + coletaId + "&format=json";
                 window.location.href = downloadUrl;
             };
         </script>';
-
+    
         return $html;
     }
+    
 
     public function download_csv($coleta_id)
     {
@@ -157,9 +151,8 @@ class collection_manager
         header('Content-Disposition: attachment; filename="' . mb_convert_encoding($coleta->nome, 'UTF-8') . '.csv"');
 
         $output = fopen('php://output', 'w');
-        fputs($output, "\xEF\xBB\xBF"); // BOM para UTF-8
+        fputs($output, "\xEF\xBB\xBF"); 
 
-        // Informações da coleta
         fputcsv($output, ['Nome', 'Data de Início', 'Data de Fim', 'Descrição', 'Disciplina', 'Notificar Aluno', 'Receber Alerta']);
         fputcsv($output, [
             mb_convert_encoding($coleta->nome, 'UTF-8'),
@@ -171,24 +164,22 @@ class collection_manager
             $coleta->receber_alerta ? 'Sim' : 'Não'
         ]);
 
-        // Perguntas associadas
         fputcsv($output, ['ID da Pergunta', 'Classe AEQ', 'Emoção', 'Pergunta']);
         foreach ($perguntas as $pergunta) {
             fputcsv($output, [
-                $pergunta->pergunta_id, // Usando o ID da pergunta diretamente
+                $pergunta->pergunta_id, 
                 mb_convert_encoding($pergunta->nome_classe, 'UTF-8'),
                 mb_convert_encoding($pergunta->emocao_nome, 'UTF-8'),
                 mb_convert_encoding($pergunta->pergunta_texto, 'UTF-8')
             ]);
         }
 
-        // Respostas dos alunos com a função do usuário
         fputcsv($output, ['Usuario', 'Email', 'Role', 'ID da Pergunta', 'Resposta', 'Data de Resposta']);
         foreach ($respostas as $resposta) {
             fputcsv($output, [
-                mb_convert_encoding($resposta->usuario, 'UTF-8'), // Nome de usuário do aluno
-                mb_convert_encoding($resposta->email, 'UTF-8'), // Email do aluno
-                mb_convert_encoding($resposta->role_name, 'UTF-8'), // Função do usuário
+                mb_convert_encoding($resposta->usuario, 'UTF-8'), 
+                mb_convert_encoding($resposta->email, 'UTF-8'), 
+                mb_convert_encoding($resposta->role_name, 'UTF-8'), 
                 $resposta->pergunta_id, // ID da pergunta
                 $resposta->resposta, // Resposta do aluno
                 date('d/m/Y H:i', strtotime($resposta->data_resposta)) // Data da resposta
@@ -304,111 +295,12 @@ class collection_manager
                 <i class="fa fa-file-csv"></i> Baixar CSV
             </button>
             <button id="downloadJSON" class="btn btn-secondary">
-                <i class="fa fa-file-json"></i> Baixar JSON
+                <i class="fa fa-file-code"></i> Baixar JSON
             </button>
         </div>
     </div>
 </div>
 
-<style>
-    .accordion {
-        max-width: 700px;
-        margin: 20px auto;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        background: #fff;
-    }
-
-    .accordion-item {
-        border-bottom: 1px solid #ddd;
-    }
-
-    .accordion-header {
-        background: #f0f0f0;
-        color: #333;
-        padding: 12px;
-        cursor: pointer;
-        transition: background 0.3s ease;
-    }
-
-    .accordion-header:hover {
-        background: #d8f3dc;
-    }
-
-    .accordion-button {
-        width: 100%;
-        text-align: left;
-        border: none;
-        background: none;
-        font-size: 15px;
-        color: #333;
-    }
-
-    .accordion-body {
-        padding: 12px;
-        background: #f9f9f9;
-        transition: max-height 0.3s ease;
-    }
-
-    .accordion-body p {
-        margin: 8px 0;
-        font-size: 14px;
-        color: #333;
-    }
-
-    .btn {
-        display: inline-flex;
-        align-items: center;
-        background-color: #4CAF50;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-
-    .btn:hover {
-        background-color: #45a049;
-    }
-
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.5);
-    }
-
-    .modal-content {
-        background-color: white;
-        margin: 15% auto;
-        padding: 20px;
-        border-radius: 10px;
-        width: 80%;
-        max-width: 600px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    }
-
-    .close {
-        color: #aaa;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-    }
-
-    .close:hover,
-    .close:focus {
-        color: black;
-        text-decoration: none;
-        cursor: pointer;
-    }
-</style>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
