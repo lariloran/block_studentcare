@@ -33,27 +33,37 @@ echo '<style>
     }
     .faq-search input {
         width: 80%;
-        padding: 10px;
+        padding: 12px;
         font-size: 16px;
         border: 1px solid #ddd;
-        border-radius: 5px;
+        border-radius: 8px;
+        transition: border-color 0.3s;
+    }
+    .faq-search input:focus {
+        border-color: #4CAF50;
+        outline: none;
     }
     .faq-topics {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        display: flex;
+        flex-wrap: wrap;
         gap: 20px;
+        justify-content: center;
     }
     .faq-topic {
         background-color: #fff;
         border: 1px solid #ddd;
         border-radius: 8px;
         padding: 20px;
+        max-width: 300px;
+        min-height: 200px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         text-align: center;
+        transition: transform 0.3s ease;
         cursor: pointer;
-        transition: box-shadow 0.3s ease;
     }
     .faq-topic:hover {
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        transform: scale(1.05);
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
     }
     .faq-topic-icon {
         font-size: 50px;
@@ -73,22 +83,20 @@ echo '<style>
         top: 0;
         width: 100%;
         height: 100%;
-        overflow: auto;
         background-color: rgba(0, 0, 0, 0.5);
     }
-.modal-content {
-    background-color: white;
-    margin: 10% auto;
-    padding: 30px;
-    border-radius: 15px;
-    width: 80%;
-    max-width: 600px;
-    border: 1px solid #ddd;
-    box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
-    max-height: 80vh; /* Define uma altura máxima */
-    overflow-y: auto; /* Adiciona scroll vertical se necessário */
-}
-
+    .modal-content {
+        background-color: white;
+        margin: 10% auto;
+        padding: 30px;
+        border-radius: 15px;
+        width: 80%;
+        max-width: 600px;
+        border: 1px solid #ddd;
+        box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+        max-height: 80vh;
+        overflow-y: auto;
+    }
     .modal-content h2 {
         font-size: 1.8em;
         color: #333;
@@ -158,7 +166,6 @@ echo html_writer::tag('div', 'Principais funcionalidades do plugin IFCare', arra
 echo html_writer::end_div();
 
 echo html_writer::end_div();
-
 echo html_writer::end_div();
 
 // Modal HTML
