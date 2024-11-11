@@ -168,7 +168,6 @@ echo html_writer::end_div();
 echo html_writer::end_div();
 echo html_writer::end_div();
 
-// Modal HTML
 echo '<div id="emotionModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>

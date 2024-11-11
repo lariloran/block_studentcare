@@ -38,23 +38,17 @@ class collection_manager
 {
     global $DB;
 
-    // Inicia transação para garantir a consistência dos dados
     $transaction = $DB->start_delegated_transaction();
 
     try {
-        // Excluir as respostas dos alunos relacionadas à coleta
         $DB->delete_records('ifcare_resposta', ['coleta_id' => $coleta_id]);
 
-        // Excluir as associações de classe e emoção
         $DB->delete_records('ifcare_associacao_classe_emocao_coleta', ['cadastrocoleta_id' => $coleta_id]);
 
-        // Excluir a própria coleta
         $DB->delete_records('ifcare_cadastrocoleta', ['id' => $coleta_id]);
 
-        // Confirma a transação
         $transaction->allow_commit();
     } catch (Exception $e) {
-        // Em caso de erro, desfaz a transação
         $transaction->rollback($e);
         throw $e;
     }
@@ -64,7 +58,6 @@ class collection_manager
     {
         global $DB;
 
-        // Inclui o CSS inline
         $html = '<style>
             .accordion {
                 max-width: 700px;
@@ -311,7 +304,6 @@ class collection_manager
             $curso_nome = $curso ? format_string($curso->fullname) : 'Disciplina não encontrada';
             $coleta->curso_nome = $curso_nome;
 
-            // Busca o tipo e o nome do recurso/atividade
             $resource_info = '--';
             $module = $DB->get_record('course_modules', ['id' => $coleta->resource_id], 'module');
 
@@ -534,9 +526,9 @@ function filtrarColetas() {
                 mb_convert_encoding($resposta->usuario, 'UTF-8'),
                 mb_convert_encoding($resposta->email, 'UTF-8'),
                 mb_convert_encoding($resposta->role_name, 'UTF-8'),
-                $resposta->pergunta_id, // ID da pergunta
-                $resposta->resposta, // Resposta do aluno
-                date('d/m/Y H:i', strtotime($resposta->data_resposta)) // Data da resposta
+                $resposta->pergunta_id, 
+                $resposta->resposta, 
+                date('d/m/Y H:i', strtotime($resposta->data_resposta))
             ]);
         }
 
@@ -563,13 +555,10 @@ function filtrarColetas() {
         $curso = $DB->get_record('course', ['id' => $coleta->curso_id], 'fullname');
         $curso_nome = $curso ? format_string($curso->fullname) : 'Disciplina não encontrada';
 
-        // Obtendo perguntas associadas
         $perguntas = $this->obter_perguntas_associadas($coleta_id);
 
-        // Obtendo o contexto do curso
         $context = context_course::instance($coleta->curso_id);
 
-        // Obtendo respostas dos alunos com função
         $sql_respostas = "SELECT r.id, a.username AS usuario, a.email, p.id AS pergunta_id, p.pergunta_texto, r.resposta, r.data_resposta, 
                           ra.roleid, role.shortname AS role_name
                           FROM {ifcare_resposta} r
@@ -589,7 +578,6 @@ function filtrarColetas() {
         header('Content-Type: application/json');
         header('Content-Disposition: attachment; filename="' . $coleta->nome . '.json"');
 
-        // Preparando os dados para o JSON
         $coleta_data = [
             'nome' => $coleta->nome,
             'data_inicio' => $coleta->data_inicio,
@@ -602,7 +590,6 @@ function filtrarColetas() {
             'respostas' => []
         ];
 
-        // Adicionando perguntas ao JSON
         foreach ($perguntas as $pergunta) {
             $coleta_data['perguntas'][] = [
                 'id' => $pergunta->pergunta_id,
@@ -612,12 +599,11 @@ function filtrarColetas() {
             ];
         }
 
-        // Adicionando respostas ao JSON
         foreach ($respostas as $resposta) {
             $coleta_data['respostas'][] = [
                 'usuario' => $resposta->usuario,
                 'email' => $resposta->email,
-                'funcao' => $resposta->role_name, // Nome da função do usuário
+                'funcao' => $resposta->role_name, 
                 'id_pergunta' => $resposta->pergunta_id,
                 'resposta' => $resposta->resposta,
                 'data_resposta' => $resposta->data_resposta
@@ -653,7 +639,6 @@ function filtrarColetas() {
             <button id="downloadJSON" class="btn-coleta btn-coleta-secondary">
                 <i class="fa fa-file-code"></i> Baixar JSON
             </button>
-            <!-- Botão de Exclusão -->
             <button id="deleteColeta" class="btn-coleta btn-coleta-secondary" onclick="confirmarExclusao()">
                 <i class="fa fa-trash"></i> Excluir
             </button>
@@ -661,7 +646,6 @@ function filtrarColetas() {
     </div>
 </div>
 
-<!-- Modal de confirmação de exclusão -->
 <div id="confirmDeleteModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="fecharConfirmacao()">&times;</span>
@@ -675,7 +659,6 @@ function filtrarColetas() {
 <script>
 let coletaIdParaExclusao = null;
 
-// Função para confirmar a exclusão
 function confirmarExclusao() {
     const coletaNome = document.getElementById("modalColetaNome").textContent;
     document.getElementById("confirmColetaNome").textContent = coletaNome;
@@ -683,12 +666,10 @@ function confirmarExclusao() {
     document.getElementById("confirmDeleteModal").style.display = "block";
 }
 
-// Fechar o modal de confirmação
 function fecharConfirmacao() {
     document.getElementById("confirmDeleteModal").style.display = "none";
 }
 
-// Função para excluir a coleta confirmada
 function excluirColetaConfirmado() {
     fecharConfirmacao();
 
@@ -698,7 +679,7 @@ function excluirColetaConfirmado() {
         data: { coleta_id: coletaIdParaExclusao },
         success: function(response) {
             alert("Coleta excluída com sucesso!");
-            location.reload(); // Recarrega a página para atualizar a lista de coletas
+            location.reload(); 
         },
         error: function() {
             alert("Erro ao excluir a coleta.");
@@ -706,7 +687,6 @@ function excluirColetaConfirmado() {
     });
 }
 
-// Fecha o modal ao clicar fora dele
 window.onclick = function(event) {
     if (event.target == document.getElementById("confirmDeleteModal")) {
         fecharConfirmacao();

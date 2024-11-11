@@ -15,7 +15,6 @@ class process_collection extends \core\task\scheduled_task
         $agora = time();
         mtrace("Iniciando tarefa cron de coleta...");
 
-        // Consulta coletas que ainda não enviaram notificação
         $sql = "SELECT c.*
                 FROM {ifcare_cadastrocoleta} c
                 WHERE :agora >= c.data_inicio 
@@ -23,7 +22,6 @@ class process_collection extends \core\task\scheduled_task
                 AND c.notificar_alunos = 1
                 AND c.notificacao_enviada = 0";
 
-        // Dentro de `execute`, ao buscar coletas
         try {
             $coletas = $DB->get_records_sql($sql, [
                 'agora' => date('Y-m-d H:i:s', $agora),
@@ -42,10 +40,8 @@ class process_collection extends \core\task\scheduled_task
 
                 $this->adicionar_recurso_url($coleta, $curso);
 
-                // Envia notificações para alunos matriculados
                 $this->enviar_notificacao($coleta);
 
-                // Marca a coleta como notificada
                 $DB->set_field('ifcare_cadastrocoleta', 'notificacao_enviada', 1, ['id' => $coleta->id]);
 
                 mtrace("Notificação enviada e coleta processada: " . $coleta->nome);
@@ -62,49 +58,40 @@ class process_collection extends \core\task\scheduled_task
         $coleta->curso_id = clean_param($coleta->curso_id, PARAM_INT);
         $section_id = clean_param($coleta->section_id, PARAM_INT);
 
-        // Incluir a biblioteca de módulos do Moodle para usar add_moduleinfo()
         require_once($CFG->dirroot . '/course/modlib.php');
 
-        // Log do início do método
         mtrace("Iniciando a adição de recurso URL para a coleta: {$coleta->nome}, Curso ID: {$curso->id}");
 
-        // Verifica se o curso foi fornecido corretamente
         if (!isset($curso->id)) {
             mtrace("Erro: Curso não encontrado ou inválido para adicionar o recurso URL.");
             return;
         }
 
-        // Obter informações rápidas do curso
         mtrace("Obtendo informações do curso (get_fast_modinfo)...");
 
         $modinfo = get_fast_modinfo($curso->id);
-        $sections = $modinfo->get_sections(); // Obtem todas as seções do curso
+        $sections = $modinfo->get_sections(); 
 
-        // Verifica se o curso possui seções
         if (empty($sections)) {
             mtrace("Nenhuma seção encontrada no curso. Criando recurso na seção zero.");
-            $sections[0] = []; // Adiciona manualmente a seção zero, pois ela sempre existe
+            $sections[0] = []; 
         }
 
-        // Utilizar a seção armazenada na coleta
         $section_id = $coleta->section_id;
 
 
         mtrace("Total de seções encontradas: " . count($sections));
         mtrace("Processando a seção especificada: Seção {$section_id}");
 
-        // Preparar os dados do recurso URL
         $urlparams = new \stdClass();
         $urlparams->course = $curso->id;
-        $urlparams->module = $DB->get_field('modules', 'id', ['name' => 'url']); // ID do módulo de tipo 'url'
+        $urlparams->module = $DB->get_field('modules', 'id', ['name' => 'url']); 
 
-                // Dentro de `adicionar_recurso_url`
         if (empty($curso) || empty($urlparams->module)) {
             mtrace("Erro ao obter dados do curso ou módulo.");
             return;
         }
 
-        // Verificar se o módulo URL foi encontrado
         if (!$urlparams->module) {
             mtrace("Erro: Não foi possível encontrar o módulo do tipo 'url' no banco de dados.");
             return;
@@ -116,26 +103,20 @@ class process_collection extends \core\task\scheduled_task
         $urlparams->visible = 1;
         $urlparams->format = FORMAT_MOODLE;
 
-        // Definir o valor de 'display' para evitar os warnings
-        $urlparams->display = 0;  // 0: Exibir no mesmo frame (padrão)
+        $urlparams->display = 0;  
 
-        // Condição de conclusão: estudantes devem marcar manualmente como concluído
-        $urlparams->completion = 1; // 1 = Atividade pode ser marcada como concluída manualmente
-        $urlparams->completionview = 0; // 0 = Visualização da atividade não é obrigatória para marcar como concluída
+        $urlparams->completion = 1; 
+        $urlparams->completionview = 0; 
 
-        // Dados do recurso URL que será criado na seção especificada
-        $urlparams->section = $section_id; // Utiliza a seção definida na coleta
+        $urlparams->section = $section_id; 
         $urlparams->name = "IFCare - Como você está se sentindo hoje?";
-        // Formata as datas de início e fim
         $data_inicio_formatada = date('d/m/Y H:i', strtotime($coleta->data_inicio));
         $data_fim_formatada = date('d/m/Y H:i', strtotime($coleta->data_fim));
 
-        // Define a descrição com destaque em negrito para a palavra "Aberto"
         $urlparams->intro = clean_text("Responda esta coleta <strong>até</strong> {$data_fim_formatada}. Participe e nos ajude a compreender melhor suas emoções!", FORMAT_HTML);
         $urlparams->introformat = FORMAT_HTML;
 
-        // Define a opção para exibir a descrição na página do curso
-        $urlparams->showdescription = 1; // Define para mostrar a descrição por padrão
+        $urlparams->showdescription = 1; 
         $urlparams->introformat = FORMAT_HTML;
         $urlparams->externalurl = clean_param("{$CFG->wwwroot}/blocks/ifcare/view.php?coletaid={$coleta->id}", PARAM_URL);
         $urlparams->timemodified = time();
@@ -144,7 +125,6 @@ class process_collection extends \core\task\scheduled_task
         mtrace("Nome do recurso: {$urlparams->name}");
         mtrace("URL: {$urlparams->externalurl}");
 
-        // Criar a URL como um recurso dentro da seção especificada
         $cmid = \add_moduleinfo((object) $urlparams, $curso, null);
 
         if ($cmid) {
