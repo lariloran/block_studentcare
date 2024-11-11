@@ -1,0 +1,46 @@
+# Ignore o diretório de cache e outros arquivos temporários
+/cache/
+/localcache/
+/tmp/
+
+# Ignorar arquivos de configuração locais
+config.php
+
+# Ignorar arquivos e diretórios de dependências
+/vendor/
+/node_modules/
+
+# Ignorar arquivos e diretórios de build
+/build/
+/dist/
+/*.log
+*.tmp
+
+# Ignorar arquivos de IDE e editor
+/.idea/
+/*.sublime-project
+/*.sublime-workspace
+/.vscode/
+
+# Ignorar arquivos de sistema
+.DS_Store
+Thumbs.db
+
+# Ignorar arquivos de backup
+*.bak
+*.swp
+*.swo
+
+# Ignorar arquivos de compilação
+*.o
+*.a
+*.class
+*.jar
+*.pyc
+*.pyo
+
+# Ignorar arquivos específicos do Moodle
+/moodledata/
+/lib/classes/
+/lib/db/
+/lib/phpunit/
