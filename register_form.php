@@ -9,9 +9,20 @@ class register_form extends moodleform
     
     public function get_user_courses($userid) {
         global $DB;
+        $courses = enrol_get_users_courses($userid, true);
+        $teacher_courses = [];
     
-        return enrol_get_users_courses($userid, true); 
+        foreach ($courses as $course) {
+            $context = context_course::instance($course->id);
+            
+            // Verifica se o usuário possui a capacidade de gerenciamento no curso
+            if (has_capability('moodle/course:update', $context, $userid)) {
+                $teacher_courses[] = $course;
+            }
+        }
+        return $teacher_courses;
     }
+    
     
 
     public function __construct()
