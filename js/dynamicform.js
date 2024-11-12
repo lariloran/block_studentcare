@@ -112,52 +112,65 @@ require(["jquery"], function ($) {
   }
 
   function renderSelectedEmotions() {
-    var emotionContainer = $('#emocoes-selecionadas');
+    var emotionContainer = $("#emocoes-selecionadas");
 
     // Itera sobre todas as classes e emoções selecionadas para exibir o resumo completo
     Object.keys(selecoes).forEach(function (classeId) {
-        var emocoes = selecoes[classeId];
-        emocoes.forEach(function (emocaoId) {
-            // Verifica se a emoção já foi adicionada ao resumo
-            if (!emotionContainer.find('.emotion-tag[data-id="' + emocaoId + '"]').length) {
-                // Obtém o nome da emoção atual de acordo com seu ID
-                var emotionName = $('#id_emocoes option[value="' + emocaoId + '"]').text();
+      var emocoes = selecoes[classeId];
+      emocoes.forEach(function (emocaoId) {
+        // Verifica se a emoção já foi adicionada ao resumo
+        if (
+          !emotionContainer.find('.emotion-tag[data-id="' + emocaoId + '"]')
+            .length
+        ) {
+          // Obtém o nome da emoção atual de acordo com seu ID
+          var emotionName = $(
+            '#id_emocoes option[value="' + emocaoId + '"]'
+          ).text();
 
-                if (emotionName) {
-                    var tag = $('<div>').addClass('emotion-tag').attr('data-id', emocaoId).text(emotionName);
-                    var closeButton = $('<span>').addClass('close-btn').text('×');
+          if (emotionName) {
+            var tag = $("<div>")
+              .addClass("emotion-tag")
+              .attr("data-id", emocaoId)
+              .text(emotionName);
+            var closeButton = $("<span>").addClass("close-btn").text("×");
 
-                    // Permite remover uma emoção específica do resumo ao clicar no botão de fechar
-                    closeButton.on('click', function () {
-                        // Remove a emoção do objeto selecoes
-                        selecoes[classeId] = selecoes[classeId].filter(function (e) {
-                            return e !== emocaoId;
-                        });
+            // Permite remover uma emoção específica do resumo ao clicar no botão de fechar
+            closeButton.on("click", function () {
+              // Remove a emoção do objeto selecoes
+              selecoes[classeId] = selecoes[classeId].filter(function (e) {
+                return e !== emocaoId;
+              });
 
-                        // Remove a tag visual
-                        tag.remove();
+              // Remove a tag visual
+              tag.remove();
 
-                        // Atualiza o campo oculto com as emoções restantes
-                        $('#emocao_selecionadas').val(JSON.stringify(selecoes));
+              // Atualiza o campo oculto com as emoções restantes
+              $("#emocao_selecionadas").val(JSON.stringify(selecoes));
 
-                        // Desmarca a emoção no campo select
-                        $('#id_emocoes option[value="' + emocaoId + '"]').prop('selected', false);
-                    });
+              // Desmarca a emoção no campo select
+              $('#id_emocoes option[value="' + emocaoId + '"]').prop(
+                "selected",
+                false
+              );
+            });
 
-                    tag.append(closeButton);
-                    emotionContainer.append(tag);
-                }
-            }
-        });
+            tag.append(closeButton);
+            emotionContainer.append(tag);
+          }
+        }
+      });
     });
-}
-
-
+  }
 
   require(["core/notification"], function (notification) {
     $("form.mform").on("submit", function (e) {
-      e.preventDefault();
+      if (!validateDates()) {
+        e.preventDefault();
+        return;
+      }
 
+      e.preventDefault();
       notification.confirm(
         "Confirmação",
         "Está pronto para salvar esta coleta de emoções?",
@@ -168,7 +181,7 @@ require(["jquery"], function ($) {
           $("#recurso").val($("#id_resourceid").val());
           $("form.mform").off("submit").submit();
         },
-        function () {}
+        function () { }
       );
     });
   });
@@ -356,6 +369,62 @@ require(["jquery"], function ($) {
         );
     }
   }
+
+  function getTimestampFromSelector(selectorId) {
+    var year = parseInt($(`#${selectorId}_year`).val());
+    var month = parseInt($(`#${selectorId}_month`).val()) - 1;
+    var day = parseInt($(`#${selectorId}_day`).val());
+    var hour = parseInt($(`#${selectorId}_hour`).val());
+    var minute = parseInt($(`#${selectorId}_minute`).val());
+
+    if (
+      isNaN(year) ||
+      isNaN(month) ||
+      isNaN(day) ||
+      isNaN(hour) ||
+      isNaN(minute)
+    ) {
+      return null;
+    }
+
+    return new Date(year, month, day, hour, minute).getTime() / 1000;
+  }
+
+  function validateDates() {
+    var startTimestamp = getTimestampFromSelector("id_starttime");
+    var endTimestamp = getTimestampFromSelector("id_endtime");
+    var currentTimestamp = Math.floor(Date.now() / 1000);
+
+    if (startTimestamp === null || endTimestamp === null) {
+      return true;
+    }
+
+    if (startTimestamp < currentTimestamp) {
+      alert("A data de início não pode estar no passado.");
+      return false;
+    }
+
+    if (endTimestamp <= startTimestamp) {
+      alert("A data de fim deve ser posterior à data de início.");
+      return false;
+    }
+
+    return true;
+  }
+
+  function updateTimestamps() {
+    var startTimestamp = getTimestampFromSelector("id_starttime");
+    var endTimestamp = getTimestampFromSelector("id_endtime");
+
+    $("#start_timestamp_hidden").val(startTimestamp);
+    $("#end_timestamp_hidden").val(endTimestamp);
+  }
+
+  $(
+    "#id_starttime_day, #id_starttime_month, #id_starttime_year, #id_starttime_hour, #id_starttime_minute, #id_endtime_day, #id_endtime_month, #id_endtime_year, #id_endtime_hour, #id_endtime_minute"
+  ).change(function () {
+    setTimeout(updateTimestamps, 100);
+  });
 
   $("#id_courseid").change(function () {
     var courseid = $(this).val();

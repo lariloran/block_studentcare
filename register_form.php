@@ -37,6 +37,7 @@ class register_form extends moodleform
         parent::__construct();
     }
 
+
     public function definition()
     {
         global $PAGE, $COURSE, $DB,$USER,$PAGE;
@@ -79,12 +80,16 @@ class register_form extends moodleform
         $mform->addElement('select', 'resourceid', get_string('select_resource', 'block_ifcare'), array());
         $mform->setType('resourceid', PARAM_INT);
 
-        $mform->addElement('date_time_selector', 'starttime', get_string('starttime', 'block_ifcare'), array('optional' => false));
-
         $current_time = time(); 
-        $future_time = $current_time + (30 * 60);
+        $start_time = $current_time + (5 * 60); 
+        $future_time = $current_time + (30 * 60); 
+        
+        $mform->addElement('date_time_selector', 'starttime', get_string('starttime', 'block_ifcare'), array('optional' => false));
+        $mform->setDefault('starttime', $start_time); 
+        
         $mform->addElement('date_time_selector', 'endtime', get_string('endtime', 'block_ifcare'), array('optional' => false));
-        $mform->setDefault('endtime', $future_time);
+        $mform->setDefault('endtime', $future_time); 
+        
 
         $mform->addElement('textarea', 'description', get_string('description', 'block_ifcare'), 'wrap="virtual" rows="5" cols="50"');
         $mform->setType('description', PARAM_TEXT);
@@ -137,14 +142,22 @@ class register_form extends moodleform
     public function validation($data, $files)
     {
         $errors = parent::validation($data, $files);
-
-        if ($data['endtime'] <= $data['starttime']) {
-            $errors['endtime'] = get_string('endtimeerror', 'block_ifcare');
+        
+        $current_time = time();
+    
+        // Verifica se a data de início está no passado
+        if ($data['starttime'] < $current_time) {
+            $errors['starttime'] = get_string('starttime_past_error', 'block_ifcare');
         }
-
+    
+        // Verifica se a data de fim é posterior à data de início
+        if ($data['endtime'] <= $data['starttime']) {
+            $errors['endtime'] = get_string('endtime_before_start_error', 'block_ifcare');
+        }
+    
         return $errors;
     }
-
+    
     public function process_form($data)
     {
         global $DB, $SESSION, $COURSE, $PAGE;

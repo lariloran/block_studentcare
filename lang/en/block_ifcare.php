@@ -21,6 +21,8 @@ $string['submit'] = 'Salvar';
 $string['endtimeerror'] = 'A hora de término deve ser posterior à hora de início.';
 $string['mensagem_sucesso'] = 'Cadastro realizado com sucesso!';
 $string['mensagem_erro'] = 'Erro ao realizar o cadastro. Tente novamente.';
+$string['starttime_past_error'] = 'A data de início não pode estar no passado.';
+$string['endtime_before_start_error'] = 'A data de fim deve ser posterior à data de início.';
 
 // Strings de gerenciamento e navegação
 $string['manage_collections'] = 'Gerenciar Coletas';
