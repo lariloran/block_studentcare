@@ -286,6 +286,13 @@ class collection_manager
 .btn-coleta-ativo:hover {
     background-color: #45a049;
 }
+    .button-group {
+    display: flex;
+    gap: 10px; /* Define o espaço entre os botões */
+    justify-content: center; /* Centraliza os botões */
+    margin-top: 15px; /* Espaçamento acima do grupo de botões */
+}
+
 
         </style>';
 
@@ -343,19 +350,21 @@ class collection_manager
             $coleta->section_name = $section_name;
         
             $html .= '<div class="card" 
-                         data-nome="' . format_string($coleta->nome) . '" 
-                         data-data_inicio="' . $coleta->data_inicio . '" 
-                         data-data_fim="' . $coleta->data_fim . '" 
-                         data-curso_nome="' . $curso_nome . '" 
-                         data-recurso_nome="' . $coleta->recurso_nome . '" 
-                         data-resource_name="' . format_string($coleta->resource_name) . '" 
-                         data-section_name="' . format_string($coleta->section_name) . '">
-                        <h3>' . format_string($coleta->nome) . '</h3>
-                        <p><strong>Disciplina:</strong> ' . $curso_nome . '</p>
-                        <p><strong>Data de Início:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_inicio)) . '</p>
-                        <p><strong>Data de Fim:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_fim)) . '</p>
-                        <button class="btn-coleta" onclick="abrirModal(' . $coleta->id . ')">Detalhes</button>
-                     </div>';
+            data-id="' . $coleta->id . '" 
+            data-nome="' . format_string($coleta->nome) . '" 
+            data-data_inicio="' . $coleta->data_inicio . '" 
+            data-data_fim="' . $coleta->data_fim . '" 
+            data-curso_nome="' . $curso_nome . '" 
+            data-recurso_nome="' . $coleta->recurso_nome . '" 
+            data-resource_name="' . format_string($coleta->resource_name) . '" 
+            data-section_name="' . format_string($coleta->section_name) . '">
+           <h3>' . format_string($coleta->nome) . '</h3>
+           <p><strong>Disciplina:</strong> ' . $curso_nome . '</p>
+           <p><strong>Data de Início:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_inicio)) . '</p>
+           <p><strong>Data de Fim:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_fim)) . '</p>
+           <button class="btn-coleta" onclick="abrirModal(' . $coleta->id . ')">Detalhes</button>
+         </div>';
+
         }
         
         $html .= '</div>';
@@ -681,9 +690,12 @@ function filtrarColetas() {
     <div class="modal-content">
         <span class="close" onclick="fecharConfirmacao()">&times;</span>
         <h2>Confirmação de Exclusão</h2>
-        <p>Tem certeza de que deseja excluir a coleta "<span id="confirmColetaNome"></span>"? Todos os dados, incluindo as respostas dos alunos, serão removidos permanentemente.</p>
-        <button class="btn-coleta" onclick="excluirColetaConfirmado()">Sim, excluir</button>
-        <button class="btn-coleta" onclick="fecharConfirmacao()">Cancelar</button>
+        <p>Tem certeza de que deseja excluir a coleta "<span id="confirmColetaNome"></span>"? Todos os dados, <strong>incluindo as respostas dos alunos</strong>, serão removidos permanentemente.</p>
+        <div class="button-group">
+    <button class="btn-coleta btn-coleta-secondary" onclick="excluirColetaConfirmado()">Sim, excluir</button>
+    <button class="btn-coleta btn-coleta-secondary" onclick="fecharConfirmacao()">Cancelar</button>
+</div>
+
     </div>
 </div>
 
@@ -695,6 +707,10 @@ function confirmarExclusao() {
     document.getElementById("confirmColetaNome").textContent = coletaNome;
     coletaIdParaExclusao = document.getElementById("modalColetaUrl").getAttribute("href").split("=").pop();
     document.getElementById("confirmDeleteModal").style.display = "block";
+}
+
+function fecharModalDetalhe() {
+    document.getElementById("coletaModal").style.display = "none";
 }
 
 function fecharConfirmacao() {
@@ -710,13 +726,22 @@ function excluirColetaConfirmado() {
         data: { coleta_id: coletaIdParaExclusao },
         success: function(response) {
             alert("Coleta excluída com sucesso!");
-            location.reload(); 
+
+            // Fecha o modal de detalhes da coleta excluída
+            fecharModalDetalhe();
+
+            // Remove o card da coleta excluída da listagem
+            const coletaCard = document.querySelector(`.card[data-id='${coletaIdParaExclusao}']`);
+            if (coletaCard) {
+                coletaCard.remove();
+            }
         },
         error: function() {
             alert("Erro ao excluir a coleta.");
         }
     });
 }
+
 
 window.onclick = function(event) {
     if (event.target == document.getElementById("confirmDeleteModal")) {
