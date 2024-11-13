@@ -690,7 +690,7 @@ function filtrarColetas() {
     <div class="modal-content">
         <span class="close" onclick="fecharConfirmacao()">&times;</span>
         <h2>Confirmação de Exclusão</h2>
-        <p>Tem certeza de que deseja excluir a coleta "<span id="confirmColetaNome"></span>"? Todos os dados, <strong>incluindo as respostas dos alunos</strong>, serão removidos permanentemente.</p>
+        <p>Tem certeza de que deseja excluir a coleta "<span id="confirmColetaNome"></span>"? Todos os dados, <strong>incluindo as respostas dos alunos</strong>, serão removidos <strong>PERMANENTEMENTE</strong>. Essa ação é irreversível.</p>
         <div class="button-group">
     <button class="btn-coleta btn-coleta-secondary" onclick="excluirColetaConfirmado()">Sim, excluir</button>
     <button class="btn-coleta btn-coleta-secondary" onclick="fecharConfirmacao()">Cancelar</button>
