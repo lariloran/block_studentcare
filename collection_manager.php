@@ -6,7 +6,7 @@ class collection_manager
     {
         global $DB;
 
-        $sql = "SELECT id, nome, data_inicio, data_fim, descricao, curso_id, notificar_alunos, receber_alerta , resource_id
+        $sql = "SELECT id, nome, data_inicio, data_fim, descricao, curso_id, notificar_alunos, receber_alerta , resource_id_atrelado, section_id
                 FROM {ifcare_cadastrocoleta} 
                 WHERE professor_id = :professor_id
                 ORDER BY data_inicio DESC";
@@ -35,25 +35,38 @@ class collection_manager
     }
 
     public function excluir_coleta($coleta_id)
-{
-    global $DB;
+    {
+        global $DB, $CFG;
+    
+        $transaction = $DB->start_delegated_transaction();
+    
+        try {
+            $resource_id_instance = $DB->get_field('ifcare_cadastrocoleta', 'resource_id', ['id' => $coleta_id]);
 
-    $transaction = $DB->start_delegated_transaction();
-
-    try {
-        $DB->delete_records('ifcare_resposta', ['coleta_id' => $coleta_id]);
-
-        $DB->delete_records('ifcare_associacao_classe_emocao_coleta', ['cadastrocoleta_id' => $coleta_id]);
-
-        $DB->delete_records('ifcare_cadastrocoleta', ['id' => $coleta_id]);
-
-        $transaction->allow_commit();
-    } catch (Exception $e) {
-        $transaction->rollback($e);
-        throw $e;
+            if ($resource_id_instance) {
+                // Busca diretamente o ID em `course_modules` onde `instance` é igual ao `resource_id`
+                $course_module_id = $DB->get_field('course_modules', 'id', ['instance' => $resource_id_instance]);
+            
+                if ($course_module_id) {
+                    require_once($CFG->dirroot . '/course/lib.php');
+                    course_delete_module($course_module_id);
+                }
+            }
+            
+    
+            $DB->delete_records('ifcare_resposta', ['coleta_id' => $coleta_id]);
+    
+            $DB->delete_records('ifcare_associacao_classe_emocao_coleta', ['cadastrocoleta_id' => $coleta_id]);
+    
+            $DB->delete_records('ifcare_cadastrocoleta', ['id' => $coleta_id]);
+    
+            $transaction->allow_commit();
+        } catch (Exception $e) {
+            $transaction->rollback($e);
+            throw $e;
+        }
     }
-}
-
+    
     public function listar_coletas($professor_id)
     {
         global $DB;
@@ -303,25 +316,40 @@ class collection_manager
             $curso = $DB->get_record('course', ['id' => $coleta->curso_id], 'fullname');
             $curso_nome = $curso ? format_string($curso->fullname) : 'Disciplina não encontrada';
             $coleta->curso_nome = $curso_nome;
-
+        
             $resource_info = '--';
-            $module = $DB->get_record('course_modules', ['id' => $coleta->resource_id], 'module');
-
+            $resource_name = '--';
+            $section_name = '--';
+        
+            $module = $DB->get_record('course_modules', ['id' => $coleta->resource_id_atrelado], 'module');
             if ($module) {
                 $mod_info = $DB->get_record('modules', ['id' => $module->module], 'name');
                 if ($mod_info) {
                     $resource_info = ucfirst($mod_info->name);
                 }
+                $resource_name_record = $DB->get_record('course_modules', ['id' => $coleta->resource_id_atrelado], 'id, instance');
+                if ($resource_name_record) {
+                    $resource_name = $DB->get_field($mod_info->name, 'name', ['id' => $resource_name_record->instance]);
+                }
             }
-
+        
+            $section_record = $DB->get_record('course_sections', ['section' => $coleta->section_id, 'course' => $coleta->curso_id], 'name');
+            $section_name = $section_record && !empty($section_record->name) 
+                ? format_string($section_record->name) 
+                : "--";
+            
             $coleta->recurso_nome = $resource_info;
-
+            $coleta->resource_name = $resource_name;
+            $coleta->section_name = $section_name;
+        
             $html .= '<div class="card" 
                          data-nome="' . format_string($coleta->nome) . '" 
                          data-data_inicio="' . $coleta->data_inicio . '" 
                          data-data_fim="' . $coleta->data_fim . '" 
                          data-curso_nome="' . $curso_nome . '" 
-                         data-recurso_nome="' . $coleta->recurso_nome . '">
+                         data-recurso_nome="' . $coleta->recurso_nome . '" 
+                         data-resource_name="' . format_string($coleta->resource_name) . '" 
+                         data-section_name="' . format_string($coleta->section_name) . '">
                         <h3>' . format_string($coleta->nome) . '</h3>
                         <p><strong>Disciplina:</strong> ' . $curso_nome . '</p>
                         <p><strong>Data de Início:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_inicio)) . '</p>
@@ -329,7 +357,7 @@ class collection_manager
                         <button class="btn-coleta" onclick="abrirModal(' . $coleta->id . ')">Detalhes</button>
                      </div>';
         }
-
+        
         $html .= '</div>';
 
         $html .= '<script>const coletasData = ' . json_encode(array_values($coletas)) . ';</script>';
@@ -412,8 +440,9 @@ function filtrarColetas() {
                 document.getElementById("modalColetaFim").textContent = new Date(coleta.data_fim).toLocaleString();
                 document.getElementById("modalNotificarAlunos").textContent = coleta.notificar_alunos == 1 ? "Sim" : "Não";
                 document.getElementById("modalReceberAlerta").textContent = coleta.receber_alerta == 1 ? "Sim" : "Não";
-                document.getElementById("modalRecursoNome").textContent = coleta.recurso_nome;
-    
+                document.getElementById("modalResourceName").textContent = coleta.resource_name;
+                document.getElementById("modalSectionName").textContent = coleta.section_name;
+
                 const coletaUrl = `${M.cfg.wwwroot}/blocks/ifcare/view.php?coletaid=${coleta.id}`;
                 const modalColetaUrlElement = document.getElementById("modalColetaUrl");
                 modalColetaUrlElement.href = coletaUrl;
@@ -627,10 +656,12 @@ function filtrarColetas() {
         <p><strong>Disciplina:</strong> <span id="modalColetaDisciplina"></span></p>
         <p><strong>Data de Início:</strong> <span id="modalColetaInicio"></span></p>
         <p><strong>Data de Fim:</strong> <span id="modalColetaFim"></span></p>
-        <p><strong>Descrição:</strong> <span id="modalColetaDescricao"></span></p>
+        <p><strong>Nome da Seção Vinculada:</strong> <span id="modalSectionName"></span></p>
+        <p><strong>Nome da Atividade/Recurso Vinculado:</strong> <span id="modalResourceName"></span></p>
         <p><strong>Notificar Aluno:</strong> <span id="modalNotificarAlunos"></span></p>
         <p><strong>Receber Alerta:</strong> <span id="modalReceberAlerta"></span></p>
-        <p><strong>Recurso/Atividade vinculado:</strong> <span id="modalRecursoNome"></span></p>
+        <p><strong>Descrição:</strong> <span id="modalColetaDescricao"></span></p>
+
 
         <div class="button-group">
             <button id="downloadCSV" class="btn-coleta btn-coleta-secondary">

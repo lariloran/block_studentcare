@@ -8,6 +8,14 @@ $PAGE->set_url('/blocks/ifcare/view.php', array('coletaid' => $coletaid));
 $PAGE->set_context($context);
 $PAGE->set_title("Coleta de Emoções");
 
+
+if (!$DB->record_exists('ifcare_cadastrocoleta', ['id' => $coletaid])) {
+    echo $OUTPUT->header();
+    echo html_writer::tag('div', 'Desculpe, esta coleta não está mais disponível. Entre em contato com o administrador ou professor para mais informações.', ['class' => 'alert alert-info']);
+    echo $OUTPUT->footer();
+    exit;
+}
+
 $userid = $USER->id;
 
 $coletaR = $DB->get_record('ifcare_cadastrocoleta', ['id' => $coletaid]);
