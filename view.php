@@ -23,7 +23,6 @@ $cursoR = $DB->get_record('course', ['id' => $coletaR->curso_id]);
 
 $is_enrolled = is_enrolled(context_course::instance($coletaR->curso_id), $userid);
 
-// Se o usuário não estiver inscrito no curso, redireciona para o curso atual
 if (!$is_enrolled) {
     redirect(new moodle_url('/course/view.php', ['id' => $COURSE->id]));
     exit;
@@ -35,7 +34,7 @@ $respostasExistentes = $DB->get_records('ifcare_resposta', [
 
 if ($respostasExistentes) {
     echo $OUTPUT->header();
-    
+
     $redirectUrl = new moodle_url("/course/view.php", ['id' => intval($coletaR->curso_id)]);
     echo '
     <script>
@@ -111,7 +110,7 @@ if ($respostasExistentes) {
             <button class="modal-btn" onclick="irParaHome()">Voltar para o curso</button>
         </div>
     </div>';
-    
+
     echo $OUTPUT->footer();
     return;
 }
@@ -148,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             foreach ($respostas as $pergunta_id => $resposta) {
                 $pergunta_id = clean_param($pergunta_id, PARAM_INT);
                 $resposta = clean_param($resposta, PARAM_TEXT);
-            
+
                 if ($resposta !== null) {
                     $pergunta = $DB->get_record('ifcare_pergunta', ['id' => $pergunta_id]);
                     if ($pergunta) {
@@ -158,12 +157,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $nova_resposta->coleta_id = $coletaid;
                         $nova_resposta->resposta = $resposta;
                         $nova_resposta->data_resposta = date('Y-m-d H:i:s');
-            
+
                         $DB->insert_record('ifcare_resposta', $nova_resposta);
                     }
                 }
             }
-            
+
 
             header('Content-Type: application/json');
             echo json_encode(['success' => true]);
@@ -175,6 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
     }
+
 
     $tcle_aceito_form = optional_param('tcle_aceito', 0, PARAM_INT);
     if ($tcle_aceito_form == 1) {
@@ -317,6 +317,13 @@ $perguntas_json = json_encode(array_values($perguntas));
     </div>
 <?php endif; ?>
 
+<div id="feedback-container" style="display: none; text-align: center; margin-top: 20px;">
+    <h3>O que você achou desta coleta?</h3>
+    <textarea id="feedback-text" rows="4" cols="50" placeholder="Escreva seu feedback aqui..."></textarea>
+    <button class="modal-btn" onclick="enviarFeedback()">Enviar Feedback</button>
+</div>
+
+
 <div id="modal-erro" class="modal">
     <div class="modal-content">
         <span class="close" onclick="fecharModal('modal-erro')">&times;</span>
@@ -408,19 +415,17 @@ $perguntas_json = json_encode(array_values($perguntas));
     }
 
     let coletaConcluida = false;
+    let feedbackEnviado = false;
 
     function avancarPergunta() {
-        if (coletaConcluida) {
-            abrirModal('modal-sucesso');
-            return;
-        }
-
         if (respostasSelecionadas[perguntas[perguntaAtual].id] !== undefined) {
             if (perguntaAtual < totalPerguntas - 1) {
                 perguntaAtual++;
                 mostrarPergunta(perguntaAtual);
             } else {
                 enviarRespostas();
+                document.getElementById('quiz-container').style.display = 'none';
+                document.getElementById('feedback-container').style.display = 'block';
             }
         } else {
             abrirModal('modal-erro');
@@ -428,11 +433,6 @@ $perguntas_json = json_encode(array_values($perguntas));
     }
 
     function enviarRespostas() {
-        if (coletaConcluida) {
-            abrirModal('modal-sucesso');
-            return;
-        }
-
         const dadosRespostas = {
             coleta_id: <?php echo $coletaid; ?>,
             usuario_id: <?php echo $userid; ?>,
@@ -449,12 +449,39 @@ $perguntas_json = json_encode(array_values($perguntas));
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    coletaConcluida = true;
-                    abrirModal('modal-sucesso');
+                    console.log("Respostas enviadas com sucesso");
                 } else {
                     console.error('Erro ao salvar as respostas:', data.error);
                 }
-            });
+            })
+            .catch(error => console.error('Erro ao enviar as respostas:', error));
+    }
+
+    function enviarFeedback() {
+        const feedbackText = document.getElementById('feedback-text').value;
+
+        const dadosFeedback = {
+            coleta_id: <?php echo $coletaid; ?>,
+            usuario_id: <?php echo $userid; ?>,
+            feedback: feedbackText || ""
+        };
+
+        fetch('feedback.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dadosFeedback)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    abrirModal('modal-sucesso');
+                } else {
+                    console.error('Erro ao enviar o feedback:', data.error);
+                }
+            })
+            .catch(error => console.error('Erro ao enviar o feedback:', error));
     }
 
 
