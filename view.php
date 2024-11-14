@@ -317,11 +317,14 @@ $perguntas_json = json_encode(array_values($perguntas));
     </div>
 <?php endif; ?>
 
-<div id="feedback-container" style="display: none; text-align: center; margin-top: 20px;">
-    <h3>O que você achou desta coleta?</h3>
-    <textarea id="feedback-text" rows="4" cols="50" placeholder="Escreva seu feedback aqui..."></textarea>
-    <button class="modal-btn" onclick="enviarFeedback()">Enviar Feedback</button>
+<div id="feedback-container" style="display: none; text-align: center; margin: 0 auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); max-width: 600px;">
+    <h3 class="feedback-title" style="font-size: 18px; font-weight: bold; margin-bottom: 15px; color: #333;">O que você achou desta coleta?</h3>
+    <textarea id="feedback-text" rows="4" cols="50" placeholder="Escreva seu feedback aqui..." style="width: 100%; max-width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 15px; font-size: 16px;"></textarea>
+    <div class="feedback-btn-container" style="display: flex; justify-content: center;">
+        <button class="buttonTcle" onclick="enviarFeedback()" style="padding: 10px 20px;">Enviar Feedback</button>
+    </div>
 </div>
+
 
 
 <div id="modal-erro" class="modal">
@@ -338,7 +341,6 @@ $perguntas_json = json_encode(array_values($perguntas));
         <span class="close" onclick="fecharModal('modal-sucesso')">&times;</span>
         <h2>Coleta Concluída</h2>
         <p>Você completou todas as perguntas da coleta. Obrigado por participar!</p>
-        <button class="modal-btn" onclick="fecharModal('modal-sucesso')">Fechar</button>
         <button class="modal-btn" onclick="irParaHome()">Voltar para o curso</button>
     </div>
 </div>
