@@ -138,5 +138,21 @@
         <KEY NAME="curso_fk" TYPE="foreign" FIELDS="curso_id" REFTABLE="course" REFFIELDS="id" ONDELETE="cascade"/>
     </KEYS>
 </TABLE>
+
+<TABLE NAME="ifcare_feedback" COMMENT="Armazena feedbacks dos usuários sobre a coleta">
+    <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" SEQUENCE="true" COMMENT="Identificador único do feedback"/>
+        <FIELD NAME="coleta_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID da coleta associada"/>
+        <FIELD NAME="usuario_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID do usuário que forneceu o feedback"/>
+        <FIELD NAME="feedback" TYPE="text" NOTNULL="true" COMMENT="Texto do feedback fornecido pelo usuário"/>
+        <FIELD NAME="data_feedback" TYPE="datetime" NOTNULL="true" COMMENT="Data e hora em que o feedback foi registrado"/>
+    </FIELDS>
+    <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="coleta_fk" TYPE="foreign" FIELDS="coleta_id" REFTABLE="ifcare_cadastrocoleta" REFFIELDS="id" ONDELETE="cascade"/>
+        <KEY NAME="usuario_fk" TYPE="foreign" FIELDS="usuario_id" REFTABLE="user" REFFIELDS="id" ONDELETE="cascade"/>
+    </KEYS>
+</TABLE>
+
 </TABLES>
 </XMLDB>
