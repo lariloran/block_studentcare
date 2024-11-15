@@ -37,8 +37,22 @@ $coletas = $DB->get_records_menu('ifcare_cadastrocoleta', null, 'nome', 'id, nom
         <p>Exibe a distribuição de respostas por escala Likert.</p>
         <button class="btn-coleta" onclick="abrirModalGrafico()">Visualizar Gráfico</button>
     </div>
+    <div class="card">
+        <canvas id="modaPreviewChart" width="150" height="100"></canvas>
+        <h3>Moda das Respostas</h3>
+        <p>Exibe a moda das respostas para cada pergunta.</p>
+        <button class="btn-coleta" onclick="abrirModalModa()">Visualizar Moda</button>
+    </div>
+
 </div>
 
+<!-- Modal de Tela Cheia para o Gráfico de Moda -->
+<div id="modaModal" class="modal-fullscreen">
+    <div class="modal-content-fullscreen">
+        <span class="close-fullscreen" onclick="fecharModalModa()">&times;</span>
+        <canvas id="modaChartFull"></canvas>
+    </div>
+</div>
 
 <!-- Modal de Tela Cheia para o Gráfico de Barras Empilhadas -->
 <div id="graficoModal" class="modal-fullscreen">
@@ -50,52 +64,66 @@ $coletas = $DB->get_records_menu('ifcare_cadastrocoleta', null, 'nome', 'id, nom
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    let chart;
+    let chart, modaChart;
 
     document.addEventListener('DOMContentLoaded', function () {
-        // Dados fictícios para o gráfico de pré-visualização
-        const previewData = {
-            labels: ['Discordo Totalmente', 'Discordo', 'Neutro', 'Concordo', 'Concordo Totalmente'],
-            datasets: [{
-                label: '',
-                data: [12, 19, 3, 5, 2], // Dados de exemplo
-                backgroundColor: 'rgba(75, 192, 192, 0.6)'
-            }]
-        };
+    // Dados fictícios para o gráfico de pré-visualização de barras empilhadas
+    const previewData = {
+        labels: ['Discordo Totalmente', 'Discordo', 'Neutro', 'Concordo', 'Concordo Totalmente'],
+        datasets: [{
+            label: '',
+            data: [12, 19, 3, 5, 2],
+            backgroundColor: 'rgba(75, 192, 192, 0.6)'
+        }]
+    };
 
-        // Inicializa o gráfico de pré-visualização no canvas
-        const previewCtx = document.getElementById('previewChart').getContext('2d');
-        new Chart(previewCtx, {
-            type: 'bar',
-            data: previewData,
-            options: {
-                responsive: false,
-                plugins: {
-                    legend: { display: false }, // Oculta a legenda no preview
-                    title: { display: false }   // Oculta o título no preview
-                },
-                scales: {
-                    x: { display: false }, // Oculta os eixos no preview
-                    y: { display: false }
-                }
+    // Inicializa o gráfico de pré-visualização no canvas do gráfico de barras empilhadas
+    const previewCtx = document.getElementById('previewChart').getContext('2d');
+    new Chart(previewCtx, {
+        type: 'bar',
+        data: previewData,
+        options: {
+            responsive: false,
+            plugins: {
+                legend: { display: false },
+                title: { display: false }
+            },
+            scales: {
+                x: { display: false },
+                y: { display: false }
             }
-        });
+        }
     });
 
-    // Função para carregar dados do gráfico com base no coletaid
-    function loadChartData(coletaid) {
-        if (coletaid) {
-            fetch('/blocks/ifcare/load_coleta_data.php?coletaid=' + coletaid)
-                .then(response => response.json())
-                .then(data => {
-                    updateChart(data.chart_data);
-                });
-        } else {
-            if (chart) chart.destroy();
-        }
-    }
+    // Dados fictícios para o gráfico de pré-visualização de moda
+    const modaPreviewData = {
+        labels: ['Pergunta 1', 'Pergunta 2', 'Pergunta 3'],
+        datasets: [{
+            label: 'Moda',
+            data: [2, 3, 4],
+            backgroundColor: 'rgba(153, 102, 255, 0.5)'
+        }]
+    };
 
-    // Carrega o gráfico automaticamente se o coletaid está presente
+    // Inicializa o gráfico de pré-visualização de moda no canvas
+    const modaPreviewCtx = document.getElementById('modaPreviewChart').getContext('2d');
+    new Chart(modaPreviewCtx, {
+        type: 'bar',
+        data: modaPreviewData,
+        options: {
+            responsive: false,
+            plugins: {
+                legend: { display: false },
+                title: { display: false }
+            },
+            scales: {
+                x: { display: false },
+                y: { display: false }
+            }
+        }
+    });
+});
+
     document.addEventListener('DOMContentLoaded', function () {
         const selectedColetaId = "<?php echo $selected_coletaid; ?>";
         if (selectedColetaId) {
@@ -103,7 +131,6 @@ $coletas = $DB->get_records_menu('ifcare_cadastrocoleta', null, 'nome', 'id, nom
         }
     });
 
-    // Carrega o gráfico quando uma coleta é selecionada manualmente
     document.getElementById('coletaSelect').addEventListener('change', function () {
         loadChartData(this.value);
     });
@@ -114,6 +141,34 @@ $coletas = $DB->get_records_menu('ifcare_cadastrocoleta', null, 'nome', 'id, nom
 
     function fecharModalGrafico() {
         document.getElementById("graficoModal").style.display = "none";
+    }
+
+    function abrirModalModa() {
+        document.getElementById("modaModal").style.display = "flex";
+    }
+
+    function fecharModalModa() {
+        document.getElementById("modaModal").style.display = "none";
+    }
+
+    window.onclick = function (event) {
+        if (event.target == document.getElementById("modaModal")) {
+            fecharModalModa();
+        }
+    }
+
+    function loadChartData(coletaid) {
+        if (coletaid) {
+            fetch('/blocks/ifcare/load_coleta_data.php?coletaid=' + coletaid)
+                .then(response => response.json())
+                .then(data => {
+                    updateChart(data.chart_data);       // Gráfico de barras empilhadas
+                    updateModaChart(data.moda_data);    // Novo gráfico de moda
+                });
+        } else {
+            if (chart) chart.destroy();
+            if (modaChart) modaChart.destroy();
+        }
     }
 
     function updateChart(chart_data) {
@@ -133,9 +188,7 @@ $coletas = $DB->get_records_menu('ifcare_cadastrocoleta', null, 'nome', 'id, nom
                     title: {
                         display: true,
                         text: 'Distribuição de Respostas por Escala Likert',
-                        font: {
-                            size: 20
-                        },
+                        font: { size: 20 },
                         padding: { top: 10, bottom: 20 }
                     }
                 },
@@ -144,11 +197,65 @@ $coletas = $DB->get_records_menu('ifcare_cadastrocoleta', null, 'nome', 'id, nom
         });
     }
 
-    window.onclick = function (event) {
-        if (event.target == document.getElementById("graficoModal")) {
-            fecharModalGrafico();
+    function updateModaChart(moda_data) {
+    const modaCtx = document.getElementById('modaChartFull').getContext('2d');
+    if (modaChart) modaChart.destroy();
+
+    // Mapeamento de valores numéricos para a escala Likert
+    const likertLabels = {
+        1: "Discordo Totalmente",
+        2: "Discordo",
+        3: "Neutro",
+        4: "Concordo",
+        5: "Concordo Totalmente"
+    };
+
+    modaChart = new Chart(modaCtx, {
+        type: 'bar',
+        data: {
+            labels: moda_data.labels,
+            datasets: [{
+                label: 'Moda das Respostas',
+                data: moda_data.data,  // Usamos os valores numéricos para o gráfico
+                backgroundColor: 'rgba(153, 102, 255, 0.5)'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                title: {
+                    display: true,
+                    text: 'Moda das Respostas por Pergunta'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const value = context.raw;
+                            return `Moda: ${likertLabels[value]} (${value})`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: { title: { display: true, text: 'Perguntas' } },
+                y: {
+                    title: { display: true, text: 'Moda' },
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1, // Apenas números inteiros
+                        callback: function(value) {
+                            return likertLabels[value] || ''; // Exibe apenas os valores exatos 1 a 5
+                        },
+                        min: 1,
+                        max: 5
+                    }
+                }
+            }
         }
-    }
+    });
+}
+
 </script>
 
 <style>
