@@ -136,15 +136,14 @@ class collection_manager
                 overflow: auto;
                 background-color: rgba(0, 0, 0, 0.5);
             }
-            .modal-content {
-                background-color: white;
-                margin: 15% auto;
-                padding: 20px;
-                border-radius: 10px;
-                width: 80%;
-                max-width: 600px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-            }
+.modal-content {
+    width: 90%;
+    max-width: 600px;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 10px;
+}
+
             .close {
                 color: #aaa;
                 float: right;
@@ -170,36 +169,46 @@ class collection_manager
     border: 1px solid #ddd;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    max-width: 300px;
-    min-height: 200px; /* Define uma altura mínima */
+    padding: 16px; /* Reduz o padding para economizar espaço */
+    max-width: 250px; /* Diminui a largura máxima */
+    min-height: 180px; /* Ajusta a altura mínima */
     text-align: left;
     transition: transform 0.3s;
+    font-size: 14px; /* Reduz o tamanho do texto */
+    line-height: 1.4; /* Ajusta o espaçamento entre linhas */
 }
 
-            .card:hover {
-                transform: scale(1.05);
-            }
-            .card h3 {
-                font-size: 18px;
-                margin-bottom: 10px;
-                color: #333;
-            }
-            .card p {
-                margin: 5px 0;
-                font-size: 14px;
-                color: #555;
-            }
-            .card .btn-coleta {
-                margin-top: 10px;
-                background-color: #4CAF50;
-                color: white;
-                padding: 8px 16px;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                transition: background-color 0.3s;
-            }
+.card:hover {
+    transform: scale(1.05);
+}
+
+.card h3 {
+    font-size: 16px; /* Reduz o tamanho do título */
+    margin-bottom: 8px;
+    color: #333;
+    
+}
+
+.card p {
+    margin: 4px 0; /* Diminui o espaçamento entre os parágrafos */
+    font-size: 13px; /* Reduz o texto das informações */
+    color: #555;
+     white-space: nowrap;
+     overflow: hidden; /* Oculta o texto excedente */
+    text-overflow: ellipsis; /* Adiciona reticências no final do texto */
+}
+
+.card .btn-coleta {
+    width: 100%; /* Faz o botão ocupar toda a largura do card */
+    text-align: center; /* Centraliza o texto no botão */
+    display: block; /* Garante que o botão seja um elemento de bloco */
+    margin-top: auto; /* Faz o botão alinhar-se ao final do card */
+    padding: 8px 12px; /* Reduz o padding para diminuir a altura */
+    font-size: 14px; /* Ajusta o tamanho do texto para harmonizar */
+    border-radius: 4px; /* Mantém bordas arredondadas, mas sutis */
+}
+
+
             .card .btn-coleta:hover {
                 background-color: #45a049;
             }
@@ -397,7 +406,7 @@ class collection_manager
                <p><strong>Disciplina:</strong> ' . $curso_nome . '</p>
                <p><strong>Data de Início:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_inicio)) . '</p>
                <p><strong>Data de Fim:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_fim)) . '</p>
-               <button class="btn-coleta" onclick="abrirModal(' . $coleta->id . ')">Detalhes</button>
+               <button class="btn-coleta" onclick="abrirModal(' . $coleta->id . ')"><i class="fa fa-info-circle"></i> Detalhes</button>
              </div>';
     
             }
