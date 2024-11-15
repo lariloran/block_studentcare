@@ -17,7 +17,7 @@ if (empty($emocao_respostas)) {
     echo json_encode([
         'tabela_dados' => [],
         'chart_data' => ['labels' => [], 'datasets' => []],
-        'moda_data' => ['labels' => [], 'data' => []]
+        'moda_data' => ['labels' => [], 'data' => [], 'frequencies' => []]
     ]);
     exit;
 }
@@ -33,6 +33,7 @@ $datasets = [
 ];
 
 $moda_data = [];
+$frequencies = [];
 
 foreach ($emocao_respostas as $resposta) {
     $pergunta_id = $resposta->pergunta_id;
@@ -40,7 +41,6 @@ foreach ($emocao_respostas as $resposta) {
     $likert_value = $resposta->resposta;
     $quantidade = $resposta->quantidade;
 
-    // Organiza dados para o gráfico de barras empilhadas
     if (!isset($tabela_dados[$pergunta_id])) {
         $tabela_dados[$pergunta_id] = [0, 0, 0, 0, 0];
         $labels[$pergunta_id] = $pergunta;
@@ -48,10 +48,12 @@ foreach ($emocao_respostas as $resposta) {
     $tabela_dados[$pergunta_id][$likert_value - 1] = $quantidade;
 }
 
-// Calcular a moda para cada pergunta
+// Calcular a moda e sua frequência para cada pergunta
 foreach ($tabela_dados as $pergunta_id => $respostas) {
-    $moda = array_keys($respostas, max($respostas))[0] + 1; // Encontrar o índice da moda e ajustar para escala Likert
+    $moda = array_keys($respostas, max($respostas))[0] + 1;
+    $frequencia_moda = max($respostas);
     $moda_data[] = $moda;
+    $frequencies[] = $frequencia_moda;
 }
 
 // Preenche os datasets para o gráfico de barras empilhadas
@@ -70,7 +72,8 @@ echo json_encode([
     ],
     'moda_data' => [
         'labels' => array_values($labels),
-        'data' => $moda_data
+        'data' => $moda_data,
+        'frequencies' => $frequencies
     ]
 ]);
 exit;

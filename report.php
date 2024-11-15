@@ -216,7 +216,7 @@ $coletas = $DB->get_records_menu('ifcare_cadastrocoleta', null, 'nome', 'id, nom
             labels: moda_data.labels,
             datasets: [{
                 label: 'Moda das Respostas',
-                data: moda_data.data,  // Usamos os valores numéricos para o gráfico
+                data: moda_data.data,
                 backgroundColor: 'rgba(153, 102, 255, 0.5)'
             }]
         },
@@ -231,8 +231,12 @@ $coletas = $DB->get_records_menu('ifcare_cadastrocoleta', null, 'nome', 'id, nom
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            const value = context.raw;
-                            return `Moda: ${likertLabels[value]} (${value})`;
+                            const modaValue = context.raw;
+                            const modaFrequency = moda_data.frequencies ? moda_data.frequencies[context.dataIndex] : null;
+                            const modaLabel = likertLabels[modaValue] || modaValue;
+                            return modaFrequency !== null
+                                ? `Moda: ${modaLabel} (${modaValue}) - Frequência: ${modaFrequency}`
+                                : `Moda: ${modaLabel} (${modaValue})`;
                         }
                     }
                 }
@@ -243,9 +247,9 @@ $coletas = $DB->get_records_menu('ifcare_cadastrocoleta', null, 'nome', 'id, nom
                     title: { display: true, text: 'Moda' },
                     beginAtZero: true,
                     ticks: {
-                        stepSize: 1, // Apenas números inteiros
+                        stepSize: 1,
                         callback: function(value) {
-                            return likertLabels[value] || ''; // Exibe apenas os valores exatos 1 a 5
+                            return likertLabels[value] || '';
                         },
                         min: 1,
                         max: 5
