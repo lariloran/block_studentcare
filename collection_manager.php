@@ -286,30 +286,59 @@ class collection_manager
 .btn-coleta-ativo:hover {
     background-color: #45a049;
 }
-    .button-group {
-    display: flex;
-    gap: 10px; /* Define o espaço entre os botões */
-    justify-content: center; /* Centraliza os botões */
-    margin-top: 15px; /* Espaçamento acima do grupo de botões */
+
+
+.pagination-controls {
+    position: relative; /* Ajuste conforme necessário */
+    text-align: center;
+    margin: 20px 0;
 }
 
+.pagination-controls button {
+    margin: 5px;
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
 
+.pagination-controls button:hover {
+    background-color: #45a049;
+}
+
+.pagination-controls button.btn-coleta-ativo {
+    background-color: #2E7D32; /* Cor diferenciada para página ativa */
+    cursor: default;
+}
         </style>';
 
 
         $html .= '<div class="filter-container-coleta">
-                    <label for="searchBox">Buscar:</label>
-                    <input type="text" id="searchBox" placeholder="Buscar por nome, disciplina, descrição, tipo de recurso..." onkeyup="filtrarColetas()">
-                    
-                    <label for="orderBy">Ordenar por:</label>
-                    <select id="orderBy" onchange="ordenarColetas()">
-                        <option value="nome">Nome da Coleta</option>
-                        <option value="data_inicio">Data de Início</option>
-                        <option value="data_fim">Data de Fim</option>
-                        <option value="curso_nome">Disciplina</option>
-                    </select>
-                    <button id="orderDirection" onclick="toggleOrderDirection()">Ascendente <i class="icon fa fa-arrow-up"></i></button>
-                </div>';
+    <label for="searchBox"><strong>Buscar:</strong></label>
+    <input type="text" id="searchBox" placeholder="Buscar por nome, disciplina, descrição, tipo de recurso..." onkeyup="filtrarColetas()">
+
+    <label for="orderBy"><strong>Ordenar por:</strong></label>
+    <select id="orderBy" onchange="ordenarColetas()">
+        <option value="nome">Nome da Coleta</option>
+        <option value="data_inicio">Data de Início</option>
+        <option value="data_fim">Data de Fim</option>
+        <option value="curso_nome">Disciplina</option>
+    </select>
+
+    <button id="orderDirection" onclick="toggleOrderDirection()">Ascendente <i class="icon fa fa-arrow-up"></i></button>
+
+    <label for="pageSize"><strong>Exibir:</strong></label>
+    <select id="pageSize" onchange="atualizarPaginacao()">
+        <option value="5">5 por página</option>
+        <option value="10" selected>10 por página</option>
+        <option value="15">15 por página</option>
+        <option value="20">20 por página</option>
+    </select>
+</div>
+';
 
         $html .= '<div class="card-list" id="coletasContainer">';
 
@@ -318,7 +347,9 @@ class collection_manager
             <i class="fa fa-plus-circle"></i>
         </h3>
         <p style="font-size: 18px; font-weight: bold; color: #333;">Nova Coleta</p>
-      </div>';
+      </div>
+      
+      ';
 
         $coletas = $this->get_coletas_by_professor($professor_id);
 
@@ -375,10 +406,72 @@ class collection_manager
 
         $html .= '</div>';
 
+        $html .= '<div id="paginationControls" class="pagination-controls"></div>'; // Mova o container para o final
+
         $html .= '<script>const coletasData = ' . json_encode(array_values($coletas)) . ';</script>';
         $html .= '<script>
             let isAscending = true;
 
+            let currentPage = 1;
+
+function atualizarPaginacao() {
+    currentPage = 1; // Reseta para a primeira página ao mudar o tamanho
+    renderizarPaginacao();
+}
+
+function renderizarPaginacao() {
+    const pageSize = parseInt(document.getElementById("pageSize").value);
+    const cards = Array.from(document.querySelectorAll("#coletasContainer .card"))
+        .filter(card => card.hasAttribute("data-id")); // Exclui o card de Nova Coleta da paginação
+    const totalCards = cards.length;
+    const totalPages = Math.ceil(totalCards / pageSize);
+
+    // Oculta todos os cards exceto o card de Nova Coleta
+    document.querySelectorAll("#coletasContainer .card").forEach(card => {
+        if (!card.hasAttribute("data-id")) {
+            card.style.display = "block"; // Mantém o card de Nova Coleta visível
+        } else {
+            card.style.display = "none"; // Oculta os demais cards inicialmente
+        }
+    });
+
+    // Exibe os cards da página atual
+    const start = (currentPage - 1) * pageSize;
+    const end = start + pageSize;
+
+    cards.slice(start, end).forEach(card => {
+        card.style.display = "block"; // Exibe os cards relevantes da página atual
+    });
+
+    // Renderiza os controles de paginação
+    renderizarControlesPaginacao(totalPages);
+}
+
+
+function renderizarControlesPaginacao(totalPages) {
+    const container = document.getElementById("paginationControls");
+    if (!container) return;
+
+    container.innerHTML = ""; // Limpa os controles anteriores
+
+    // Adiciona os botões de página
+    for (let i = 1; i <= totalPages; i++) {
+        const button = document.createElement("button");
+        button.textContent = i;
+        button.classList.add("btn-coleta");
+        if (i === currentPage) button.classList.add("btn-coleta-ativo");
+        button.addEventListener("click", () => {
+            currentPage = i;
+            renderizarPaginacao();
+        });
+        container.appendChild(button);
+    }
+}
+
+
+            document.addEventListener("DOMContentLoaded", function () {
+    renderizarPaginacao(); // Renderiza a paginação ao carregar a página
+});
             function toggleOrderDirection() {
                 isAscending = !isAscending;
                 const button = document.getElementById("orderDirection");
@@ -419,6 +512,8 @@ class collection_manager
 
                 container.innerHTML = "";
                 cards.forEach(card => container.appendChild(card));
+
+                renderizarPaginacao();
             }
 function filtrarColetas() {
     const searchTerm = document.getElementById("searchBox").value.toLowerCase();
@@ -440,6 +535,8 @@ function filtrarColetas() {
         card.style.visibility = matches ? "visible" : "hidden";
         card.style.position = matches ? "static" : "absolute";
     });
+
+    renderizarPaginacao();
 }
 
 

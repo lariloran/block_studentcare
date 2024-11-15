@@ -11,13 +11,14 @@ echo $OUTPUT->header();
 
 $selected_coletaid = optional_param('coletaid', '', PARAM_INT);
 
-$coletas = $DB->get_records_menu('ifcare_cadastrocoleta', null, 'nome', 'id, nome');
+$coletas = $DB->get_records_menu('ifcare_cadastrocoleta', ['professor_id' => $USER->id], 'nome', 'id, nome');
 ?>
 
 <!-- Combo para Seleção de Coleta -->
 <div class="filter-container-coleta">
     <label for="coletaSelect"><strong>Selecione uma Coleta:</strong></label>
     <select id="coletaSelect" name="coletaid">
+        <option value="" <?php echo empty($selected_coletaid) ? 'selected' : ''; ?>>-- Escolha --</option>
         <?php foreach ($coletas as $id => $nome): ?>
             <option value="<?php echo $id; ?>" <?php echo ($id == $selected_coletaid) ? 'selected' : ''; ?>>
                 <?php echo $nome; ?>
@@ -25,6 +26,8 @@ $coletas = $DB->get_records_menu('ifcare_cadastrocoleta', null, 'nome', 'id, nom
         <?php endforeach; ?>
     </select>
 </div>
+
+
 
 <!-- Cards de Gráficos -->
 <div class="card-list" id="graficosContainer">
