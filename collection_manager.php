@@ -408,6 +408,8 @@ class collection_manager
                <p><strong>Data de Início:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_inicio)) . '</p>
                <p><strong>Data de Fim:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_fim)) . '</p>
                <button class="btn-coleta" onclick="abrirModal(' . $coleta->id . ')"><i class="fa fa-info-circle"></i> Detalhes</button>
+               
+               
              </div>';
     
             }
@@ -657,6 +659,12 @@ window.onclick = function(event) {
         fecharConfirmacao();
     }
 }
+
+function editarColeta() {
+    const coletaId = document.getElementById("modalColetaUrl").getAttribute("href").split("=").pop();
+    window.location.href = M.cfg.wwwroot + "/blocks/ifcare/edit.php?coletaid=" + coletaId;  // Redireciona para edit_form.php com o ID da coleta
+}
+
         </script>';
 
         return $html;
@@ -849,6 +857,9 @@ window.onclick = function(event) {
             </button>
             <button id="downloadJSON" class="btn-coleta btn-coleta-secondary">
                 <i class="fa fa-file-code"></i> Baixar JSON
+            </button>
+            <button id="editarColeta" class="btn-coleta btn-coleta-secondary" onclick="editarColeta()">
+                <i class="fa fa-edit"></i> Editar
             </button>
             <button id="deleteColeta" class="btn-coleta btn-coleta-secondary" onclick="confirmarExclusao()">
                 <i class="fa fa-trash"></i> Excluir
