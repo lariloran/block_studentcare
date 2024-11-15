@@ -62,6 +62,16 @@ $coletas = $DB->get_records_menu('ifcare_cadastrocoleta', ['professor_id' => $US
     </div>
 </div>
 
+<!-- Modal de Alerta -->
+<div id="alertModal" class="modal-fullscreen">
+    <div class="modal-content-fullscreen">
+        <span class="close-fullscreen" onclick="fecharModalAlerta()">&times;</span>
+        <p style="text-align: center; font-size: 18px; color: #333; font-weight: bold;">
+            Por favor, selecione uma coleta antes de visualizar o gráfico.
+        </p>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     let chart, modaChart;
@@ -132,11 +142,15 @@ $coletas = $DB->get_records_menu('ifcare_cadastrocoleta', ['professor_id' => $US
         loadChartData(this.value);
     });
 
+
     function abrirModalGrafico() {
+    const selectedColeta = document.getElementById("coletaSelect").value;
+    if (!selectedColeta) {
+        abrirModalAlerta(); // Exibe o alerta se nenhuma coleta foi selecionada
+        return;
+    }
     const modal = document.getElementById("graficoModal");
     modal.style.display = "flex";
-
-    // Adiciona evento para fechar ao clicar fora do conteúdo
     modal.addEventListener("click", function (event) {
         if (event.target === modal) {
             fecharModalGrafico();
@@ -144,15 +158,14 @@ $coletas = $DB->get_records_menu('ifcare_cadastrocoleta', ['professor_id' => $US
     });
 }
 
-function fecharModalGrafico() {
-    document.getElementById("graficoModal").style.display = "none";
-}
-
 function abrirModalModa() {
+    const selectedColeta = document.getElementById("coletaSelect").value;
+    if (!selectedColeta) {
+        abrirModalAlerta(); // Exibe o alerta se nenhuma coleta foi selecionada
+        return;
+    }
     const modal = document.getElementById("modaModal");
     modal.style.display = "flex";
-
-    // Adiciona evento para fechar ao clicar fora do conteúdo
     modal.addEventListener("click", function (event) {
         if (event.target === modal) {
             fecharModalModa();
@@ -160,10 +173,31 @@ function abrirModalModa() {
     });
 }
 
+
+function fecharModalGrafico() {
+    document.getElementById("graficoModal").style.display = "none";
+}
+
+
+
 function fecharModalModa() {
     document.getElementById("modaModal").style.display = "none";
 }
 
+function abrirModalAlerta() {
+    const modal = document.getElementById("alertModal");
+    modal.style.display = "flex";
+
+    modal.addEventListener("click", function (event) {
+        if (event.target === modal) {
+            fecharModalAlerta();
+        }
+    });
+}
+
+function fecharModalAlerta() {
+    document.getElementById("alertModal").style.display = "none";
+}
 
     window.onclick = function (event) {
         if (event.target == document.getElementById("modaModal")) {
@@ -276,6 +310,7 @@ function fecharModalModa() {
 </script>
 
 <style>
+
     .filter-container-coleta {
         display: flex;
         align-items: center;
