@@ -313,60 +313,66 @@ class collection_manager
 
         $html .= '<div class="card-list" id="coletasContainer">';
 
+        $html .= '<div class="card" style="text-align: center; cursor: pointer;" onclick="window.location.href=\'' . new moodle_url('/blocks/ifcare/register.php') . '\'">
+        <h3 style="font-size: 50px; color: #4CAF50; margin: 20px 0;">
+            <i class="fa fa-plus-circle"></i>
+        </h3>
+        <p style="font-size: 18px; font-weight: bold; color: #333;">Nova Coleta</p>
+      </div>';
+
         $coletas = $this->get_coletas_by_professor($professor_id);
 
-        if (empty($coletas)) {
-            return "<p>Nenhuma coleta cadastrada.</p>";
-        }
-
-        foreach ($coletas as $coleta) {
-            $curso = $DB->get_record('course', ['id' => $coleta->curso_id], 'fullname');
-            $curso_nome = $curso ? format_string($curso->fullname) : 'Disciplina não encontrada';
-            $coleta->curso_nome = $curso_nome;
-        
-            $resource_info = '--';
-            $resource_name = '--';
-            $section_name = '--';
-        
-            $module = $DB->get_record('course_modules', ['id' => $coleta->resource_id_atrelado], 'module');
-            if ($module) {
-                $mod_info = $DB->get_record('modules', ['id' => $module->module], 'name');
-                if ($mod_info) {
-                    $resource_info = ucfirst($mod_info->name);
-                }
-                $resource_name_record = $DB->get_record('course_modules', ['id' => $coleta->resource_id_atrelado], 'id, instance');
-                if ($resource_name_record) {
-                    $resource_name = $DB->get_field($mod_info->name, 'name', ['id' => $resource_name_record->instance]);
-                }
-            }
-        
-            $section_record = $DB->get_record('course_sections', ['section' => $coleta->section_id, 'course' => $coleta->curso_id], 'name');
-            $section_name = $section_record && !empty($section_record->name) 
-                ? format_string($section_record->name) 
-                : "--";
+        if (!empty($coletas)) {
+            foreach ($coletas as $coleta) {
+                $curso = $DB->get_record('course', ['id' => $coleta->curso_id], 'fullname');
+                $curso_nome = $curso ? format_string($curso->fullname) : 'Disciplina não encontrada';
+                $coleta->curso_nome = $curso_nome;
             
-            $coleta->recurso_nome = $resource_info;
-            $coleta->resource_name = $resource_name;
-            $coleta->section_name = $section_name;
-        
-            $html .= '<div class="card" 
-            data-id="' . $coleta->id . '" 
-            data-nome="' . format_string($coleta->nome) . '" 
-            data-data_inicio="' . $coleta->data_inicio . '" 
-            data-data_fim="' . $coleta->data_fim . '" 
-            data-curso_nome="' . $curso_nome . '" 
-            data-recurso_nome="' . $coleta->recurso_nome . '" 
-            data-resource_name="' . format_string($coleta->resource_name) . '" 
-            data-section_name="' . format_string($coleta->section_name) . '">
-           <h3>' . format_string($coleta->nome) . '</h3>
-           <p><strong>Disciplina:</strong> ' . $curso_nome . '</p>
-           <p><strong>Data de Início:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_inicio)) . '</p>
-           <p><strong>Data de Fim:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_fim)) . '</p>
-           <button class="btn-coleta" onclick="abrirModal(' . $coleta->id . ')">Detalhes</button>
-         </div>';
+                $resource_info = '--';
+                $resource_name = '--';
+                $section_name = '--';
+            
+                $module = $DB->get_record('course_modules', ['id' => $coleta->resource_id_atrelado], 'module');
+                if ($module) {
+                    $mod_info = $DB->get_record('modules', ['id' => $module->module], 'name');
+                    if ($mod_info) {
+                        $resource_info = ucfirst($mod_info->name);
+                    }
+                    $resource_name_record = $DB->get_record('course_modules', ['id' => $coleta->resource_id_atrelado], 'id, instance');
+                    if ($resource_name_record) {
+                        $resource_name = $DB->get_field($mod_info->name, 'name', ['id' => $resource_name_record->instance]);
+                    }
+                }
+            
+                $section_record = $DB->get_record('course_sections', ['section' => $coleta->section_id, 'course' => $coleta->curso_id], 'name');
+                $section_name = $section_record && !empty($section_record->name) 
+                    ? format_string($section_record->name) 
+                    : "--";
+                
+                $coleta->recurso_nome = $resource_info;
+                $coleta->resource_name = $resource_name;
+                $coleta->section_name = $section_name;
+            
+                $html .= '<div class="card" 
+                data-id="' . $coleta->id . '" 
+                data-nome="' . format_string($coleta->nome) . '" 
+                data-data_inicio="' . $coleta->data_inicio . '" 
+                data-data_fim="' . $coleta->data_fim . '" 
+                data-curso_nome="' . $curso_nome . '" 
+                data-recurso_nome="' . $coleta->recurso_nome . '" 
+                data-resource_name="' . format_string($coleta->resource_name) . '" 
+                data-section_name="' . format_string($coleta->section_name) . '">
+               <h3>' . format_string($coleta->nome) . '</h3>
+               <p><strong>Disciplina:</strong> ' . $curso_nome . '</p>
+               <p><strong>Data de Início:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_inicio)) . '</p>
+               <p><strong>Data de Fim:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_fim)) . '</p>
+               <button class="btn-coleta" onclick="abrirModal(' . $coleta->id . ')">Detalhes</button>
+             </div>';
+    
+            }
+                    }
 
-        }
-        
+
         $html .= '</div>';
 
         $html .= '<script>const coletasData = ' . json_encode(array_values($coletas)) . ';</script>';
@@ -518,20 +524,15 @@ function excluirColetaConfirmado() {
         success: function(response) {
             alert("Coleta excluída com sucesso!");
 
-            // Fecha o modal de detalhes da coleta excluída
-            fecharModalDetalhe();
-
-            // Remove o card da coleta excluída da listagem
-            const coletaCard = document.querySelector(`.card[data-id=´${coletaIdParaExclusao}´]`);
-            if (coletaCard) {
-                coletaCard.remove();
-            }
+            // Redireciona para a página inicial (index)
+            window.location.href = M.cfg.wwwroot + "/blocks/ifcare/index.php";
         },
         error: function() {
             alert("Erro ao excluir a coleta.");
         }
     });
 }
+
 
 
 window.onclick = function(event) {

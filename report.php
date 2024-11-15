@@ -153,7 +153,7 @@ $coletas = $DB->get_records_menu('ifcare_cadastrocoleta', null, 'nome', 'id, nom
 
     function loadChartData(coletaid) {
         if (coletaid) {
-            fetch('/blocks/ifcare/load_coleta_data.php?coletaid=' + coletaid)
+            fetch('/blocks/ifcare/load_collection_data.php?coletaid=' + coletaid)
                 .then(response => response.json())
                 .then(data => {
                     updateChart(data.chart_data);      

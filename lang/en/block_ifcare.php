@@ -4,6 +4,7 @@ $string['pluginname'] = 'IFCare';
 $string['header'] = 'IFCare 🤖📚🎭';
 
 // Strings para o formulário de coleta
+$string['create_new_collection'] = 'Cadastrar Nova Coleta';
 $string['name'] = 'Nome da coleta';
 $string['description'] = 'Descrição';
 $string['starttime'] = 'Data e Hora de Início da coleta';
