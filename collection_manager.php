@@ -495,35 +495,38 @@ function renderizarControlesPaginacao(totalPages) {
                 ordenarColetas();
             }
 
-            function ordenarColetas() {
-                const orderBy = document.getElementById("orderBy").value;
-                const container = document.getElementById("coletasContainer");
-                const cards = Array.from(container.getElementsByClassName("card"));
+function ordenarColetas() {
+    const orderBy = document.getElementById("orderBy").value;
+    const container = document.getElementById("coletasContainer");
+    const cards = Array.from(container.getElementsByClassName("card"));
 
-                cards.sort((a, b) => {
-                    let valA = a.getAttribute("data-" + orderBy);
-                    let valB = b.getAttribute("data-" + orderBy);
+    cards.sort((a, b) => {
+        let valA = a.getAttribute("data-" + orderBy) || "";
+        let valB = b.getAttribute("data-" + orderBy) || "";
 
-                    if (orderBy === "data_inicio" || orderBy === "data_fim") {
-                        valA = new Date(valA);
-                        valB = new Date(valB);
-                    } else {
-                        valA = valA.toLowerCase();
-                        valB = valB.toLowerCase();
-                    }
+        if (orderBy === "data_inicio" || orderBy === "data_fim") {
+            valA = new Date(valA);
+            valB = new Date(valB);
+        } else {
+            // Transforma valores para lower case para comparação consistente de strings
+            valA = valA.toString().toLowerCase();
+            valB = valB.toString().toLowerCase();
+        }
 
-                    if (isAscending) {
-                        return valA < valB ? -1 : valA > valB ? 1 : 0;
-                    } else {
-                        return valA > valB ? -1 : valA < valB ? 1 : 0;
-                    }
-                });
+        if (isAscending) {
+            return valA < valB ? -1 : valA > valB ? 1 : 0;
+        } else {
+            return valA > valB ? -1 : valA < valB ? 1 : 0;
+        }
+    });
 
-                container.innerHTML = "";
-                cards.forEach(card => container.appendChild(card));
+    // Limpa o container e reaplica os cards na nova ordem
+    container.innerHTML = "";
+    cards.forEach(card => container.appendChild(card));
 
-                renderizarPaginacao();
-            }
+    renderizarPaginacao();
+}
+
 function filtrarColetas() {
     const searchTerm = document.getElementById("searchBox").value.toLowerCase();
     const container = document.getElementById("coletasContainer");
