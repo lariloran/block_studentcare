@@ -486,6 +486,59 @@ function filtrarColetas() {
         };
 
   
+let coletaIdParaExclusao = null;
+
+function abrirGrafico() {
+    const coletaId = document.getElementById("modalColetaUrl").getAttribute("href").split("=").pop();
+    window.location.href = M.cfg.wwwroot + "/blocks/ifcare/report.php?coletaid=" + coletaId;
+}
+
+function confirmarExclusao() {
+    const coletaNome = document.getElementById("modalColetaNome").textContent;
+    document.getElementById("confirmColetaNome").textContent = coletaNome;
+    coletaIdParaExclusao = document.getElementById("modalColetaUrl").getAttribute("href").split("=").pop();
+    document.getElementById("confirmDeleteModal").style.display = "block";
+}
+
+function fecharModalDetalhe() {
+    document.getElementById("coletaModal").style.display = "none";
+}
+
+function fecharConfirmacao() {
+    document.getElementById("confirmDeleteModal").style.display = "none";
+}
+
+function excluirColetaConfirmado() {
+    fecharConfirmacao();
+
+    $.ajax({
+        url: M.cfg.wwwroot + "/blocks/ifcare/delete_collection.php",
+        type: "POST",
+        data: { coleta_id: coletaIdParaExclusao },
+        success: function(response) {
+            alert("Coleta excluída com sucesso!");
+
+            // Fecha o modal de detalhes da coleta excluída
+            fecharModalDetalhe();
+
+            // Remove o card da coleta excluída da listagem
+            const coletaCard = document.querySelector(`.card[data-id=´${coletaIdParaExclusao}´]`);
+            if (coletaCard) {
+                coletaCard.remove();
+            }
+        },
+        error: function() {
+            alert("Erro ao excluir a coleta.");
+        }
+    });
+}
+
+
+window.onclick = function(event) {
+    if (event.target == document.getElementById("confirmDeleteModal")) {
+        fecharConfirmacao();
+    }
+}
         </script>';
 
         return $html;
@@ -701,60 +754,4 @@ function filtrarColetas() {
 
     </div>
 </div>
-
-<script>
-let coletaIdParaExclusao = null;
-
-function abrirGrafico() {
-    const coletaId = document.getElementById("modalColetaUrl").getAttribute("href").split("=").pop();
-    window.location.href = M.cfg.wwwroot + "/blocks/ifcare/report.php?coletaid=" + coletaId;
-}
-
-function confirmarExclusao() {
-    const coletaNome = document.getElementById("modalColetaNome").textContent;
-    document.getElementById("confirmColetaNome").textContent = coletaNome;
-    coletaIdParaExclusao = document.getElementById("modalColetaUrl").getAttribute("href").split("=").pop();
-    document.getElementById("confirmDeleteModal").style.display = "block";
-}
-
-function fecharModalDetalhe() {
-    document.getElementById("coletaModal").style.display = "none";
-}
-
-function fecharConfirmacao() {
-    document.getElementById("confirmDeleteModal").style.display = "none";
-}
-
-function excluirColetaConfirmado() {
-    fecharConfirmacao();
-
-    $.ajax({
-        url: M.cfg.wwwroot + "/blocks/ifcare/delete_collection.php",
-        type: "POST",
-        data: { coleta_id: coletaIdParaExclusao },
-        success: function(response) {
-            alert("Coleta excluída com sucesso!");
-
-            // Fecha o modal de detalhes da coleta excluída
-            fecharModalDetalhe();
-
-            // Remove o card da coleta excluída da listagem
-            const coletaCard = document.querySelector(`.card[data-id='${coletaIdParaExclusao}']`);
-            if (coletaCard) {
-                coletaCard.remove();
-            }
-        },
-        error: function() {
-            alert("Erro ao excluir a coleta.");
-        }
-    });
-}
-
-
-window.onclick = function(event) {
-    if (event.target == document.getElementById("confirmDeleteModal")) {
-        fecharConfirmacao();
-    }
-}
-</script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

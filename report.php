@@ -9,10 +9,8 @@ $PAGE->set_title("Relatório de Coletas de Emoções");
 
 echo $OUTPUT->header();
 
-// Captura o parâmetro 'coletaid' da URL
 $selected_coletaid = optional_param('coletaid', '', PARAM_INT);
 
-// Obter as coletas para o combo
 $coletas = $DB->get_records_menu('ifcare_cadastrocoleta', null, 'nome', 'id, nome');
 ?>
 
@@ -20,7 +18,6 @@ $coletas = $DB->get_records_menu('ifcare_cadastrocoleta', null, 'nome', 'id, nom
 <div class="filter-container-coleta">
     <label for="coletaSelect"><strong>Selecione uma Coleta:</strong></label>
     <select id="coletaSelect" name="coletaid">
-        <option value="">Escolha uma coleta</option>
         <?php foreach ($coletas as $id => $nome): ?>
             <option value="<?php echo $id; ?>" <?php echo ($id == $selected_coletaid) ? 'selected' : ''; ?>>
                 <?php echo $nome; ?>
@@ -67,7 +64,7 @@ $coletas = $DB->get_records_menu('ifcare_cadastrocoleta', null, 'nome', 'id, nom
     let chart, modaChart;
 
     document.addEventListener('DOMContentLoaded', function () {
-    // Dados fictícios para o gráfico de pré-visualização de barras empilhadas
+    
     const previewData = {
         labels: ['Discordo Totalmente', 'Discordo', 'Neutro', 'Concordo', 'Concordo Totalmente'],
         datasets: [{
@@ -77,7 +74,6 @@ $coletas = $DB->get_records_menu('ifcare_cadastrocoleta', null, 'nome', 'id, nom
         }]
     };
 
-    // Inicializa o gráfico de pré-visualização no canvas do gráfico de barras empilhadas
     const previewCtx = document.getElementById('previewChart').getContext('2d');
     new Chart(previewCtx, {
         type: 'bar',
@@ -95,7 +91,6 @@ $coletas = $DB->get_records_menu('ifcare_cadastrocoleta', null, 'nome', 'id, nom
         }
     });
 
-    // Dados fictícios para o gráfico de pré-visualização de moda
     const modaPreviewData = {
         labels: ['Pergunta 1', 'Pergunta 2', 'Pergunta 3'],
         datasets: [{
@@ -105,7 +100,6 @@ $coletas = $DB->get_records_menu('ifcare_cadastrocoleta', null, 'nome', 'id, nom
         }]
     };
 
-    // Inicializa o gráfico de pré-visualização de moda no canvas
     const modaPreviewCtx = document.getElementById('modaPreviewChart').getContext('2d');
     new Chart(modaPreviewCtx, {
         type: 'bar',
@@ -162,8 +156,8 @@ $coletas = $DB->get_records_menu('ifcare_cadastrocoleta', null, 'nome', 'id, nom
             fetch('/blocks/ifcare/load_coleta_data.php?coletaid=' + coletaid)
                 .then(response => response.json())
                 .then(data => {
-                    updateChart(data.chart_data);       // Gráfico de barras empilhadas
-                    updateModaChart(data.moda_data);    // Novo gráfico de moda
+                    updateChart(data.chart_data);      
+                    updateModaChart(data.moda_data);   
                 });
         } else {
             if (chart) chart.destroy();
@@ -201,7 +195,6 @@ $coletas = $DB->get_records_menu('ifcare_cadastrocoleta', null, 'nome', 'id, nom
     const modaCtx = document.getElementById('modaChartFull').getContext('2d');
     if (modaChart) modaChart.destroy();
 
-    // Mapeamento de valores numéricos para a escala Likert
     const likertLabels = {
         1: "Discordo Totalmente",
         2: "Discordo",
@@ -263,7 +256,6 @@ $coletas = $DB->get_records_menu('ifcare_cadastrocoleta', null, 'nome', 'id, nom
 </script>
 
 <style>
-    /* Mantendo a consistência visual do layout */
     .filter-container-coleta {
         display: flex;
         align-items: center;
@@ -367,11 +359,8 @@ $coletas = $DB->get_records_menu('ifcare_cadastrocoleta', null, 'nome', 'id, nom
     .preview-image,
     #previewChart {
         width: 100%;
-        /* Ajusta a largura para preencher o card */
         height: auto;
-        /* Mantém a proporção */
         margin-bottom: 10px;
-        /* Espaçamento entre o gráfico e o título */
     }
 </style>
 

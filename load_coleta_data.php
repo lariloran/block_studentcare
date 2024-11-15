@@ -48,7 +48,6 @@ foreach ($emocao_respostas as $resposta) {
     $tabela_dados[$pergunta_id][$likert_value - 1] = $quantidade;
 }
 
-// Calcular a moda e sua frequência para cada pergunta
 foreach ($tabela_dados as $pergunta_id => $respostas) {
     $moda = array_keys($respostas, max($respostas))[0] + 1;
     $frequencia_moda = max($respostas);
@@ -56,7 +55,6 @@ foreach ($tabela_dados as $pergunta_id => $respostas) {
     $frequencies[] = $frequencia_moda;
 }
 
-// Preenche os datasets para o gráfico de barras empilhadas
 foreach ($datasets as $index => &$dataset) {
     foreach ($labels as $pergunta_id => $pergunta_texto) {
         $dataset['data'][] = $tabela_dados[$pergunta_id][$index];
