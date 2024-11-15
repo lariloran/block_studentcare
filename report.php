@@ -133,20 +133,37 @@ $coletas = $DB->get_records_menu('ifcare_cadastrocoleta', ['professor_id' => $US
     });
 
     function abrirModalGrafico() {
-        document.getElementById("graficoModal").style.display = "flex";
-    }
+    const modal = document.getElementById("graficoModal");
+    modal.style.display = "flex";
 
-    function fecharModalGrafico() {
-        document.getElementById("graficoModal").style.display = "none";
-    }
+    // Adiciona evento para fechar ao clicar fora do conteúdo
+    modal.addEventListener("click", function (event) {
+        if (event.target === modal) {
+            fecharModalGrafico();
+        }
+    });
+}
 
-    function abrirModalModa() {
-        document.getElementById("modaModal").style.display = "flex";
-    }
+function fecharModalGrafico() {
+    document.getElementById("graficoModal").style.display = "none";
+}
 
-    function fecharModalModa() {
-        document.getElementById("modaModal").style.display = "none";
-    }
+function abrirModalModa() {
+    const modal = document.getElementById("modaModal");
+    modal.style.display = "flex";
+
+    // Adiciona evento para fechar ao clicar fora do conteúdo
+    modal.addEventListener("click", function (event) {
+        if (event.target === modal) {
+            fecharModalModa();
+        }
+    });
+}
+
+function fecharModalModa() {
+    document.getElementById("modaModal").style.display = "none";
+}
+
 
     window.onclick = function (event) {
         if (event.target == document.getElementById("modaModal")) {
