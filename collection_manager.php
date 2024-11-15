@@ -125,17 +125,18 @@ class collection_manager
             .btn-coleta:hover {
                 background-color: #45a049;
             }
-            .modal {
-                display: none;
-                position: fixed;
-                z-index: 1;
-                left: 0;
-                top: 0;
-                width: 100%;
-                height: 100%;
-                overflow: auto;
-                background-color: rgba(0, 0, 0, 0.5);
-            }
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5); /* Fundo semi-transparente */
+}
+
 .modal-content {
     width: 90%;
     max-width: 600px;
@@ -575,18 +576,25 @@ function filtrarColetas() {
                 document.getElementById("downloadCSV").setAttribute("data-id", coleta.id);
                 document.getElementById("downloadJSON").setAttribute("data-id", coleta.id);
         
-                document.getElementById("coletaModal").style.display = "block";
+                const modal = document.getElementById("coletaModal");
+    modal.style.display = "block";
+                    adicionarEventosFechamento(modal);
+
             }
     
-            document.querySelector(".close").onclick = function () {
-                document.getElementById("coletaModal").style.display = "none";
-            };
-    
-            window.onclick = function (event) {
-                if (event.target == document.getElementById("coletaModal")) {
-                    document.getElementById("coletaModal").style.display = "none";
-                }
-            };
+function adicionarEventosFechamento(modal) {
+    // Fecha o modal ao clicar no "x"
+    modal.querySelector(".close").onclick = function () {
+        modal.style.display = "none";
+    };
+
+    // Fecha o modal ao clicar fora do conteúdo
+    modal.addEventListener("click", function (event) {
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    });
+}
 
                     document.getElementById("downloadCSV").onclick = function() {
             const coletaId = this.getAttribute("data-id");
