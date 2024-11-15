@@ -48,5 +48,11 @@ foreach ($datasets as $index => &$dataset) {
 }
 
 header('Content-Type: application/json');
-echo json_encode(['tabela_dados' => $tabela_dados, 'chart_data' => ['labels' => array_values($labels), 'datasets' => $datasets]]);
+echo json_encode([
+    'tabela_dados' => $tabela_dados,
+    'chart_data' => [
+        'labels' => array_values($labels),
+        'datasets' => $datasets
+    ]
+]);
 exit;

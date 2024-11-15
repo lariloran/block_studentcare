@@ -682,6 +682,9 @@ function filtrarColetas() {
             <button id="deleteColeta" class="btn-coleta btn-coleta-secondary" onclick="confirmarExclusao()">
                 <i class="fa fa-trash"></i> Excluir
             </button>
+            <button id="graficoColeta" class="btn-coleta btn-coleta-secondary" onclick="abrirGrafico()">
+                <i class="fa fa-chart-bar"></i> Gráficos
+            </button>
         </div>
     </div>
 </div>
@@ -701,6 +704,11 @@ function filtrarColetas() {
 
 <script>
 let coletaIdParaExclusao = null;
+
+function abrirGrafico() {
+    const coletaId = document.getElementById("modalColetaUrl").getAttribute("href").split("=").pop();
+    window.location.href = M.cfg.wwwroot + "/blocks/ifcare/report.php?coletaid=" + coletaId;
+}
 
 function confirmarExclusao() {
     const coletaNome = document.getElementById("modalColetaNome").textContent;
