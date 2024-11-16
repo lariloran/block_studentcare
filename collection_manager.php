@@ -5,16 +5,17 @@ class collection_manager
     public function get_coletas_by_professor($professor_id)
     {
         global $DB;
-
-        $sql = "SELECT id, nome, data_inicio, data_fim, descricao, curso_id, notificar_alunos, receber_alerta , resource_id_atrelado, section_id
+    
+        $sql = "SELECT id, nome, data_inicio, data_fim, descricao, curso_id, notificar_alunos, receber_alerta , resource_id_atrelado, section_id, data_criacao
                 FROM {ifcare_cadastrocoleta} 
                 WHERE professor_id = :professor_id
-                ORDER BY data_inicio DESC";
-
+                ORDER BY data_criacao DESC";
+    
         $params = ['professor_id' => $professor_id];
-
+    
         return $DB->get_records_sql($sql, $params);
     }
+    
 
     private function obter_perguntas_associadas($coleta_id)
     {
@@ -332,6 +333,8 @@ class collection_manager
 
     <label for="orderBy"><strong>Ordenar por:</strong></label>
     <select id="orderBy" onchange="ordenarColetas()">
+    <option value="data_criacao">Data de Criação</option>
+
         <option value="nome">Nome da Coleta</option>
         <option value="data_inicio">Data de Início</option>
         <option value="data_fim">Data de Fim</option>
@@ -399,6 +402,8 @@ class collection_manager
                 data-nome="' . format_string($coleta->nome) . '" 
                 data-data_inicio="' . $coleta->data_inicio . '" 
                 data-data_fim="' . $coleta->data_fim . '" 
+                    data-data_criacao="' . $coleta->data_criacao . '" 
+
                 data-curso_nome="' . $curso_nome . '" 
                 data-recurso_nome="' . $coleta->recurso_nome . '" 
                 data-resource_name="' . format_string($coleta->resource_name) . '" 
@@ -507,10 +512,11 @@ function ordenarColetas() {
         let valA = a.getAttribute("data-" + orderBy) || "";
         let valB = b.getAttribute("data-" + orderBy) || "";
 
-        if (orderBy === "data_inicio" || orderBy === "data_fim") {
-            valA = new Date(valA);
-            valB = new Date(valB);
-        } else {
+if (orderBy === "data_inicio" || orderBy === "data_fim" || orderBy === "data_criacao") {
+    valA = new Date(valA);
+    valB = new Date(valB);
+}
+ else {
             // Transforma valores para lower case para comparação consistente de strings
             valA = valA.toString().toLowerCase();
             valB = valB.toString().toLowerCase();
