@@ -6,15 +6,16 @@ use core\notification;
 
 class register_form extends moodleform
 {
-    
-    public function get_user_courses($userid) {
+
+    public function get_user_courses($userid)
+    {
         global $DB;
         $courses = enrol_get_users_courses($userid, true);
         $teacher_courses = [];
-    
+
         foreach ($courses as $course) {
             $context = context_course::instance($course->id);
-            
+
             // Verifica se o usuário possui a capacidade de gerenciamento no curso
             if (has_capability('moodle/course:update', $context, $userid)) {
                 $teacher_courses[] = $course;
@@ -22,56 +23,57 @@ class register_form extends moodleform
         }
         return $teacher_courses;
     }
-    
-    
+
+
 
     public function __construct()
     {
-        global $COURSE,$PAGE;
+        global $COURSE, $PAGE;
 
         $context = context_course::instance($COURSE->id);
 
         $PAGE->set_context($context);
 
-        
+
         parent::__construct();
     }
 
 
     public function definition()
     {
-        global $PAGE, $COURSE, $DB,$USER,$PAGE;
+        global $PAGE, $COURSE, $DB, $USER, $PAGE;
         $mform = $this->_form;
 
         $context = context_course::instance($COURSE->id);
 
         $PAGE->set_context($context);
 
-        $microsegundos = explode(' ', microtime())[0] * 1000; 
-        $milissegundos = str_pad((int)$microsegundos, 3, '0', STR_PAD_LEFT); 
         
-        $nomeColeta = "COLETA-" . date('YmdHis') . $milissegundos; 
-        
+        $microsegundos = explode(' ', microtime())[0] * 1000;
+        $milissegundos = str_pad((int) $microsegundos, 3, '0', STR_PAD_LEFT);
+
+        $nomeColeta = "COLETA-" . date('YmdHis') . $milissegundos;
+
         $mform->addElement('text', 'name', get_string('name', 'block_ifcare'), array('size' => '50', 'readonly' => 'readonly'));
         $mform->setType('name', PARAM_NOTAGS);
-        $mform->setDefault('name', $nomeColeta); 
+        $mform->setDefault('name', $nomeColeta);
 
-        $cursos = $this->get_user_courses($USER->id); 
+        $cursos = $this->get_user_courses($USER->id);
         $options = array();
 
         if (!empty($cursos)) {
-            usort($cursos, function($a, $b) {
+            usort($cursos, function ($a, $b) {
                 return strcmp($a->fullname, $b->fullname);
             });
 
             foreach ($cursos as $curso) {
-                $options[$curso->id] = $curso->fullname; 
+                $options[$curso->id] = $curso->fullname;
             }
         } else {
-       
+
         }
 
-        $mform->addElement('select', 'courseid', get_string('select_course', 'block_ifcare'), $options); 
+        $mform->addElement('select', 'courseid', get_string('select_course', 'block_ifcare'), $options);
         $mform->setType('courseid', PARAM_INT);
 
         $mform->addElement('select', 'sectionid', get_string('select_section', 'block_ifcare'), array());
@@ -80,16 +82,16 @@ class register_form extends moodleform
         $mform->addElement('select', 'resourceid', get_string('select_resource', 'block_ifcare'), array());
         $mform->setType('resourceid', PARAM_INT);
 
-        $current_time = time(); 
-        $start_time = $current_time + (5 * 60); 
-        $future_time = $current_time + (30 * 60); 
-        
+        $current_time = time();
+        $start_time = $current_time + (5 * 60);
+        $future_time = $current_time + (30 * 60);
+
         $mform->addElement('date_time_selector', 'starttime', get_string('starttime', 'block_ifcare'), array('optional' => false));
-        $mform->setDefault('starttime', $start_time); 
-        
+        $mform->setDefault('starttime', $start_time);
+
         $mform->addElement('date_time_selector', 'endtime', get_string('endtime', 'block_ifcare'), array('optional' => false));
-        $mform->setDefault('endtime', $future_time); 
-        
+        $mform->setDefault('endtime', $future_time);
+
 
         $mform->addElement('textarea', 'description', get_string('description', 'block_ifcare'), 'wrap="virtual" rows="5" cols="50"');
         $mform->setType('description', PARAM_TEXT);
@@ -134,38 +136,39 @@ class register_form extends moodleform
 
         $mform->addElement('hidden', 'userid', $USER->id);
         $mform->setType('userid', PARAM_INT);
-    
-        $PAGE->requires->js(new moodle_url('/blocks/ifcare/js/dynamicform.js'));
+
+        $PAGE->requires->js(new moodle_url('/blocks/ifcare/js/shared.js'));
+        $PAGE->requires->js(new moodle_url('/blocks/ifcare/js/register_form.js'));
 
     }
-    
+
     public function validation($data, $files)
     {
         $errors = parent::validation($data, $files);
-        
+
         $current_time = time();
-    
+
         // Verifica se a data de início está no passado
         if ($data['starttime'] < $current_time) {
             $errors['starttime'] = get_string('starttime_past_error', 'block_ifcare');
         }
-    
+
         // Verifica se a data de fim é posterior à data de início
         if ($data['endtime'] <= $data['starttime']) {
             $errors['endtime'] = get_string('endtime_before_start_error', 'block_ifcare');
         }
-    
+
         return $errors;
     }
-    
+
     public function process_form($data)
     {
         global $DB, $SESSION, $COURSE, $PAGE;
-    
+
         $context = context_course::instance($COURSE->id);
         $PAGE->set_context($context);
-    
-            // Sanitização de campos numéricos e texto
+
+        // Sanitização de campos numéricos e texto
         $userid = clean_param($data->userid, PARAM_INT);
         $courseid = clean_param($data->courseid, PARAM_INT);
         $nome = clean_param($data->name, PARAM_TEXT);
@@ -177,7 +180,7 @@ class register_form extends moodleform
         $sectionId = clean_param($data->setor, PARAM_INT);
         $resourceIdAtrelado = clean_param($data->recurso, PARAM_INT);
 
-    
+
         $registro = new stdClass();
         $registro->nome = clean_param($nome, PARAM_TEXT);
         $registro->data_inicio = clean_param($dataInicioFormatada, PARAM_TEXT);
@@ -191,27 +194,27 @@ class register_form extends moodleform
         $registro->resource_id_atrelado = clean_param($resourceIdAtrelado, PARAM_INT);
         $registro->resource_id = 0;
 
-    
+
         $inserted = $DB->insert_record('ifcare_cadastrocoleta', $registro);
-    
+
         if ($inserted) {
             $cadastroColetaId = $inserted;
-    
+
             $emocaoSelecionadas = json_decode($data->emocao_selecionadas, true);
             if (!is_array($emocaoSelecionadas)) {
                 $SESSION->mensagem_erro = get_string('mensagem_erro', 'block_ifcare');
                 redirect(new moodle_url("/blocks/ifcare/index.php", ['courseid' => $courseid]));
             }
-            
+
             if (is_array($emocaoSelecionadas) && !empty($emocaoSelecionadas)) {
                 foreach ($emocaoSelecionadas as $classeAeqId => $emocoes) {
                     if (is_array($emocoes)) {
                         foreach ($emocoes as $emocaoId) {
                             $associacao = new stdClass();
                             $associacao->cadastrocoleta_id = $cadastroColetaId;
-                            $associacao->classeaeq_id = $classeAeqId; 
+                            $associacao->classeaeq_id = $classeAeqId;
                             $associacao->emocao_id = $emocaoId;
-    
+
                             $DB->insert_record('ifcare_associacao_classe_emocao_coleta', $associacao);
                         }
                     }
@@ -219,7 +222,7 @@ class register_form extends moodleform
             } else {
                 $SESSION->mensagem_erro = get_string('mensagem_erro', 'block_ifcare');
             }
-    
+
             $SESSION->mensagem_sucesso = get_string('mensagem_sucesso', 'block_ifcare');
             redirect(new moodle_url("/blocks/ifcare/index.php?courseid=$courseid"));
         } else {
