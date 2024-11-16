@@ -32,7 +32,7 @@ class edit_form extends moodleform
 
         $mform->addElement('hidden', 'is_editing');
         $mform->setType('is_editing', PARAM_INT);
-        $mform->setDefault('is_editing', 0); // Define o valor padrão como 0
+        $mform->setDefault('is_editing', 1); // Define o valor padrão como 0
         
         // Nome da coleta (preenchido com o valor existente)
         $mform->addElement('text', 'name', get_string('name', 'block_ifcare'), ['size' => '50', 'readonly' => 'readonly']);
