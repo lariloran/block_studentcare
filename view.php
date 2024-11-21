@@ -359,11 +359,14 @@ $perguntas_json = json_encode(array_values($perguntas));
     function mostrarPergunta(index) {
         let pergunta = perguntas[index];
         let perguntaContainer = document.getElementById('pergunta-container');
+        perguntaContainer.classList.remove('animate');
+
         if (!perguntaContainer) {
             console.error("O elemento 'pergunta-container' não foi encontrado.");
             return;
         }
 
+        setTimeout(() => {
         perguntaContainer.innerHTML = `
         <p>
             <strong>${pergunta.emocao_nome}</strong>
@@ -374,7 +377,9 @@ $perguntas_json = json_encode(array_values($perguntas));
         </p>
         <p class="pergunta-texto">${pergunta.pergunta_texto}</p>
     `;
-
+        perguntaContainer.classList.add('animate');
+    }, 100); // Tempo para remover e reaplicar a classe de animação
+    
         document.querySelectorAll('.emoji-button').forEach(btn => {
             btn.classList.remove('selected');
         });
@@ -691,10 +696,41 @@ echo $OUTPUT->footer();
     }
 
     #pergunta-container {
-        margin-bottom: 20px;
-        font-size: 18px;
-        text-align: center;
-    }
+    margin-bottom: 20px;
+    font-size: 20px;
+    text-align: center;
+    font-weight: bold;
+    color: #333;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    transform: translateY(10px);
+    opacity: 0;
+}
+
+#pergunta-container.animate {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.pergunta-texto {
+    position: relative;
+    font-size: 22px;
+    font-weight: bold;
+    color: #333;
+}
+
+.pergunta-texto::after {
+    content: '';
+    display: block;
+    width: 50%; 
+    margin: 10px auto 0; 
+    height: 4px;
+    background: linear-gradient(90deg, #4caf50, #81c784); 
+    border-radius: 2px;
+}
 
     .tooltip-icon {
         position: relative;
