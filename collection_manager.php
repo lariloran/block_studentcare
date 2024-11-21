@@ -70,7 +70,8 @@ class collection_manager
     
     public function listar_coletas($professor_id)
     {
-        global $DB;
+        global $DB, $CFG;
+        require_once($CFG->dirroot . '/course/lib.php');
 
         $html = '<style>
             .accordion {
@@ -388,10 +389,8 @@ class collection_manager
                     }
                 }
             
-                $section_record = $DB->get_record('course_sections', ['section' => $coleta->section_id, 'course' => $coleta->curso_id], 'name');
-                $section_name = $section_record && !empty($section_record->name) 
-                    ? format_string($section_record->name) 
-                    : "--";
+                $section_name = get_section_name($coleta->curso_id, $coleta->section_id);
+
                 
                 $coleta->recurso_nome = $resource_info;
                 $coleta->resource_name = $resource_name;

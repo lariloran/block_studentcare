@@ -20,7 +20,15 @@ class edit_form extends moodleform
 
         // Garantir que as propriedades necessárias existam com valores padrão
         $this->coleta->classeaeq_id = $this->coleta->classeaeq_id ?? 0;
-        $this->coleta->emocoes = $this->coleta->emocoes ?? '';
+        
+
+        $this->coleta->emocoes = $DB->get_records_menu(
+            'ifcare_associacao_classe_emocao_coleta',
+            ['cadastrocoleta_id' => $coleta_id],
+            null,
+            'emocao_id, emocao_id'
+        );
+        
         parent::__construct();
     }
 
@@ -87,27 +95,28 @@ class edit_form extends moodleform
         $mform->setDefault('description', $this->coleta->descricao);
 
         // Emoções associadas
-        $classes = $DB->get_records('ifcare_classeaeq');
-        $class_options = [];
-        foreach ($classes as $class) {
-            $class_options[$class->id] = $class->nome_classe;
-        }
-        $mform->addElement('select', 'classe_aeq', get_string('aeqclasses', 'block_ifcare'), $class_options);
-        $mform->setType('classe_aeq', PARAM_INT);
-        $mform->setDefault('classe_aeq', $this->coleta->classeaeq_id);
+        // $classes = $DB->get_records('ifcare_classeaeq');
+        // $class_options = [];
+        // foreach ($classes as $class) {
+        //     $class_options[$class->id] = $class->nome_classe;
+        // }
+        // $mform->addElement('select', 'classe_aeq', get_string('aeqclasses', 'block_ifcare'), $class_options);
+        // $mform->setType('classe_aeq', PARAM_INT);
+        // $mform->setDefault('classe_aeq', $this->coleta->classeaeq_id);
 
         $emotions = $DB->get_records('ifcare_emocao');
         $emotion_options = [];
         foreach ($emotions as $emotion) {
             $emotion_options[$emotion->id] = $emotion->nome;
         }
-        $mform->addElement('select', 'emocoes', get_string('emotions', 'block_ifcare'), array(), array('multiple' => 'multiple', 'size' => 8));
+    
+        $mform->addElement('select', 'emocoes', get_string('emotions', 'block_ifcare'), $emotion_options, ['multiple' => 'multiple', 'size' => 8]);
         $mform->setType('emocoes', PARAM_INT);
-
-        // Dividir e preencher as emoções selecionadas, se existirem
-        $selected_emotions = (!empty($this->coleta->emocoes)) ? explode(',', $this->coleta->emocoes) : [];
-        $mform->setDefault('emocoes', $selected_emotions);
-
+    
+        // Define as emoções já selecionadas como padrão
+        $selected_emotions = array_keys($this->coleta->emocoes);
+        $mform->setDefault('emocoes', $selected_emotions); 
+        
         // Resumo de emoções
         $mform->addElement('html', '
             <div class="fitem">

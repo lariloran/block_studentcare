@@ -137,9 +137,7 @@ class register_form extends moodleform
         $mform->addElement('hidden', 'userid', $USER->id);
         $mform->setType('userid', PARAM_INT);
 
-        $PAGE->requires->js(new moodle_url('/blocks/ifcare/js/shared.js'));
         $PAGE->requires->js(new moodle_url('/blocks/ifcare/js/register_form.js'));
-
     }
 
     public function validation($data, $files)
