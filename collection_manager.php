@@ -572,11 +572,17 @@ function filtrarColetas() {
 
             function abrirModal(coletaId) {
                 const coleta = coletasData.find(c => c.id == coletaId);
-        
+        const modalDisciplina = document.getElementById("modalColetaDisciplina");
+
                 document.getElementById("modalColetaNome").textContent = coleta.nome;
                 document.getElementById("modalColetaDescricao").textContent = coleta.descricao ? coleta.descricao : "--";
-                document.getElementById("modalColetaDisciplina").textContent = coleta.curso_nome ? coleta.curso_nome : "Disciplina não encontrada";
-                document.getElementById("modalColetaInicio").textContent = new Date(coleta.data_inicio).toLocaleString();
+if (coleta.curso_id && coleta.curso_nome) {
+    modalDisciplina.textContent = coleta.curso_nome;
+    modalDisciplina.href = `${M.cfg.wwwroot}/course/view.php?id=${coleta.curso_id}`;
+} else {
+    modalDisciplina.textContent = "Disciplina não encontrada";
+    modalDisciplina.href = "#";
+}                document.getElementById("modalColetaInicio").textContent = new Date(coleta.data_inicio).toLocaleString();
                 document.getElementById("modalColetaFim").textContent = new Date(coleta.data_fim).toLocaleString();
                 document.getElementById("modalNotificarAlunos").textContent = coleta.notificar_alunos == 1 ? "Sim" : "Não";
                 document.getElementById("modalReceberAlerta").textContent = coleta.receber_alerta == 1 ? "Sim" : "Não";
@@ -854,7 +860,7 @@ function editarColeta() {
         <span class="close">&times;</span>
         <h2 id="modalColetaNome"></h2>
         <p><strong>Preview Coleta:</strong> <a id="modalColetaUrl" href="#" target="_blank">Link da Coleta</a></p>
-        <p><strong>Disciplina:</strong> <span id="modalColetaDisciplina"></span></p>
+        <p><strong>Disciplina:</strong> <a id="modalColetaDisciplina" href="#" target="_blank" style="color: #0073AA; text-decoration: none;"></a></p>
         <p><strong>Data de Início:</strong> <span id="modalColetaInicio"></span></p>
         <p><strong>Data de Fim:</strong> <span id="modalColetaFim"></span></p>
         <p><strong>Nome da Seção Vinculada:</strong> <span id="modalSectionName"></span></p>
