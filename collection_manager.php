@@ -325,6 +325,14 @@ class collection_manager
     background-color: #2E7D32; /* Cor diferenciada para página ativa */
     cursor: default;
 }
+.button-group {
+    display: flex; /* Coloca os itens em linha */
+    flex-wrap: wrap; /* Permite quebrar para a próxima linha se o espaço não for suficiente */
+    gap: 10px; /* Espaçamento entre os botões */
+    justify-content: center; /* Alinha os botões no centro do modal */
+    margin-top: 20px; /* Espaçamento superior */
+}
+
         </style>';
 
 
