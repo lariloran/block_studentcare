@@ -255,6 +255,7 @@ if (!$perguntas) {
 
 $perguntas_json = json_encode(array_values($perguntas));
 ?>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
 <div id="tcle-container" style="display: <?php echo $tcle_aceito ? 'none' : 'block'; ?>;">
     <form id="tcle-form" method="POST" class="tcle-form">
@@ -280,7 +281,10 @@ $perguntas_json = json_encode(array_values($perguntas));
             <progress id="progress-bar" value="0" max="100"></progress>
             <span id="progress-text">0%</span>
         </div>
-        <div id="pergunta-container"></div>
+
+        <div id="pergunta-container">
+        </div>
+
 
         <div id="respostas-container">
             <button class="emoji-button" data-value="1">
@@ -317,9 +321,12 @@ $perguntas_json = json_encode(array_values($perguntas));
     </div>
 <?php endif; ?>
 
-<div id="feedback-container" style="display: none; text-align: center; margin: 0 auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); max-width: 600px;">
-    <h3 class="feedback-title" style="font-size: 18px; font-weight: bold; margin-bottom: 15px; color: #333;">O que você achou desta coleta?</h3>
-    <textarea id="feedback-text" rows="4" cols="50" placeholder="Escreva seu feedback aqui..." style="width: 100%; max-width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 15px; font-size: 16px;"></textarea>
+<div id="feedback-container"
+    style="display: none; text-align: center; margin: 0 auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); max-width: 600px;">
+    <h3 class="feedback-title" style="font-size: 18px; font-weight: bold; margin-bottom: 15px; color: #333;">O que você
+        achou desta coleta?</h3>
+    <textarea id="feedback-text" rows="4" cols="50" placeholder="Escreva seu feedback aqui..."
+        style="width: 100%; max-width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 15px; font-size: 16px;"></textarea>
     <div class="feedback-btn-container" style="display: flex; justify-content: center;">
         <button class="buttonTcle" onclick="enviarFeedback()" style="padding: 10px 20px;">Enviar Feedback</button>
     </div>
@@ -367,7 +374,7 @@ $perguntas_json = json_encode(array_values($perguntas));
         }
 
         setTimeout(() => {
-        perguntaContainer.innerHTML = `
+            perguntaContainer.innerHTML = `
         <p>
             <strong>${pergunta.emocao_nome}</strong>
             <span class="tooltip-icon">
@@ -377,9 +384,9 @@ $perguntas_json = json_encode(array_values($perguntas));
         </p>
         <p class="pergunta-texto">${pergunta.pergunta_texto}</p>
     `;
-        perguntaContainer.classList.add('animate');
-    }, 100); // Tempo para remover e reaplicar a classe de animação
-    
+            perguntaContainer.classList.add('animate');
+        }, 100); // Tempo para remover e reaplicar a classe de animação
+
         document.querySelectorAll('.emoji-button').forEach(btn => {
             btn.classList.remove('selected');
         });
@@ -696,41 +703,53 @@ echo $OUTPUT->footer();
     }
 
     #pergunta-container {
-    margin-bottom: 20px;
-    font-size: 20px;
-    text-align: center;
-    font-weight: bold;
-    color: #333;
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
-    transform: translateY(10px);
-    opacity: 0;
-}
+        margin-bottom: 20px;
+        font-size: 20px;
+        text-align: center;
+        font-weight: bold;
+        color: #333;
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+        transform: translateY(10px);
+        opacity: 0;
+    }
 
-#pergunta-container.animate {
-    transform: translateY(0);
-    opacity: 1;
-}
+    #pergunta-container.animate {
+        transform: translateY(0);
+        opacity: 1;
+    }
 
-.pergunta-texto {
-    position: relative;
-    font-size: 22px;
-    font-weight: bold;
-    color: #333;
-}
+    .pergunta-texto {
+        position: relative;
+        font-family: 'Roboto', sans-serif;
+        font-size: 24px;
+        color: #333;
+    }
 
-.pergunta-texto::after {
-    content: '';
-    display: block;
-    width: 50%; 
-    margin: 10px auto 0; 
-    height: 4px;
-    background: linear-gradient(90deg, #4caf50, #81c784); 
-    border-radius: 2px;
-}
+    .pergunta-texto::after {
+        content: '';
+        display: block;
+        width: 50%;
+        margin: 10px auto 0;
+        height: 4px;
+        background: linear-gradient(90deg, #4caf50, #81c784);
+        border-radius: 2px;
+    }
+
+    .etiqueta {
+        display: inline-block;
+        background-color: #4caf50;
+        color: white;
+        font-size: 12px;
+        font-weight: bold;
+        padding: 5px 10px;
+        border-radius: 20px;
+        margin-bottom: 10px;
+    }
+
 
     .tooltip-icon {
         position: relative;
@@ -791,16 +810,40 @@ echo $OUTPUT->footer();
         height: 48px;
     }
 
-    .emoji-button span {
-        font-size: 14px;
-        color: #000;
-        text-align: center;
-    }
-
     .emoji-button:hover,
     .emoji-button.selected {
         transform: scale(1.2);
     }
+
+    .emoji-button span {
+        font-size: 14px;
+        color: #000;
+        text-align: center;
+        transition: color 0.2s ease, border 0.3s ease;
+        position: relative;
+        padding: 5px;
+    }
+
+    .emoji-button.selected span {
+        color: #4caf50;
+        position: relative;
+        z-index: 1;
+    }
+
+    .emoji-button.selected span::before {
+        content: '';
+        position: absolute;
+        top: -3px;
+        left: -3px;
+        right: -3px;
+        bottom: -3px;
+        border: 2px solid transparent;
+        border-image-slice: 1;
+        border-image-source: linear-gradient(45deg, #4CAF50, #81C784, #2196F3);
+        border-radius: 4px;
+        z-index: -1;
+    }
+
 
     #controls {
         display: flex;
