@@ -287,29 +287,27 @@ $perguntas_json = json_encode(array_values($perguntas));
 
 
         <div id="respostas-container">
-            <button class="emoji-button" data-value="1">
-                <img src="<?php echo $CFG->wwwroot; ?>/blocks/ifcare/pix/discordoTotalmente.png" alt="Discordo Totalmente"
-                    class="emoji-img">
-                <span>Discordo Totalmente</span>
-            </button>
-            <button class="emoji-button" data-value="2">
-                <img src="<?php echo $CFG->wwwroot; ?>/blocks/ifcare/pix/discordo.png" alt="Discordo" class="emoji-img">
-                <span>Discordo</span>
-            </button>
-            <button class="emoji-button" data-value="3">
-                <img src="<?php echo $CFG->wwwroot; ?>/blocks/ifcare/pix/neutro.png" alt="Neutro" class="emoji-img">
-                <span>Neutro</span>
-            </button>
-            <button class="emoji-button" data-value="4">
-                <img src="<?php echo $CFG->wwwroot; ?>/blocks/ifcare/pix/concordo.png" alt="Concordo" class="emoji-img">
-                <span>Concordo</span>
-            </button>
-            <button class="emoji-button" data-value="5">
-                <img src="<?php echo $CFG->wwwroot; ?>/blocks/ifcare/pix/concordoTotalmente.png" alt="Concordo Totalmente"
-                    class="emoji-img">
-                <span>Concordo Totalmente</span>
-            </button>
-        </div>
+    <button class="emoji-button" data-value="1">
+        <span class="emoji" id="emoji-1"></span>
+        <span>Discordo Totalmente</span>
+    </button>
+    <button class="emoji-button" data-value="2">
+        <span class="emoji" id="emoji-2"></span>
+        <span>Discordo</span>
+    </button>
+    <button class="emoji-button" data-value="3">
+        <span class="emoji" id="emoji-3"></span>
+        <span>Neutro</span>
+    </button>
+    <button class="emoji-button" data-value="4">
+        <span class="emoji" id="emoji-4"></span>
+        <span>Concordo</span>
+    </button>
+    <button class="emoji-button" data-value="5">
+        <span class="emoji" id="emoji-5"></span>
+        <span>Concordo Totalmente</span>
+    </button>
+</div>
 
         <div id="controls">
             <button id="voltar-btn" onclick="voltarPergunta()">Voltar</button>
@@ -353,6 +351,26 @@ $perguntas_json = json_encode(array_values($perguntas));
 </div>
 
 <script>
+        const emotionEmojiMap = {
+        'Prazer': ['😐', '🙂', '😀', '😄', '😍'],
+        'Esperança': ['😟', '😐', '🙂', '😊', '✨'],
+        'Orgulho': ['😔', '😐', '🙂', '😌', '🏅'],
+        'Raiva': ['😌', '😐', '😕', '😠', '😡'],
+        'Ansiedade': ['😌', '😐', '😬', '😰', '😱'],
+        'Vergonha': ['😌', '😐', '😳', '😖', '🙈'],
+        'Desespero': ['😌', '😐', '😔', '😟', '😭'],
+        'Tédio': ['🤩', '🙂', '😐', '😕', '😴']
+    };
+
+    function updateEmojisForEmotion(emocao) {
+        const emojis = emotionEmojiMap[emocao] || ['😐', '😐', '😐', '😐', '😐']; // Emojis padrão, caso a emoção não seja encontrada
+        document.getElementById('emoji-1').textContent = emojis[0];
+        document.getElementById('emoji-2').textContent = emojis[1];
+        document.getElementById('emoji-3').textContent = emojis[2];
+        document.getElementById('emoji-4').textContent = emojis[3];
+        document.getElementById('emoji-5').textContent = emojis[4];
+    }
+
     let perguntas = <?php echo $perguntas_json; ?>;
     let perguntaAtual = 0;
     let totalPerguntas = perguntas.length;
@@ -365,6 +383,8 @@ $perguntas_json = json_encode(array_values($perguntas));
 
     function mostrarPergunta(index) {
         let pergunta = perguntas[index];
+        updateEmojisForEmotion(pergunta.emocao_nome); // Atualiza os emojis com base na emoção da pergunta
+
         let perguntaContainer = document.getElementById('pergunta-container');
         perguntaContainer.classList.remove('animate');
 
@@ -785,65 +805,55 @@ echo $OUTPUT->footer();
     }
 
     #respostas-container {
-        display: flex;
-        justify-content: space-evenly;
-        margin-bottom: 20px;
-    }
+    display: flex;
+    justify-content: space-evenly;
+    margin-bottom: 20px;
+}
 
-    .emoji-button {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        background: none;
-        border: none;
-        cursor: pointer;
-        text-align: center;
-        transition: transform 0.2s ease-in-out;
-        margin: 0 10px;
-    }
+.emoji-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    transition: transform 0.2s ease-in-out, border 0.3s ease-in-out;
+    margin: 0 10px;
+    padding: 10px;
+    position: relative;
+}
 
-    .emoji-img {
-        display: block;
-        margin-bottom: 5px;
-        width: 48px;
-        height: 48px;
-    }
 
-    .emoji-button:hover,
-    .emoji-button.selected {
-        transform: scale(1.2);
-    }
+.emoji-button span {
+    font-size: 14px; /* Tamanho do texto */
+    color: #000;
+    text-align: center;
+    padding-top: 5px;
+}
 
-    .emoji-button span {
-        font-size: 14px;
-        color: #000;
-        text-align: center;
-        transition: color 0.2s ease, border 0.3s ease;
-        position: relative;
-        padding: 5px;
-    }
+.emoji-button:hover,
+.emoji-button.selected {
+    transform: scale(1.1); /* Cresce suavemente */
+}
 
-    .emoji-button.selected span {
-        color: #4caf50;
-        position: relative;
-        z-index: 1;
-    }
 
-    .emoji-button.selected span::before {
-        content: '';
-        position: absolute;
-        top: -3px;
-        left: -3px;
-        right: -3px;
-        bottom: -3px;
-        border: 2px solid transparent;
-        border-image-slice: 1;
-        border-image-source: linear-gradient(45deg, #4CAF50, #81C784, #2196F3);
-        border-radius: 4px;
-        z-index: -1;
-    }
+.emoji-button:hover {
+    border-image-source: linear-gradient(45deg, #2196F3, #81C784, #4CAF50); /* Gradiente alternado no hover */
+}
 
+
+.emoji-button span.emoji {
+    font-size: 48px; /* Tamanho base dos emojis */
+    transition: transform 0.3s ease, filter 0.3s ease;
+    display: inline-block;
+}
+
+.emoji-button.selected span.emoji {
+    transform: scale(1.5); /* Aumenta o tamanho do emoji selecionado */
+    filter: drop-shadow(0 0 5px #4caf50); /* Adiciona um leve brilho */
+}
 
     #controls {
         display: flex;
