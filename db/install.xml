@@ -11,7 +11,7 @@
         <FIELD NAME="receber_alerta" TYPE="int" LENGTH="1" NOTNULL="true" COMMENT="Se o usuário deve receber alertas"/>
         <FIELD NAME="notificar_alunos" TYPE="int" LENGTH="1" NOTNULL="true" COMMENT="Se os alunos devem ser notificados"/>
         <FIELD NAME="curso_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID do curso associado"/>
-        <FIELD NAME="professor_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID do professor que cadastrou"/>
+        <FIELD NAME="usuario_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID do usuário que cadastrou"/>
         <FIELD NAME="section_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID da seção selecionada pelo professor"/>
         <FIELD NAME="resource_id_atrelado" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID do recurso/atividade selecionado pelo professor"/>
         <FIELD NAME="resource_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID do recurso URL criado"/>
