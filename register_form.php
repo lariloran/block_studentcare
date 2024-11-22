@@ -16,14 +16,12 @@ class register_form extends moodleform
         foreach ($courses as $course) {
             $context = context_course::instance($course->id);
 
-            // Verifica se o usuário possui a capacidade de gerenciamento no curso
             if (has_capability('moodle/course:update', $context, $userid)) {
                 $teacher_courses[] = $course;
             }
         }
         return $teacher_courses;
     }
-
 
 
     public function __construct()
@@ -137,6 +135,7 @@ class register_form extends moodleform
         $mform->addElement('hidden', 'userid', $USER->id);
         $mform->setType('userid', PARAM_INT);
 
+        $PAGE->requires->js(new moodle_url('/blocks/ifcare/js/shared.js'));
         $PAGE->requires->js(new moodle_url('/blocks/ifcare/js/register_form.js'));
     }
 
@@ -146,12 +145,10 @@ class register_form extends moodleform
 
         $current_time = time();
 
-        // Verifica se a data de início está no passado
         if ($data['starttime'] < $current_time) {
             $errors['starttime'] = get_string('starttime_past_error', 'block_ifcare');
         }
 
-        // Verifica se a data de fim é posterior à data de início
         if ($data['endtime'] <= $data['starttime']) {
             $errors['endtime'] = get_string('endtime_before_start_error', 'block_ifcare');
         }

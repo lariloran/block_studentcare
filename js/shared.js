@@ -59,6 +59,55 @@ require(["jquery"], function ($) {
         success: function (response) {
           var emotions = JSON.parse(response).emotions;
 
+          $("#id_emocoes").empty();
+
+          if (Array.isArray(emotions) && emotions.length > 0) {
+            emotions.forEach(function (emotion) {
+              $("#id_emocoes").append(
+                $("<option>", {
+                  value: emotion.value,
+                  text: emotion.name,
+                })
+              );
+            });
+
+            if (classeAeqId in selecoes) {
+              $("#id_emocoes").val(selecoes[classeAeqId]);
+            }
+          } else {
+            $("#id_emocoes").append(
+              $("<option>", {
+                value: "",
+                text: "Nenhuma emoção disponível",
+              })
+            );
+          }
+
+          window.ifcare.updateSelectedEmotions();
+        },
+        error: function () {
+          console.error("Erro ao carregar as emoções.");
+          $("#id_emocoes")
+            .empty()
+            .append(
+              $("<option>", {
+                value: "",
+                text: "Erro ao carregar emoções",
+              })
+            );
+        },
+      });
+    }
+  }
+  window.ifcare.loadEmotionsEdit = function loadEmotions(classeAeqId) {
+    if (classeAeqId) {
+      $.ajax({
+        url: M.cfg.wwwroot + "/blocks/ifcare/get_emotions.php",
+        method: "GET",
+        data: { classeaeqid: classeAeqId },
+        success: function (response) {
+          var emotions = JSON.parse(response).emotions;
+
           // Limpa as opções do select
           $("#id_emocoes").empty();
 
@@ -414,12 +463,8 @@ require(["jquery"], function ($) {
 
   require(["core/notification"], function (notification) {
     $("form.mform").on("submit", function (e) {
-      if (!validateDates()) {
-        e.preventDefault();
-        return;
-      }
-
       e.preventDefault();
+
       notification.confirm(
         "Confirmação",
         "Está pronto para salvar esta coleta de emoções?",
@@ -435,21 +480,7 @@ require(["jquery"], function ($) {
     });
   });
 
-  $("#id_emocoes").change(window.ifcare.updateSelectedEmotions);
-
-  $("#id_classe_aeq").change(function () {
-    var classeAeqId = $(this).val();
-    if (classeAeqId) {
-      window.ifcare.loadEmotions(classeAeqId);
-    }
-  });
-
-  $(
-    "#id_starttime_day, #id_starttime_month, #id_starttime_year, #id_starttime_hour, #id_starttime_minute, #id_endtime_day, #id_endtime_month, #id_endtime_year, #id_endtime_hour, #id_endtime_minute"
-  ).change(function () {
-    setTimeout(window.ifcare.updateTimestamps, 100);
-  });
-
+  
   $("#id_courseid").change(function () {
     var courseid = $(this).val();
     if (courseid) {
@@ -463,7 +494,8 @@ require(["jquery"], function ($) {
     window.ifcare.loadResources(courseid, sectionid);
   });
 
+  $("#id_emocoes").change(window.ifcare.updateSelectedEmotions);
+  
   window.ifcare.toggleSaveButton();
 
-  window.ifcare.loadEmotions($("#id_classe_aeq").val());
 });

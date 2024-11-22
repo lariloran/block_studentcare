@@ -1,14 +1,16 @@
 require(["jquery"], function ($) {  
+    window.ifcare.toggleSaveButton();
+  
     $("#id_classe_aeq").change(function () {
       var classeAeqId = $(this).val();
       if (classeAeqId) {
-        window.ifcare.loadEmotions(classeAeqId);
+        window.ifcare.loadEmotionsEdit(classeAeqId);
       }
     });
-
+  
     var initialCourseid = $("#id_courseid").val();
     if (initialCourseid) {
-      window.ifcare.loadSections(initialCourseid);
-      window.ifcare.loadEmotions($("#id_classe_aeq").val());
+      window.ifcare.loadEmotionsEdit($("#id_classe_aeq").val());
     }
+    
   });
