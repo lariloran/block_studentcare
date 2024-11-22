@@ -2,16 +2,16 @@
 class collection_manager
 {
 
-    public function get_coletas_by_professor($professor_id)
+    public function get_coletas_by_professor($usuario_id)
     {
         global $DB;
     
         $sql = "SELECT id, nome, data_inicio, data_fim, descricao, curso_id, notificar_alunos, receber_alerta , resource_id_atrelado, section_id, data_criacao
                 FROM {ifcare_cadastrocoleta} 
-                WHERE professor_id = :professor_id
+                WHERE usuario_id = :usuario_id
                 ORDER BY data_criacao DESC";
     
-        $params = ['professor_id' => $professor_id];
+        $params = ['usuario_id' => $usuario_id];
     
         return $DB->get_records_sql($sql, $params);
     }
@@ -68,7 +68,7 @@ class collection_manager
         }
     }
     
-    public function listar_coletas($professor_id)
+    public function listar_coletas($usuario_id)
     {
         global $DB, $CFG;
         require_once($CFG->dirroot . '/course/lib.php');
@@ -373,7 +373,7 @@ class collection_manager
       
       ';
 
-        $coletas = $this->get_coletas_by_professor($professor_id);
+        $coletas = $this->get_coletas_by_professor($usuario_id);
 
         if (!empty($coletas)) {
             foreach ($coletas as $coleta) {

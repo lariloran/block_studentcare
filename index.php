@@ -18,8 +18,8 @@ echo html_writer::start_tag('div', ['class' => 'col-md-12']);
 
 // Listagem de coletas com o card de criação
 $collectionManager = new collection_manager();
-$professor_id = $USER->id;
-echo $collectionManager->listar_coletas($professor_id);
+$usuario_id = $USER->id;
+echo $collectionManager->listar_coletas($usuario_id);
 
 echo html_writer::end_tag('div');
 echo html_writer::end_tag('div');

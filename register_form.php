@@ -187,7 +187,7 @@ class register_form extends moodleform
         $registro->receber_alerta = clean_param($receberAlerta, PARAM_INT);
         $registro->notificar_alunos = clean_param($notificarAlunos, PARAM_INT);
         $registro->curso_id = clean_param($courseid, PARAM_INT);
-        $registro->professor_id = clean_param($userid, PARAM_INT);
+        $registro->usuario_id = clean_param($userid, PARAM_INT);
         $registro->section_id = clean_param($sectionId, PARAM_INT);
         $registro->resource_id_atrelado = clean_param($resourceIdAtrelado, PARAM_INT);
         $registro->resource_id = 0;

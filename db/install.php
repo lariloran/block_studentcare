@@ -50,11 +50,11 @@ foreach ($records_emotions as $record) {
 }
 
 $records_questions = [
-    (object)['id' => 1, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'Fico animado(a) para ir à aula.'],
-    (object)['id' => 2, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'Gosto de estar na aula.'],
-    (object)['id' => 3, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'Depois da aula, começo a ansiar pela próxima aula.'],
+    (object)['id' => 1, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'Estar na aula dessa disciplina me deixa muito animado.'],
+    (object)['id' => 2, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'Gosto de estar nesta aula.'],
+    (object)['id' => 3, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'Depois dessa aula, começo a ansiar pela próxima aula.'],
     (object)['id' => 4, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'Estou ansioso(a) para aprender muito nesta aula.'],
-    (object)['id' => 5, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'Estou feliz por ter entendido o material.'],
+    (object)['id' => 5, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'Estou feliz por ter entendido o conteúdo da disciplina.'],
     (object)['id' => 6, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'Fico contente que valeu a pena ir à aula.'],
     (object)['id' => 7, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'Estou motivado(a) para ir a esta aula porque é empolgante.'],
     (object)['id' => 8, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'Meu prazer nesta aula me faz querer participar.'],

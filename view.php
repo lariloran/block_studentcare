@@ -352,7 +352,7 @@ $perguntas_json = json_encode(array_values($perguntas));
 
 <script>
         const emotionEmojiMap = {
-        'Prazer': ['😐', '🙂', '😀', '😄', '😍'],
+        'Alegria': ['😐', '🙂', '😀', '😄', '😍'],
         'Esperança': ['😟', '😐', '🙂', '😊', '✨'],
         'Orgulho': ['😔', '😐', '🙂', '😌', '🏅'],
         'Raiva': ['😌', '😐', '😕', '😠', '😡'],
@@ -363,7 +363,7 @@ $perguntas_json = json_encode(array_values($perguntas));
     };
 
     function updateEmojisForEmotion(emocao) {
-        const emojis = emotionEmojiMap[emocao] || ['😐', '😐', '😐', '😐', '😐']; // Emojis padrão, caso a emoção não seja encontrada
+        const emojis = emotionEmojiMap[emocao] || ['😕', '😟', '😐', '🙂', '😀']; // Emojis padrão, caso a emoção não seja encontrada
         document.getElementById('emoji-1').textContent = emojis[0];
         document.getElementById('emoji-2').textContent = emojis[1];
         document.getElementById('emoji-3').textContent = emojis[2];

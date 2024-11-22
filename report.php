@@ -11,7 +11,7 @@ echo $OUTPUT->header();
 
 $selected_coletaid = optional_param('coletaid', '', PARAM_INT);
 
-$coletas = $DB->get_records_menu('ifcare_cadastrocoleta', ['professor_id' => $USER->id], 'nome', 'id, nome');
+$coletas = $DB->get_records_menu('ifcare_cadastrocoleta', ['usuario_id' => $USER->id], 'nome', 'id, nome');
 ?>
 
 <!-- Combo para Seleção de Coleta -->
