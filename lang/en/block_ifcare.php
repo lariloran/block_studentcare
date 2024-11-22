@@ -17,6 +17,7 @@ $string['select_resource'] = 'Selecione um recurso ou atividade';
 $string['alertprogress'] = 'Receber alerta do andamento da coleta';
 $string['notify_students'] = 'Notificar os alunos';
 $string['submit'] = 'Salvar';
+$string['update'] = 'Salvar';
 
 // Mensagens de validação e erro
 $string['endtimeerror'] = 'A hora de término deve ser posterior à hora de início.';
@@ -24,6 +25,11 @@ $string['mensagem_sucesso'] = 'Cadastro realizado com sucesso!';
 $string['mensagem_erro'] = 'Erro ao realizar o cadastro. Tente novamente.';
 $string['starttime_past_error'] = 'A data de início não pode estar no passado.';
 $string['endtime_before_start_error'] = 'A data de fim deve ser posterior à data de início.';
+$string['coleta_atualizada_com_sucesso'] = 'A coleta foi atualizada com sucesso.';
+$string['erro_ao_atualizar_coleta'] = 'Erro ao atualizar os dados da coleta.';
+$string['erro_ao_atualizar_emocoes'] = 'Erro ao atualizar as emoções associadas.';
+$string['editcoleta'] = 'Editar Coleta';
+$string['coleta_atualizada_com_sucesso'] = 'A coleta foi atualizada com sucesso.';
 
 // Strings de gerenciamento e navegação
 $string['manage_collections'] = 'Gerenciar Coletas';

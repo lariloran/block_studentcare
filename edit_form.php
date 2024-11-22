@@ -37,10 +37,9 @@ class edit_form extends moodleform
         global $PAGE, $DB, $USER;
 
         $mform = $this->_form;
+        $mform->addElement('hidden', 'coletaid', $this->coleta->id);
+        $mform->setType('coletaid', PARAM_INT);
 
-        $mform->addElement('hidden', 'is_editing');
-        $mform->setType('is_editing', PARAM_INT);
-        $mform->setDefault('is_editing', 1); // Define o valor padrão como 0
 
         // Nome da coleta (preenchido com o valor existente)
         $mform->addElement('text', 'name', get_string('name', 'block_ifcare'), ['size' => '50', 'readonly' => 'readonly']);
@@ -69,14 +68,17 @@ class edit_form extends moodleform
         $mform->setDefault('sectionid', $this->coleta->section_id);
 
         // Recursos da seção específica
-        $modinfo = get_fast_modinfo($this->coleta->curso_id); // Obtém informações rápidas do curso
+        $modinfo = get_fast_modinfo($this->coleta->curso_id);
         $resources = [];
+
+        // Adiciona a opção padrão
+        $resources[''] = 'Não vincular a nenhuma atividade/recurso';
 
         if (isset($modinfo->sections[$this->coleta->section_id])) {
             foreach ($modinfo->sections[$this->coleta->section_id] as $cmid) {
                 $cm = $modinfo->cms[$cmid];
-                if ($cm->uservisible) { // Verifica se o recurso está visível para o usuário
-                    $resources[$cm->id] = $cm->name; // Usa o nome do recurso
+                if ($cm->uservisible) {
+                    $resources[$cm->id] = $cm->name;
                 }
             }
         } else {
@@ -85,7 +87,11 @@ class edit_form extends moodleform
 
         $mform->addElement('select', 'resourceid', get_string('select_resource', 'block_ifcare'), $resources);
         $mform->setType('resourceid', PARAM_INT);
-        $mform->setDefault('resourceid', $this->coleta->resource_id_atrelado);
+
+        // Define a opção padrão como selecionada, se nenhuma for encontrada
+        $default_resourceid = $this->coleta->resource_id_atrelado ?? '';
+        $mform->setDefault('resourceid', $default_resourceid);
+
 
 
         // Datas de início e fim
@@ -110,29 +116,22 @@ class edit_form extends moodleform
         $mform->setType('classe_aeq', PARAM_INT);
         $mform->setDefault('classe_aeq', $this->coleta->classeaeq_id);
 
-        // Busca as emoções associadas à coleta
-        $selected_emotions = array_keys($this->coleta->emocoes); // Obtém os IDs das emoções associadas
+        $selected_emotions = array_keys($this->coleta->emocoes);
 
-        // Recupera todas as emoções disponíveis
         $emotions = $DB->get_records('ifcare_emocao');
         $emotion_options = [];
         foreach ($emotions as $emotion) {
             $emotion_options[$emotion->id] = $emotion->nome;
         }
 
-        // Adiciona o elemento select para as emoções
         $mform->addElement('select', 'emocoes', get_string('emotions', 'block_ifcare'), $emotion_options, ['multiple' => 'multiple', 'size' => 8]);
-        $mform->setType('emocoes', PARAM_SEQUENCE); // Define o tipo correto para múltiplos valores
-
-      // Adiciona o campo oculto para as emoções associadas ao formulário
+        $mform->setType('emocoes', PARAM_SEQUENCE);
         $mform->addElement('hidden', 'emocao_associadas', '', ['id' => 'emocao_associadas']);
         $mform->setType('emocao_associadas', PARAM_RAW);
 
-        // Define o valor do campo oculto após sua criação
         $mform->setDefault('emocao_associadas', json_encode($selected_emotions));
 
-              
-        // Resumo de emoções
+
         $mform->addElement('html', '
             <div class="fitem">
                 <div class="fitemtitle">Resumo das Seleções</div>
@@ -148,7 +147,13 @@ class edit_form extends moodleform
         $mform->setDefault('notify_students', $this->coleta->notificar_alunos);
 
         // Botão de envio
-        $mform->addElement('submit', 'save', get_string('submit', 'block_ifcare'));
+        $mform->addElement('submit', 'save', get_string('update', 'block_ifcare'));
+        
+        $mform->addElement('hidden', 'setor', '', array('id' => 'setor'));
+        $mform->setType('setor', PARAM_INT);
+
+        $mform->addElement('hidden', 'recurso', '', array('id' => 'recurso'));
+        $mform->setType('recurso', PARAM_INT);
 
 
         $PAGE->requires->js(new moodle_url('/blocks/ifcare/js/shared.js'));
@@ -157,35 +162,54 @@ class edit_form extends moodleform
 
     public function process_form($data)
     {
-        global $DB;
-
+        global $DB, $SESSION;
+        // Atualizar os dados principais da coleta
         $update_data = new stdClass();
-        $update_data->id = $this->coleta->id;
-        $update_data->nome = $data->name;
-        $update_data->data_inicio = date('Y-m-d H:i:s', $data->starttime);
-        $update_data->data_fim = date('Y-m-d H:i:s', $data->endtime);
-        $update_data->descricao = $data->description;
-        $update_data->curso_id = $data->courseid;
-        $update_data->section_id = $data->sectionid;
-        $update_data->resource_id_atrelado = $data->resourceid;
-        $update_data->receber_alerta = $data->alertprogress;
-        $update_data->notificar_alunos = $data->notify_students;
+        $update_data->id = clean_param($data->coletaid, PARAM_INT);
+        $update_data->nome = clean_param($data->name, PARAM_TEXT);
+        $update_data->data_inicio = date('Y-m-d H:i:s', clean_param($data->starttime, PARAM_INT));
+        $update_data->data_fim = date('Y-m-d H:i:s', clean_param($data->endtime, PARAM_INT));
+        $update_data->descricao = clean_param($data->description, PARAM_TEXT);
+        $update_data->curso_id = clean_param($data->courseid, PARAM_INT);
+        $update_data->section_id = clean_param($data->setor, PARAM_INT);
+        $update_data->resource_id_atrelado =  clean_param($data->recurso, PARAM_INT);
+        $update_data->receber_alerta = clean_param($data->alertprogress, PARAM_INT);
+        $update_data->notificar_alunos = clean_param($data->notify_students, PARAM_INT);
 
-        $DB->update_record('ifcare_cadastrocoleta', $update_data);
-
-        // Atualizar as associações de emoções
-        $DB->delete_records('ifcare_associacao_classe_emocao_coleta', ['cadastrocoleta_id' => $this->coleta->id]);
-
-        if (!empty($data->emocoes)) {
-            foreach ($data->emocoes as $emocao_id) {
-                $assoc = new stdClass();
-                $assoc->cadastrocoleta_id = $this->coleta->id;
-                $assoc->classeaeq_id = $data->classe_aeq;
-                $assoc->emocao_id = $emocao_id;
-                $DB->insert_record('ifcare_associacao_classe_emocao_coleta', $assoc);
-            }
+        // Atualizar o registro principal
+        try {
+            $DB->update_record('ifcare_cadastrocoleta', $update_data);
+        } catch (dml_exception $e) {
+            debugging('Erro ao atualizar os dados da coleta: ' . $e->getMessage());
+            throw new moodle_exception('erro_ao_atualizar_coleta', 'block_ifcare');
         }
+
+        // Atualizar associações de emoções
+        try {
+            // Deletar as emoções antigas
+            $DB->delete_records('ifcare_associacao_classe_emocao_coleta', ['cadastrocoleta_id' => $this->coleta->id]);
+
+            // Adicionar as novas emoções
+            if (!empty($data->emocoes)) {
+                foreach ($data->emocoes as $emocao_id) {
+                    $assoc = new stdClass();
+                    $assoc->cadastrocoleta_id = $this->coleta->id;
+                    $assoc->classeaeq_id = clean_param($data->classe_aeq, PARAM_INT);
+                    $assoc->emocao_id = clean_param($emocao_id, PARAM_INT);
+
+                    $DB->insert_record('ifcare_associacao_classe_emocao_coleta', $assoc);
+                }
+            }
+        } catch (dml_exception $e) {
+            debugging('Erro ao atualizar as emoções associadas: ' . $e->getMessage());
+            throw new moodle_exception('erro_ao_atualizar_emocoes', 'block_ifcare');
+        }
+
+        // Redirecionar com sucesso
+        $SESSION->mensagem_sucesso = get_string('coleta_atualizada_com_sucesso', 'block_ifcare');
+        redirect(new moodle_url('/blocks/ifcare/index.php', ['courseid' => $data->courseid]));
     }
+
 }
 
 
