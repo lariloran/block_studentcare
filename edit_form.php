@@ -20,7 +20,7 @@ class edit_form extends moodleform
 
         // Garantir que as propriedades necessárias existam com valores padrão
         $this->coleta->classeaeq_id = $this->coleta->classeaeq_id ?? 0;
-        
+
 
         $this->coleta->emocoes = $DB->get_records_menu(
             'ifcare_associacao_classe_emocao_coleta',
@@ -28,7 +28,7 @@ class edit_form extends moodleform
             null,
             'emocao_id, emocao_id'
         );
-        
+
         parent::__construct();
     }
 
@@ -41,7 +41,7 @@ class edit_form extends moodleform
         $mform->addElement('hidden', 'is_editing');
         $mform->setType('is_editing', PARAM_INT);
         $mform->setDefault('is_editing', 1); // Define o valor padrão como 0
-        
+
         // Nome da coleta (preenchido com o valor existente)
         $mform->addElement('text', 'name', get_string('name', 'block_ifcare'), ['size' => '50', 'readonly' => 'readonly']);
         $mform->setType('name', PARAM_NOTAGS);
@@ -68,19 +68,25 @@ class edit_form extends moodleform
         $mform->setType('sectionid', PARAM_INT);
         $mform->setDefault('sectionid', $this->coleta->section_id);
 
-        // Recursos do curso
+        // Recursos da seção específica
         $modinfo = get_fast_modinfo($this->coleta->curso_id); // Obtém informações rápidas do curso
         $resources = [];
 
-        foreach ($modinfo->cms as $cm) {
-            if ($cm->uservisible) { // Verifica se o recurso está visível para o usuário
-                $resources[$cm->id] = $cm->name; // Usa o nome do recurso
+        if (isset($modinfo->sections[$this->coleta->section_id])) {
+            foreach ($modinfo->sections[$this->coleta->section_id] as $cmid) {
+                $cm = $modinfo->cms[$cmid];
+                if ($cm->uservisible) { // Verifica se o recurso está visível para o usuário
+                    $resources[$cm->id] = $cm->name; // Usa o nome do recurso
+                }
             }
+        } else {
+            mtrace("Seção {$this->coleta->section_id} não encontrada ou sem recursos visíveis.");
         }
 
         $mform->addElement('select', 'resourceid', get_string('select_resource', 'block_ifcare'), $resources);
         $mform->setType('resourceid', PARAM_INT);
         $mform->setDefault('resourceid', $this->coleta->resource_id_atrelado);
+
 
         // Datas de início e fim
         $mform->addElement('date_time_selector', 'starttime', get_string('starttime', 'block_ifcare'), ['optional' => false]);
@@ -95,28 +101,28 @@ class edit_form extends moodleform
         $mform->setDefault('description', $this->coleta->descricao);
 
         // Emoções associadas
-        // $classes = $DB->get_records('ifcare_classeaeq');
-        // $class_options = [];
-        // foreach ($classes as $class) {
-        //     $class_options[$class->id] = $class->nome_classe;
-        // }
-        // $mform->addElement('select', 'classe_aeq', get_string('aeqclasses', 'block_ifcare'), $class_options);
-        // $mform->setType('classe_aeq', PARAM_INT);
-        // $mform->setDefault('classe_aeq', $this->coleta->classeaeq_id);
+        $classes = $DB->get_records('ifcare_classeaeq');
+        $class_options = [];
+        foreach ($classes as $class) {
+            $class_options[$class->id] = $class->nome_classe;
+        }
+        $mform->addElement('select', 'classe_aeq', get_string('aeqclasses', 'block_ifcare'), $class_options);
+        $mform->setType('classe_aeq', PARAM_INT);
+        $mform->setDefault('classe_aeq', $this->coleta->classeaeq_id);
 
         $emotions = $DB->get_records('ifcare_emocao');
         $emotion_options = [];
         foreach ($emotions as $emotion) {
             $emotion_options[$emotion->id] = $emotion->nome;
         }
-    
+
         $mform->addElement('select', 'emocoes', get_string('emotions', 'block_ifcare'), $emotion_options, ['multiple' => 'multiple', 'size' => 8]);
         $mform->setType('emocoes', PARAM_INT);
-    
+
         // Define as emoções já selecionadas como padrão
         $selected_emotions = array_keys($this->coleta->emocoes);
-        $mform->setDefault('emocoes', $selected_emotions); 
-        
+        $mform->setDefault('emocoes', $selected_emotions);
+
         // Resumo de emoções
         $mform->addElement('html', '
             <div class="fitem">
