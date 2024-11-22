@@ -152,8 +152,6 @@ class edit_form extends moodleform
 
 
         $PAGE->requires->js(new moodle_url('/blocks/ifcare/js/shared.js'));
-        $PAGE->requires->js(new moodle_url('/blocks/ifcare/js/edit_form.js'));
-
 
     }
 

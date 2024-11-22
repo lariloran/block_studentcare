@@ -49,61 +49,7 @@ require(["jquery"], function ($) {
     var selectedEmotions = $("#id_emocoes").val() || [];
     $("#id_save").prop("disabled", selectedEmotions.length === 0);
   };
-  // window.ifcare.loadEmotions = function loadEmotions(classeAeqId) {
-  //   var isEditing = $("#id_is_editing").val() || "0";
-  //   if (isEditing === "1") {
-  //     window.ifcare.loadEmotionsEdit(classeAeqId);
-  //     return;
-  //   } else {
-  //     if (classeAeqId) {
-  //       $.ajax({
-  //         url: M.cfg.wwwroot + "/blocks/ifcare/get_emotions.php",
-  //         method: "GET",
-  //         data: { classeaeqid: classeAeqId },
-  //         success: function (response) {
-  //           var emotions = JSON.parse(response).emotions;
 
-  //           $("#id_emocoes").empty();
-
-  //           if (Array.isArray(emotions) && emotions.length > 0) {
-  //             emotions.forEach(function (emotion) {
-  //               $("#id_emocoes").append(
-  //                 $("<option>", {
-  //                   value: emotion.value,
-  //                   text: emotion.name,
-  //                 })
-  //               );
-  //             });
-
-  //             if (classeAeqId in selecoes) {
-  //               $("#id_emocoes").val(selecoes[classeAeqId]);
-  //             }
-  //           } else {
-  //             $("#id_emocoes").append(
-  //               $("<option>", {
-  //                 value: "",
-  //                 text: "Nenhuma emoção disponível",
-  //               })
-  //             );
-  //           }
-
-  //           window.ifcare.updateSelectedEmotions();
-  //         },
-  //         error: function () {
-  //           console.error("Erro ao carregar as emoções.");
-  //           $("#id_emocoes")
-  //             .empty()
-  //             .append(
-  //               $("<option>", {
-  //                 value: "",
-  //                 text: "Erro ao carregar emoções",
-  //               })
-  //             );
-  //         },
-  //       });
-  //     }
-  //   }
-  // };
   window.ifcare.loadEmotions = function loadEmotions(classeAeqId) {
     if (classeAeqId) {
       $.ajax({
