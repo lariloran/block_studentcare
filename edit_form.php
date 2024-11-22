@@ -110,19 +110,28 @@ class edit_form extends moodleform
         $mform->setType('classe_aeq', PARAM_INT);
         $mform->setDefault('classe_aeq', $this->coleta->classeaeq_id);
 
+        // Busca as emoções associadas à coleta
+        $selected_emotions = array_keys($this->coleta->emocoes); // Obtém os IDs das emoções associadas
+
+        // Recupera todas as emoções disponíveis
         $emotions = $DB->get_records('ifcare_emocao');
         $emotion_options = [];
         foreach ($emotions as $emotion) {
             $emotion_options[$emotion->id] = $emotion->nome;
         }
 
+        // Adiciona o elemento select para as emoções
         $mform->addElement('select', 'emocoes', get_string('emotions', 'block_ifcare'), $emotion_options, ['multiple' => 'multiple', 'size' => 8]);
-        $mform->setType('emocoes', PARAM_INT);
+        $mform->setType('emocoes', PARAM_SEQUENCE); // Define o tipo correto para múltiplos valores
 
-        // Define as emoções já selecionadas como padrão
-        $selected_emotions = array_keys($this->coleta->emocoes);
-        $mform->setDefault('emocoes', $selected_emotions);
+      // Adiciona o campo oculto para as emoções associadas ao formulário
+        $mform->addElement('hidden', 'emocao_associadas', '', ['id' => 'emocao_associadas']);
+        $mform->setType('emocao_associadas', PARAM_RAW);
 
+        // Define o valor do campo oculto após sua criação
+        $mform->setDefault('emocao_associadas', json_encode($selected_emotions));
+
+              
         // Resumo de emoções
         $mform->addElement('html', '
             <div class="fitem">
