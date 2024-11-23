@@ -47,14 +47,11 @@ class register_form extends moodleform
         $PAGE->set_context($context);
 
 
-        $microsegundos = explode(' ', microtime())[0] * 1000;
-        $milissegundos = str_pad((int) $microsegundos, 3, '0', STR_PAD_LEFT);
+      
 
-        $nomeColeta = "COLETA-" . date('YmdHis') . $milissegundos;
-
-        $mform->addElement('text', 'name', get_string('name', 'block_ifcare'), array('size' => '50', 'readonly' => 'readonly'));
-        $mform->setType('name', PARAM_NOTAGS);
-        $mform->setDefault('name', $nomeColeta);
+        // $mform->addElement('text', 'name', get_string('name', 'block_ifcare'), array('size' => '50', 'readonly' => 'readonly'));
+        // $mform->setType('name', PARAM_NOTAGS);
+        // $mform->setDefault('name', $nomeColeta);
 
         $cursos = $this->get_user_courses($USER->id);
         $options = array();
@@ -163,10 +160,29 @@ class register_form extends moodleform
     {
         global $DB, $SESSION, $COURSE, $PAGE;
 
+        global $DB;
+
+        global $DB;
+
+        // Obtém o número total de coletas existentes (contagem geral)
+        $numeroColeta = $DB->count_records('ifcare_cadastrocoleta', ['curso_id' => $data->courseid]) + 1;
+        
+        // Formata a data de criação
+        $dataCriacao = date('d/m/Y');
+        
+        // Obtém o nome completo do curso
+        $cursoNome = $DB->get_field('course', 'fullname', ['id' => $data->courseid]);
+        $cursoNomeFormatado = format_string($cursoNome);
+        
+        // Cria o nome da coleta com o nome completo do curso
+        $nomeColeta = 'Coleta #' . $numeroColeta . ' - ' . $cursoNomeFormatado . ' - ' . $dataCriacao;
+        
+        
+
         // Sanitização de campos numéricos e texto
         $userid = clean_param($data->userid, PARAM_INT);
         $courseid = clean_param($data->courseid, PARAM_INT);
-        $nome = clean_param($data->name, PARAM_TEXT);
+        $nome = $nomeColeta;
         $dataInicioFormatada = clean_param(date('Y-m-d H:i:s', $data->starttime), PARAM_TEXT);
         $dataFimFormatada = clean_param(date('Y-m-d H:i:s', $data->endtime), PARAM_TEXT);
         $descricao = clean_param($data->description, PARAM_TEXT);

@@ -463,69 +463,62 @@ require(["jquery", "core/notification"], function ($, notification) {
 
     window.ifcare.excluirColeta = function excluirColeta(coletaId) {
       return fetch(M.cfg.wwwroot + "/blocks/ifcare/delete_collection.php", {
-          method: "POST",
-          headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: `coleta_id=${coletaId}`,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: `coleta_id=${coletaId}`,
       }).then((response) => {
-          if (response.ok) {
-              // Remove o card da listagem
-              const modal = document.getElementById("coletaModal");
-              const card = document.querySelector(`[data-id='${coletaId}']`);
-              if (modal) {
-                  modal.style.display = "none";
-              }
-              if (card) {
-                  card.style.display = "none"; // Oculta o card
-                  card.remove(); // Remove o card do DOM
-              }
-              window.location.href = M.cfg.wwwroot + "/blocks/ifcare/index.php";
-
-              return true; // Indica sucesso
-          } else {
-              throw new Error("Falha ao excluir a coleta.");
+        if (response.ok) {
+          // Remove o card da listagem
+          const modal = document.getElementById("coletaModal");
+          const card = document.querySelector(`[data-id='${coletaId}']`);
+          if (modal) {
+            modal.style.display = "none";
           }
-      });
-  };
-  
-  window.ifcare.confirmarExclusaoModal = function confirmarExclusaoModal(button) {
-    const coletaId = button.getAttribute("data-id");
-    const coletaNome = button.getAttribute("data-name");
+          if (card) {
+            card.style.display = "none"; // Oculta o card
+            card.remove(); // Remove o card do DOM
+          }
+          window.location.href = M.cfg.wwwroot + "/blocks/ifcare/index.php";
 
-    notification.confirm(
+          return true; // Indica sucesso
+        } else {
+          throw new Error("Falha ao excluir a coleta.");
+        }
+      });
+    };
+
+    window.ifcare.confirmarExclusaoModal = function confirmarExclusaoModal(
+      button
+    ) {
+      const coletaId = button.getAttribute("data-id");
+      const coletaNome = button.getAttribute("data-name");
+
+      notification.confirm(
         "Confirmação de Exclusão",
         `Tem certeza de que deseja excluir a coleta "<strong>${coletaNome}</strong>"? 
         Esta ação não pode ser desfeita e todos os dados relacionados serão removidos.`,
         "Excluir",
         "Cancelar",
         function () {
-            // Chama a função de exclusão e exibe mensagem de sucesso
-            window.ifcare
-                .excluirColeta(coletaId)
-                .then(() => {
-                    // Mensagem de sucesso com reload no callback
-                      setTimeout(() => {
-                        notification.alert(
-                          "Sucesso",
-                          "A coleta foi excluída com sucesso.",
-                          "Ok"
-                      );                      }, 100); // 100ms de atraso para garantir que o reload seja processado
-
-                })
-                .catch((error) => {
-                    // Exibe mensagem de erro
-                    notification.alert(
-                        "Erro",
-                        error.message || "Ocorreu um erro ao tentar excluir a coleta. Por favor, tente novamente.",
-                        "Ok"
-                    );
-                });
+          // Chama a função de exclusão e exibe mensagem de sucesso
+          window.ifcare
+            .excluirColeta(coletaId)
+            .then(() => {})
+            .catch((error) => {
+              // Exibe mensagem de erro
+              notification.alert(
+                "Erro",
+                error.message ||
+                  "Ocorreu um erro ao tentar excluir a coleta. Por favor, tente novamente.",
+                "Ok"
+              );
+            });
         },
-        function () {
-        }
-    );
-};
+        function () {}
+      );
+    };
 
     $("#id_courseid").change(function () {
       var courseid = $(this).val();

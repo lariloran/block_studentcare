@@ -383,13 +383,12 @@ class collection_manager
                 data-recurso_nome="' . $coleta->recurso_nome . '" 
                 data-resource_name="' . format_string($coleta->resource_name) . '" 
                 data-section_name="' . format_string($coleta->section_name) . '">
-               <h3>' . format_string($coleta->nome) . '</h3>
+                <h3>' . format_string(mb_strimwidth($coleta->nome, 0, 30, "...")) . '</h3>
                <p><strong>Disciplina:</strong> ' . $curso_nome . '</p>
                <p><strong>Data de Início:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_inicio)) . '</p>
                <p><strong>Data de Fim:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_fim)) . '</p>
                <button class="btn-coleta" onclick="abrirModal(' . $coleta->id . ')"><i class="fa fa-info-circle"></i> Detalhes</button>
-               
-               
+                              
              </div>';
 
             }
