@@ -225,6 +225,17 @@ echo '<style>
     max-width: 600px;
     margin: 20px auto;
 }
+
+.titulo-coleta {
+    font-size: 24px;
+    font-weight: bold;
+    color: #4CAF50;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+
+
 </style>';
 
 $agora = time();
@@ -240,20 +251,51 @@ if ($agora > strtotime($coletaR->data_fim)) {
 }
 
 $perguntas = $DB->get_records_sql("
-    SELECT p.id, p.pergunta_texto, e.nome AS emocao_nome, e.txttooltip AS texto_tooltip
+    SELECT p.id, p.pergunta_texto, e.nome AS emocao_nome, e.txttooltip AS texto_tooltip, p.classeaeq_id AS classe_id
     FROM {ifcare_pergunta} p
     JOIN {ifcare_emocao} e ON e.id = p.emocao_id
     JOIN {ifcare_associacao_classe_emocao_coleta} a ON a.emocao_id = e.id
     WHERE a.cadastrocoleta_id = :coletaid
 ", ['coletaid' => $coletaid]);
 
+$cursoNome = $cursoR->fullname;
+
 if (!$perguntas) {
-    $cursoNome = $cursoR->fullname;
     $mensagem = "Nenhuma pergunta foi encontrada para esta coleta. Entre em contato com o professor da disciplina de <strong>{$cursoNome}</strong> para mais informações.";
     echo html_writer::tag('div', $mensagem, ['class' => 'alert alert-info']);
-        echo $OUTPUT->footer();
+    echo $OUTPUT->footer();
     exit;
 }
+
+// Títulos personalizados para cada classe AEQ
+$classe_titulos = [
+    1 => "Emoções Relacionadas à Aula",
+    2 => "Emoções Relacionadas ao Aprendizado",
+    3 => "Emoções Relacionadas às Avaliações"
+];
+
+// Mensagens personalizadas para perguntas
+$classe_mensagens = [
+    1 => "Como você está se sentindo em relação à aula de <strong>{$cursoR->fullname}</strong>?",
+    2 => "Como você está se sentindo em relação ao seu aprendizado em <strong>{$cursoR->fullname}</strong>?",
+    3 => "Como você está se sentindo em relação às avaliações de <strong>{$cursoR->fullname}</strong>?"
+];
+
+
+
+// Obter classe da pergunta
+$pergunta_classe_id = $DB->get_field_sql("
+    SELECT classeaeq_id 
+    FROM {ifcare_associacao_classe_emocao_coleta} 
+    WHERE cadastrocoleta_id = :coletaid 
+    LIMIT 1",
+    ['coletaid' => $coletaid]
+);
+
+
+// Define o título e mensagem baseados na classe
+$titulo_coleta = $classe_titulos[$pergunta_classe_id] ?? "Coleta de Emoções";
+$mensagem_coleta = $classe_mensagens[$pergunta_classe_id] ?? "Como você está se sentindo?";
 
 $perguntas_json = json_encode(array_values($perguntas));
 ?>
@@ -278,7 +320,7 @@ $perguntas_json = json_encode(array_values($perguntas));
 
 <?php if ($tcle_aceito): ?>
     <div id="quiz-container">
-        <div class="titulo-coleta">Coleta de Emoções</div>
+        <div id="titulo-coleta" class="titulo-coleta"></div>
         <div id="progress-bar-container">
             <progress id="progress-bar" value="0" max="100"></progress>
             <span id="progress-text">0%</span>
@@ -383,32 +425,73 @@ $perguntas_json = json_encode(array_values($perguntas));
     }
 
 
+    function gerarMensagem(emocaoNome, textoTooltip, contexto) {
+    return `
+    <p>
+        As perguntas a seguir referem-se à emoção 
+        <strong>${emocaoNome}</strong>
+        <span class="tooltip-icon">
+            &#9432;
+            <span class="tooltip-text">${textoTooltip}</span>
+        </span>
+        que você pode sentir 
+        <strong>antes</strong>, <strong>durante</strong> ou <strong>depois</strong> ${contexto}. 
+        Por favor, leia cada item com atenção e responda utilizando a escala fornecida.
+    </p>`;
+}
+
+
+
     function mostrarPergunta(index) {
         let pergunta = perguntas[index];
-        updateEmojisForEmotion(pergunta.emocao_nome); // Atualiza os emojis com base na emoção da pergunta
 
+        // Atualiza os emojis com base na emoção da pergunta
+        updateEmojisForEmotion(pergunta.emocao_nome);
+        // Define a mensagem com base na classe da pergunta
+        let mensagemColeta = "";
+        let cursoNome = <?php echo json_encode($cursoNome); ?>;
+
+        switch (pergunta.classe_id) {
+            case "1":
+                mensagemColeta = gerarMensagem(pergunta.emocao_nome, pergunta.texto_tooltip, 'das aulas da discplina de ' + '<strong>' + cursoNome + '</strong>');
+                break;
+
+            case "2":
+                mensagemColeta = gerarMensagem(pergunta.emocao_nome, pergunta.texto_tooltip, 'da sua rotina de estudos');
+                break;
+
+            case "3":
+                mensagemColeta = gerarMensagem(pergunta.emocao_nome, pergunta.texto_tooltip, 'de alguma atividade avaliativa da disciplina de ' + '<strong>' + cursoNome + '</strong>');
+                break;
+
+            default:
+                mensagemColeta = gerarMensagem(pergunta.emocao_nome, pergunta.texto_tooltip, '');
+
+
+        }
+        document.getElementById('titulo-coleta').innerHTML = mensagemColeta;
+
+
+        // Verifica se o contêiner da pergunta existe
         let perguntaContainer = document.getElementById('pergunta-container');
-        perguntaContainer.classList.remove('animate');
-
         if (!perguntaContainer) {
             console.error("O elemento 'pergunta-container' não foi encontrado.");
             return;
         }
 
+        // Remove a animação antes de atualizar o conteúdo
+        perguntaContainer.classList.remove('animate');
+
+        // Atualiza o conteúdo do contêiner com a mensagem e a pergunta
         setTimeout(() => {
             perguntaContainer.innerHTML = `
-        <p>
-            <strong>${pergunta.emocao_nome}</strong>
-            <span class="tooltip-icon">
-                &#9432;
-                <span class="tooltip-text">${pergunta.texto_tooltip}</span>
-            </span>
-        </p>
-        <p class="pergunta-texto">${pergunta.pergunta_texto}</p>
-    `;
+            <p class="pergunta-texto">${pergunta.pergunta_texto}</p>
+            
+        `;
             perguntaContainer.classList.add('animate');
-        }, 100); // Tempo para remover e reaplicar a classe de animação
+        }, 100); // Adiciona um delay para a animação
 
+        // Atualiza a seleção de emojis
         document.querySelectorAll('.emoji-button').forEach(btn => {
             btn.classList.remove('selected');
         });
@@ -417,10 +500,12 @@ $perguntas_json = json_encode(array_values($perguntas));
             document.querySelector(`.emoji-button[data-value="${respostasSelecionadas[pergunta.id]}"]`).classList.add('selected');
         }
 
+        // Atualiza a barra de progresso
         let progresso = Math.round(((index + 1) / totalPerguntas) * 100);
         document.getElementById('progress-bar').value = progresso;
         document.getElementById('progress-text').innerText = `${progresso}%`;
     }
+
 
     document.querySelectorAll('.emoji-button').forEach(button => {
         button.addEventListener('click', function () {
