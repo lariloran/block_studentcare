@@ -157,14 +157,19 @@ echo html_writer::end_div();
 echo html_writer::start_div('manual_aeq-topics');
 
 // Card 1 - Classes AEQ
+echo html_writer::start_div('manual_aeq-topic', array('onclick' => 'openModal("Comece por aqui", "<p>O <strong>AEQ (Achievement Emotions Questionnaire)</strong> categoriza as emoções dos estudantes em três classes principais:</p><ul><li><em>Emoções relacionadas às aulas</em>: Como os estudantes se sentem durante as aulas, incluindo emoções como <strong>diversão</strong> e <strong>tédio</strong>.</li><li><em>Emoções relacionadas às provas</em>: Emoções como <strong>ansiedade</strong> e <strong>orgulho</strong>, ligadas à preparação e realização de avaliações.</li><li><em>Emoções relacionadas ao aprendizado</em>: Emoções como <strong>esperança</strong> e <strong>frustração</strong>, que surgem durante o processo de aprendizado.</li></ul>")'));
+echo html_writer::tag('div', '🏃‍♂️‍➡️', array('class' => 'manual_aeq-topic-icon'));
+echo html_writer::tag('div', 'Comece por aqui', array('class' => 'manual_aeq-topic-title'));
+echo html_writer::end_div();
+
 echo html_writer::start_div('manual_aeq-topic', array('onclick' => 'openModal("Classes AEQ", "<p>O <strong>AEQ (Achievement Emotions Questionnaire)</strong> categoriza as emoções dos estudantes em três classes principais:</p><ul><li><em>Emoções relacionadas às aulas</em>: Como os estudantes se sentem durante as aulas, incluindo emoções como <strong>diversão</strong> e <strong>tédio</strong>.</li><li><em>Emoções relacionadas às provas</em>: Emoções como <strong>ansiedade</strong> e <strong>orgulho</strong>, ligadas à preparação e realização de avaliações.</li><li><em>Emoções relacionadas ao aprendizado</em>: Emoções como <strong>esperança</strong> e <strong>frustração</strong>, que surgem durante o processo de aprendizado.</li></ul>")'));
-echo html_writer::tag('div', '📚', array('class' => 'manual_aeq-topic-icon'));
+echo html_writer::tag('div', '📖', array('class' => 'manual_aeq-topic-icon'));
 echo html_writer::tag('div', 'Classes AEQ', array('class' => 'manual_aeq-topic-title'));
 echo html_writer::end_div();
 
 // Card 2 - Emoções
 echo html_writer::start_div('manual_aeq-topic', array('onclick' => 'openModal("Emoções", "<p>O <strong>AEQ</strong> inclui diversas emoções acadêmicas importantes, como:</p><ul><li><strong>Orgulho</strong>: Sentimento positivo ligado às realizações acadêmicas.</li><li><strong>Ansiedade</strong>: Emoção negativa frequentemente associada a provas e tarefas desafiadoras.</li><li><strong>Frustração</strong>: Surge quando os resultados não correspondem às expectativas.</li><li><strong>Esperança</strong>: Emoção positiva que reflete confiança no sucesso acadêmico.</li></ul>")'));
-echo html_writer::tag('div', '😊', array('class' => 'manual_aeq-topic-icon'));
+echo html_writer::tag('div', '🎭', array('class' => 'manual_aeq-topic-icon'));
 echo html_writer::tag('div', 'Emoções', array('class' => 'manual_aeq-topic-title'));
 echo html_writer::end_div();
 
