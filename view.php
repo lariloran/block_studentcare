@@ -248,8 +248,10 @@ $perguntas = $DB->get_records_sql("
 ", ['coletaid' => $coletaid]);
 
 if (!$perguntas) {
-    echo "Nenhuma pergunta foi encontrada para esta coleta.";
-    echo $OUTPUT->footer();
+    $cursoNome = $cursoR->fullname;
+    $mensagem = "Nenhuma pergunta foi encontrada para esta coleta. Entre em contato com o professor da disciplina de <strong>{$cursoNome}</strong> para mais informações.";
+    echo html_writer::tag('div', $mensagem, ['class' => 'alert alert-info']);
+        echo $OUTPUT->footer();
     exit;
 }
 
@@ -287,27 +289,27 @@ $perguntas_json = json_encode(array_values($perguntas));
 
 
         <div id="respostas-container">
-    <button class="emoji-button" data-value="1">
-        <span class="emoji" id="emoji-1"></span>
-        <span>Discordo Totalmente</span>
-    </button>
-    <button class="emoji-button" data-value="2">
-        <span class="emoji" id="emoji-2"></span>
-        <span>Discordo</span>
-    </button>
-    <button class="emoji-button" data-value="3">
-        <span class="emoji" id="emoji-3"></span>
-        <span>Neutro</span>
-    </button>
-    <button class="emoji-button" data-value="4">
-        <span class="emoji" id="emoji-4"></span>
-        <span>Concordo</span>
-    </button>
-    <button class="emoji-button" data-value="5">
-        <span class="emoji" id="emoji-5"></span>
-        <span>Concordo Totalmente</span>
-    </button>
-</div>
+            <button class="emoji-button" data-value="1">
+                <span class="emoji" id="emoji-1"></span>
+                <span>Discordo Totalmente</span>
+            </button>
+            <button class="emoji-button" data-value="2">
+                <span class="emoji" id="emoji-2"></span>
+                <span>Discordo</span>
+            </button>
+            <button class="emoji-button" data-value="3">
+                <span class="emoji" id="emoji-3"></span>
+                <span>Neutro</span>
+            </button>
+            <button class="emoji-button" data-value="4">
+                <span class="emoji" id="emoji-4"></span>
+                <span>Concordo</span>
+            </button>
+            <button class="emoji-button" data-value="5">
+                <span class="emoji" id="emoji-5"></span>
+                <span>Concordo Totalmente</span>
+            </button>
+        </div>
 
         <div id="controls">
             <button id="voltar-btn" onclick="voltarPergunta()">Voltar</button>
@@ -351,7 +353,7 @@ $perguntas_json = json_encode(array_values($perguntas));
 </div>
 
 <script>
-        const emotionEmojiMap = {
+    const emotionEmojiMap = {
         'Alegria': ['😐', '🙂', '😀', '😄', '😍'],
         'Esperança': ['😟', '😐', '🙂', '😊', '✨'],
         'Orgulho': ['😔', '😐', '🙂', '😌', '🏅'],
@@ -805,55 +807,61 @@ echo $OUTPUT->footer();
     }
 
     #respostas-container {
-    display: flex;
-    justify-content: space-evenly;
-    margin-bottom: 20px;
-}
+        display: flex;
+        justify-content: space-evenly;
+        margin-bottom: 20px;
+    }
 
-.emoji-button {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: none;
-    border: none;
-    cursor: pointer;
-    text-align: center;
-    transition: transform 0.2s ease-in-out, border 0.3s ease-in-out;
-    margin: 0 10px;
-    padding: 10px;
-    position: relative;
-}
-
-
-.emoji-button span {
-    font-size: 14px; /* Tamanho do texto */
-    color: #000;
-    text-align: center;
-    padding-top: 5px;
-}
-
-.emoji-button:hover,
-.emoji-button.selected {
-    transform: scale(1.1); /* Cresce suavemente */
-}
+    .emoji-button {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: none;
+        border: none;
+        cursor: pointer;
+        text-align: center;
+        transition: transform 0.2s ease-in-out, border 0.3s ease-in-out;
+        margin: 0 10px;
+        padding: 10px;
+        position: relative;
+    }
 
 
-.emoji-button:hover {
-    border-image-source: linear-gradient(45deg, #2196F3, #81C784, #4CAF50); /* Gradiente alternado no hover */
-}
+    .emoji-button span {
+        font-size: 14px;
+        /* Tamanho do texto */
+        color: #000;
+        text-align: center;
+        padding-top: 5px;
+    }
+
+    .emoji-button:hover,
+    .emoji-button.selected {
+        transform: scale(1.1);
+        /* Cresce suavemente */
+    }
 
 
-.emoji-button span.emoji {
-    font-size: 48px; /* Tamanho base dos emojis */
-    transition: transform 0.3s ease, filter 0.3s ease;
-    display: inline-block;
-}
+    .emoji-button:hover {
+        border-image-source: linear-gradient(45deg, #2196F3, #81C784, #4CAF50);
+        /* Gradiente alternado no hover */
+    }
 
-.emoji-button.selected span.emoji {
-    transform: scale(1.5); /* Aumenta o tamanho do emoji selecionado */
-    filter: drop-shadow(0 0 5px #4caf50); /* Adiciona um leve brilho */
-}
+
+    .emoji-button span.emoji {
+        font-size: 48px;
+        /* Tamanho base dos emojis */
+        transition: transform 0.3s ease, filter 0.3s ease;
+        display: inline-block;
+    }
+
+    .emoji-button.selected span.emoji {
+        transform: scale(1.5);
+        /* Aumenta o tamanho do emoji selecionado */
+        filter: drop-shadow(0 0 5px #4caf50);
+        /* Adiciona um leve brilho */
+    }
 
     #controls {
         display: flex;

@@ -74,45 +74,7 @@ class collection_manager
         require_once($CFG->dirroot . '/course/lib.php');
 
         $html = '<style>
-            .accordion {
-                max-width: 700px;
-                margin: 20px auto;
-                border-radius: 8px;
-                overflow: hidden;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                background: #fff;
-            }
-            .accordion-item {
-                border-bottom: 1px solid #ddd;
-            }
-            .accordion-header {
-                background: #f0f0f0;
-                color: #333;
-                padding: 12px;
-                cursor: pointer;
-                transition: background 0.3s ease;
-            }
-            .accordion-header:hover {
-                background: #d8f3dc;
-            }
-            .accordion-button {
-                width: 100%;
-                text-align: left;
-                border: none;
-                background: none;
-                font-size: 15px;
-                color: #333;
-            }
-            .accordion-body {
-                padding: 12px;
-                background: #f9f9f9;
-                transition: max-height 0.3s ease;
-            }
-            .accordion-body p {
-                margin: 8px 0;
-                font-size: 14px;
-                color: #333;
-            }
+
             .btn-coleta {
                 display: inline-flex;
                 align-items: center;
@@ -147,6 +109,12 @@ class collection_manager
     border-radius: 10px;
 }
 
+.modal-content h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 15px;
+    text-align: center;
+}
             .close {
                 color: #aaa;
                 float: right;
