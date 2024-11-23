@@ -32,7 +32,7 @@ class block_ifcare extends block_base
         if ($has_teacher_or_admin_role) {
             $this->content->text = html_writer::link(new moodle_url('/blocks/ifcare/index.php'), get_string('manage_collections', 'block_ifcare')) . '<br>' .
                 html_writer::link(new moodle_url('/blocks/ifcare/report.php'), get_string('view_dashboard', 'block_ifcare')) . '<br>' .
-                html_writer::link(new moodle_url('/blocks/ifcare/faq.php'), get_string('aeq_manual', 'block_ifcare'));
+                html_writer::link(new moodle_url('/blocks/ifcare/faq.php'), get_string('faq', 'block_ifcare'));
         } else {
             $this->content->text = get_string('welcome', 'block_ifcare');
         }

@@ -73,6 +73,7 @@ class edit_form extends moodleform
             $mform->addElement('select', 'sectionid', get_string('select_section', 'block_ifcare'), $section_options);
             $mform->setType('sectionid', PARAM_INT);
             $mform->setDefault('sectionid', $this->coleta->section_id);
+            $mform->addHelpButton('sectionid', 'select_section', 'block_ifcare');
         }
 
         // Recursos da seção específica
@@ -96,6 +97,7 @@ class edit_form extends moodleform
         // Adiciona o elemento de seleção ao formulário
         $mform->addElement('select', 'resourceid', get_string('select_resource', 'block_ifcare'), $resources);
         $mform->setType('resourceid', PARAM_INT);
+        $mform->addHelpButton('resourceid', 'select_resource', 'block_ifcare');
 
 
         // Define a opção padrão como selecionada, se nenhuma for encontrada
@@ -130,6 +132,7 @@ class edit_form extends moodleform
             $mform->addElement('select', 'classe_aeq', get_string('aeqclasses', 'block_ifcare'), $class_options);
             $mform->setType('classe_aeq', PARAM_INT);
             $mform->setDefault('classe_aeq', $this->coleta->classeaeq_id);
+            $mform->addHelpButton('classe_aeq', 'aeqclasses', 'block_ifcare');
 
             $selected_emotions = array_keys($this->coleta->emocoes);
 
@@ -141,6 +144,7 @@ class edit_form extends moodleform
 
             $mform->addElement('select', 'emocoes', get_string('emotions', 'block_ifcare'), $emotion_options, ['multiple' => 'multiple', 'size' => 8]);
             $mform->setType('emocoes', PARAM_SEQUENCE);
+            $mform->addHelpButton('emocoes', 'emotions', 'block_ifcare');
 
             $mform->addElement('hidden', 'emocao_selecionadas', '', array('id' => 'emocao_selecionadas'));
             $mform->setType('emocao_selecionadas', PARAM_RAW);
@@ -162,10 +166,12 @@ class edit_form extends moodleform
         // Checkboxes
         $mform->addElement('advcheckbox', 'alertprogress', get_string('alertprogress', 'block_ifcare'), null, ['group' => 1], [0, 1]);
         $mform->setDefault('alertprogress', $this->coleta->receber_alerta);
+        $mform->addHelpButton('alertprogress', 'alertprogress', 'block_ifcare');
 
         if (!$coletaIniciada) {
             $mform->addElement('advcheckbox', 'notify_students', get_string('notify_students', 'block_ifcare'), null, ['group' => 1], [0, 1]);
             $mform->setDefault('notify_students', $this->coleta->notificar_alunos);
+            $mform->addHelpButton('notify_students', 'notify_students', 'block_ifcare');
         }
         // Botões de enviar e cancelar agrupados
         $buttonarray = [];

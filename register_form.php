@@ -39,7 +39,7 @@ class register_form extends moodleform
 
     public function definition()
     {
-        global $PAGE, $COURSE, $DB, $USER, $PAGE;
+        global $PAGE, $COURSE, $DB, $USER, $PAGE,$OUTPUT;
         $mform = $this->_form;
 
         $context = context_course::instance($COURSE->id);
@@ -73,9 +73,11 @@ class register_form extends moodleform
 
         $mform->addElement('select', 'sectionid', get_string('select_section', 'block_ifcare'), array());
         $mform->setType('sectionid', PARAM_INT);
-
+        $mform->addHelpButton('sectionid', 'select_section', 'block_ifcare');
+        
         $mform->addElement('select', 'resourceid', get_string('select_resource', 'block_ifcare'), array());
         $mform->setType('resourceid', PARAM_INT);
+        $mform->addHelpButton('resourceid', 'select_resource', 'block_ifcare');
 
         $current_time = time();
         $start_time = $current_time + (5 * 60);
@@ -109,9 +111,11 @@ class register_form extends moodleform
 
         $mform->addElement('select', 'classe_aeq', get_string('aeqclasses', 'block_ifcare'), $options2);
         $mform->setType('classe_aeq', PARAM_TEXT);
+        $mform->addHelpButton('classe_aeq', 'aeqclasses', 'block_ifcare');
 
         $mform->addElement('select', 'emocoes', get_string('emotions', 'block_ifcare'), array(), array('multiple' => 'multiple', 'size' => 8));
         $mform->setType('emocoes', PARAM_INT);
+        $mform->addHelpButton('emocoes', 'emotions', 'block_ifcare');
 
         $mform->addElement('html', '
             <div class="fitem">
@@ -122,9 +126,13 @@ class register_form extends moodleform
 
         $mform->addElement('advcheckbox', 'alertprogress', get_string('alertprogress', 'block_ifcare'), null, array('group' => 1), array(0, 1));
         $mform->setDefault('alertprogress', 1);
+        $mform->addHelpButton('alertprogress', 'alertprogress', 'block_ifcare');
 
         $mform->addElement('advcheckbox', 'notify_students', get_string('notify_students', 'block_ifcare'), null, array('group' => 1), array(0, 1));
         $mform->setDefault('notify_students', 1);
+        $mform->addHelpButton('notify_students', 'notify_students', 'block_ifcare');
+
+
         // Botões de enviar e cancelar agrupados
         $buttonarray = [];
         $buttonarray[] = $mform->createElement('submit', 'save', get_string('submit', 'block_ifcare'));

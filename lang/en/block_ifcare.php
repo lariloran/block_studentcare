@@ -42,7 +42,7 @@ $string['returntolist'] = 'Voltar para a listagem';
 // Strings de gerenciamento e navegação
 $string['manage_collections'] = 'Gerenciar Coletas';
 $string['view_dashboard'] = 'Dashboard de Coletas';
-$string['aeq_manual'] = 'Perguntas Frequentes (FAQ)';
+$string['faq'] = 'Perguntas Frequentes (FAQ)';
 $string['process_collection'] = 'Processar Coleta';
 
 $string['messageprovider:created_collection'] = 'Notificação enviada aos alunos quando uma nova coleta é criada.';
@@ -54,4 +54,11 @@ $string['ifcare:managecollections'] = 'Gerenciar o bloco IFCare';
 // Mensagem de boas-vindas
 $string['welcome'] = 'Bem-vindos ao IFCare!';
 
+///Tooltips
+$string['select_section_help'] = 'Escolha a seção onde deseja realizar a coleta de emoções. Cada seção representa um módulo ou semana do curso. Ao selecionar uma seção, será criado automaticamente um recurso do tipo <strong>URL</strong> na seção escolhida.';
+$string['select_resource_help'] = 'Escolha o recurso ao qual deseja atrelar a coleta de emoções. Cada recurso representa uma atividade ou material dentro do curso. Ao selecionar o recurso, ele será vinculado automaticamente à coleta de emoções na seção correspondente.';
+$string['aeqclasses_help'] = 'Escolha as classes AEQ que deseja utilizar na coleta de emoções. As classes AEQ representam diferentes categorias de emoções acadêmicas. Para entender mais sobre as classes do AEQ, consulte a seção <strong>Manual do AEQ</strong> no painel do bloco.';
+$string['emotions_help'] = 'Escolha as emoções que deseja incluir na coleta. Cada emoção selecionada exibirá um conjunto diferente de perguntas relacionadas durante a coleta, permitindo uma análise detalhada das emoções acadêmicas. As emoções estão associadas às classes AEQ, que representam diferentes categorias de emoções acadêmicas. Para entender mais sobre as emoções e suas classificações, consulte as informações no <strong>Manual do AEQ</strong> disponível no painel do bloco.';
+$string['alertprogress_help'] = 'Ative esta opção para enviar uma notificação quando a coleta for finalizada. Quando ativado, uma notificação por e-mail e um pop-up no Moodle serão enviadas informando que a coleta de emoções foi concluída.';
+$string['notify_students_help'] = 'Ative esta opção para enviar uma notificação aos alunos quando uma nova coleta for criada. Quando ativado, os alunos receberão uma notificação por e-mail e um pop-up no Moodle informando sobre a criação da coleta de emoções.';
 ?>
