@@ -33,7 +33,7 @@ $string['coleta_atualizada_com_sucesso'] = 'A coleta foi atualizada com sucesso.
 $string['editcoleta'] = 'Editar Coleta';
 $string['editcoleta_subtitle'] = 'Edição da coleta: {$a}';
 
-$string['coleta_limitada_aviso'] = 'A coleta foi iniciada em {$a->datainicio}. Algumas alterações estão limitadas. Para mais detalhes, retorne à <a href="{$a->listagemurl}">listagem de coletas</a>.';
+$string['coleta_limitada_aviso'] = 'A coleta foi iniciada em {$a->datainicio}. Algumas alterações estão limitadas. Para mais detalhes desta coleta, retorne à <a href="{$a->listagemurl}">listagem</a>.';
 $string['coleta_atualizada_com_sucesso'] = 'A coleta foi atualizada com sucesso.';
 $string['returntolist'] = 'Voltar para a listagem';
 
