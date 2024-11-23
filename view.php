@@ -425,87 +425,127 @@ $perguntas_json = json_encode(array_values($perguntas));
     }
 
 
-    function gerarMensagem(emocaoNome, textoTooltip, contexto) {
+
+    let ultimaClasseId = null; // Para rastrear a última classe exibida
+    let introducoesExibidas = {}; // Para evitar repetir introduções já exibidas
+
+    function gerarMensagem(emocoes, tooltips, contexto) {
+    const plural = emocoes.length > 1;
+
+    // Gera a lista de emoções com seus tooltips
+    const emocoesComTooltip = emocoes.map((emocao, index) => {
+        return `
+            <strong>${emocao}</strong>
+            <span class="tooltip-icon">
+                &#9432;
+                <span class="tooltip-text">${tooltips[index]}</span>
+            </span>
+        `;
+    }).join(", ");
+
     return `
     <p>
-        As perguntas a seguir referem-se à emoção 
-        <strong>${emocaoNome}</strong>
-        <span class="tooltip-icon">
-            &#9432;
-            <span class="tooltip-text">${textoTooltip}</span>
-        </span>
+        As perguntas a seguir referem-se ${plural ? 'às emoções' : 'à emoção'} 
+        ${emocoesComTooltip}
         que você pode sentir 
         <strong>antes</strong>, <strong>durante</strong> ou <strong>depois</strong> ${contexto}. 
         Por favor, leia cada item com atenção e responda utilizando a escala fornecida.
     </p>`;
 }
 
+function mostrarTextoInicial(pergunta, emocoesDaClasse, tooltipsDaClasse) {
+    // Mensagem de introdução com base na classe
+    let cursoNome = <?php echo json_encode($cursoNome); ?>;
+    let contexto =
+        pergunta.classe_id === "1"
+            ? `das aulas da disciplina de <strong>${cursoNome}</strong>`
+            : pergunta.classe_id === "2"
+            ? "da sua rotina de estudos"
+            : `de alguma atividade avaliativa da disciplina de <strong>${cursoNome}</strong>`;
 
+    let mensagemInicial = gerarMensagem(emocoesDaClasse, tooltipsDaClasse, contexto);
 
-    function mostrarPergunta(index) {
-        let pergunta = perguntas[index];
+    // Exibe o texto inicial no container
+    document.getElementById('titulo-coleta').innerHTML = mensagemInicial;
+    document.getElementById('pergunta-container').innerHTML = '';
+    document.getElementById('respostas-container').style.display = 'none'; // Oculta emojis
+    document.getElementById('progress-bar-container').style.display = 'none'; // Oculta barra de progresso
+}
 
-        // Atualiza os emojis com base na emoção da pergunta
-        updateEmojisForEmotion(pergunta.emocao_nome);
-        // Define a mensagem com base na classe da pergunta
-        let mensagemColeta = "";
-        let cursoNome = <?php echo json_encode($cursoNome); ?>;
+function mostrarPergunta(index) {
+    let pergunta = perguntas[index];
+    let cursoNome = <?php echo json_encode($cursoNome); ?>;
 
-        switch (pergunta.classe_id) {
-            case "1":
-                mensagemColeta = gerarMensagem(pergunta.emocao_nome, pergunta.texto_tooltip, 'das aulas da discplina de ' + '<strong>' + cursoNome + '</strong>');
-                break;
+    // Obter todas as emoções e seus tooltips únicos da classe atual
+    const emocoesDaClasse = [...new Set(
+        perguntas
+            .filter(p => p.classe_id === pergunta.classe_id)
+            .map(p => p.emocao_nome)
+    )];
+    const tooltipsDaClasse = [...new Set(
+        perguntas
+            .filter(p => p.classe_id === pergunta.classe_id)
+            .map(p => p.texto_tooltip)
+    )];
 
-            case "2":
-                mensagemColeta = gerarMensagem(pergunta.emocao_nome, pergunta.texto_tooltip, 'da sua rotina de estudos');
-                break;
-
-            case "3":
-                mensagemColeta = gerarMensagem(pergunta.emocao_nome, pergunta.texto_tooltip, 'de alguma atividade avaliativa da disciplina de ' + '<strong>' + cursoNome + '</strong>');
-                break;
-
-            default:
-                mensagemColeta = gerarMensagem(pergunta.emocao_nome, pergunta.texto_tooltip, '');
-
-
+    // Se a classe mudou e ainda não exibimos a introdução para essa classe, mostramos o texto inicial
+    if (pergunta.classe_id !== ultimaClasseId) {
+        if (!introducoesExibidas[pergunta.classe_id]) {
+            mostrarTextoInicial(pergunta, emocoesDaClasse, tooltipsDaClasse);
+            introducoesExibidas[pergunta.classe_id] = true; // Marca introdução como exibida
+            ultimaClasseId = pergunta.classe_id;
+            return; // Para aqui até o usuário avançar
         }
-        document.getElementById('titulo-coleta').innerHTML = mensagemColeta;
-
-
-        // Verifica se o contêiner da pergunta existe
-        let perguntaContainer = document.getElementById('pergunta-container');
-        if (!perguntaContainer) {
-            console.error("O elemento 'pergunta-container' não foi encontrado.");
-            return;
-        }
-
-        // Remove a animação antes de atualizar o conteúdo
-        perguntaContainer.classList.remove('animate');
-
-        // Atualiza o conteúdo do contêiner com a mensagem e a pergunta
-        setTimeout(() => {
-            perguntaContainer.innerHTML = `
-            <p class="pergunta-texto">${pergunta.pergunta_texto}</p>
-            
-        `;
-            perguntaContainer.classList.add('animate');
-        }, 100); // Adiciona um delay para a animação
-
-        // Atualiza a seleção de emojis
-        document.querySelectorAll('.emoji-button').forEach(btn => {
-            btn.classList.remove('selected');
-        });
-
-        if (respostasSelecionadas[pergunta.id] !== undefined) {
-            document.querySelector(`.emoji-button[data-value="${respostasSelecionadas[pergunta.id]}"]`).classList.add('selected');
-        }
-
-        // Atualiza a barra de progresso
-        let progresso = Math.round(((index + 1) / totalPerguntas) * 100);
-        document.getElementById('progress-bar').value = progresso;
-        document.getElementById('progress-text').innerText = `${progresso}%`;
     }
 
+    // Atualiza os emojis com base na emoção
+    updateEmojisForEmotion(pergunta.emocao_nome);
+
+    // Exibe o título da pergunta
+    document.getElementById('titulo-coleta').innerHTML = `
+        ${cursoNome} - ${pergunta.emocao_nome}
+        <span class="tooltip-icon">
+            &#9432;
+            <span class="tooltip-text">${pergunta.texto_tooltip}</span>
+        </span>
+    `;
+
+    // Animação e exibição do texto da pergunta
+    let perguntaContainer = document.getElementById('pergunta-container');
+    if (!perguntaContainer) {
+        console.error("O elemento 'pergunta-container' não foi encontrado.");
+        return;
+    }
+
+    // Remove a animação antes de atualizar o conteúdo
+    perguntaContainer.classList.remove('animate');
+
+    setTimeout(() => {
+        // Atualiza o conteúdo do contêiner com a pergunta
+        perguntaContainer.innerHTML = `
+            <p class="pergunta-texto">${pergunta.pergunta_texto}</p>
+        `;
+        // Adiciona a animação
+        perguntaContainer.classList.add('animate');
+    }, 100);
+
+    // Exibe emojis e barra de progresso
+    document.getElementById('respostas-container').style.display = 'flex';
+    document.getElementById('progress-bar-container').style.display = 'block';
+
+    // Atualiza a barra de progresso
+    let progresso = Math.round(((index + 1) / totalPerguntas) * 100);
+    document.getElementById('progress-bar').value = progresso;
+    document.getElementById('progress-text').innerText = `${progresso}%`;
+
+    // Atualiza a seleção de emojis
+    document.querySelectorAll('.emoji-button').forEach(btn => btn.classList.remove('selected'));
+    if (respostasSelecionadas[pergunta.id] !== undefined) {
+        document
+            .querySelector(`.emoji-button[data-value="${respostasSelecionadas[pergunta.id]}"]`)
+            .classList.add('selected');
+    }
+}
 
     document.querySelectorAll('.emoji-button').forEach(button => {
         button.addEventListener('click', function () {
@@ -539,19 +579,34 @@ $perguntas_json = json_encode(array_values($perguntas));
     let feedbackEnviado = false;
 
     function avancarPergunta() {
-        if (respostasSelecionadas[perguntas[perguntaAtual].id] !== undefined) {
-            if (perguntaAtual < totalPerguntas - 1) {
-                perguntaAtual++;
-                mostrarPergunta(perguntaAtual);
-            } else {
-                enviarRespostas();
-                document.getElementById('quiz-container').style.display = 'none';
-                document.getElementById('feedback-container').style.display = 'block';
-            }
-        } else {
-            abrirModal('modal-erro');
-        }
+    let pergunta = perguntas[perguntaAtual];
+    let tituloAtual = document.getElementById('titulo-coleta').innerText;
+
+    // Verifica se o conteúdo atual é um texto inicial (introdução)
+    if (tituloAtual.includes('As perguntas a seguir referem-se')) {
+        // Avança sem validação de emoji
+        perguntaAtual++;
+        mostrarPergunta(perguntaAtual);
+        return;
     }
+
+    // Validação para perguntas normais
+    if (respostasSelecionadas[pergunta.id] !== undefined) {
+        if (perguntaAtual < totalPerguntas - 1) {
+            perguntaAtual++;
+            mostrarPergunta(perguntaAtual);
+        } else {
+            // Finaliza coleta
+            enviarRespostas();
+            coletaConcluida = true;
+            abrirModal('modal-sucesso');
+        }
+    } else {
+        // Exibe o modal de erro se não há resposta selecionada
+        abrirModal('modal-erro');
+    }
+}
+
 
     function enviarRespostas() {
         const dadosRespostas = {
@@ -570,7 +625,6 @@ $perguntas_json = json_encode(array_values($perguntas));
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    console.log("Respostas enviadas com sucesso");
                 } else {
                     console.error('Erro ao salvar as respostas:', data.error);
                 }
