@@ -19,10 +19,26 @@ echo '<style>
         margin: 0 auto;
         padding: 20px;
     }
-    .faq-header {
-        text-align: center;
-        margin-bottom: 30px;
-    }
+ .faq-title {
+    position: relative;
+    font-family: "Roboto", sans-serif;
+    font-size: 24px;
+    color: #333;
+    text-align: center; /* Centraliza o texto */
+    margin-bottom: 20px; /* Adiciona espaço abaixo do título */
+
+}
+
+.faq-header .faq-title::after {
+    content: "";
+    display: block;
+    width: 50%; /* Ajuste conforme necessário */
+    margin: 10px auto 0; /* Margem para separar do texto */
+    height: 4px;
+    background: linear-gradient(90deg, #4caf50, #81c784); /* Gradiente de verde */
+    border-radius: 2px; /* Bordas arredondadas */
+}
+
     .faq-header h3 {
         font-size: 2em;
         color: #333;
@@ -135,7 +151,7 @@ echo html_writer::empty_tag('input', array('type' => 'text', 'id' => 'faqSearch'
 echo html_writer::end_div();
 
 echo html_writer::start_div('faq-header');
-echo html_writer::tag('h3', 'Como podemos ajudar?');
+echo html_writer::tag('h3', 'Como podemos ajudar?', ['class' => 'faq-title']);
 echo html_writer::end_div();
 
 echo html_writer::start_div('faq-topics');
