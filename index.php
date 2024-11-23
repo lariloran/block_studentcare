@@ -10,7 +10,12 @@ $PAGE->set_context($context);
 $PAGE->set_url(new moodle_url('/blocks/ifcare/index.php'));
 $PAGE->set_title(get_string('header', 'block_ifcare'));
 
+
 echo $OUTPUT->header();
+
+
+$PAGE->requires->js(new moodle_url('/blocks/ifcare/js/shared.js'));
+
 
 echo html_writer::start_tag('div', ['class' => 'container-fluid']);
 echo html_writer::start_tag('div', ['class' => 'row']);

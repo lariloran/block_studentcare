@@ -5,17 +5,17 @@ class collection_manager
     public function get_coletas_by_professor($usuario_id)
     {
         global $DB;
-    
+
         $sql = "SELECT id, nome, data_inicio, data_fim, descricao, curso_id, notificar_alunos, receber_alerta , resource_id_atrelado, section_id, data_criacao
                 FROM {ifcare_cadastrocoleta} 
                 WHERE usuario_id = :usuario_id
                 ORDER BY data_criacao DESC";
-    
+
         $params = ['usuario_id' => $usuario_id];
-    
+
         return $DB->get_records_sql($sql, $params);
     }
-    
+
 
     private function obter_perguntas_associadas($coleta_id)
     {
@@ -38,39 +38,39 @@ class collection_manager
     public function excluir_coleta($coleta_id)
     {
         global $DB, $CFG;
-    
+
         $transaction = $DB->start_delegated_transaction();
-    
+
         try {
             $resource_id_instance = $DB->get_field('ifcare_cadastrocoleta', 'resource_id', ['id' => $coleta_id]);
 
             if ($resource_id_instance) {
                 // Busca diretamente o ID em `course_modules` onde `instance` é igual ao `resource_id`
                 $course_module_id = $DB->get_field('course_modules', 'id', ['instance' => $resource_id_instance]);
-            
+
                 if ($course_module_id) {
                     require_once($CFG->dirroot . '/course/lib.php');
                     course_delete_module($course_module_id);
                 }
             }
-            
-    
+
+
             $DB->delete_records('ifcare_resposta', ['coleta_id' => $coleta_id]);
-    
+
             $DB->delete_records('ifcare_associacao_classe_emocao_coleta', ['cadastrocoleta_id' => $coleta_id]);
-    
+
             $DB->delete_records('ifcare_cadastrocoleta', ['id' => $coleta_id]);
-    
+
             $transaction->allow_commit();
         } catch (Exception $e) {
             $transaction->rollback($e);
             throw $e;
         }
     }
-    
+
     public function listar_coletas($usuario_id)
     {
-        global $DB, $CFG;
+        global $DB, $CFG, $PAGE;
         require_once($CFG->dirroot . '/course/lib.php');
 
         $html = '<style>
@@ -380,11 +380,11 @@ class collection_manager
                 $curso = $DB->get_record('course', ['id' => $coleta->curso_id], 'fullname');
                 $curso_nome = $curso ? format_string($curso->fullname) : 'Disciplina não encontrada';
                 $coleta->curso_nome = $curso_nome;
-            
+
                 $resource_info = '--';
                 $resource_name = '--';
                 $section_name = '--';
-            
+
                 $module = $DB->get_record('course_modules', ['id' => $coleta->resource_id_atrelado], 'module');
                 if ($module) {
                     $mod_info = $DB->get_record('modules', ['id' => $module->module], 'name');
@@ -396,14 +396,14 @@ class collection_manager
                         $resource_name = $DB->get_field($mod_info->name, 'name', ['id' => $resource_name_record->instance]);
                     }
                 }
-            
+
                 $section_name = get_section_name($coleta->curso_id, $coleta->section_id);
 
-                
+
                 $coleta->recurso_nome = $resource_info;
                 $coleta->resource_name = $resource_name;
                 $coleta->section_name = $section_name;
-            
+
                 $html .= '<div class="card" 
                 data-id="' . $coleta->id . '" 
                 data-nome="' . format_string($coleta->nome) . '" 
@@ -423,9 +423,9 @@ class collection_manager
                
                
              </div>';
-    
+
             }
-                    }
+        }
 
 
         $html .= '</div>';
@@ -576,13 +576,14 @@ function filtrarColetas() {
 
                 document.getElementById("modalColetaNome").textContent = coleta.nome;
                 document.getElementById("modalColetaDescricao").textContent = coleta.descricao ? coleta.descricao : "--";
-if (coleta.curso_id && coleta.curso_nome) {
-    modalDisciplina.textContent = coleta.curso_nome;
-    modalDisciplina.href = `${M.cfg.wwwroot}/course/view.php?id=${coleta.curso_id}`;
-} else {
-    modalDisciplina.textContent = "Disciplina não encontrada";
-    modalDisciplina.href = "#";
-}                document.getElementById("modalColetaInicio").textContent = new Date(coleta.data_inicio).toLocaleString();
+                if (coleta.curso_id && coleta.curso_nome) {
+                    modalDisciplina.textContent = coleta.curso_nome;
+                    modalDisciplina.href = `${M.cfg.wwwroot}/course/view.php?id=${coleta.curso_id}`;
+                } else {
+                    modalDisciplina.textContent = "Disciplina não encontrada";
+                    modalDisciplina.href = "#";
+                }               
+                document.getElementById("modalColetaInicio").textContent = new Date(coleta.data_inicio).toLocaleString();
                 document.getElementById("modalColetaFim").textContent = new Date(coleta.data_fim).toLocaleString();
                 document.getElementById("modalNotificarAlunos").textContent = coleta.notificar_alunos == 1 ? "Sim" : "Não";
                 document.getElementById("modalReceberAlerta").textContent = coleta.receber_alerta == 1 ? "Sim" : "Não";
@@ -597,8 +598,13 @@ if (coleta.curso_id && coleta.curso_nome) {
                 document.getElementById("downloadCSV").setAttribute("data-id", coleta.id);
                 document.getElementById("downloadJSON").setAttribute("data-id", coleta.id);
         
+                // Atualiza o botão de exclusão no modal
+                const deleteButton = document.getElementById("deleteColeta");
+                deleteButton.setAttribute("data-id", coleta.id);
+                deleteButton.setAttribute("data-name", coleta.nome);
+
                 const modal = document.getElementById("coletaModal");
-    modal.style.display = "block";
+                modal.style.display = "block";
                     adicionarEventosFechamento(modal);
 
             }
@@ -630,47 +636,16 @@ function adicionarEventosFechamento(modal) {
         };
 
   
-let coletaIdParaExclusao = null;
-
 function abrirGrafico() {
     const coletaId = document.getElementById("modalColetaUrl").getAttribute("href").split("=").pop();
     window.location.href = M.cfg.wwwroot + "/blocks/ifcare/report.php?coletaid=" + coletaId;
 }
 
-function confirmarExclusao() {
-    const coletaNome = document.getElementById("modalColetaNome").textContent;
-    document.getElementById("confirmColetaNome").textContent = coletaNome;
-    coletaIdParaExclusao = document.getElementById("modalColetaUrl").getAttribute("href").split("=").pop();
-    document.getElementById("confirmDeleteModal").style.display = "block";
-}
+
 
 function fecharModalDetalhe() {
     document.getElementById("coletaModal").style.display = "none";
 }
-
-function fecharConfirmacao() {
-    document.getElementById("confirmDeleteModal").style.display = "none";
-}
-
-function excluirColetaConfirmado() {
-    fecharConfirmacao();
-
-    $.ajax({
-        url: M.cfg.wwwroot + "/blocks/ifcare/delete_collection.php",
-        type: "POST",
-        data: { coleta_id: coletaIdParaExclusao },
-        success: function(response) {
-            alert("Coleta excluída com sucesso!");
-
-            // Redireciona para a página inicial (index)
-            window.location.href = M.cfg.wwwroot + "/blocks/ifcare/index.php";
-        },
-        error: function() {
-            alert("Erro ao excluir a coleta.");
-        }
-    });
-}
-
 
 
 window.onclick = function(event) {
@@ -685,6 +660,7 @@ function editarColeta() {
 }
 
         </script>';
+
 
         return $html;
     }
@@ -762,8 +738,8 @@ function editarColeta() {
                 mb_convert_encoding($resposta->usuario, 'UTF-8'),
                 mb_convert_encoding($resposta->email, 'UTF-8'),
                 mb_convert_encoding($resposta->role_name, 'UTF-8'),
-                $resposta->pergunta_id, 
-                $resposta->resposta, 
+                $resposta->pergunta_id,
+                $resposta->resposta,
                 date('d/m/Y H:i', strtotime($resposta->data_resposta))
             ]);
         }
@@ -839,7 +815,7 @@ function editarColeta() {
             $coleta_data['respostas'][] = [
                 'usuario' => $resposta->usuario,
                 'email' => $resposta->email,
-                'funcao' => $resposta->role_name, 
+                'funcao' => $resposta->role_name,
                 'id_pergunta' => $resposta->pergunta_id,
                 'resposta' => $resposta->resposta,
                 'data_resposta' => $resposta->data_resposta
@@ -860,7 +836,8 @@ function editarColeta() {
         <span class="close">&times;</span>
         <h2 id="modalColetaNome"></h2>
         <p><strong>Preview Coleta:</strong> <a id="modalColetaUrl" href="#" target="_blank">Link da Coleta</a></p>
-        <p><strong>Disciplina:</strong> <a id="modalColetaDisciplina" href="#" target="_blank" style="color: #0073AA; text-decoration: none;"></a></p>
+        <p><strong>Disciplina:</strong> <a id="modalColetaDisciplina" href="#" target="_blank"
+                style="color: #0073AA; text-decoration: none;"></a></p>
         <p><strong>Data de Início:</strong> <span id="modalColetaInicio"></span></p>
         <p><strong>Data de Fim:</strong> <span id="modalColetaFim"></span></p>
         <p><strong>Nome da Seção Vinculada:</strong> <span id="modalSectionName"></span></p>
@@ -880,9 +857,11 @@ function editarColeta() {
             <button id="editarColeta" class="btn-coleta btn-coleta-secondary" onclick="editarColeta()">
                 <i class="fa fa-edit"></i> Editar
             </button>
-            <button id="deleteColeta" class="btn-coleta btn-coleta-secondary" onclick="confirmarExclusao()">
+            <button id="deleteColeta" class="btn-coleta btn-coleta-secondary" data-id="" data-name=""
+                onclick="window.ifcare.confirmarExclusaoModal(this)">
                 <i class="fa fa-trash"></i> Excluir
             </button>
+
             <button id="graficoColeta" class="btn-coleta btn-coleta-secondary" onclick="abrirGrafico()">
                 <i class="fa fa-chart-bar"></i> Gráficos
             </button>
@@ -890,16 +869,4 @@ function editarColeta() {
     </div>
 </div>
 
-<div id="confirmDeleteModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="fecharConfirmacao()">&times;</span>
-        <h2>Confirmação de Exclusão</h2>
-        <p>Tem certeza de que deseja excluir a coleta "<span id="confirmColetaNome"></span>"? Todos os dados, <strong>incluindo as respostas dos alunos</strong>, serão removidos <strong>PERMANENTEMENTE</strong>. Essa ação é irreversível.</p>
-        <div class="button-group">
-    <button class="btn-coleta btn-coleta-secondary" onclick="excluirColetaConfirmado()">Sim, excluir</button>
-    <button class="btn-coleta btn-coleta-secondary" onclick="fecharConfirmacao()">Cancelar</button>
-</div>
-
-    </div>
-</div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
