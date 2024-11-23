@@ -7,8 +7,8 @@ global $PAGE, $OUTPUT;
 $courseid = optional_param('courseid', 0, PARAM_INT);
 $context = context_system::instance();
 $PAGE->set_context($context);
-$PAGE->set_url('/blocks/ifcare/manual_aeq.php', array('courseid' => $courseid));
-$PAGE->set_title(get_string('aeq_manual_title', 'block_ifcare'));
+$PAGE->set_url('/blocks/ifcare/faq.php', array('courseid' => $courseid));
+$PAGE->set_title(get_string('aeq_manual', 'block_ifcare'));
 $PAGE->set_pagelayout('standard');
 
 echo $OUTPUT->header();

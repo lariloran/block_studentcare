@@ -5,7 +5,7 @@ require_login();
 $context = context_course::instance($COURSE->id);
 $PAGE->set_url('/blocks/ifcare/report.php');
 $PAGE->set_context($context);
-$PAGE->set_title("Relatório de Coletas de Emoções");
+$PAGE->set_title(get_string('report', 'block_ifcare'));
 
 echo $OUTPUT->header();
 

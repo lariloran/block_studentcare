@@ -257,36 +257,6 @@ if (!$perguntas) {
     exit;
 }
 
-// Títulos personalizados para cada classe AEQ
-$classe_titulos = [
-    1 => "Emoções Relacionadas à Aula",
-    2 => "Emoções Relacionadas ao Aprendizado",
-    3 => "Emoções Relacionadas às Avaliações"
-];
-
-// Mensagens personalizadas para perguntas
-$classe_mensagens = [
-    1 => "Como você está se sentindo em relação à aula de <strong>{$cursoR->fullname}</strong>?",
-    2 => "Como você está se sentindo em relação ao seu aprendizado em <strong>{$cursoR->fullname}</strong>?",
-    3 => "Como você está se sentindo em relação às avaliações de <strong>{$cursoR->fullname}</strong>?"
-];
-
-
-
-// Obter classe da pergunta
-$pergunta_classe_id = $DB->get_field_sql("
-    SELECT classeaeq_id 
-    FROM {ifcare_associacao_classe_emocao_coleta} 
-    WHERE cadastrocoleta_id = :coletaid 
-    LIMIT 1",
-    ['coletaid' => $coletaid]
-);
-
-
-// Define o título e mensagem baseados na classe
-$titulo_coleta = $classe_titulos[$pergunta_classe_id] ?? "Coleta de Emoções";
-$mensagem_coleta = $classe_mensagens[$pergunta_classe_id] ?? "Como você está se sentindo?";
-
 $perguntas_json = json_encode(array_values($perguntas));
 ?>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
@@ -397,7 +367,7 @@ $perguntas_json = json_encode(array_values($perguntas));
     };
 
     function updateEmojisForEmotion(emocao) {
-        const emojis = emotionEmojiMap[emocao] || ['😕', '😟', '😐', '🙂', '😀']; // Emojis padrão, caso a emoção não seja encontrada
+        const emojis = emotionEmojiMap[emocao] || ['😕', '😟', '😐', '🙂', '😀']; 
         document.getElementById('emoji-1').textContent = emojis[0];
         document.getElementById('emoji-2').textContent = emojis[1];
         document.getElementById('emoji-3').textContent = emojis[2];
@@ -416,24 +386,23 @@ $perguntas_json = json_encode(array_values($perguntas));
 
 
 
-    let ultimaClasseId = null; // Para rastrear a última classe exibida
-    let introducoesExibidas = {}; // Para evitar repetir introduções já exibidas
+    let ultimaClasseId = null; 
+    let introducoesExibidas = {};
 
     function gerarMensagem(emocoes, tooltips, contexto) {
-    const plural = emocoes.length > 1;
+        const plural = emocoes.length > 1;
 
-    // Gera a lista de emoções com seus tooltips
-    const emocoesComTooltip = emocoes.map((emocao, index) => {
-        return `
+        const emocoesComTooltip = emocoes.map((emocao, index) => {
+            return `
             <strong>${emocao}</strong>
             <span class="tooltip-icon">
                 &#9432;
                 <span class="tooltip-text">${tooltips[index]}</span>
             </span>
         `;
-    }).join(", ");
+        }).join(", ");
 
-    return `
+        return `
     <p>
         As perguntas a seguir referem-se ${plural ? 'às emoções' : 'à emoção'} 
         ${emocoesComTooltip}
@@ -441,61 +410,55 @@ $perguntas_json = json_encode(array_values($perguntas));
         <strong>antes</strong>, <strong>durante</strong> ou <strong>depois</strong> ${contexto}. 
         Por favor, leia cada item com atenção e responda utilizando a escala fornecida.
     </p>`;
-}
-
-function mostrarTextoInicial(pergunta, emocoesDaClasse, tooltipsDaClasse) {
-    // Mensagem de introdução com base na classe
-    let cursoNome = <?php echo json_encode($cursoNome); ?>;
-    let contexto =
-        pergunta.classe_id === "1"
-            ? `das aulas da disciplina de <strong>${cursoNome}</strong>`
-            : pergunta.classe_id === "2"
-            ? "da sua rotina de estudos"
-            : `de alguma atividade avaliativa da disciplina de <strong>${cursoNome}</strong>`;
-
-    let mensagemInicial = gerarMensagem(emocoesDaClasse, tooltipsDaClasse, contexto);
-
-    // Exibe o texto inicial no container
-    document.getElementById('titulo-coleta').innerHTML = mensagemInicial;
-    document.getElementById('pergunta-container').innerHTML = '';
-    document.getElementById('pergunta-container').style.display = 'none'; // Oculta emojis
-    document.getElementById('respostas-container').style.display = 'none'; // Oculta emojis
-    document.getElementById('progress-bar-container').style.display = 'none'; // Oculta barra de progresso
-}
-
-function mostrarPergunta(index) {
-    let pergunta = perguntas[index];
-    let cursoNome = <?php echo json_encode($cursoNome); ?>;
-
-    // Obter todas as emoções e seus tooltips únicos da classe atual
-    const emocoesDaClasse = [...new Set(
-        perguntas
-            .filter(p => p.classe_id === pergunta.classe_id)
-            .map(p => p.emocao_nome)
-    )];
-    const tooltipsDaClasse = [...new Set(
-        perguntas
-            .filter(p => p.classe_id === pergunta.classe_id)
-            .map(p => p.texto_tooltip)
-    )];
-
-    // Se a classe mudou e ainda não exibimos a introdução para essa classe, mostramos o texto inicial
-    if (pergunta.classe_id !== ultimaClasseId) {
-        if (!introducoesExibidas[pergunta.classe_id]) {
-            mostrarTextoInicial(pergunta, emocoesDaClasse, tooltipsDaClasse);
-            introducoesExibidas[pergunta.classe_id] = true; // Marca introdução como exibida
-            ultimaClasseId = pergunta.classe_id;
-            return; // Para aqui até o usuário avançar
-        }
     }
 
-    document.getElementById('pergunta-container').style.display = 'block'; // Oculta emojis
+    function mostrarTextoInicial(pergunta, emocoesDaClasse, tooltipsDaClasse) {
+        let cursoNome = <?php echo json_encode($cursoNome); ?>;
+        let contexto =
+            pergunta.classe_id === "1"
+                ? `das aulas da disciplina de <strong>${cursoNome}</strong>`
+                : pergunta.classe_id === "2"
+                    ? "da sua rotina de estudos"
+                    : `de alguma atividade avaliativa da disciplina de <strong>${cursoNome}</strong>`;
 
-    // Atualiza os emojis com base na emoção
-    updateEmojisForEmotion(pergunta.emocao_nome);
+        let mensagemInicial = gerarMensagem(emocoesDaClasse, tooltipsDaClasse, contexto);
 
-    // Exibe o título da pergunta
-    document.getElementById('titulo-coleta').innerHTML = `
+        document.getElementById('titulo-coleta').innerHTML = mensagemInicial;
+        document.getElementById('pergunta-container').innerHTML = '';
+        document.getElementById('pergunta-container').style.display = 'none'; 
+        document.getElementById('respostas-container').style.display = 'none'; 
+        document.getElementById('progress-bar-container').style.display = 'none'; 
+    }
+
+    function mostrarPergunta(index) {
+        let pergunta = perguntas[index];
+        let cursoNome = <?php echo json_encode($cursoNome); ?>;
+
+        const emocoesDaClasse = [...new Set(
+            perguntas
+                .filter(p => p.classe_id === pergunta.classe_id)
+                .map(p => p.emocao_nome)
+        )];
+        const tooltipsDaClasse = [...new Set(
+            perguntas
+                .filter(p => p.classe_id === pergunta.classe_id)
+                .map(p => p.texto_tooltip)
+        )];
+
+        if (pergunta.classe_id !== ultimaClasseId) {
+            if (!introducoesExibidas[pergunta.classe_id]) {
+                mostrarTextoInicial(pergunta, emocoesDaClasse, tooltipsDaClasse);
+                introducoesExibidas[pergunta.classe_id] = true; 
+                ultimaClasseId = pergunta.classe_id;
+                return; 
+            }
+        }
+
+        document.getElementById('pergunta-container').style.display = 'block'; 
+
+        updateEmojisForEmotion(pergunta.emocao_nome);
+
+        document.getElementById('titulo-coleta').innerHTML = `
         ${cursoNome} - ${pergunta.emocao_nome}
         <span class="tooltip-icon">
             &#9432;
@@ -503,42 +466,35 @@ function mostrarPergunta(index) {
         </span>
     `;
 
-    // Animação e exibição do texto da pergunta
-    let perguntaContainer = document.getElementById('pergunta-container');
-    if (!perguntaContainer) {
-        console.error("O elemento 'pergunta-container' não foi encontrado.");
-        return;
-    }
+        let perguntaContainer = document.getElementById('pergunta-container');
+        if (!perguntaContainer) {
+            console.error("O elemento 'pergunta-container' não foi encontrado.");
+            return;
+        }
 
-    // Remove a animação antes de atualizar o conteúdo
-    perguntaContainer.classList.remove('animate');
+        perguntaContainer.classList.remove('animate');
 
-    setTimeout(() => {
-        // Atualiza o conteúdo do contêiner com a pergunta
-        perguntaContainer.innerHTML = `
+        setTimeout(() => {
+            perguntaContainer.innerHTML = `
             <p class="pergunta-texto">${pergunta.pergunta_texto}</p>
         `;
-        // Adiciona a animação
-        perguntaContainer.classList.add('animate');
-    }, 100);
+            perguntaContainer.classList.add('animate');
+        }, 100);
 
-    // Exibe emojis e barra de progresso
-    document.getElementById('respostas-container').style.display = 'flex';
-    document.getElementById('progress-bar-container').style.display = 'block';
+        document.getElementById('respostas-container').style.display = 'flex';
+        document.getElementById('progress-bar-container').style.display = 'block';
 
-    // Atualiza a barra de progresso
-    let progresso = Math.round(((index + 1) / totalPerguntas) * 100);
-    document.getElementById('progress-bar').value = progresso;
-    document.getElementById('progress-text').innerText = `${progresso}%`;
+        let progresso = Math.round(((index + 1) / totalPerguntas) * 100);
+        document.getElementById('progress-bar').value = progresso;
+        document.getElementById('progress-text').innerText = `${progresso}%`;
 
-    // Atualiza a seleção de emojis
-    document.querySelectorAll('.emoji-button').forEach(btn => btn.classList.remove('selected'));
-    if (respostasSelecionadas[pergunta.id] !== undefined) {
-        document
-            .querySelector(`.emoji-button[data-value="${respostasSelecionadas[pergunta.id]}"]`)
-            .classList.add('selected');
+        document.querySelectorAll('.emoji-button').forEach(btn => btn.classList.remove('selected'));
+        if (respostasSelecionadas[pergunta.id] !== undefined) {
+            document
+                .querySelector(`.emoji-button[data-value="${respostasSelecionadas[pergunta.id]}"]`)
+                .classList.add('selected');
+        }
     }
-}
 
     document.querySelectorAll('.emoji-button').forEach(button => {
         button.addEventListener('click', function () {
@@ -562,63 +518,56 @@ function mostrarPergunta(index) {
 
 
     function voltarPergunta() {
-    if (perguntaAtual > 0) {
-        perguntaAtual--;
+        if (perguntaAtual > 0) {
+            perguntaAtual--;
 
-        let pergunta = perguntas[perguntaAtual];
-        let classeAtual = pergunta.classe_id;
+            let pergunta = perguntas[perguntaAtual];
+            let classeAtual = pergunta.classe_id;
 
-        // Verifica se a pergunta anterior é o início de uma classe
-        let primeiraPerguntaDaClasse = perguntas.findIndex(p => p.classe_id === classeAtual);
+            let primeiraPerguntaDaClasse = perguntas.findIndex(p => p.classe_id === classeAtual);
 
-        if (perguntaAtual === primeiraPerguntaDaClasse) {
-            // Reexibe o texto inicial da classe
-            let emocoesDaClasse = [...new Set(
-                perguntas.filter(p => p.classe_id === classeAtual).map(p => p.emocao_nome)
-            )];
-            let tooltipsDaClasse = [...new Set(
-                perguntas.filter(p => p.classe_id === classeAtual).map(p => p.texto_tooltip)
-            )];
-            mostrarTextoInicial(pergunta, emocoesDaClasse, tooltipsDaClasse);
-        } else {
-            // Mostra a pergunta anterior normalmente
-            mostrarPergunta(perguntaAtual);
+            if (perguntaAtual === primeiraPerguntaDaClasse) {
+                let emocoesDaClasse = [...new Set(
+                    perguntas.filter(p => p.classe_id === classeAtual).map(p => p.emocao_nome)
+                )];
+                let tooltipsDaClasse = [...new Set(
+                    perguntas.filter(p => p.classe_id === classeAtual).map(p => p.texto_tooltip)
+                )];
+                mostrarTextoInicial(pergunta, emocoesDaClasse, tooltipsDaClasse);
+            } else {
+                mostrarPergunta(perguntaAtual);
+            }
         }
     }
-}
 
 
     let coletaConcluida = false;
     let feedbackEnviado = false;
 
     function avancarPergunta() {
-    let pergunta = perguntas[perguntaAtual];
-    let tituloAtual = document.getElementById('titulo-coleta').innerText;
+        let pergunta = perguntas[perguntaAtual];
+        let tituloAtual = document.getElementById('titulo-coleta').innerText;
 
-    // Verifica se o conteúdo atual é um texto inicial (introdução)
-    if (tituloAtual.includes('As perguntas a seguir referem-se')) {
-        // Avança sem validação de emoji
-        perguntaAtual++;
-        mostrarPergunta(perguntaAtual);
-        return;
-    }
-
-    // Validação para perguntas normais
-    if (respostasSelecionadas[pergunta.id] !== undefined) {
-        if (perguntaAtual < totalPerguntas - 1) {
+        if (tituloAtual.includes('As perguntas a seguir referem-se')) {
             perguntaAtual++;
             mostrarPergunta(perguntaAtual);
-        } else {
-            // Finaliza coleta
-            enviarRespostas();
-            coletaConcluida = true;
-            abrirModal('modal-sucesso');
+            return;
         }
-    } else {
-        // Exibe o modal de erro se não há resposta selecionada
-        abrirModal('modal-erro');
+
+        if (respostasSelecionadas[pergunta.id] !== undefined) {
+            if (perguntaAtual < totalPerguntas - 1) {
+                perguntaAtual++;
+                mostrarPergunta(perguntaAtual);
+            } else {
+                // Finaliza coleta
+                enviarRespostas();
+                coletaConcluida = true;
+                abrirModal('modal-sucesso');
+            }
+        } else {
+            abrirModal('modal-erro');
+        }
     }
-}
 
 
     function enviarRespostas() {
@@ -835,8 +784,7 @@ echo $OUTPUT->footer();
     #quiz-container {
         width: 100%;
         max-width: 700px;
-        min-height: 500px; /* Altura mínima consistente */
-
+        min-height: 500px;
         margin: 0 auto;
         height: auto;
         padding: 20px;
@@ -879,44 +827,44 @@ echo $OUTPUT->footer();
     }
 
     #pergunta-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 20px;
-    font-size: 20px;
-    text-align: center;
-    font-weight: bold;
-    color: #333;
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
-    transform: translateY(10px);
-    opacity: 0;
-    height: 100px; /* ou ajuste o valor conforme necessário */
-    width: 100%;
-    max-width: 700px;
-    margin: 20px auto;
-}
-
-.titulo-coleta p{
-    margin-top: 100px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+        font-size: 20px;
+        text-align: center;
+        font-weight: bold;
+        color: #333;
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+        transform: translateY(10px);
+        opacity: 0;
+        height: 100px;
+        width: 100%;
+        max-width: 700px;
+        margin: 20px auto;
     }
 
-#pergunta-container.animate {
-    transform: translateY(0);
-    opacity: 1;
-}
+    .titulo-coleta p {
+        margin-top: 100px;
+    }
 
-.pergunta-texto {
-    font-family: 'Roboto', sans-serif;
-    font-size: 24px;
-    color: #333;
-    margin: 0;
-    padding: 0;
-}
+    #pergunta-container.animate {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    .pergunta-texto {
+        font-family: 'Roboto', sans-serif;
+        font-size: 24px;
+        color: #333;
+        margin: 0;
+        padding: 0;
+    }
 
 
     .pergunta-texto::after {

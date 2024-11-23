@@ -1,7 +1,8 @@
 <?php
 
 $string['pluginname'] = 'IFCare';
-$string['header'] = 'IFCare 🤖📚🎭';
+$string['header'] = 'Gerenciar Coletas';
+$string['report'] = 'Dashboard de Coletas';
 
 // Strings para o formulário de coleta
 $string['create_new_collection'] = 'Cadastrar Nova Coleta';
@@ -40,9 +41,8 @@ $string['returntolist'] = 'Voltar para a listagem';
 
 // Strings de gerenciamento e navegação
 $string['manage_collections'] = 'Gerenciar Coletas';
-$string['view_dashboard'] = 'Visualizar Dashboard das Coletas';
-$string['aeq_manual'] = 'Conheça o AEQ e o IFCare';
-$string['aeq_manual_title'] = 'Achievement Emotions Questionnaire (AEQ) Manual';
+$string['view_dashboard'] = 'Dashboard de Coletas';
+$string['aeq_manual'] = 'Perguntas Frequentes (FAQ)';
 $string['process_collection'] = 'Processar Coleta';
 
 $string['messageprovider:created_collection'] = 'Notificação enviada aos alunos quando uma nova coleta é criada.';
