@@ -48,14 +48,6 @@ if ($coletaIniciada) {
     );
 }
 
-// Botão de retorno à listagem
-echo $OUTPUT->single_button(
-    new moodle_url('/blocks/ifcare/index.php'),
-    get_string('returntolist', 'block_ifcare'),
-    'get',
-    ['class' => 'return-button']
-);
-
 // Renderiza o formulário de edição
 try {
     $mform = new edit_form($coletaid);

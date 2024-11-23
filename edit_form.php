@@ -167,12 +167,12 @@ class edit_form extends moodleform
             $mform->addElement('advcheckbox', 'notify_students', get_string('notify_students', 'block_ifcare'), null, ['group' => 1], [0, 1]);
             $mform->setDefault('notify_students', $this->coleta->notificar_alunos);
         }
-        // Botão de enviar
-        $mform->addElement('submit', 'save', get_string('update', 'block_ifcare'));
-        $mform->setType('save', PARAM_ACTION);
+        // Botões de enviar e cancelar agrupados
+        $buttonarray = [];
+        $buttonarray[] = $mform->createElement('submit', 'save', get_string('update', 'block_ifcare'));
+        $buttonarray[] = $mform->createElement('cancel', 'cancel', get_string('cancel'));
+        $mform->addGroup($buttonarray, 'buttonar', '', [' '], false);
 
-        // Botão de cancelar
-        $mform->addElement('cancel', 'cancel', get_string('cancel'));
 
         $mform->addElement('hidden', 'setor', '', array('id' => 'setor'));
         $mform->setType('setor', PARAM_INT);
@@ -191,18 +191,18 @@ class edit_form extends moodleform
 
         // Verifica se a coleta já foi iniciada
         $coletaIniciada = strtotime($this->coleta->data_inicio) <= time();
-    
+
         // Atualiza apenas os campos permitidos dependendo do estado da coleta
         $update_data = new stdClass();
         $update_data->id = clean_param($data->coletaid, PARAM_INT);
-    
+
         if (!$coletaIniciada) {
             // Atualizações permitidas na edição completa
             $update_data->curso_id = clean_param($data->courseid, PARAM_INT);
             $update_data->section_id = clean_param($data->setor, PARAM_INT);
             $update_data->data_inicio = date('Y-m-d H:i:s', clean_param($data->starttime, PARAM_INT));
         }
-    
+
         // Atualizações permitidas em qualquer estado
         $update_data->data_fim = date('Y-m-d H:i:s', clean_param($data->endtime, PARAM_INT));
         $update_data->descricao = clean_param($data->description, PARAM_TEXT);
@@ -212,7 +212,7 @@ class edit_form extends moodleform
         if (!$coletaIniciada) {
             $update_data->notificar_alunos = clean_param($data->notify_students, PARAM_INT);
         }
-    
+
         // Atualizar o registro principal
         try {
             $DB->update_record('ifcare_cadastrocoleta', $update_data);
@@ -220,20 +220,20 @@ class edit_form extends moodleform
             debugging('Erro ao atualizar os dados da coleta: ' . $e->getMessage());
             throw new moodle_exception('erro_ao_atualizar_coleta', 'block_ifcare');
         }
-    
+
         // Atualizar associações de emoções (apenas se a coleta não foi iniciada)
         if (!$coletaIniciada) {
             try {
                 // Deletar as emoções antigas
                 $DB->delete_records('ifcare_associacao_classe_emocao_coleta', ['cadastrocoleta_id' => $this->coleta->id]);
-    
+
                 // Decodificar e validar o campo oculto `emocao_selecionadas`
                 $emocao_selecionadas = json_decode($data->emocao_selecionadas, true);
                 if (!is_array($emocao_selecionadas)) {
                     debugging('O campo emocao_selecionadas não contém um array válido.');
                     $emocao_selecionadas = [];
                 }
-    
+
                 // Adicionar as novas emoções
                 foreach ($emocao_selecionadas as $classe_aeq_id => $emocoes) {
                     if (is_array($emocoes)) {
@@ -242,7 +242,7 @@ class edit_form extends moodleform
                             $assoc->cadastrocoleta_id = $this->coleta->id;
                             $assoc->classeaeq_id = clean_param($classe_aeq_id, PARAM_INT);
                             $assoc->emocao_id = clean_param($emocao_id, PARAM_INT);
-    
+
                             $DB->insert_record('ifcare_associacao_classe_emocao_coleta', $assoc);
                         }
                     }
@@ -252,12 +252,12 @@ class edit_form extends moodleform
                 throw new moodle_exception('erro_ao_atualizar_emocoes', 'block_ifcare');
             }
         }
-    
+
         // Redirecionar com sucesso
         $SESSION->mensagem_sucesso = get_string('coleta_atualizada_com_sucesso', 'block_ifcare');
-        redirect(new moodle_url('/blocks/ifcare/index.php',));
+        redirect(new moodle_url('/blocks/ifcare/index.php', ));
     }
-    
+
 
 }
 

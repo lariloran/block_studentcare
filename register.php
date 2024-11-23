@@ -10,7 +10,7 @@ $context = context_system::instance();
 $PAGE->set_context($context);
 $PAGE->set_url(new moodle_url('/blocks/ifcare/register.php'));
 $PAGE->set_title('Adicionar Nova Coleta');
-$PAGE->set_heading('Nova Coleta');
+$PAGE->set_heading('Adicionar Nova Coleta');
 
 
 // Renderiza o formulário

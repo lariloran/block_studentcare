@@ -128,12 +128,12 @@ class register_form extends moodleform
 
         $mform->addElement('advcheckbox', 'notify_students', get_string('notify_students', 'block_ifcare'), null, array('group' => 1), array(0, 1));
         $mform->setDefault('notify_students', 1);
-        // Botão de enviar
-        $mform->addElement('submit', 'save', get_string('submit', 'block_ifcare'));
-        $mform->setType('save', PARAM_ACTION);
+        // Botões de enviar e cancelar agrupados
+        $buttonarray = [];
+        $buttonarray[] = $mform->createElement('submit', 'save', get_string('submit', 'block_ifcare'));
+        $buttonarray[] = $mform->createElement('cancel', 'cancel', get_string('cancel'));
+        $mform->addGroup($buttonarray, 'buttonar', '', [' '], false);
 
-        // Botão de cancelar
-        $mform->addElement('cancel', 'cancel', get_string('cancel'));
 
         $mform->addElement('hidden', 'userid', $USER->id);
         $mform->setType('userid', PARAM_INT);
