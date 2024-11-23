@@ -835,6 +835,8 @@ echo $OUTPUT->footer();
     #quiz-container {
         width: 100%;
         max-width: 700px;
+        min-height: 500px; /* Altura mínima consistente */
+
         margin: 0 auto;
         height: auto;
         padding: 20px;
@@ -898,6 +900,10 @@ echo $OUTPUT->footer();
     max-width: 700px;
     margin: 20px auto;
 }
+
+.titulo-coleta p{
+    margin-top: 100px;
+    }
 
 #pergunta-container.animate {
     transform: translateY(0);
