@@ -45,11 +45,99 @@ require(["jquery", "core/notification"], function ($, notification) {
 `);
     window.ifcare = window.ifcare || {};
     var selecoes = {};
+// Função para salvar seleções no localStorage
+window.ifcare.saveToLocalStorage = function saveToLocalStorage(classeId, emotions) {
+  const storedSelections = JSON.parse(localStorage.getItem("ifcareSelections")) || {};
+  storedSelections[classeId] = emotions;
+  localStorage.setItem("ifcareSelections", JSON.stringify(storedSelections));
+};
 
-    // window.ifcare.toggleSaveButton = function toggleSaveButton() {
-    //   var selectedEmotions = $("#id_emocoes").val() || [];
-    //   $("#id_save").prop("disabled", selectedEmotions.length === 0);
-    // };
+// Função para recuperar seleções do localStorage
+window.ifcare.getFromLocalStorage = function getFromLocalStorage() {
+  return JSON.parse(localStorage.getItem("ifcareSelections")) || {};
+};
+
+// Atualiza o campo oculto com o JSON das seleções
+window.ifcare.updateHiddenField = function updateHiddenField() {
+  const storedSelections = window.ifcare.getFromLocalStorage();
+  $("#emocao_selecionadas").val(JSON.stringify(storedSelections));
+};
+
+// Atualiza o resumo visual das seleções
+window.ifcare.renderResumo = function renderResumo() {
+  const storedSelections = window.ifcare.getFromLocalStorage();
+  const emotionContainer = $("#emocoes-selecionadas");
+  emotionContainer.empty();
+
+  // Itera por todas as classes e emoções armazenadas
+  Object.keys(storedSelections).forEach(function (classeId) {
+    storedSelections[classeId].forEach(function (emocao) {
+      // Evita duplicatas no DOM
+      if (
+        !emotionContainer.find(
+          `.emotion-tag[data-id="${emocao.id}"][data-classe="${classeId}"]`
+        ).length
+      ) {
+        // Nome do balão: Nome da emoção + ID da classe
+        const tagText = `${emocao.name} - Classe ${classeId}`;
+
+        const tag = $("<div>")
+          .addClass("emotion-tag")
+          .attr("data-id", emocao.id)
+          .attr("data-classe", classeId)
+          .text(tagText);
+
+        const closeButton = $("<span>")
+          .addClass("close-btn")
+          .text("×")
+          .on("click", function () {
+            // Remove a emoção do localStorage
+            const updatedSelections = window.ifcare.getFromLocalStorage();
+            updatedSelections[classeId] = updatedSelections[classeId].filter(
+              (e) => e.id !== emocao.id
+            );
+
+               // Desmarca a emoção no select múltiplo
+    $(`#id_emocoes option[value="${emocao.id}"]`).prop("selected", false);
+    
+            // Atualiza o localStorage e o campo oculto
+            localStorage.setItem(
+              "ifcareSelections",
+              JSON.stringify(updatedSelections)
+            );
+            window.ifcare.updateHiddenField();
+
+            // Remove o balão visual
+            tag.remove();
+          });
+
+        tag.append(closeButton);
+        emotionContainer.append(tag);
+      }
+    });
+  });
+};
+
+    // Atualiza o objeto de seleções e o resumo ao mudar o select múltiplo
+    $("#id_emocoes").on("change", function () {
+      const classeId = $("#id_classe_aeq").val();
+      if (!classeId) return;
+
+      // Atualiza as seleções com ID e nome da emoção
+      const selectedEmotions = $(this)
+        .val()
+        .map(function (id) {
+          const name = $(`#id_emocoes option[value="${id}"]`).text();
+          return { id: id, name: name };
+        });
+
+      // Salva no localStorage
+      window.ifcare.saveToLocalStorage(classeId, selectedEmotions);
+
+      // Atualiza o resumo e o campo oculto
+      window.ifcare.updateHiddenField();
+      window.ifcare.renderResumo();
+    });
 
     window.ifcare.loadEmotions = function loadEmotions(classeAeqId) {
       if (classeAeqId) {
@@ -83,8 +171,6 @@ require(["jquery", "core/notification"], function ($, notification) {
                 })
               );
             }
-
-            window.ifcare.updateSelectedEmotions();
           },
           error: function () {
             console.error("Erro ao carregar as emoções.");
@@ -147,8 +233,6 @@ require(["jquery", "core/notification"], function ($, notification) {
               );
             }
 
-            // Atualiza o resumo de emoções no frontend
-            window.ifcare.updateSelectedEmotions();
           },
           error: function () {
             console.error("Erro ao carregar as emoções.");
@@ -163,70 +247,6 @@ require(["jquery", "core/notification"], function ($, notification) {
           },
         });
       }
-    };
-
-    window.ifcare.updateSelectedEmotions = function updateSelectedEmotions() {
-      var classeAeqId = $("#id_classe_aeq").val();
-      if (classeAeqId) {
-        var selectedEmotions = $("#id_emocoes").val() || [];
-        selecoes[classeAeqId] = selectedEmotions;
-
-        $("#emocao_selecionadas").val(JSON.stringify(selecoes));
-
-        window.ifcare.renderSelectedEmotions();
-      }
-    };
-
-    window.ifcare.renderSelectedEmotions = function renderSelectedEmotions() {
-      var emotionContainer = $("#emocoes-selecionadas");
-
-      // Itera sobre todas as classes e emoções selecionadas para exibir o resumo completo
-      Object.keys(selecoes).forEach(function (classeId) {
-        var emocoes = selecoes[classeId];
-        emocoes.forEach(function (emocaoId) {
-          // Verifica se a emoção já foi adicionada ao resumo
-          if (
-            !emotionContainer.find('.emotion-tag[data-id="' + emocaoId + '"]')
-              .length
-          ) {
-            // Obtém o nome da emoção atual de acordo com seu ID
-            var emotionName = $(
-              '#id_emocoes option[value="' + emocaoId + '"]'
-            ).text();
-
-            if (emotionName) {
-              var tag = $("<div>")
-                .addClass("emotion-tag")
-                .attr("data-id", emocaoId)
-                .text(emotionName);
-              var closeButton = $("<span>").addClass("close-btn").text("×");
-
-              // Permite remover uma emoção específica do resumo ao clicar no botão de fechar
-              closeButton.on("click", function () {
-                // Remove a emoção do objeto selecoes
-                selecoes[classeId] = selecoes[classeId].filter(function (e) {
-                  return e !== emocaoId;
-                });
-
-                // Remove a tag visual
-                tag.remove();
-
-                // Atualiza o campo oculto com as emoções restantes
-                $("#emocao_selecionadas").val(JSON.stringify(selecoes));
-
-                // Desmarca a emoção no campo select
-                $('#id_emocoes option[value="' + emocaoId + '"]').prop(
-                  "selected",
-                  false
-                );
-              });
-
-              tag.append(closeButton);
-              emotionContainer.append(tag);
-            }
-          }
-        });
-      });
     };
 
     window.ifcare.loadSections = function loadSections(courseid) {
@@ -533,6 +553,5 @@ require(["jquery", "core/notification"], function ($, notification) {
       window.ifcare.loadResources(courseid, sectionid);
     });
 
-    $("#id_emocoes").change(window.ifcare.updateSelectedEmotions);
   });
 });

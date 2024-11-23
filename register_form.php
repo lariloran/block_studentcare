@@ -220,26 +220,24 @@ class register_form extends moodleform
             $cadastroColetaId = $inserted;
 
             $emocaoSelecionadas = json_decode($data->emocao_selecionadas, true);
-            if (!is_array($emocaoSelecionadas)) {
-                $SESSION->mensagem_erro = get_string('mensagem_erro', 'block_ifcare');
-                redirect(new moodle_url("/blocks/ifcare/index.php"));
-            }
-
-            if (is_array($emocaoSelecionadas) && !empty($emocaoSelecionadas)) {
+            if (is_array($emocaoSelecionadas)) {
                 foreach ($emocaoSelecionadas as $classeAeqId => $emocoes) {
                     if (is_array($emocoes)) {
-                        foreach ($emocoes as $emocaoId) {
+                        foreach ($emocoes as $emocao) {
+                            $emocaoId = clean_param($emocao['id'], PARAM_INT); // Pega o ID da emoção
                             $associacao = new stdClass();
                             $associacao->cadastrocoleta_id = $cadastroColetaId;
                             $associacao->classeaeq_id = $classeAeqId;
                             $associacao->emocao_id = $emocaoId;
-
+    
+                            // Salva a associação no banco
                             $DB->insert_record('ifcare_associacao_classe_emocao_coleta', $associacao);
                         }
                     }
                 }
             } else {
                 $SESSION->mensagem_erro = get_string('mensagem_erro', 'block_ifcare');
+                redirect(new moodle_url("/blocks/ifcare/index.php"));
             }
 
             $SESSION->mensagem_sucesso = get_string('mensagem_sucesso', 'block_ifcare');

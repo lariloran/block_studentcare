@@ -235,24 +235,25 @@ class edit_form extends moodleform
 
                 // Decodificar e validar o campo oculto `emocao_selecionadas`
                 $emocao_selecionadas = json_decode($data->emocao_selecionadas, true);
+
                 if (!is_array($emocao_selecionadas)) {
                     debugging('O campo emocao_selecionadas não contém um array válido.');
                     $emocao_selecionadas = [];
                 }
 
-                // Adicionar as novas emoções
-                foreach ($emocao_selecionadas as $classe_aeq_id => $emocoes) {
-                    if (is_array($emocoes)) {
-                        foreach ($emocoes as $emocao_id) {
-                            $assoc = new stdClass();
-                            $assoc->cadastrocoleta_id = $this->coleta->id;
-                            $assoc->classeaeq_id = clean_param($classe_aeq_id, PARAM_INT);
-                            $assoc->emocao_id = clean_param($emocao_id, PARAM_INT);
+            // Adicionar as novas emoções
+            foreach ($emocao_selecionadas as $classe_aeq_id => $emocoes) {
+                if (is_array($emocoes)) {
+                    foreach ($emocoes as $emocao) {
+                        $assoc = new stdClass();
+                        $assoc->cadastrocoleta_id = $this->coleta->id;
+                        $assoc->classeaeq_id = clean_param($classe_aeq_id, PARAM_INT);
+                        $assoc->emocao_id = clean_param($emocao['id'], PARAM_INT);
 
-                            $DB->insert_record('ifcare_associacao_classe_emocao_coleta', $assoc);
-                        }
+                        $DB->insert_record('ifcare_associacao_classe_emocao_coleta', $assoc);
                     }
                 }
+            }
             } catch (dml_exception $e) {
                 debugging('Erro ao atualizar as emoções associadas: ' . $e->getMessage());
                 throw new moodle_exception('erro_ao_atualizar_emocoes', 'block_ifcare');

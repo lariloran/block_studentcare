@@ -1,6 +1,5 @@
 require(["jquery", "core/notification"], function ($, notification) {
   $(function () {
-    
     $("form.mform").on("submit", function (e) {
       // Verifica se o botão de cancelar foi clicado
       if ($(document.activeElement).attr("name") === "cancel") {

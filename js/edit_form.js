@@ -1,7 +1,14 @@
 require(["jquery", "core/notification"], function ($, notification) {
   $(function () {
+    // Atualiza as emoções no select múltiplo e no resumo
+    function loadAllSelections() {
+      const storedSelections = window.ifcare.getFromLocalStorage();
+      window.ifcare.renderResumo();
 
-    
+      // Preenche o campo oculto com as seleções armazenadas
+      $("#emocao_selecionadas").val(JSON.stringify(storedSelections));
+    }
+
     $("form.mform").on("submit", function (e) {
       // Verifica se o botão de cancelar foi clicado
       if ($(document.activeElement).attr("name") === "cancel") {
@@ -28,15 +35,17 @@ require(["jquery", "core/notification"], function ($, notification) {
     });
 
     $("#id_classe_aeq").change(function () {
-      var classeAeqId = $(this).val();
+      const classeAeqId = $(this).val();
       if (classeAeqId) {
         window.ifcare.loadEmotionsEdit(classeAeqId);
       }
     });
 
-    var initialCourseid = $("#id_courseid").val();
+    // Carrega as emoções da classe selecionada e o resumo
+    const initialCourseid = $("#id_courseid").val();
     if (initialCourseid) {
       window.ifcare.loadEmotionsEdit($("#id_classe_aeq").val());
+      loadAllSelections();
     }
   });
 });
