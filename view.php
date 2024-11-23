@@ -468,6 +468,7 @@ function mostrarTextoInicial(pergunta, emocoesDaClasse, tooltipsDaClasse) {
     // Exibe o texto inicial no container
     document.getElementById('titulo-coleta').innerHTML = mensagemInicial;
     document.getElementById('pergunta-container').innerHTML = '';
+    document.getElementById('pergunta-container').style.display = 'none'; // Oculta emojis
     document.getElementById('respostas-container').style.display = 'none'; // Oculta emojis
     document.getElementById('progress-bar-container').style.display = 'none'; // Oculta barra de progresso
 }
@@ -497,6 +498,8 @@ function mostrarPergunta(index) {
             return; // Para aqui até o usuário avançar
         }
     }
+
+    document.getElementById('pergunta-container').style.display = 'block'; // Oculta emojis
 
     // Atualiza os emojis com base na emoção
     updateEmojisForEmotion(pergunta.emocao_nome);
@@ -569,11 +572,31 @@ function mostrarPergunta(index) {
 
 
     function voltarPergunta() {
-        if (perguntaAtual > 0) {
-            perguntaAtual--;
+    if (perguntaAtual > 0) {
+        perguntaAtual--;
+
+        let pergunta = perguntas[perguntaAtual];
+        let classeAtual = pergunta.classe_id;
+
+        // Verifica se a pergunta anterior é o início de uma classe
+        let primeiraPerguntaDaClasse = perguntas.findIndex(p => p.classe_id === classeAtual);
+
+        if (perguntaAtual === primeiraPerguntaDaClasse) {
+            // Reexibe o texto inicial da classe
+            let emocoesDaClasse = [...new Set(
+                perguntas.filter(p => p.classe_id === classeAtual).map(p => p.emocao_nome)
+            )];
+            let tooltipsDaClasse = [...new Set(
+                perguntas.filter(p => p.classe_id === classeAtual).map(p => p.texto_tooltip)
+            )];
+            mostrarTextoInicial(pergunta, emocoesDaClasse, tooltipsDaClasse);
+        } else {
+            // Mostra a pergunta anterior normalmente
             mostrarPergunta(perguntaAtual);
         }
     }
+}
+
 
     let coletaConcluida = false;
     let feedbackEnviado = false;
