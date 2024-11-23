@@ -1,4 +1,5 @@
-require(["jquery"], function ($) {  
+require(["jquery"], function ($) {
+  $(function () {
     $("#id_classe_aeq").change(function () {
       var classeAeqId = $(this).val();
       if (classeAeqId) {
@@ -12,3 +13,4 @@ require(["jquery"], function ($) {
       window.ifcare.loadEmotions($("#id_classe_aeq").val());
     }
   });
+});

@@ -495,7 +495,6 @@ require(["jquery"], function ($) {
     });
 
     $("#id_emocoes").change(window.ifcare.updateSelectedEmotions);
-    $("#id_resourceid").change(window.ifcare.loadResources($("#id_courseid").val(), $("#id_sectionid").val()));
 
     window.ifcare.toggleSaveButton();
   });

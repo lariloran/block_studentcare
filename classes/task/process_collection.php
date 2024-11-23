@@ -23,7 +23,7 @@ class process_collection extends \core\task\scheduled_task
             AND c.notificacao_enviada = 0";
 
         try {
-            $coletas = $DB->get_records_sql($sql, [
+            $coletas_iniciar = $DB->get_records_sql($sql, [
                 'agora' => date('Y-m-d H:i:s', $agora),
             ]);
         } catch (\dml_exception $e) {

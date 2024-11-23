@@ -126,6 +126,10 @@ class edit_form extends moodleform
 
         $mform->addElement('select', 'emocoes', get_string('emotions', 'block_ifcare'), $emotion_options, ['multiple' => 'multiple', 'size' => 8]);
         $mform->setType('emocoes', PARAM_SEQUENCE);
+
+        $mform->addElement('hidden', 'emocao_selecionadas', '', array('id' => 'emocao_selecionadas'));
+        $mform->setType('emocao_selecionadas', PARAM_RAW);
+
         $mform->addElement('hidden', 'emocao_associadas', '', ['id' => 'emocao_associadas']);
         $mform->setType('emocao_associadas', PARAM_RAW);
 
@@ -148,7 +152,7 @@ class edit_form extends moodleform
 
         // Botão de envio
         $mform->addElement('submit', 'save', get_string('update', 'block_ifcare'));
-        
+
         $mform->addElement('hidden', 'setor', '', array('id' => 'setor'));
         $mform->setType('setor', PARAM_INT);
 
@@ -172,7 +176,7 @@ class edit_form extends moodleform
         $update_data->descricao = clean_param($data->description, PARAM_TEXT);
         $update_data->curso_id = clean_param($data->courseid, PARAM_INT);
         $update_data->section_id = clean_param($data->setor, PARAM_INT);
-        $update_data->resource_id_atrelado =  clean_param($data->recurso, PARAM_INT);
+        $update_data->resource_id_atrelado = clean_param($data->recurso, PARAM_INT);
         $update_data->receber_alerta = clean_param($data->alertprogress, PARAM_INT);
         $update_data->notificar_alunos = clean_param($data->notify_students, PARAM_INT);
 
@@ -189,17 +193,29 @@ class edit_form extends moodleform
             // Deletar as emoções antigas
             $DB->delete_records('ifcare_associacao_classe_emocao_coleta', ['cadastrocoleta_id' => $this->coleta->id]);
 
-            // Adicionar as novas emoções
-            if (!empty($data->emocoes)) {
-                foreach ($data->emocoes as $emocao_id) {
-                    $assoc = new stdClass();
-                    $assoc->cadastrocoleta_id = $this->coleta->id;
-                    $assoc->classeaeq_id = clean_param($data->classe_aeq, PARAM_INT);
-                    $assoc->emocao_id = clean_param($emocao_id, PARAM_INT);
+            // Decodificar e validar o campo oculto `emocao_selecionadas`
+            $emocao_selecionadas = json_decode($data->emocao_selecionadas, true);
+            if (!is_array($emocao_selecionadas)) {
+                debugging('O campo emocao_selecionadas não contém um array válido.');
+                $emocao_selecionadas = [];
+            }
 
-                    $DB->insert_record('ifcare_associacao_classe_emocao_coleta', $assoc);
+
+            // Adicionar as novas emoções
+            foreach ($emocao_selecionadas as $classe_aeq_id => $emocoes) {
+                if (is_array($emocoes)) {
+                    foreach ($emocoes as $emocao_id) {
+                        $assoc = new stdClass();
+                        $assoc->cadastrocoleta_id = $this->coleta->id;
+                        $assoc->classeaeq_id = clean_param($classe_aeq_id, PARAM_INT);
+                        $assoc->emocao_id = clean_param($emocao_id, PARAM_INT);
+
+                        $DB->insert_record('ifcare_associacao_classe_emocao_coleta', $assoc);
+                    }
                 }
             }
+
+
         } catch (dml_exception $e) {
             debugging('Erro ao atualizar as emoções associadas: ' . $e->getMessage());
             throw new moodle_exception('erro_ao_atualizar_emocoes', 'block_ifcare');
