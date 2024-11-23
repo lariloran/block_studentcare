@@ -42,6 +42,7 @@ $string['returntolist'] = 'Voltar para a listagem';
 // Strings de gerenciamento e navegação
 $string['manage_collections'] = 'Gerenciar Coletas';
 $string['view_dashboard'] = 'Dashboard de Coletas';
+$string['manual_aeq'] = 'Manual do AEQ';
 $string['faq'] = 'Perguntas Frequentes (FAQ)';
 $string['process_collection'] = 'Processar Coleta';
 
