@@ -226,16 +226,6 @@ echo '<style>
     margin: 20px auto;
 }
 
-.titulo-coleta {
-    font-size: 24px;
-    font-weight: bold;
-    color: #4CAF50;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-
-
 </style>';
 
 $agora = time();
@@ -887,31 +877,41 @@ echo $OUTPUT->footer();
     }
 
     #pergunta-container {
-        margin-bottom: 20px;
-        font-size: 20px;
-        text-align: center;
-        font-weight: bold;
-        color: #333;
-        background-color: #f9f9f9;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
-        transform: translateY(10px);
-        opacity: 0;
-    }
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    font-size: 20px;
+    text-align: center;
+    font-weight: bold;
+    color: #333;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    transform: translateY(10px);
+    opacity: 0;
+    height: 100px; /* ou ajuste o valor conforme necessário */
+    width: 100%;
+    max-width: 700px;
+    margin: 20px auto;
+}
 
-    #pergunta-container.animate {
-        transform: translateY(0);
-        opacity: 1;
-    }
+#pergunta-container.animate {
+    transform: translateY(0);
+    opacity: 1;
+}
 
-    .pergunta-texto {
-        position: relative;
-        font-family: 'Roboto', sans-serif;
-        font-size: 24px;
-        color: #333;
-    }
+.pergunta-texto {
+    font-family: 'Roboto', sans-serif;
+    font-size: 24px;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
 
     .pergunta-texto::after {
         content: '';
