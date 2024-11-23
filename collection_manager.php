@@ -556,6 +556,25 @@ function filtrarColetas() {
                 document.getElementById("modalReceberAlerta").textContent = coleta.receber_alerta == 1 ? "Sim" : "Não";
                 document.getElementById("modalResourceName").textContent = coleta.resource_name;
                 document.getElementById("modalSectionName").textContent = coleta.section_name;
+                $.ajax({
+                    url: `${M.cfg.wwwroot}/blocks/ifcare/get_associated_class_emotions.php`,
+                    type: "GET",
+                    data: { coleta_id: coletaId },
+                    success: function (response) {
+                        // Verifica se a resposta está vazia ou contém mensagens específicas
+                        if (response.trim() === "<p>Nenhuma emoção ou classe AEQ cadastrada para esta coleta.</p>") {
+                            document.getElementById("modalEmocoes").innerHTML = response; // Exibe a mensagem amigável
+                        } else if (response.trim() === "") {
+                            document.getElementById("modalEmocoes").innerHTML = "<p>Erro: Nenhuma resposta recebida.</p>";
+                        } else {
+                            document.getElementById("modalEmocoes").innerHTML = response; // Insere o conteúdo retornado
+                        }
+                    },
+                    error: function () {
+                        // Exibe mensagem de erro apenas para problemas reais de requisição
+                        document.getElementById("modalEmocoes").innerHTML = "<p>Erro ao carregar emoções e classes AEQ.</p>";
+                    }
+                });
 
                 const coletaUrl = `${M.cfg.wwwroot}/blocks/ifcare/view.php?coletaid=${coleta.id}`;
                 const modalColetaUrlElement = document.getElementById("modalColetaUrl");
@@ -793,7 +812,24 @@ function editarColeta() {
         exit;
     }
 
-
+    public function obter_emocoes_e_classes($coleta_id)
+    {
+        global $DB;
+    
+        $sql = "SELECT 
+                    classe.nome_classe, 
+                    GROUP_CONCAT(DISTINCT emocao.nome ORDER BY emocao.nome SEPARATOR ', ') AS emocoes
+                FROM {ifcare_associacao_classe_emocao_coleta} assoc
+                JOIN {ifcare_classeaeq} classe ON classe.id = assoc.classeaeq_id
+                JOIN {ifcare_emocao} emocao ON emocao.id = assoc.emocao_id
+                WHERE assoc.cadastrocoleta_id = :coleta_id
+                GROUP BY classe.id, classe.nome_classe
+                ORDER BY FIELD(classe.id, 1, 2, 3), classe.nome_classe";
+    
+        $params = ['coleta_id' => $coleta_id];
+        return $DB->get_records_sql($sql, $params);
+    }
+    
 
 }
 ?>
@@ -812,6 +848,7 @@ function editarColeta() {
         <p><strong>Notificar Aluno:</strong> <span id="modalNotificarAlunos"></span></p>
         <p><strong>Receber Alerta:</strong> <span id="modalReceberAlerta"></span></p>
         <p><strong>Descrição:</strong> <span id="modalColetaDescricao"></span></p>
+        <div id="modalEmocoes"></div>
 
 
         <div class="button-group">
