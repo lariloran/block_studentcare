@@ -17,7 +17,7 @@ $string['select_resource'] = 'Selecione um recurso ou atividade';
 $string['alertprogress'] = 'Receber alerta do andamento da coleta';
 $string['notify_students'] = 'Notificar os alunos';
 $string['submit'] = 'Salvar';
-$string['update'] = 'Salvar';
+$string['update'] = 'Atualizar';
 
 // Mensagens de validação e erro
 $string['endtimeerror'] = 'A hora de término deve ser posterior à hora de início.';
@@ -28,8 +28,15 @@ $string['endtime_before_start_error'] = 'A data de fim deve ser posterior à dat
 $string['coleta_atualizada_com_sucesso'] = 'A coleta foi atualizada com sucesso.';
 $string['erro_ao_atualizar_coleta'] = 'Erro ao atualizar os dados da coleta.';
 $string['erro_ao_atualizar_emocoes'] = 'Erro ao atualizar as emoções associadas.';
-$string['editcoleta'] = 'Editar Coleta';
 $string['coleta_atualizada_com_sucesso'] = 'A coleta foi atualizada com sucesso.';
+
+$string['editcoleta'] = 'Editar Coleta';
+$string['editcoleta_subtitle'] = 'Edição da coleta: {$a}';
+
+$string['coleta_limitada_aviso'] = 'A coleta foi iniciada em {$a->datainicio}. Algumas alterações estão limitadas. Para mais detalhes, retorne à <a href="{$a->listagemurl}">listagem de coletas</a>.';
+$string['coleta_atualizada_com_sucesso'] = 'A coleta foi atualizada com sucesso.';
+$string['returntolist'] = 'Voltar para a listagem';
+
 
 // Strings de gerenciamento e navegação
 $string['manage_collections'] = 'Gerenciar Coletas';

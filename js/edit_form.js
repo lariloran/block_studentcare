@@ -1,7 +1,5 @@
 require(["jquery"], function ($) {
   $(function () {
-    window.ifcare.toggleSaveButton();
-
     $("#id_classe_aeq").change(function () {
       var classeAeqId = $(this).val();
       if (classeAeqId) {

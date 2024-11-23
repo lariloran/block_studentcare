@@ -12,7 +12,6 @@ $PAGE->set_url(new moodle_url('/blocks/ifcare/register.php'));
 $PAGE->set_title('Adicionar Nova Coleta');
 $PAGE->set_heading('Nova Coleta');
 
-echo $OUTPUT->header();
 
 // Renderiza o formulário
 $mform = new register_form();
@@ -29,6 +28,8 @@ if ($mform->is_cancelled()) {
     $SESSION->mensagem_sucesso = get_string('mensagem_sucesso', 'block_ifcare');
     redirect(new moodle_url('/blocks/ifcare/index.php'));
 }
+
+echo $OUTPUT->header();
 
 // Exibe o formulário
 $mform->display();

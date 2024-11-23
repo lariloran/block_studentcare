@@ -46,7 +46,7 @@ class register_form extends moodleform
 
         $PAGE->set_context($context);
 
-        
+
         $microsegundos = explode(' ', microtime())[0] * 1000;
         $milissegundos = str_pad((int) $microsegundos, 3, '0', STR_PAD_LEFT);
 
@@ -128,9 +128,12 @@ class register_form extends moodleform
 
         $mform->addElement('advcheckbox', 'notify_students', get_string('notify_students', 'block_ifcare'), null, array('group' => 1), array(0, 1));
         $mform->setDefault('notify_students', 1);
-
+        // Botão de enviar
         $mform->addElement('submit', 'save', get_string('submit', 'block_ifcare'));
         $mform->setType('save', PARAM_ACTION);
+
+        // Botão de cancelar
+        $mform->addElement('cancel', 'cancel', get_string('cancel'));
 
         $mform->addElement('hidden', 'userid', $USER->id);
         $mform->setType('userid', PARAM_INT);
@@ -159,9 +162,6 @@ class register_form extends moodleform
     public function process_form($data)
     {
         global $DB, $SESSION, $COURSE, $PAGE;
-
-        $context = context_course::instance($COURSE->id);
-        $PAGE->set_context($context);
 
         // Sanitização de campos numéricos e texto
         $userid = clean_param($data->userid, PARAM_INT);
@@ -198,7 +198,7 @@ class register_form extends moodleform
             $emocaoSelecionadas = json_decode($data->emocao_selecionadas, true);
             if (!is_array($emocaoSelecionadas)) {
                 $SESSION->mensagem_erro = get_string('mensagem_erro', 'block_ifcare');
-                redirect(new moodle_url("/blocks/ifcare/index.php", ['courseid' => $courseid]));
+                redirect(new moodle_url("/blocks/ifcare/index.php"));
             }
 
             if (is_array($emocaoSelecionadas) && !empty($emocaoSelecionadas)) {
@@ -219,11 +219,12 @@ class register_form extends moodleform
             }
 
             $SESSION->mensagem_sucesso = get_string('mensagem_sucesso', 'block_ifcare');
-            redirect(new moodle_url("/blocks/ifcare/index.php?courseid=$courseid"));
         } else {
             $SESSION->mensagem_erro = get_string('mensagem_erro', 'block_ifcare');
-            redirect(new moodle_url("/blocks/ifcare/index.php?courseid=$courseid"));
         }
+
+        redirect(new moodle_url("/blocks/ifcare/index.php"));
+
     }
 }
 

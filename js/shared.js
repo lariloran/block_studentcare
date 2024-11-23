@@ -46,10 +46,10 @@ require(["jquery"], function ($) {
     window.ifcare = window.ifcare || {};
     var selecoes = {};
 
-    window.ifcare.toggleSaveButton = function toggleSaveButton() {
-      var selectedEmotions = $("#id_emocoes").val() || [];
-      $("#id_save").prop("disabled", selectedEmotions.length === 0);
-    };
+    // window.ifcare.toggleSaveButton = function toggleSaveButton() {
+    //   var selectedEmotions = $("#id_emocoes").val() || [];
+    //   $("#id_save").prop("disabled", selectedEmotions.length === 0);
+    // };
 
     window.ifcare.loadEmotions = function loadEmotions(classeAeqId) {
       if (classeAeqId) {
@@ -174,7 +174,6 @@ require(["jquery"], function ($) {
         $("#emocao_selecionadas").val(JSON.stringify(selecoes));
 
         window.ifcare.renderSelectedEmotions();
-        window.ifcare.toggleSaveButton();
       }
     };
 
@@ -461,11 +460,16 @@ require(["jquery"], function ($) {
       $("#start_timestamp_hidden").val(startTimestamp);
       $("#end_timestamp_hidden").val(endTimestamp);
     };
-
     require(["core/notification"], function (notification) {
       $("form.mform").on("submit", function (e) {
+        // Verifica se o botão de cancelar foi clicado
+        if ($(document.activeElement).attr("name") === "cancel") {
+          return true; // Permite que o formulário seja cancelado sem exibir a confirmação
+        }
+    
+        // Previne o envio padrão do formulário para exibir a confirmação
         e.preventDefault();
-
+    
         notification.confirm(
           "Confirmação",
           "Está pronto para salvar esta coleta de emoções?",
@@ -474,12 +478,15 @@ require(["jquery"], function ($) {
           function () {
             $("#setor").val($("#id_sectionid").val());
             $("#recurso").val($("#id_resourceid").val());
-            $("form.mform").off("submit").submit();
+            $("form.mform").off("submit").submit(); // Reenvia o formulário após a confirmação
           },
-          function () {}
+          function () {
+            // Ação ao cancelar no diálogo de confirmação (nada necessário aqui)
+          }
         );
       });
     });
+    
 
     $("#id_courseid").change(function () {
       var courseid = $(this).val();
@@ -496,6 +503,5 @@ require(["jquery"], function ($) {
 
     $("#id_emocoes").change(window.ifcare.updateSelectedEmotions);
 
-    window.ifcare.toggleSaveButton();
   });
 });

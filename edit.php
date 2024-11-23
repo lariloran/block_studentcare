@@ -1,5 +1,4 @@
 <?php
-
 require_once('../../config.php');
 require_once("$CFG->libdir/formslib.php");
 require_once(__DIR__ . '/edit_form.php');
@@ -26,11 +25,36 @@ $PAGE->set_context($context);
 
 // Configuração da página
 $PAGE->set_url(new moodle_url('/blocks/ifcare/edit.php', ['coletaid' => $coletaid]));
-$PAGE->set_title(get_string('editcoleta', 'block_ifcare'));
-$PAGE->set_heading(get_string('editcoleta', 'block_ifcare'));
+$PAGE->set_title(get_string('editcoleta', 'block_ifcare') . ": " . format_string($coleta->nome));
+//$PAGE->set_heading(get_string('editcoleta', 'block_ifcare') . " - " . format_string($coleta->nome));
+
+// Verifica se a coleta já foi iniciada
+$coletaIniciada = strtotime($coleta->data_inicio) <= time();
 
 // Cabeçalho da página
 echo $OUTPUT->header();
+
+// Exibe subtítulo ou informações adicionais
+echo html_writer::tag('h2', get_string('editcoleta_subtitle', 'block_ifcare', format_string($coleta->nome)), ['class' => 'coleta-subtitle']);
+
+// Exibe uma mensagem de aviso se a coleta já foi iniciada
+if ($coletaIniciada) {
+    echo $OUTPUT->notification(
+        get_string('coleta_limitada_aviso', 'block_ifcare', [
+            'listagemurl' => new moodle_url('/blocks/ifcare/index.php'),
+            'datainicio' => userdate(strtotime($coleta->data_inicio)),
+        ]),
+        'info'
+    );
+}
+
+// Botão de retorno à listagem
+echo $OUTPUT->single_button(
+    new moodle_url('/blocks/ifcare/index.php'),
+    get_string('returntolist', 'block_ifcare'),
+    'get',
+    ['class' => 'return-button']
+);
 
 // Renderiza o formulário de edição
 try {
@@ -58,5 +82,3 @@ try {
 
 // Rodapé da página
 echo $OUTPUT->footer();
-
-?>
