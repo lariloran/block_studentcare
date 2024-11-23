@@ -11,7 +11,15 @@ echo $OUTPUT->header();
 
 $selected_coletaid = optional_param('coletaid', '', PARAM_INT);
 
-$coletas = $DB->get_records_menu('ifcare_cadastrocoleta', ['usuario_id' => $USER->id], 'nome', 'id, nome');
+// Consulta SQL para buscar as coletas junto com o nome completo do curso
+$sql = "SELECT c.id AS coleta_id, c.nome AS coleta_nome, c.curso_id, course.fullname AS curso_nome
+        FROM {ifcare_cadastrocoleta} c
+        JOIN {course} course ON course.id = c.curso_id
+        WHERE c.usuario_id = :usuario_id
+        ORDER BY course.fullname, c.nome";
+
+$params = ['usuario_id' => $USER->id];
+$coletas = $DB->get_records_sql($sql, $params);
 ?>
 
 <!-- Combo para Seleção de Coleta -->
@@ -19,11 +27,26 @@ $coletas = $DB->get_records_menu('ifcare_cadastrocoleta', ['usuario_id' => $USER
     <label for="coletaSelect"><strong>Selecione uma Coleta:</strong></label>
     <select id="coletaSelect" name="coletaid">
         <option value="" <?php echo empty($selected_coletaid) ? 'selected' : ''; ?>>-- Escolha --</option>
-        <?php foreach ($coletas as $id => $nome): ?>
-            <option value="<?php echo $id; ?>" <?php echo ($id == $selected_coletaid) ? 'selected' : ''; ?>>
-                <?php echo $nome; ?>
+        <?php 
+        $last_course_name = null;
+        foreach ($coletas as $coleta): 
+            // Agrupa por nome do curso
+            if ($last_course_name !== $coleta->curso_nome): 
+                if ($last_course_name !== null): ?>
+                    </optgroup>
+                <?php endif; ?>
+                <optgroup label="<?php echo format_string($coleta->curso_nome); ?>">
+            <?php 
+            $last_course_name = $coleta->curso_nome;
+            endif; 
+            ?>
+            <option value="<?php echo $coleta->coleta_id; ?>" <?php echo ($coleta->coleta_id == $selected_coletaid) ? 'selected' : ''; ?>>
+                <?php echo format_string($coleta->coleta_nome); ?>
             </option>
         <?php endforeach; ?>
+        <?php if ($last_course_name !== null): ?>
+            </optgroup>
+        <?php endif; ?>
     </select>
 </div>
 
