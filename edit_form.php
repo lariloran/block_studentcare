@@ -134,8 +134,34 @@ class edit_form extends moodleform
             $mform->setDefault('classe_aeq', $this->coleta->classeaeq_id);
             $mform->addHelpButton('classe_aeq', 'aeqclasses', 'block_ifcare');
 
-            $selected_emotions = array_keys($this->coleta->emocoes);
+            
+            $selected_emotions = [];
 
+            // Obter as emoções associadas organizadas por classe
+            $emocao_associadas = $DB->get_records('ifcare_associacao_classe_emocao_coleta', [
+                'cadastrocoleta_id' => $this->coleta->id
+            ]);
+            
+            foreach ($emocao_associadas as $associacao) {
+                $classe_id = $associacao->classeaeq_id;
+                $emocao_id = $associacao->emocao_id;
+            
+                // Buscar o nome da emoção pelo ID
+                $emocao = $DB->get_record('ifcare_emocao', ['id' => $emocao_id], 'id, nome');
+            
+                if ($emocao) {
+                    if (!isset($selected_emotions[$classe_id])) {
+                        $selected_emotions[$classe_id] = [];
+                    }
+            
+                    // Adicionar ao array com os detalhes completos
+                    $selected_emotions[$classe_id][] = [
+                        'id' => $emocao->id,
+                        'name' => $emocao->nome
+                    ];
+                }
+            }
+            
             $emotions = $DB->get_records('ifcare_emocao');
             $emotion_options = [];
             foreach ($emotions as $emotion) {
@@ -151,8 +177,7 @@ class edit_form extends moodleform
 
             $mform->addElement('hidden', 'emocao_associadas', '', ['id' => 'emocao_associadas']);
             $mform->setType('emocao_associadas', PARAM_RAW);
-
-            $mform->setDefault('emocao_associadas', json_encode($selected_emotions));
+            $mform->setDefault('emocao_associadas', json_encode(value: $selected_emotions));
         }
 
         if (!$coletaIniciada) {

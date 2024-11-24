@@ -45,78 +45,87 @@ require(["jquery", "core/notification"], function ($, notification) {
 `);
     window.ifcare = window.ifcare || {};
     var selecoes = {};
-// Função para salvar seleções no localStorage
-window.ifcare.saveToLocalStorage = function saveToLocalStorage(classeId, emotions) {
-  const storedSelections = JSON.parse(localStorage.getItem("ifcareSelections")) || {};
-  storedSelections[classeId] = emotions;
-  localStorage.setItem("ifcareSelections", JSON.stringify(storedSelections));
+    // Função para salvar seleções no localStorage, vinculando ao ID da coleta atual
+    window.ifcare.saveToLocalStorage = function saveToLocalStorage(classeId, emotions) {
+      const storedSelections = JSON.parse(localStorage.getItem("ifcareSelections")) || {};
+      storedSelections[classeId] = emotions;
+  
+      localStorage.setItem("ifcareSelections", JSON.stringify(storedSelections));
+  };
+  
+
+  window.ifcare.getFromLocalStorage = function getFromLocalStorage() {
+    return JSON.parse(localStorage.getItem("ifcareSelections")) || {};
 };
 
-// Função para recuperar seleções do localStorage
-window.ifcare.getFromLocalStorage = function getFromLocalStorage() {
-  return JSON.parse(localStorage.getItem("ifcareSelections")) || {};
+
+window.ifcare.clearLocalStorage = function clearLocalStorage() {
+  localStorage.removeItem("ifcareSelections");
 };
 
-// Atualiza o campo oculto com o JSON das seleções
-window.ifcare.updateHiddenField = function updateHiddenField() {
-  const storedSelections = window.ifcare.getFromLocalStorage();
-  $("#emocao_selecionadas").val(JSON.stringify(storedSelections));
-};
+    // Atualiza o campo oculto com o JSON das seleções
+    window.ifcare.updateHiddenField = function updateHiddenField() {
+      const storedSelections = window.ifcare.getFromLocalStorage();
+      $("#emocao_selecionadas").val(JSON.stringify(storedSelections));
+    };
 
-// Atualiza o resumo visual das seleções
-window.ifcare.renderResumo = function renderResumo() {
-  const storedSelections = window.ifcare.getFromLocalStorage();
-  const emotionContainer = $("#emocoes-selecionadas");
-  emotionContainer.empty();
+    // Atualiza o resumo visual das seleções
+    window.ifcare.renderResumo = function renderResumo() {
+      const storedSelections = window.ifcare.getFromLocalStorage();
+      const emotionContainer = $("#emocoes-selecionadas");
+      emotionContainer.empty();
 
-  // Itera por todas as classes e emoções armazenadas
-  Object.keys(storedSelections).forEach(function (classeId) {
-    storedSelections[classeId].forEach(function (emocao) {
-      // Evita duplicatas no DOM
-      if (
-        !emotionContainer.find(
-          `.emotion-tag[data-id="${emocao.id}"][data-classe="${classeId}"]`
-        ).length
-      ) {
-        // Nome do balão: Nome da emoção + ID da classe
-        const tagText = `${emocao.name} - Classe ${classeId}`;
+      // Itera por todas as classes e emoções armazenadas
+      Object.keys(storedSelections).forEach(function (classeId) {
+        storedSelections[classeId].forEach(function (emocao) {
+          // Evita duplicatas no DOM
+          if (
+            !emotionContainer.find(
+              `.emotion-tag[data-id="${emocao.id}"][data-classe="${classeId}"]`
+            ).length
+          ) {
+            // Nome do balão: Nome da emoção + ID da classe
+            const tagText = `${emocao.name} - Classe ${classeId}`;
 
-        const tag = $("<div>")
-          .addClass("emotion-tag")
-          .attr("data-id", emocao.id)
-          .attr("data-classe", classeId)
-          .text(tagText);
+            const tag = $("<div>")
+              .addClass("emotion-tag")
+              .attr("data-id", emocao.id)
+              .attr("data-classe", classeId)
+              .text(tagText);
 
-        const closeButton = $("<span>")
-          .addClass("close-btn")
-          .text("×")
-          .on("click", function () {
-            // Remove a emoção do localStorage
-            const updatedSelections = window.ifcare.getFromLocalStorage();
-            updatedSelections[classeId] = updatedSelections[classeId].filter(
-              (e) => e.id !== emocao.id
-            );
+            const closeButton = $("<span>")
+              .addClass("close-btn")
+              .text("×")
+              .on("click", function () {
+                // Remove a emoção do localStorage
+                const updatedSelections = window.ifcare.getFromLocalStorage();
+                updatedSelections[classeId] = updatedSelections[
+                  classeId
+                ].filter((e) => e.id !== emocao.id);
 
-               // Desmarca a emoção no select múltiplo
-    $(`#id_emocoes option[value="${emocao.id}"]`).prop("selected", false);
-    
-            // Atualiza o localStorage e o campo oculto
-            localStorage.setItem(
-              "ifcareSelections",
-              JSON.stringify(updatedSelections)
-            );
-            window.ifcare.updateHiddenField();
+                // Desmarca a emoção no select múltiplo
+                $(`#id_emocoes option[value="${emocao.id}"]`).prop(
+                  "selected",
+                  false
+                );
 
-            // Remove o balão visual
-            tag.remove();
-          });
+                // Atualiza o localStorage e o campo oculto
+                localStorage.setItem(
+                  "ifcareSelections",
+                  JSON.stringify(updatedSelections)
+                );
+                window.ifcare.updateHiddenField();
 
-        tag.append(closeButton);
-        emotionContainer.append(tag);
-      }
-    });
-  });
-};
+                // Remove o balão visual
+                tag.remove();
+              });
+
+            tag.append(closeButton);
+            emotionContainer.append(tag);
+          }
+        });
+      });
+    };
 
     // Atualiza o objeto de seleções e o resumo ao mudar o select múltiplo
     $("#id_emocoes").on("change", function () {
@@ -186,69 +195,76 @@ window.ifcare.renderResumo = function renderResumo() {
         });
       }
     };
-    window.ifcare.loadEmotionsEdit = function loadEmotions(classeAeqId) {
+    window.ifcare.loadEmotionsEdit = function loadEmotionsEdit(classeAeqId) {
       if (classeAeqId) {
-        $.ajax({
-          url: M.cfg.wwwroot + "/blocks/ifcare/get_emotions.php",
-          method: "GET",
-          data: { classeaeqid: classeAeqId },
-          success: function (response) {
-            var emotions = JSON.parse(response).emotions;
-
-            // Limpa as opções do select
-            $("#id_emocoes").empty();
-
-            // Obtém as emoções associadas do campo oculto (IDs de emoções salvas para essa coleta)
-            var associatedEmotions = JSON.parse(
-              $("#emocao_associadas").val() || "[]"
-            );
-
-            if (Array.isArray(emotions) && emotions.length > 0) {
-              emotions.forEach(function (emotion) {
-                var option = $("<option>", {
-                  value: emotion.value,
-                  text: emotion.name,
-                });
-
-                if (associatedEmotions.includes(parseInt(emotion.value))) {
-                  option.prop("selected", true);
-                }
-
-                $("#id_emocoes").append(option);
-              });
-
-              // Define as seleções armazenadas no frontend, se existirem
-              if (classeAeqId in selecoes) {
-                $("#id_emocoes").val(selecoes[classeAeqId]);
-              }
-
-              // Garante que as seleções marcadas sejam refletidas no campo visual
-              $("#id_emocoes").trigger("change");
-            } else {
-              $("#id_emocoes").append(
-                $("<option>", {
-                  value: "",
-                  text: "Nenhuma emoção disponível",
-                })
-              );
-            }
-
-          },
-          error: function () {
-            console.error("Erro ao carregar as emoções.");
-            $("#id_emocoes")
-              .empty()
-              .append(
-                $("<option>", {
-                  value: "",
-                  text: "Erro ao carregar emoções",
-                })
-              );
-          },
-        });
+          $.ajax({
+              url: M.cfg.wwwroot + "/blocks/ifcare/get_emotions.php",
+              method: "GET",
+              data: { classeaeqid: classeAeqId },
+              success: function (response) {
+                  var emotions = JSON.parse(response).emotions;
+  
+                  // Limpa as opções do select
+                  $("#id_emocoes").empty();
+  
+                  // Obtém as emoções associadas do campo oculto (agora agrupadas por classe)
+                  var associatedEmotions = JSON.parse(
+                      $("#emocao_associadas").val() || "{}"
+                  );
+  
+                  // Garante que é um objeto válido
+                  if (typeof associatedEmotions !== "object") {
+                      associatedEmotions = {};
+                  }
+  
+                  // Converte as emoções associadas da classe atual em um array de IDs
+                  var associatedEmotionIds = (associatedEmotions[classeAeqId] || []).map(
+                      function (emotion) {
+                          return parseInt(emotion.id);
+                      }
+                  );
+  
+                  if (Array.isArray(emotions) && emotions.length > 0) {
+                      emotions.forEach(function (emotion) {
+                          var option = $("<option>", {
+                              value: emotion.value,
+                              text: emotion.name,
+                          });
+  
+                          // Marca como selecionado se o ID estiver nos associados
+                          if (associatedEmotionIds.includes(parseInt(emotion.value))) {
+                              option.prop("selected", true);
+                          }
+  
+                          $("#id_emocoes").append(option);
+                      });
+  
+                      // Garante que as seleções marcadas sejam refletidas no campo visual
+                      $("#id_emocoes").trigger("change");
+                  } else {
+                      $("#id_emocoes").append(
+                          $("<option>", {
+                              value: "",
+                              text: "Nenhuma emoção disponível",
+                          })
+                      );
+                  }
+              },
+              error: function () {
+                  console.error("Erro ao carregar as emoções.");
+                  $("#id_emocoes")
+                      .empty()
+                      .append(
+                          $("<option>", {
+                              value: "",
+                              text: "Erro ao carregar emoções",
+                          })
+                      );
+              },
+          });
       }
-    };
-
+  };
+  
     window.ifcare.loadSections = function loadSections(courseid) {
       if (courseid) {
         $.ajax({
@@ -552,6 +568,5 @@ window.ifcare.renderResumo = function renderResumo() {
       var sectionid = $(this).val();
       window.ifcare.loadResources(courseid, sectionid);
     });
-
   });
 });
