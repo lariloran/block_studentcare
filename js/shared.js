@@ -74,58 +74,67 @@ window.ifcare.clearLocalStorage = function clearLocalStorage() {
       const storedSelections = window.ifcare.getFromLocalStorage();
       const emotionContainer = $("#emocoes-selecionadas");
       emotionContainer.empty();
-
+  
+      // Mapeamento entre IDs das classes AEQ e seus nomes
+      const classeAeqMap = {
+          1: "AUL",
+          2: "APR",
+          3: "AVA"
+      };
+  
       // Itera por todas as classes e emoções armazenadas
       Object.keys(storedSelections).forEach(function (classeId) {
-        storedSelections[classeId].forEach(function (emocao) {
-          // Evita duplicatas no DOM
-          if (
-            !emotionContainer.find(
-              `.emotion-tag[data-id="${emocao.id}"][data-classe="${classeId}"]`
-            ).length
-          ) {
-            // Nome do balão: Nome da emoção + ID da classe
-            const tagText = `${emocao.name} - Classe ${classeId}`;
-
-            const tag = $("<div>")
-              .addClass("emotion-tag")
-              .attr("data-id", emocao.id)
-              .attr("data-classe", classeId)
-              .text(tagText);
-
-            const closeButton = $("<span>")
-              .addClass("close-btn")
-              .text("×")
-              .on("click", function () {
-                // Remove a emoção do localStorage
-                const updatedSelections = window.ifcare.getFromLocalStorage();
-                updatedSelections[classeId] = updatedSelections[
-                  classeId
-                ].filter((e) => e.id !== emocao.id);
-
-                // Desmarca a emoção no select múltiplo
-                $(`#id_emocoes option[value="${emocao.id}"]`).prop(
-                  "selected",
-                  false
-                );
-
-                // Atualiza o localStorage e o campo oculto
-                localStorage.setItem(
-                  "ifcareSelections",
-                  JSON.stringify(updatedSelections)
-                );
-                window.ifcare.updateHiddenField();
-
-                // Remove o balão visual
-                tag.remove();
-              });
-
-            tag.append(closeButton);
-            emotionContainer.append(tag);
-          }
-        });
+          storedSelections[classeId].forEach(function (emocao) {
+              // Evita duplicatas no DOM
+              if (
+                  !emotionContainer.find(
+                      `.emotion-tag[data-id="${emocao.id}"][data-classe="${classeId}"]`
+                  ).length
+              ) {
+                  // Nome do balão: Nome da emoção + Nome da classe
+                  const classeName = classeAeqMap[classeId] || `Classe ${classeId}`;
+                  const tagText = `${emocao.name} - ${classeName}`;
+  
+                  const tag = $("<div>")
+                      .addClass("emotion-tag")
+                      .attr("data-id", emocao.id)
+                      .attr("data-classe", classeId)
+                      .text(tagText);
+  
+                  const closeButton = $("<span>")
+                      .addClass("close-btn")
+                      .text("×")
+                      .on("click", function () {
+                          // Remove a emoção do localStorage
+                          const updatedSelections = window.ifcare.getFromLocalStorage();
+                          updatedSelections[classeId] = updatedSelections[classeId].filter(
+                              (e) => e.id !== emocao.id
+                          );
+  
+                          // Desmarca a emoção no select múltiplo
+                          $(`#id_emocoes option[value="${emocao.id}"]`).prop(
+                              "selected",
+                              false
+                          );
+  
+                          // Atualiza o localStorage e o campo oculto
+                          localStorage.setItem(
+                              "ifcareSelections",
+                              JSON.stringify(updatedSelections)
+                          );
+                          window.ifcare.updateHiddenField();
+  
+                          // Remove o balão visual
+                          tag.remove();
+                      });
+  
+                  tag.append(closeButton);
+                  emotionContainer.append(tag);
+              }
+          });
       });
-    };
+  };
+  
 
     // Atualiza o objeto de seleções e o resumo ao mudar o select múltiplo
     $("#id_emocoes").on("change", function () {
