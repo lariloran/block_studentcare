@@ -597,82 +597,104 @@ function mostrarTextoInicial(pergunta, emocoesDaClasse, tooltipsDaClasse) {
     let feedbackEnviado = false;
 
     function avancarPergunta() {
-        let pergunta = perguntas[perguntaAtual];
-        let tituloAtual = document.getElementById('titulo-coleta').innerText;
+    let pergunta = perguntas[perguntaAtual];
+    let tituloAtual = document.getElementById('titulo-coleta').innerText;
 
-        if (tituloAtual.includes('As perguntas a seguir referem-se')) {
+    if (tituloAtual.includes('As perguntas a seguir referem-se')) {
+        perguntaAtual++;
+        mostrarPergunta(perguntaAtual);
+        return;
+    }
+
+    if (respostasSelecionadas[pergunta.id] !== undefined) {
+        if (perguntaAtual < totalPerguntas - 1) {
             perguntaAtual++;
             mostrarPergunta(perguntaAtual);
-            return;
-        }
-
-        if (respostasSelecionadas[pergunta.id] !== undefined) {
-            if (perguntaAtual < totalPerguntas - 1) {
-                perguntaAtual++;
-                mostrarPergunta(perguntaAtual);
-                contadorPerguntas++; // Incrementa o contador para a próxima pergunta
-            } else {
-                // Finaliza coleta
-                enviarRespostas();
-                coletaConcluida = true;
-                abrirModal('modal-sucesso');
-            }
+            contadorPerguntas++;
         } else {
-            abrirModal('modal-erro');
+            // Finaliza coleta e exibe modal de feedback
+            enviarRespostas().then(() => {
+                console.log("Respostas enviadas com sucesso.");
+                mostrarFeedback();
+            }).catch(error => {
+                console.error("Erro ao finalizar coleta:", error);
+                abrirModal('modal-erro');
+            });
         }
+    } else {
+        abrirModal('modal-erro');
+    }
+}
+
+function mostrarFeedback() {
+    // Oculta o quiz
+    const quizContainer = document.getElementById('quiz-container');
+    if (quizContainer) {
+        quizContainer.style.display = 'none';
     }
 
-
-    function enviarRespostas() {
-        const dadosRespostas = {
-            coleta_id: <?php echo $coletaid; ?>,
-            usuario_id: <?php echo $userid; ?>,
-            respostas: respostasSelecionadas
-        };
-
-        fetch(window.location.href, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(dadosRespostas)
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                } else {
-                    console.error('Erro ao salvar as respostas:', data.error);
-                }
-            })
-            .catch(error => console.error('Erro ao enviar as respostas:', error));
+    // Exibe o modal de feedback
+    const feedbackContainer = document.getElementById('feedback-container');
+    if (feedbackContainer) {
+        feedbackContainer.style.display = 'block';
+    } else {
+        console.error("Container de feedback não encontrado.");
     }
+}
+
+
+
+function enviarRespostas() {
+    const dadosRespostas = {
+        coleta_id: <?php echo $coletaid; ?>,
+        usuario_id: <?php echo $userid; ?>,
+        respostas: respostasSelecionadas
+    };
+
+    // Retorna a Promise gerada pelo fetch
+    return fetch(window.location.href, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dadosRespostas)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (!data.success) {
+            throw new Error(data.error || "Erro desconhecido");
+        }
+    });
+}
 
     function enviarFeedback() {
-        const feedbackText = document.getElementById('feedback-text').value;
+    const feedbackText = document.getElementById('feedback-text').value;
 
-        const dadosFeedback = {
-            coleta_id: <?php echo $coletaid; ?>,
-            usuario_id: <?php echo $userid; ?>,
-            feedback: feedbackText || ""
-        };
+    const dadosFeedback = {
+        coleta_id: <?php echo $coletaid; ?>,
+        usuario_id: <?php echo $userid; ?>,
+        feedback: feedbackText || ""
+    };
 
-        fetch('feedback.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(dadosFeedback)
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    abrirModal('modal-sucesso');
-                } else {
-                    console.error('Erro ao enviar o feedback:', data.error);
-                }
-            })
-            .catch(error => console.error('Erro ao enviar o feedback:', error));
-    }
+    fetch('feedback.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dadosFeedback)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log("Feedback enviado com sucesso.");
+            irParaHome(); // Redireciona para o curso após o feedback
+        } else {
+            console.error("Erro ao enviar o feedback:", data.error);
+        }
+    })
+    .catch(error => console.error("Erro ao enviar o feedback:", error));
+}
+
 
 
     function abrirModal(modalId) {
