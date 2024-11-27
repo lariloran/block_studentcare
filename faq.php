@@ -7,7 +7,7 @@ global $PAGE, $OUTPUT;
 $courseid = optional_param('courseid', 0, PARAM_INT);
 $context = context_system::instance();
 $PAGE->set_context($context);
-$PAGE->set_url('/blocks/ifcare/faq.php', array('courseid' => $courseid));
+$PAGE->set_url('/blocks/ifcare/faq.php');
 $PAGE->set_title(get_string('faq', 'block_ifcare'));
 $PAGE->set_pagelayout('standard');
 
@@ -91,28 +91,32 @@ echo '<style>
         font-weight: bold;
         color: #333;
     }
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-    }
-    .modal-content {
-        background-color: white;
-        margin: 10% auto;
-        padding: 30px;
-        border-radius: 15px;
-        width: 80%;
-        max-width: 600px;
-        border: 1px solid #ddd;
-        box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
-        max-height: 80vh;
-        overflow-y: auto;
-    }
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    overflow-y: auto; /* Permite scroll para toda a janela, se necessário */
+    padding-top: 20px; /* Adiciona um espaçamento superior geral */
+}
+
+
+.modal-content {
+    position: relative;
+    background-color: white;
+    margin: 50px auto; /* Define uma margem superior mínima */
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%; /* Aumenta a largura para ocupar 90% da tela */
+    max-width: 800px; /* Aumenta a largura máxima */
+    max-height: 90vh; /* Limita a altura máxima */
+    overflow-y: auto; /* Adiciona scroll para conteúdo longo */
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+}
     .modal-content h2 {
         font-size: 1.8em;
         color: #333;
@@ -156,32 +160,128 @@ echo html_writer::end_div();
 
 echo html_writer::start_div('faq-topics');
 
-echo html_writer::start_div('faq-topic', array('onclick' => 'openModal("O que é o AEQ?", "<p>O <strong>AEQ (Achievement Emotions Questionnaire)</strong> é um instrumento desenvolvido para medir as emoções acadêmicas dos alunos. Ele está estruturado em três classes principais:</p><ul><li><em>Emoções relacionadas às aulas</em>: Refere-se a como os alunos se sentem durante as aulas, incluindo emoções como <strong>diversão</strong> e <strong>tédio</strong>.</li><li><em>Emoções relacionadas às provas</em>: Incluem emoções como <strong>ansiedade</strong> e <strong>orgulho</strong>, e são ligadas à preparação e realização de avaliações.</li><li><em>Emoções relacionadas ao aprendizado</em>: Emoções como <strong>esperança</strong> e <strong>frustração</strong> surgem durante o processo de aprendizado.</li></ul><p>Cada classe é composta por um conjunto de emoções, incluindo diversão, esperança, orgulho, raiva, ansiedade, vergonha, tédio, e desânimo. O objetivo do AEQ é entender como essas emoções influenciam o envolvimento e desempenho dos estudantes.</p>")'));
-echo html_writer::tag('div', '😄', array('class' => 'faq-topic-icon'));
-echo html_writer::tag('div', 'O que é o AEQ?', array('class' => 'faq-topic-title'));
+echo html_writer::start_div('faq-topic', array(
+    'onclick' => 'openModal("O que é o IFCare?", `
+    <div class="modal-header">
+        <h2><i class="fas fa-info-circle"></i> O que é o IFCare?</h2>
+    </div>
+    <div class="modal-content-body">
+        <p>O <strong>IFCare</strong> é um plugin desenvolvido para a plataforma Moodle com o objetivo de <em>monitorar as emoções acadêmicas</em> dos estudantes. Ele utiliza como base o <strong>AEQ (Achievement Emotions Questionnaire)</strong>, um instrumento amplamente reconhecido na avaliação de emoções relacionadas ao desempenho acadêmico.</p>
+        <h3><i class="fas fa-tools"></i> Funcionalidades Principais</h3>
+        <ul>
+            <li>Permite que professores criem <strong>coletas de emoções</strong>, selecionando classes e emoções específicas.</li>
+            <li>Oferece aos estudantes uma interface interativa para responder às coletas usando uma escala Likert com emojis.</li>
+            <li>Gera gráficos interativos para os professores visualizarem os dados coletados, auxiliando na análise das emoções acadêmicas.</li>
+            <li>Facilita a exportação dos dados em formatos como CSV e JSON para análises externas.</li>
+        </ul>
+        <h3><i class="fas fa-bullseye"></i> Objetivo</h3>
+        <p>O principal objetivo do <strong>IFCare</strong> é auxiliar instituições de ensino a identificar e monitorar as emoções acadêmicas dos estudantes, contribuindo para intervenções pedagógicas mais personalizadas e assertivas, visando melhorar o desempenho acadêmico e reduzir problemas como desmotivação e evasão escolar.</p>
+        <h3><i class="fas fa-graduation-cap"></i> Benefícios</h3>
+        <ul>
+            <li>Apoio no <strong>planejamento pedagógico</strong> baseado em dados emocionais dos alunos.</li>
+            <li>Melhoria no <strong>engajamento e bem-estar</strong> dos estudantes.</li>
+            <li>Ferramenta de fácil integração ao Moodle, sendo acessível a professores e administradores.</li>
+        </ul>
+    </div>
+    `)'
+));
+echo html_writer::tag('div', '🤖', array('class' => 'faq-topic-icon'));
+echo html_writer::tag('div', 'O que é o IFCare?', array('class' => 'faq-topic-title'));
 echo html_writer::end_div();
 
-echo html_writer::start_div('faq-topic', array('onclick' => 'openModal("Qual o propósito e finalidade do AEQ?", "<p>O propósito do <strong>AEQ</strong> é medir e compreender as emoções acadêmicas dos estudantes, de forma a melhorar o ambiente de aprendizagem e o desempenho acadêmico. As emoções acadêmicas podem afetar diretamente o envolvimento e a motivação dos estudantes, sendo fundamentais para ajustar estratégias pedagógicas que favoreçam um ambiente positivo e produtivo.</p><p><strong>Referências utilizadas no desenvolvimento do projeto:</strong></p><ul><li>ABREU E SILVA, F. Emoções, Autoconceito, Motivação e Desempenho Acadêmico em Crianças do 3º e 4º anos de escolaridade. 2015.</li><li>BZUNECK, J. A. Emoções acadêmicas, autorregulação e seu impacto sobre motivação e aprendizagem. ETD-Educação Temática Digital, 2018.</li><li>PEKRUN, R. The Control-Value Theory of Achievement Emotions: Assumptions, Corollaries, and Implications for Educational Research and Practice. 2006.</li><li>COBO-RENDÓN, R. et al. Academic emotions, college adjustment, and dropout intention in university students. Frontiers in Education, 2023.</li></ul>")'));
-echo html_writer::tag('div', '😉', array('class' => 'faq-topic-icon'));
-echo html_writer::tag('div', 'Qual o propósito e finalidade do AEQ?', array('class' => 'faq-topic-title'));
-echo html_writer::end_div();
+echo html_writer::start_div('faq-topic', array('onclick' => 'openModal("Como utilizar o plugin IFCare?", `
+    <p>O plugin <strong>IFCare</strong> é uma ferramenta poderosa integrada ao Moodle, que permite aos professores coletar, monitorar e analisar as emoções acadêmicas de forma interativa e eficiente. Aqui está um guia para utilizá-lo:</p>
+    <h3>👩‍🏫 Passos para o professor cadastrar uma coleta:</h3>
+    <ul>
+        <li><strong>📋 Acesse o painel do plugin IFCare:</strong> Localize o plugin diretamente no painel do Moodle para facilitar a gestão centralizada, sem necessidade de instalação em cursos específicos.</li>
+        <li><strong>📝 Preencha as informações da coleta:</strong> Adicione o nome da coleta, datas de início e fim, descrição, e defina se deseja enviar notificações automáticas aos alunos.</li>
+        <li><strong>📚 Escolha o curso, seção e recurso:</strong> Vincule a coleta a um curso e selecione uma seção específica. Caso necessário, associe a coleta a um recurso existente ou crie um novo recurso do tipo URL.</li>
+        <li><strong>🎭 Selecione as classes e emoções do AEQ:</strong> Utilize o formulário para escolher as classes de emoções acadêmicas (aulas, estudo, provas) e emoções específicas. Essas seleções definirão as perguntas que os alunos responderão.</li>
+        <li><strong>🔔 Configure notificações e alertas:</strong> Ative notificações automáticas para alunos e receba alertas sobre o andamento da coleta.</li>
+    </ul>
+    <h3>📊 Após o cadastro da coleta:</h3>
+    <ul>
+        <li><strong>📤 Exportação de dados:</strong> Os dados das respostas podem ser exportados em formatos como JSON e CSV para análise mais detalhada.</li>
+        <li><strong>📈 Visualização de gráficos:</strong> O professor pode acessar relatórios interativos com gráficos para interpretar os dados coletados e ajustar estratégias pedagógicas conforme necessário.</li>
+        <li><strong>❌ Exclusão de coletas:</strong> Caso a coleta não seja mais necessária, o professor pode excluí-la diretamente pelo painel do plugin.</li>
+    </ul>
+    <h3>👨‍🎓 Para os alunos:</h3>
+    <ul>
+        <li><strong>🔔 Receba notificações personalizadas:</strong> Os alunos são notificados via e-mail e no Moodle sobre as coletas disponíveis.</li>
+        <li><strong>📝 Responda às coletas:</strong> As perguntas são exibidas de forma interativa em uma escala Likert de 1 a 5, com base nas classes e emoções selecionadas pelo professor.</li>
+        <li><strong>📜 Aceite ou recuse o TCLE:</strong> Antes de responder às perguntas, os alunos devem aceitar ou recusar o Termo de Consentimento Livre e Esclarecido (TCLE).</li>
+    </ul>
+    <h3>📘 Recursos adicionais:</h3>
+    <ul>
+        <li><strong>📖 Manual do AEQ:</strong> O plugin disponibiliza o <a href=' . new moodle_url('/blocks/ifcare/manual_aeq.php') . '>Manual AEQ</a>, que fornece detalhes sobre as classes, emoções e perguntas do AEQ.</li>
+        <li><strong>🌐 Criação automática de recursos:</strong> Após o cadastro, o plugin cria automaticamente um recurso do tipo URL vinculado à seção escolhida pelo professor, facilitando o acesso dos alunos.</li>
+        <li><strong>📊 Gráficos e relatórios:</strong> Dados das respostas são exibidos em gráficos interativos para facilitar a análise.</li>
+    </ul>
+    <p>O plugin IFCare foi projetado para ser intuitivo e eficiente, otimizando o processo de coleta e análise de emoções acadêmicas. Ele auxilia na criação de estratégias pedagógicas baseadas em dados reais, promovendo um ambiente de aprendizado mais saudável e adaptado às necessidades dos alunos.</p>
+`)'));
 
-echo html_writer::start_div('faq-topic', array('onclick' => 'openModal("Como utilizar o plugin IFCare?", "<p>O plugin <strong>IFCare</strong> é uma ferramenta integrada ao Moodle que possibilita o cadastro de coletas de emoções acadêmicas. Para cadastrar uma coleta, o professor deve:</p><ul><li>Acessar o plugin no curso desejado e iniciar o cadastro.</li><li>Fornecer informações básicas, como o nome da coleta, datas de início e fim, descrição e, opcionalmente, escolher se deseja notificar os alunos.</li><li>Selecionar o curso, seção e recurso onde a coleta será realizada.</li><li>Escolher as classes de emoções do AEQ e as emoções específicas que deseja investigar. Essas informações são selecionadas através do formulário.</li></ul><p>Os alunos devem responder às coletas utilizando uma escala <em>Likert</em> de 1 a 5, fornecendo insights sobre suas emoções relacionadas à disciplina.</p>")'));
-echo html_writer::tag('div', '😏', array('class' => 'faq-topic-icon'));
+
+echo html_writer::tag('div', '📋', array('class' => 'faq-topic-icon'));
 echo html_writer::tag('div', 'Como utilizar o plugin IFCare?', array('class' => 'faq-topic-title'));
 echo html_writer::end_div();
 
-echo html_writer::start_div('faq-topic', array('onclick' => 'openModal("O que é a Teoria de Controle-Valorização?", "<p>A <strong>Teoria de Controle-Valorização</strong>, proposta por <em>Pekrun</em>, serve como base para a construção do AEQ. Essa teoria sugere que as emoções acadêmicas estão relacionadas a dois fatores principais:</p><ul><li><strong>Controle percebido</strong> sobre as atividades e desempenho acadêmico.</li><li><strong>Valorização</strong> atribuída ao sucesso ou fracasso nessas atividades.</li></ul><p>Esses dois fatores determinam as emoções dos alunos, que, por sua vez, afetam diretamente sua motivação, engajamento e resultados acadêmicos. Emoções positivas, como <strong>orgulho</strong> e <strong>diversão</strong>, estão associadas a maiores níveis de engajamento e desempenho, enquanto emoções negativas, como <strong>ansiedade</strong> e <strong>tédio</strong>, podem ter o efeito oposto.</p>")'));
-echo html_writer::tag('div', '😊', array('class' => 'faq-topic-icon'));
-echo html_writer::tag('div', 'O que é a Teoria de Controle-Valorização?', array('class' => 'faq-topic-title'));
-echo html_writer::end_div();
 
-echo html_writer::start_div('faq-topic', array('onclick' => 'openModal("Principais funcionalidades do plugin IFCare", "<p>O plugin <strong>IFCare</strong> oferece diversas funcionalidades úteis para professores e administradores:</p><ul><li><strong>Cadastro de coletas de emoções</strong>: Professores podem criar coletas específicas para suas disciplinas, permitindo um entendimento detalhado sobre as emoções dos alunos.</li><li><strong>Escolha de classes e emoções</strong>: Professores podem selecionar quais classes do AEQ e emoções específicas desejam monitorar.</li><li><strong>Notificação automática</strong>: Após a criação de uma coleta, o sistema notifica os alunos através de e-mail e notificações no Moodle, garantindo que todos estejam cientes da nova atividade.</li><li><strong>Visualização de resultados</strong>: Os dados coletados são apresentados ao professor em forma de relatórios e gráficos, ajudando a identificar padrões emocionais e ajustar estratégias pedagógicas conforme necessário.</li><li><strong>Exportação de dados</strong>: As respostas dos alunos podem ser exportadas em formatos como JSON e CSV, para uma análise mais aprofundada ou arquivamento.</li></ul>")'));
-echo html_writer::tag('div', '😁', array('class' => 'faq-topic-icon'));
+echo html_writer::start_div('faq-topic', array(
+    'onclick' => 'openModal("Principais funcionalidades do plugin IFCare", `
+    <div class="modal-header">
+        <h2><i class="fas fa-tools"></i> Principais funcionalidades do plugin IFCare</h2>
+    </div>
+    <div class="modal-content-body">
+        <p>O <strong>IFCare</strong> é um plugin desenvolvido para facilitar o monitoramento das emoções acadêmicas no Moodle, trazendo diversas funcionalidades pensadas para professores e administradores. Confira algumas das principais:</p>
+        <ul>
+            <li><strong>📘 Manual AEQ:</strong> O plugin inclui acesso ao <a href="/blocks/ifcare/manual_aeq.php" target="_blank">Manual AEQ</a>, que explica detalhadamente o embasamento teórico e a estrutura do <em>Achievement Emotions Questionnaire (AEQ)</em>.</li>
+            <li><strong>✍️ Cadastro e edição de coletas:</strong> Os professores podem criar novas coletas específicas para suas disciplinas, editar configurações de coletas já existentes e escolher quais classes e emoções do AEQ serão trabalhadas.</li>
+            <li><strong>🗑️ Exclusão de coletas:</strong> Caso necessário, coletas podem ser facilmente removidas pelo professor.</li>
+            <li><strong>🔗 Vinculação de recursos:</strong> Durante o cadastro, é possível associar um recurso específico de uma seção da disciplina à coleta, integrando ainda mais o conteúdo da aula com a coleta.</li>
+            <li><strong>🌐 Criação automática de recurso URL:</strong> Para cada coleta criada, o plugin adiciona automaticamente um recurso do tipo URL na seção escolhida pelo professor.</li>
+            <li><strong>📬 Notificações e e-mails personalizados:</strong> Após o cadastro de uma coleta, notificações e e-mails customizados para a disciplina são enviados automaticamente aos alunos.</li>
+            <li><strong>📝 TCLE interativo:</strong> Antes de responder à coleta, o aluno visualiza um Termo de Consentimento Livre e Esclarecido (TCLE) e pode aceitá-lo ou recusá-lo.</li>
+            <li><strong>🤖 Respostas interativas:</strong> As questões do AEQ são apresentadas de forma interativa e baseadas nas classes e emoções escolhidas pelo professor.</li>
+            <li><strong>📊 Monitoramento e alertas:</strong> O professor pode acompanhar o progresso da coleta em tempo real e receber alertas sobre o andamento.</li>
+            <li><strong>📈 Visualização de resultados:</strong> Os dados coletados são exibidos em gráficos interativos e relatórios, permitindo uma análise prática e visual das emoções dos alunos.</li>
+            <li><strong>📂 Exportação de dados:</strong> Respostas dos alunos podem ser exportadas em formatos como JSON e CSV, facilitando análises externas ou arquivamento.</li>
+            <li><strong>📋 Gerenciamento centralizado:</strong> Instalado no painel do Moodle, o plugin oferece um gerenciamento simplificado e integrado, sem a necessidade de instalá-lo separadamente em cada curso.</li>
+        </ul>
+        <p>Essas funcionalidades tornam o <strong>IFCare</strong> uma ferramenta poderosa e prática para compreender as emoções acadêmicas dos alunos e melhorar o processo de ensino e aprendizagem.</p>
+    </div>
+    `)'
+));
+echo html_writer::tag('div', '🔧', array('class' => 'faq-topic-icon'));
 echo html_writer::tag('div', 'Principais funcionalidades do plugin IFCare', array('class' => 'faq-topic-title'));
 echo html_writer::end_div();
 
+
+
+echo html_writer::start_div('faq-topic', array(
+    'onclick' => 'openModal("Quem desenvolveu o IFCare?", `
+    <div class="modal-header">
+        <h2><i class="fas fa-user-graduate"></i> Quem desenvolveu o IFCare?</h2>
+    </div>
+    <div class="modal-content-body">
+        <p>O <strong>IFCare</strong> é um projeto desenvolvido como Trabalho de Conclusão de Curso (TCC) pelo aluno <strong>Rafael Lariloran Costa Rodrigues</strong> (<a href="http://lattes.cnpq.br/1281350600184120" target="_blank">Lattes</a>), estudante do curso superior em <em>Sistemas para Internet</em> do <strong>Instituto Federal de Educação, Ciência e Tecnologia do Rio Grande do Sul – Campus Porto Alegre (IFRS)</strong>.</p>
+        <p>O artigo referente ao projeto está disponível no <a href="https://repositorio.ifrs.edu.br/handle/123456789/935" target="_blank">repositório do IFRS Campus Porto Alegre</a>.</p>
+        <h3><i class="fas fa-chalkboard-teacher"></i> Orientação</h3>
+        <p>O projeto foi orientado pela <strong>Profa. Dra. Márcia Häfele Islabão Franco</strong> (<a href="http://lattes.cnpq.br/2551214616925074" target="_blank">Lattes</a>) e coorientado pelo <strong>Prof. Dr. Marcelo Augusto Rauh Schmitt</strong> (<a href="http://lattes.cnpq.br/1958021878056697" target="_blank">Lattes</a>), ambos docentes do IFRS Porto Alegre.</p>
+        <h3><i class="fas fa-envelope"></i> Contato</h3>
+        <p>Se você encontrou algum <strong>bug, problema ou possui dúvidas</strong>, envie um e-mail para:</p>
+        <ul>
+            <li><a href="mailto:lariloran2@gmail.com">lariloran2@gmail.com</a></li>
+        </ul>
+    </div>
+    `)'
+));
+echo html_writer::tag('div', '🧑🏾‍💻', array('class' => 'faq-topic-icon'));
+echo html_writer::tag('div', 'Quem desenvolveu o IFCare?', array('class' => 'faq-topic-title'));
 echo html_writer::end_div();
+
+
+
+
 echo html_writer::end_div();
 
 echo '<div id="emotionModal" class="modal">
@@ -193,7 +293,6 @@ echo '<div id="emotionModal" class="modal">
 </div>';
 
 echo html_writer::script('function openModal(title, description) {
-    document.getElementById("modalTitle").innerText = title;
     document.getElementById("modalDescription").innerHTML = description;
     document.getElementById("emotionModal").style.display = "block";
 }
