@@ -97,16 +97,22 @@ class collection_manager
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.5); /* Fundo semi-transparente */
+    background-color: rgba(0, 0, 0, 0.5);
+    overflow-y: auto; /* Permite scroll para toda a janela, se necessário */
+    padding-top: 20px; /* Adiciona um espaçamento superior geral */
 }
 
 .modal-content {
-    width: 90%;
-    max-width: 600px;
-    margin: 10% auto;
-    padding: 20px;
-    border-radius: 10px;
+    position: relative;
+    background-color: white;
+    margin: 50px auto; /* Define uma margem superior mínima */
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%; /* Aumenta a largura para ocupar 90% da tela */
+    max-width: 800px; /* Aumenta a largura máxima */
+    max-height: 90vh; /* Limita a altura máxima */
+    overflow-y: auto; /* Adiciona scroll para conteúdo longo */
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
 }
 
 .modal-content h2 {

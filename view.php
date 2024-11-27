@@ -367,7 +367,7 @@ $perguntas_json = json_encode(array_values($perguntas));
     };
 
     function updateEmojisForEmotion(emocao) {
-        const emojis = emotionEmojiMap[emocao] || ['😕', '😟', '😐', '🙂', '😀']; 
+        const emojis = emotionEmojiMap[emocao] || ['😕', '😟', '😐', '🙂', '😀'];
         document.getElementById('emoji-1').textContent = emojis[0];
         document.getElementById('emoji-2').textContent = emojis[1];
         document.getElementById('emoji-3').textContent = emojis[2];
@@ -386,53 +386,100 @@ $perguntas_json = json_encode(array_values($perguntas));
 
 
 
-    let ultimaClasseId = null; 
+    let ultimaClasseId = null;
     let introducoesExibidas = {};
 
-    function gerarMensagem(emocoes, tooltips, contexto) {
-        const plural = emocoes.length > 1;
+    function gerarMensagem(emocoes, tooltips, classeId, cursoNome, nomeRecurso = null) {
+    const plural = emocoes.length > 1;
 
-        const emocoesComTooltip = emocoes.map((emocao, index) => {
-            return `
-            <strong>${emocao}</strong>
-            <span class="tooltip-icon">
-                &#9432;
-                <span class="tooltip-text">${tooltips[index]}</span>
-            </span>
-        `;
-        }).join(", ");
-
+    const emocoesComTooltip = emocoes.map((emocao, index) => {
         return `
+        <strong>${emocao}</strong>
+        <span class="tooltip-icon">
+            &#9432;
+            <span class="tooltip-text">${tooltips[index]}</span>
+        </span>
+    `;
+    }).join(", ");
+
+    let textoAtividade;
+
+    switch (classeId) {
+        case "1": // Emoções Relacionadas às Aulas
+            textoAtividade = nomeRecurso
+                ? `da aula <strong>${nomeRecurso}</strong> da disciplina de <strong>${cursoNome}</strong>`
+                : `das aulas da disciplina de <strong>${cursoNome}</strong>`;
+            break;
+
+        case "2": // Emoções Relacionadas ao Aprendizado
+            textoAtividade = nomeRecurso
+                ? `do estudo do <strong>${nomeRecurso}</strong> pertencente à disciplina de <strong>${cursoNome}</strong>`
+                : `da sua rotina de estudos na disciplina de <strong>${cursoNome}</strong>`;
+            break;
+
+        case "3": // Emoções Relacionadas às Atividades Avaliativas
+            textoAtividade = nomeRecurso
+                ? `da atividade avaliativa <strong>${nomeRecurso}</strong> da disciplina de <strong>${cursoNome}</strong>`
+                : `de atividades avaliativas da disciplina de <strong>${cursoNome}</strong>`;
+            break;
+
+        default:
+            textoAtividade = `da disciplina de <strong>${cursoNome}</strong>`;
+    }
+
+    return `
     <p>
         As perguntas a seguir referem-se ${plural ? 'às emoções' : 'à emoção'} 
         ${emocoesComTooltip}
         que você pode sentir 
-        <strong>antes</strong>, <strong>durante</strong> ou <strong>depois</strong> ${contexto}. 
+        <strong>antes</strong>, <strong>durante</strong> ou <strong>depois</strong> ${textoAtividade}. 
         Por favor, leia cada item com atenção e responda utilizando a escala fornecida.
     </p>`;
-    }
+}
 
-    function mostrarTextoInicial(pergunta, emocoesDaClasse, tooltipsDaClasse) {
-        let cursoNome = <?php echo json_encode($cursoNome); ?>;
-        let contexto =
-            pergunta.classe_id === "1"
-                ? `das aulas da disciplina de <strong>${cursoNome}</strong>`
-                : pergunta.classe_id === "2"
-                    ? "da sua rotina de estudos"
-                    : `de alguma atividade avaliativa da disciplina de <strong>${cursoNome}</strong>`;
+function mostrarTextoInicial(pergunta, emocoesDaClasse, tooltipsDaClasse) {
+    let cursoNome = <?php echo json_encode($cursoNome); ?>;
 
-        let mensagemInicial = gerarMensagem(emocoesDaClasse, tooltipsDaClasse, contexto);
+    // Obter o nome do recurso atrelado
+    let nomeRecurso = <?php
+        $resource_name = '--';
+        $coleta = $DB->get_record('ifcare_cadastrocoleta', ['id' => $coletaid], '*');
 
-        document.getElementById('titulo-coleta').innerHTML = mensagemInicial;
-        document.getElementById('pergunta-container').innerHTML = '';
-        document.getElementById('pergunta-container').style.display = 'none'; 
-        document.getElementById('respostas-container').style.display = 'none'; 
-        document.getElementById('progress-bar-container').style.display = 'none'; 
-    }
+        if ($coleta && $coleta->resource_id_atrelado) {
+            $module = $DB->get_record('course_modules', ['id' => $coleta->resource_id_atrelado], 'module');
+            if ($module) {
+                $mod_info = $DB->get_record('modules', ['id' => $module->module], 'name');
+                if ($mod_info) {
+                    $resource_name_record = $DB->get_record('course_modules', ['id' => $coleta->resource_id_atrelado], 'id, instance');
+                    if ($resource_name_record) {
+                        $resource_name = $DB->get_field($mod_info->name, 'name', ['id' => $resource_name_record->instance]);
+                    }
+                }
+            }
+        }
+        echo json_encode($resource_name);
+    ?>;
+
+    let mensagemInicial = gerarMensagem(
+        emocoesDaClasse,
+        tooltipsDaClasse,
+        pergunta.classe_id,
+        cursoNome,
+        nomeRecurso !== '--' ? nomeRecurso : null
+    );
+
+    document.getElementById('titulo-coleta').innerHTML = mensagemInicial;
+    document.getElementById('pergunta-container').innerHTML = '';
+    document.getElementById('pergunta-container').style.display = 'none'; 
+    document.getElementById('respostas-container').style.display = 'none'; 
+    document.getElementById('progress-bar-container').style.display = 'none'; 
+}
+
+
 
     let contadorPerguntas = 1; // Variável para rastrear o número da pergunta exibida
     let ultimaDirecao = "avancar"; // Variável para rastrear a última direção de navegação
-    
+
     function mostrarPergunta(index) {
         let pergunta = perguntas[index];
         let cursoNome = <?php echo json_encode($cursoNome); ?>;
@@ -451,13 +498,13 @@ $perguntas_json = json_encode(array_values($perguntas));
         if (pergunta.classe_id !== ultimaClasseId) {
             if (!introducoesExibidas[pergunta.classe_id]) {
                 mostrarTextoInicial(pergunta, emocoesDaClasse, tooltipsDaClasse);
-                introducoesExibidas[pergunta.classe_id] = true; 
+                introducoesExibidas[pergunta.classe_id] = true;
                 ultimaClasseId = pergunta.classe_id;
-                return; 
+                return;
             }
         }
 
-        document.getElementById('pergunta-container').style.display = 'block'; 
+        document.getElementById('pergunta-container').style.display = 'block';
 
         updateEmojisForEmotion(pergunta.emocao_nome);
 
