@@ -166,16 +166,16 @@ echo html_writer::start_div('faq-topic', array(
         <h2><i class="fas fa-info-circle"></i> O que é o IFCare?</h2>
     </div>
     <div class="modal-content-body">
-        <p>O <strong>IFCare</strong> é um plugin desenvolvido para a plataforma Moodle com o objetivo de <em>monitorar as emoções acadêmicas</em> dos estudantes. Ele utiliza como base o <strong>AEQ (Achievement Emotions Questionnaire)</strong>, um instrumento amplamente reconhecido na avaliação de emoções relacionadas ao desempenho acadêmico.</p>
+        <p>O <strong>IFCare</strong> é um plugin de bloco desenvolvido para a plataforma Moodle com o objetivo de <em>monitorar as emoções acadêmicas</em> dos estudantes. Ele utiliza como base o <strong>AEQ (Achievement Emotions Questionnaire)</strong>, um instrumento amplamente reconhecido na avaliação de emoções relacionadas ao desempenho acadêmico.</p>
         <h3><i class="fas fa-tools"></i> Funcionalidades Principais</h3>
         <ul>
             <li>Permite que professores criem <strong>coletas de emoções</strong>, selecionando classes e emoções específicas.</li>
             <li>Oferece aos estudantes uma interface interativa para responder às coletas usando uma escala Likert com emojis.</li>
             <li>Gera gráficos interativos para os professores visualizarem os dados coletados, auxiliando na análise das emoções acadêmicas.</li>
-            <li>Facilita a exportação dos dados em formatos como CSV e JSON para análises externas.</li>
+            <li>Facilita a exportação dos dados em formatos como <i>CSV</i> e <i>JSON</i> para análises externas.</li>
         </ul>
         <h3><i class="fas fa-bullseye"></i> Objetivo</h3>
-        <p>O principal objetivo do <strong>IFCare</strong> é auxiliar instituições de ensino a identificar e monitorar as emoções acadêmicas dos estudantes, contribuindo para intervenções pedagógicas mais personalizadas e assertivas, visando melhorar o desempenho acadêmico e reduzir problemas como desmotivação e evasão escolar.</p>
+        <p>O principal objetivo do <strong>IFCare</strong> é auxiliar professores e instituições de ensino a identificar e monitorar as emoções acadêmicas dos estudantes, contribuindo para intervenções pedagógicas mais personalizadas e assertivas, visando melhorar o desempenho acadêmico e reduzir problemas como desmotivação e evasão escolar.</p>
         <h3><i class="fas fa-graduation-cap"></i> Benefícios</h3>
         <ul>
             <li>Apoio no <strong>planejamento pedagógico</strong> baseado em dados emocionais dos alunos.</li>
@@ -185,18 +185,22 @@ echo html_writer::start_div('faq-topic', array(
     </div>
     `)'
 ));
-echo html_writer::tag('div', '🤖', array('class' => 'faq-topic-icon'));
+echo html_writer::tag('div', '🧠', array('class' => 'faq-topic-icon'));
 echo html_writer::tag('div', 'O que é o IFCare?', array('class' => 'faq-topic-title'));
 echo html_writer::end_div();
 
-echo html_writer::start_div('faq-topic', array('onclick' => 'openModal("Como utilizar o plugin IFCare?", `
-    <p>O plugin <strong>IFCare</strong> é uma ferramenta poderosa integrada ao Moodle, que permite aos professores coletar, monitorar e analisar as emoções acadêmicas de forma interativa e eficiente. Aqui está um guia para utilizá-lo:</p>
+echo html_writer::start_div('faq-topic', array(
+    'onclick' => 'openModal("Como utilizar o plugin IFCare?", `
+    <div class="modal-header">
+        <h2><i class="fas fa-info-circle"></i> Como utilizar o plugin IFCare?</h2>
+    </div>   
+<p>O plugin <strong>IFCare</strong> é uma ferramenta poderosa integrada ao Moodle, que permite aos professores coletar, monitorar e analisar as emoções acadêmicas de forma interativa e eficiente. Aqui está um guia para utilizá-lo:</p>
     <h3>👩‍🏫 Passos para o professor cadastrar uma coleta:</h3>
     <ul>
         <li><strong>📋 Acesse o painel do plugin IFCare:</strong> Localize o plugin diretamente no painel do Moodle para facilitar a gestão centralizada, sem necessidade de instalação em cursos específicos.</li>
-        <li><strong>📝 Preencha as informações da coleta:</strong> Adicione o nome da coleta, datas de início e fim, descrição, e defina se deseja enviar notificações automáticas aos alunos.</li>
-        <li><strong>📚 Escolha o curso, seção e recurso:</strong> Vincule a coleta a um curso e selecione uma seção específica. Caso necessário, associe a coleta a um recurso existente ou crie um novo recurso do tipo URL.</li>
-        <li><strong>🎭 Selecione as classes e emoções do AEQ:</strong> Utilize o formulário para escolher as classes de emoções acadêmicas (aulas, estudo, provas) e emoções específicas. Essas seleções definirão as perguntas que os alunos responderão.</li>
+        <li><strong>📚 Preencha as informações da coleta:</strong> Adicione as datas de início e fim e descrição(opcional)</li>
+        <li><strong>📝 Escolha o curso, seção e recurso:</strong> Vincule a coleta a um curso e selecione uma seção específica. Caso necessário, associe a coleta a um recurso existente.</li>
+        <li><strong>🎭 Selecione as classes e emoções do AEQ:</strong> Utilize o formulário para escolher as classes de emoções acadêmicas (aulas, aprendizado, provas) e emoções específicas. Essas seleções definirão as perguntas que os alunos responderão.</li>
         <li><strong>🔔 Configure notificações e alertas:</strong> Ative notificações automáticas para alunos e receba alertas sobre o andamento da coleta.</li>
     </ul>
     <h3>📊 Após o cadastro da coleta:</h3>
@@ -218,7 +222,8 @@ echo html_writer::start_div('faq-topic', array('onclick' => 'openModal("Como uti
         <li><strong>📊 Gráficos e relatórios:</strong> Dados das respostas são exibidos em gráficos interativos para facilitar a análise.</li>
     </ul>
     <p>O plugin IFCare foi projetado para ser intuitivo e eficiente, otimizando o processo de coleta e análise de emoções acadêmicas. Ele auxilia na criação de estratégias pedagógicas baseadas em dados reais, promovendo um ambiente de aprendizado mais saudável e adaptado às necessidades dos alunos.</p>
-`)'));
+`)'
+));
 
 
 echo html_writer::tag('div', '📋', array('class' => 'faq-topic-icon'));
@@ -251,7 +256,7 @@ echo html_writer::start_div('faq-topic', array(
     </div>
     `)'
 ));
-echo html_writer::tag('div', '🔧', array('class' => 'faq-topic-icon'));
+echo html_writer::tag('div', '🛠️', array('class' => 'faq-topic-icon'));
 echo html_writer::tag('div', 'Principais funcionalidades do plugin IFCare', array('class' => 'faq-topic-title'));
 echo html_writer::end_div();
 
@@ -263,8 +268,8 @@ echo html_writer::start_div('faq-topic', array(
         <h2><i class="fas fa-user-graduate"></i> Quem desenvolveu o IFCare?</h2>
     </div>
     <div class="modal-content-body">
-        <p>O <strong>IFCare</strong> é um projeto desenvolvido como Trabalho de Conclusão de Curso (TCC) pelo aluno <strong>Rafael Lariloran Costa Rodrigues</strong> (<a href="http://lattes.cnpq.br/1281350600184120" target="_blank">Lattes</a>), estudante do curso superior em <em>Sistemas para Internet</em> do <strong>Instituto Federal de Educação, Ciência e Tecnologia do Rio Grande do Sul – Campus Porto Alegre (IFRS)</strong>.</p>
-        <p>O artigo referente ao projeto está disponível no <a href="https://repositorio.ifrs.edu.br/handle/123456789/935" target="_blank">repositório do IFRS Campus Porto Alegre</a>.</p>
+        <p>O <strong>IFCare</strong> é um projeto desenvolvido como Trabalho de Conclusão de Curso (TCC) pelo aluno <strong>Rafael Lariloran Costa Rodrigues</strong> (<a href="http://lattes.cnpq.br/1281350600184120" target="_blank">Lattes</a>), estudante do curso superior em <em>Sistemas para Internet</em> do <strong>Instituto Federal de Educação, Ciência e Tecnologia do Rio Grande do Sul (IFRS) – Campus Porto Alegre</strong>.</p>
+        <p>O artigo referente ao projeto está disponível no <a href="https://repositorio.ifrs.edu.br/handle/123456789/935" target="_blank">repositório do IFRS - Campus Porto Alegre</a>.</p>
         <h3><i class="fas fa-chalkboard-teacher"></i> Orientação</h3>
         <p>O projeto foi orientado pela <strong>Profa. Dra. Márcia Häfele Islabão Franco</strong> (<a href="http://lattes.cnpq.br/2551214616925074" target="_blank">Lattes</a>) e coorientado pelo <strong>Prof. Dr. Marcelo Augusto Rauh Schmitt</strong> (<a href="http://lattes.cnpq.br/1958021878056697" target="_blank">Lattes</a>), ambos docentes do IFRS Porto Alegre.</p>
         <h3><i class="fas fa-envelope"></i> Contato</h3>
@@ -275,7 +280,7 @@ echo html_writer::start_div('faq-topic', array(
     </div>
     `)'
 ));
-echo html_writer::tag('div', '🧑🏾‍💻', array('class' => 'faq-topic-icon'));
+echo html_writer::tag('div', '📟', array('class' => 'faq-topic-icon'));
 echo html_writer::tag('div', 'Quem desenvolveu o IFCare?', array('class' => 'faq-topic-title'));
 echo html_writer::end_div();
 
