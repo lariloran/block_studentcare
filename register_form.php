@@ -6,78 +6,94 @@ use core\notification;
 
 class register_form extends moodleform
 {
-    
-    public function get_user_courses($userid) {
+
+    public function get_user_courses($userid)
+    {
         global $DB;
-    
-        return enrol_get_users_courses($userid, true); 
+        $courses = enrol_get_users_courses($userid, true);
+        $teacher_courses = [];
+
+        foreach ($courses as $course) {
+            $context = context_course::instance($course->id);
+
+            if (has_capability('moodle/course:update', $context, $userid)) {
+                $teacher_courses[] = $course;
+            }
+        }
+        return $teacher_courses;
     }
-    
+
 
     public function __construct()
     {
-        global $COURSE,$PAGE;
+        global $COURSE, $PAGE;
 
         $context = context_course::instance($COURSE->id);
 
         $PAGE->set_context($context);
 
-        
+
         parent::__construct();
     }
 
+
     public function definition()
     {
-        global $PAGE, $COURSE, $DB,$USER,$PAGE;
+        global $PAGE, $COURSE, $DB, $USER, $PAGE,$OUTPUT;
         $mform = $this->_form;
 
         $context = context_course::instance($COURSE->id);
 
         $PAGE->set_context($context);
 
-        $microsegundos = explode(' ', microtime())[0] * 1000; 
-        $milissegundos = str_pad((int)$microsegundos, 3, '0', STR_PAD_LEFT); 
-        
-        $nomeColeta = "COLETA-" . date('YmdHis') . $milissegundos; 
-        
-        $mform->addElement('text', 'name', get_string('name', 'block_ifcare'), array('size' => '50', 'readonly' => 'readonly'));
-        $mform->setType('name', PARAM_NOTAGS);
-        $mform->setDefault('name', $nomeColeta); 
 
-        $cursos = $this->get_user_courses($USER->id); 
+      
+
+        // $mform->addElement('text', 'name', get_string('name', 'block_ifcare'), array('size' => '50', 'readonly' => 'readonly'));
+        // $mform->setType('name', PARAM_NOTAGS);
+        // $mform->setDefault('name', $nomeColeta);
+
+        $cursos = $this->get_user_courses($USER->id);
         $options = array();
 
         if (!empty($cursos)) {
-            usort($cursos, function($a, $b) {
+            usort($cursos, function ($a, $b) {
                 return strcmp($a->fullname, $b->fullname);
             });
 
             foreach ($cursos as $curso) {
-                $options[$curso->id] = $curso->fullname; 
+                $options[$curso->id] = $curso->fullname;
             }
         } else {
-       
+
         }
 
-        $mform->addElement('select', 'courseid', get_string('select_course', 'block_ifcare'), $options); 
+        $mform->addElement('select', 'courseid', get_string('select_course', 'block_ifcare'), $options);
         $mform->setType('courseid', PARAM_INT);
 
         $mform->addElement('select', 'sectionid', get_string('select_section', 'block_ifcare'), array());
         $mform->setType('sectionid', PARAM_INT);
-
+        $mform->addHelpButton('sectionid', 'select_section', 'block_ifcare');
+        
         $mform->addElement('select', 'resourceid', get_string('select_resource', 'block_ifcare'), array());
         $mform->setType('resourceid', PARAM_INT);
-
+        $mform->addHelpButton('resourceid', 'select_resource', 'block_ifcare');
+        $current_time = time();
+        
+        // Ajustar para a próxima hora redonda
+        $start_time = strtotime(date('Y-m-d H:00:00', $current_time)) + 3600; // Próxima hora cheia
+        $future_time = $start_time + 3600; // Adiciona 1 hora ao start_time
+        
         $mform->addElement('date_time_selector', 'starttime', get_string('starttime', 'block_ifcare'), array('optional' => false));
-
-        $current_time = time(); 
-        $future_time = $current_time + (30 * 60);
+        $mform->setDefault('starttime', $start_time);
+        
         $mform->addElement('date_time_selector', 'endtime', get_string('endtime', 'block_ifcare'), array('optional' => false));
         $mform->setDefault('endtime', $future_time);
-
-        $mform->addElement('textarea', 'description', get_string('description', 'block_ifcare'), 'wrap="virtual" rows="5" cols="50"');
+        
+        
+        $mform->addElement('textarea', 'description', get_string('description', 'block_ifcare'), 'wrap="virtual" rows="5" cols="50" maxlength="200"');
         $mform->setType('description', PARAM_TEXT);
-
+        
         $mform->addElement('hidden', 'emocao_selecionadas', '', array('id' => 'emocao_selecionadas'));
         $mform->setType('emocao_selecionadas', PARAM_RAW);
 
@@ -96,9 +112,11 @@ class register_form extends moodleform
 
         $mform->addElement('select', 'classe_aeq', get_string('aeqclasses', 'block_ifcare'), $options2);
         $mform->setType('classe_aeq', PARAM_TEXT);
+        $mform->addHelpButton('classe_aeq', 'aeqclasses', 'block_ifcare');
 
         $mform->addElement('select', 'emocoes', get_string('emotions', 'block_ifcare'), array(), array('multiple' => 'multiple', 'size' => 8));
         $mform->setType('emocoes', PARAM_INT);
+        $mform->addHelpButton('emocoes', 'emotions', 'block_ifcare');
 
         $mform->addElement('html', '
             <div class="fitem">
@@ -109,26 +127,39 @@ class register_form extends moodleform
 
         $mform->addElement('advcheckbox', 'alertprogress', get_string('alertprogress', 'block_ifcare'), null, array('group' => 1), array(0, 1));
         $mform->setDefault('alertprogress', 1);
+        $mform->addHelpButton('alertprogress', 'alertprogress', 'block_ifcare');
 
         $mform->addElement('advcheckbox', 'notify_students', get_string('notify_students', 'block_ifcare'), null, array('group' => 1), array(0, 1));
         $mform->setDefault('notify_students', 1);
+        $mform->addHelpButton('notify_students', 'notify_students', 'block_ifcare');
 
-        $mform->addElement('submit', 'save', get_string('submit', 'block_ifcare'));
-        $mform->setType('save', PARAM_ACTION);
+
+        // Botões de enviar e cancelar agrupados
+        $buttonarray = [];
+        $buttonarray[] = $mform->createElement('submit', 'save', get_string('submit', 'block_ifcare'));
+        $buttonarray[] = $mform->createElement('cancel', 'cancel', get_string('cancel'));
+        $mform->addGroup($buttonarray, 'buttonar', '', [' '], false);
+
 
         $mform->addElement('hidden', 'userid', $USER->id);
         $mform->setType('userid', PARAM_INT);
-    
-        $PAGE->requires->js(new moodle_url('/blocks/ifcare/js/dynamicform.js'));
 
+        $PAGE->requires->js(new moodle_url('/blocks/ifcare/js/shared.js'));
+        $PAGE->requires->js(new moodle_url('/blocks/ifcare/js/register_form.js'));
     }
-    
+
     public function validation($data, $files)
     {
         $errors = parent::validation($data, $files);
 
+        $current_time = time();
+
+        if ($data['starttime'] < $current_time) {
+            $errors['starttime'] = get_string('starttime_past_error', 'block_ifcare');
+        }
+
         if ($data['endtime'] <= $data['starttime']) {
-            $errors['endtime'] = get_string('endtimeerror', 'block_ifcare');
+            $errors['endtime'] = get_string('endtime_before_start_error', 'block_ifcare');
         }
 
         return $errors;
@@ -137,23 +168,39 @@ class register_form extends moodleform
     public function process_form($data)
     {
         global $DB, $SESSION, $COURSE, $PAGE;
-    
-        $context = context_course::instance($COURSE->id);
-        $PAGE->set_context($context);
-    
-            // Sanitização de campos numéricos e texto
+
+        global $DB;
+
+        global $DB;
+
+        // Obtém o número total de coletas existentes (contagem geral)
+        $numeroColeta = $DB->count_records('ifcare_cadastrocoleta', ['curso_id' => $data->courseid]) + 1;
+        
+        // Formata a data de criação
+        $dataCriacao = date('d/m/Y');
+        
+        // Obtém o nome completo do curso
+        $cursoNome = $DB->get_field('course', 'fullname', ['id' => $data->courseid]);
+        $cursoNomeFormatado = format_string($cursoNome);
+        
+        // Cria o nome da coleta com o nome completo do curso
+        $nomeColeta = 'Coleta #' . $numeroColeta . ' - ' . $cursoNomeFormatado . ' - ' . $dataCriacao;
+        
+        
+
+        // Sanitização de campos numéricos e texto
         $userid = clean_param($data->userid, PARAM_INT);
         $courseid = clean_param($data->courseid, PARAM_INT);
-        $nome = clean_param($data->name, PARAM_TEXT);
+        $nome = $nomeColeta;
         $dataInicioFormatada = clean_param(date('Y-m-d H:i:s', $data->starttime), PARAM_TEXT);
         $dataFimFormatada = clean_param(date('Y-m-d H:i:s', $data->endtime), PARAM_TEXT);
         $descricao = clean_param($data->description, PARAM_TEXT);
         $receberAlerta = clean_param($data->alertprogress, PARAM_INT);
         $notificarAlunos = clean_param($data->notify_students, PARAM_INT);
         $sectionId = clean_param($data->setor, PARAM_INT);
-        $resourceId = clean_param($data->recurso, PARAM_INT);
+        $resourceIdAtrelado = clean_param($data->recurso, PARAM_INT);
 
-    
+
         $registro = new stdClass();
         $registro->nome = clean_param($nome, PARAM_TEXT);
         $registro->data_inicio = clean_param($dataInicioFormatada, PARAM_TEXT);
@@ -162,45 +209,45 @@ class register_form extends moodleform
         $registro->receber_alerta = clean_param($receberAlerta, PARAM_INT);
         $registro->notificar_alunos = clean_param($notificarAlunos, PARAM_INT);
         $registro->curso_id = clean_param($courseid, PARAM_INT);
-        $registro->professor_id = clean_param($userid, PARAM_INT);
+        $registro->usuario_id = clean_param($userid, PARAM_INT);
         $registro->section_id = clean_param($sectionId, PARAM_INT);
-        $registro->resource_id = clean_param($resourceId, PARAM_INT);
+        $registro->resource_id_atrelado = clean_param($resourceIdAtrelado, PARAM_INT);
+        $registro->resource_id = 0;
 
-    
+
         $inserted = $DB->insert_record('ifcare_cadastrocoleta', $registro);
-    
+
         if ($inserted) {
             $cadastroColetaId = $inserted;
-    
+
             $emocaoSelecionadas = json_decode($data->emocao_selecionadas, true);
-            if (!is_array($emocaoSelecionadas)) {
-                $SESSION->mensagem_erro = get_string('mensagem_erro', 'block_ifcare');
-                redirect(new moodle_url("/blocks/ifcare/index.php", ['courseid' => $courseid]));
-            }
-            
-            if (is_array($emocaoSelecionadas) && !empty($emocaoSelecionadas)) {
+            if (is_array($emocaoSelecionadas)) {
                 foreach ($emocaoSelecionadas as $classeAeqId => $emocoes) {
                     if (is_array($emocoes)) {
-                        foreach ($emocoes as $emocaoId) {
+                        foreach ($emocoes as $emocao) {
+                            $emocaoId = clean_param($emocao['id'], PARAM_INT); // Pega o ID da emoção
                             $associacao = new stdClass();
                             $associacao->cadastrocoleta_id = $cadastroColetaId;
-                            $associacao->classeaeq_id = $classeAeqId; 
+                            $associacao->classeaeq_id = $classeAeqId;
                             $associacao->emocao_id = $emocaoId;
     
+                            // Salva a associação no banco
                             $DB->insert_record('ifcare_associacao_classe_emocao_coleta', $associacao);
                         }
                     }
                 }
             } else {
                 $SESSION->mensagem_erro = get_string('mensagem_erro', 'block_ifcare');
+                redirect(new moodle_url("/blocks/ifcare/index.php"));
             }
-    
+
             $SESSION->mensagem_sucesso = get_string('mensagem_sucesso', 'block_ifcare');
-            redirect(new moodle_url("/blocks/ifcare/index.php?courseid=$courseid"));
         } else {
             $SESSION->mensagem_erro = get_string('mensagem_erro', 'block_ifcare');
-            redirect(new moodle_url("/blocks/ifcare/index.php?courseid=$courseid"));
         }
+
+        redirect(new moodle_url("/blocks/ifcare/index.php"));
+
     }
 }
 

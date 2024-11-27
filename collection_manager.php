@@ -2,19 +2,20 @@
 class collection_manager
 {
 
-    public function get_coletas_by_professor($professor_id)
+    public function get_coletas_by_professor($usuario_id)
     {
         global $DB;
 
-        $sql = "SELECT id, nome, data_inicio, data_fim, descricao, curso_id, notificar_alunos, receber_alerta , resource_id
+        $sql = "SELECT id, nome, data_inicio, data_fim, descricao, curso_id, notificar_alunos, receber_alerta , resource_id_atrelado, section_id, data_criacao
                 FROM {ifcare_cadastrocoleta} 
-                WHERE professor_id = :professor_id
-                ORDER BY data_inicio DESC";
+                WHERE usuario_id = :usuario_id
+                ORDER BY data_criacao DESC";
 
-        $params = ['professor_id' => $professor_id];
+        $params = ['usuario_id' => $usuario_id];
 
         return $DB->get_records_sql($sql, $params);
     }
+
 
     private function obter_perguntas_associadas($coleta_id)
     {
@@ -35,69 +36,45 @@ class collection_manager
     }
 
     public function excluir_coleta($coleta_id)
-{
-    global $DB;
-
-    $transaction = $DB->start_delegated_transaction();
-
-    try {
-        $DB->delete_records('ifcare_resposta', ['coleta_id' => $coleta_id]);
-
-        $DB->delete_records('ifcare_associacao_classe_emocao_coleta', ['cadastrocoleta_id' => $coleta_id]);
-
-        $DB->delete_records('ifcare_cadastrocoleta', ['id' => $coleta_id]);
-
-        $transaction->allow_commit();
-    } catch (Exception $e) {
-        $transaction->rollback($e);
-        throw $e;
-    }
-}
-
-    public function listar_coletas($professor_id)
     {
-        global $DB;
+        global $DB, $CFG;
+
+        $transaction = $DB->start_delegated_transaction();
+
+        try {
+            $resource_id_instance = $DB->get_field('ifcare_cadastrocoleta', 'resource_id', ['id' => $coleta_id]);
+
+            if ($resource_id_instance) {
+                // Busca diretamente o ID em `course_modules` onde `instance` é igual ao `resource_id`
+                $course_module_id = $DB->get_field('course_modules', 'id', ['instance' => $resource_id_instance]);
+
+                if ($course_module_id) {
+                    require_once($CFG->dirroot . '/course/lib.php');
+                    course_delete_module($course_module_id);
+                }
+            }
+
+
+            $DB->delete_records('ifcare_resposta', ['coleta_id' => $coleta_id]);
+
+            $DB->delete_records('ifcare_associacao_classe_emocao_coleta', ['cadastrocoleta_id' => $coleta_id]);
+
+            $DB->delete_records('ifcare_cadastrocoleta', ['id' => $coleta_id]);
+
+            $transaction->allow_commit();
+        } catch (Exception $e) {
+            $transaction->rollback($e);
+            throw $e;
+        }
+    }
+
+    public function listar_coletas($usuario_id)
+    {
+        global $DB, $CFG, $PAGE;
+        require_once($CFG->dirroot . '/course/lib.php');
 
         $html = '<style>
-            .accordion {
-                max-width: 700px;
-                margin: 20px auto;
-                border-radius: 8px;
-                overflow: hidden;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                background: #fff;
-            }
-            .accordion-item {
-                border-bottom: 1px solid #ddd;
-            }
-            .accordion-header {
-                background: #f0f0f0;
-                color: #333;
-                padding: 12px;
-                cursor: pointer;
-                transition: background 0.3s ease;
-            }
-            .accordion-header:hover {
-                background: #d8f3dc;
-            }
-            .accordion-button {
-                width: 100%;
-                text-align: left;
-                border: none;
-                background: none;
-                font-size: 15px;
-                color: #333;
-            }
-            .accordion-body {
-                padding: 12px;
-                background: #f9f9f9;
-                transition: max-height 0.3s ease;
-            }
-            .accordion-body p {
-                margin: 8px 0;
-                font-size: 14px;
-                color: #333;
-            }
+
             .btn-coleta {
                 display: inline-flex;
                 align-items: center;
@@ -112,26 +89,51 @@ class collection_manager
             .btn-coleta:hover {
                 background-color: #45a049;
             }
-            .modal {
-                display: none;
-                position: fixed;
-                z-index: 1;
-                left: 0;
-                top: 0;
-                width: 100%;
-                height: 100%;
-                overflow: auto;
-                background-color: rgba(0, 0, 0, 0.5);
-            }
-            .modal-content {
-                background-color: white;
-                margin: 15% auto;
-                padding: 20px;
-                border-radius: 10px;
-                width: 80%;
-                max-width: 600px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-            }
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    overflow-y: auto; /* Permite scroll para toda a janela, se necessário */
+    padding-top: 20px; /* Adiciona um espaçamento superior geral */
+}
+
+.modal-content {
+    position: relative;
+    background-color: white;
+    margin: 50px auto; /* Define uma margem superior mínima */
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%; /* Aumenta a largura para ocupar 90% da tela */
+    max-width: 800px; /* Aumenta a largura máxima */
+    max-height: 90vh; /* Limita a altura máxima */
+    overflow-y: auto; /* Adiciona scroll para conteúdo longo */
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 15px;
+    text-align: center;
+       max-width: 90%; /* Máximo de 90% da largura da janela */
+    max-height: 80%; /* Máximo de 80% da altura da janela */
+    overflow-y: auto; /* Adiciona rolagem se o conteúdo for muito longo */
+}
+
+.modal-content span#modalColetaDescricao {
+    word-wrap: break-word; /* Força a quebra de palavras longas */
+    overflow-wrap: break-word; /* Garante suporte adicional para quebra de palavras */
+    white-space: pre-wrap; /* Preserva quebras de linha no texto original */
+    display: block; /* Garante que o texto ocupe o espaço do elemento */
+    max-height: 200px; /* Define uma altura máxima para a descrição */
+    overflow-y: auto; /* Adiciona rolagem se o conteúdo exceder o limite */
+}
+
             .close {
                 color: #aaa;
                 float: right;
@@ -157,36 +159,46 @@ class collection_manager
     border: 1px solid #ddd;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    max-width: 300px;
-    min-height: 200px; /* Define uma altura mínima */
+    padding: 16px; /* Reduz o padding para economizar espaço */
+    max-width: 250px; /* Diminui a largura máxima */
+    min-height: 180px; /* Ajusta a altura mínima */
     text-align: left;
     transition: transform 0.3s;
+    font-size: 14px; /* Reduz o tamanho do texto */
+    line-height: 1.4; /* Ajusta o espaçamento entre linhas */
 }
 
-            .card:hover {
-                transform: scale(1.05);
-            }
-            .card h3 {
-                font-size: 18px;
-                margin-bottom: 10px;
-                color: #333;
-            }
-            .card p {
-                margin: 5px 0;
-                font-size: 14px;
-                color: #555;
-            }
-            .card .btn-coleta {
-                margin-top: 10px;
-                background-color: #4CAF50;
-                color: white;
-                padding: 8px 16px;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                transition: background-color 0.3s;
-            }
+.card:hover {
+    transform: scale(1.05);
+}
+
+.card h3 {
+    font-size: 16px; /* Reduz o tamanho do título */
+    margin-bottom: 8px;
+    color: #333;
+    
+}
+
+.card p {
+    margin: 4px 0; /* Diminui o espaçamento entre os parágrafos */
+    font-size: 13px; /* Reduz o texto das informações */
+    color: #555;
+     white-space: nowrap;
+     overflow: hidden; /* Oculta o texto excedente */
+    text-overflow: ellipsis; /* Adiciona reticências no final do texto */
+}
+
+.card .btn-coleta {
+    width: 100%; /* Faz o botão ocupar toda a largura do card */
+    text-align: center; /* Centraliza o texto no botão */
+    display: block; /* Garante que o botão seja um elemento de bloco */
+    margin-top: auto; /* Faz o botão alinhar-se ao final do card */
+    padding: 8px 12px; /* Reduz o padding para diminuir a altura */
+    font-size: 14px; /* Ajusta o tamanho do texto para harmonizar */
+    border-radius: 4px; /* Mantém bordas arredondadas, mas sutis */
+}
+
+
             .card .btn-coleta:hover {
                 background-color: #45a049;
             }
@@ -274,68 +286,202 @@ class collection_manager
     background-color: #45a049;
 }
 
+
+.pagination-controls {
+    position: relative; /* Ajuste conforme necessário */
+    text-align: center;
+    margin: 20px 0;
+}
+
+.pagination-controls button {
+    margin: 5px;
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.pagination-controls button:hover {
+    background-color: #45a049;
+}
+
+.pagination-controls button.btn-coleta-ativo {
+    background-color: #2E7D32; /* Cor diferenciada para página ativa */
+    cursor: default;
+}
+.button-group {
+    display: flex; /* Coloca os itens em linha */
+    flex-wrap: wrap; /* Permite quebrar para a próxima linha se o espaço não for suficiente */
+    gap: 10px; /* Espaçamento entre os botões */
+    justify-content: center; /* Alinha os botões no centro do modal */
+    margin-top: 20px; /* Espaçamento superior */
+}
+
         </style>';
 
 
         $html .= '<div class="filter-container-coleta">
-                    <label for="searchBox">Buscar:</label>
-                    <input type="text" id="searchBox" placeholder="Buscar por nome, disciplina, descrição, tipo de recurso..." onkeyup="filtrarColetas()">
-                    
-                    <label for="orderBy">Ordenar por:</label>
-                    <select id="orderBy" onchange="ordenarColetas()">
-                        <option value="nome">Nome da Coleta</option>
-                        <option value="data_inicio">Data de Início</option>
-                        <option value="data_fim">Data de Fim</option>
-                        <option value="curso_nome">Disciplina</option>
-                    </select>
-                    <button id="orderDirection" onclick="toggleOrderDirection()">Ascendente <i class="icon fa fa-arrow-up"></i></button>
-                </div>';
+    <label for="searchBox"><strong>Buscar:</strong></label>
+    <input type="text" id="searchBox" placeholder="Buscar por nome, disciplina, descrição, tipo de recurso..." onkeyup="filtrarColetas()">
+
+    <label for="orderBy"><strong>Ordenar por:</strong></label>
+    <select id="orderBy" onchange="ordenarColetas()">
+    <option value="data_criacao">Data de Criação</option>
+
+        <option value="nome">Nome da Coleta</option>
+        <option value="data_inicio">Data de Início</option>
+        <option value="data_fim">Data de Fim</option>
+        <option value="curso_nome">Disciplina</option>
+    </select>
+
+    <button id="orderDirection" onclick="toggleOrderDirection()">Ascendente <i class="icon fa fa-arrow-up"></i></button>
+
+    <label for="pageSize"><strong>Exibir:</strong></label>
+    <select id="pageSize" onchange="atualizarPaginacao()">
+        <option value="5">5 por página</option>
+        <option value="10" selected>10 por página</option>
+        <option value="15">15 por página</option>
+        <option value="20">20 por página</option>
+    </select>
+</div>
+';
 
         $html .= '<div class="card-list" id="coletasContainer">';
 
-        $coletas = $this->get_coletas_by_professor($professor_id);
+        $html .= '<div class="card" style="text-align: center; cursor: pointer;" onclick="window.location.href=\'' . new moodle_url('/blocks/ifcare/register.php') . '\'">
+        <h3 style="font-size: 50px; color: #4CAF50; margin: 20px 0;">
+            <i class="fa fa-plus-circle"></i>
+        </h3>
+        <p style="font-size: 18px; font-weight: bold; color: #333;">Nova Coleta</p>
+      </div>
+      
+      ';
 
-        if (empty($coletas)) {
-            return "<p>Nenhuma coleta cadastrada.</p>";
-        }
+        $coletas = $this->get_coletas_by_professor($usuario_id);
 
-        foreach ($coletas as $coleta) {
-            $curso = $DB->get_record('course', ['id' => $coleta->curso_id], 'fullname');
-            $curso_nome = $curso ? format_string($curso->fullname) : 'Disciplina não encontrada';
-            $coleta->curso_nome = $curso_nome;
+        if (!empty($coletas)) {
+            foreach ($coletas as $coleta) {
+                $curso = $DB->get_record('course', ['id' => $coleta->curso_id], 'fullname');
+                $curso_nome = $curso ? format_string($curso->fullname) : 'Disciplina não encontrada';
+                $coleta->curso_nome = $curso_nome;
 
-            $resource_info = '--';
-            $module = $DB->get_record('course_modules', ['id' => $coleta->resource_id], 'module');
+                $resource_info = '--';
+                $resource_name = '--';
+                $section_name = '--';
 
-            if ($module) {
-                $mod_info = $DB->get_record('modules', ['id' => $module->module], 'name');
-                if ($mod_info) {
-                    $resource_info = ucfirst($mod_info->name);
+                $module = $DB->get_record('course_modules', ['id' => $coleta->resource_id_atrelado], 'module');
+                if ($module) {
+                    $mod_info = $DB->get_record('modules', ['id' => $module->module], 'name');
+                    if ($mod_info) {
+                        $resource_info = ucfirst($mod_info->name);
+                    }
+                    $resource_name_record = $DB->get_record('course_modules', ['id' => $coleta->resource_id_atrelado], 'id, instance');
+                    if ($resource_name_record) {
+                        $resource_name = $DB->get_field($mod_info->name, 'name', ['id' => $resource_name_record->instance]);
+                    }
                 }
+
+                $section_name = get_section_name($coleta->curso_id, $coleta->section_id);
+
+
+                $coleta->recurso_nome = $resource_info;
+                $coleta->resource_name = $resource_name;
+                $coleta->section_name = $section_name;
+
+                $html .= '<div class="card" 
+                data-id="' . $coleta->id . '" 
+                data-nome="' . format_string($coleta->nome) . '" 
+                data-data_inicio="' . $coleta->data_inicio . '" 
+                data-data_fim="' . $coleta->data_fim . '" 
+                    data-data_criacao="' . $coleta->data_criacao . '" 
+
+                data-curso_nome="' . $curso_nome . '" 
+                data-recurso_nome="' . $coleta->recurso_nome . '" 
+                data-resource_name="' . format_string($coleta->resource_name) . '" 
+                data-section_name="' . format_string($coleta->section_name) . '">
+                <h3>' . format_string(mb_strimwidth($coleta->nome, 0, 40, "...")) . '</h3>
+               <p><strong>Disciplina:</strong> ' . $curso_nome . '</p>
+               <p><strong>Data de Início:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_inicio)) . '</p>
+               <p><strong>Data de Fim:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_fim)) . '</p>
+               <button class="btn-coleta" onclick="abrirModal(' . $coleta->id . ')"><i class="fa fa-info-circle"></i> Detalhes</button>
+                              
+             </div>';
+
             }
-
-            $coleta->recurso_nome = $resource_info;
-
-            $html .= '<div class="card" 
-                         data-nome="' . format_string($coleta->nome) . '" 
-                         data-data_inicio="' . $coleta->data_inicio . '" 
-                         data-data_fim="' . $coleta->data_fim . '" 
-                         data-curso_nome="' . $curso_nome . '" 
-                         data-recurso_nome="' . $coleta->recurso_nome . '">
-                        <h3>' . format_string($coleta->nome) . '</h3>
-                        <p><strong>Disciplina:</strong> ' . $curso_nome . '</p>
-                        <p><strong>Data de Início:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_inicio)) . '</p>
-                        <p><strong>Data de Fim:</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_fim)) . '</p>
-                        <button class="btn-coleta" onclick="abrirModal(' . $coleta->id . ')">Detalhes</button>
-                     </div>';
         }
+
 
         $html .= '</div>';
+
+        $html .= '<div id="paginationControls" class="pagination-controls"></div>'; // Mova o container para o final
 
         $html .= '<script>const coletasData = ' . json_encode(array_values($coletas)) . ';</script>';
         $html .= '<script>
             let isAscending = true;
 
+            let currentPage = 1;
+
+function atualizarPaginacao() {
+    currentPage = 1; // Reseta para a primeira página ao mudar o tamanho
+    renderizarPaginacao();
+}
+
+function renderizarPaginacao() {
+    const pageSize = parseInt(document.getElementById("pageSize").value);
+    const cards = Array.from(document.querySelectorAll("#coletasContainer .card"))
+        .filter(card => card.hasAttribute("data-id")); // Exclui o card de Nova Coleta da paginação
+    const totalCards = cards.length;
+    const totalPages = Math.ceil(totalCards / pageSize);
+
+    // Oculta todos os cards exceto o card de Nova Coleta
+    document.querySelectorAll("#coletasContainer .card").forEach(card => {
+        if (!card.hasAttribute("data-id")) {
+            card.style.display = "block"; // Mantém o card de Nova Coleta visível
+        } else {
+            card.style.display = "none"; // Oculta os demais cards inicialmente
+        }
+    });
+
+    // Exibe os cards da página atual
+    const start = (currentPage - 1) * pageSize;
+    const end = start + pageSize;
+
+    cards.slice(start, end).forEach(card => {
+        card.style.display = "block"; // Exibe os cards relevantes da página atual
+    });
+
+    // Renderiza os controles de paginação
+    renderizarControlesPaginacao(totalPages);
+}
+
+
+function renderizarControlesPaginacao(totalPages) {
+    const container = document.getElementById("paginationControls");
+    if (!container) return;
+
+    container.innerHTML = ""; // Limpa os controles anteriores
+
+    // Adiciona os botões de página
+    for (let i = 1; i <= totalPages; i++) {
+        const button = document.createElement("button");
+        button.textContent = i;
+        button.classList.add("btn-coleta");
+        if (i === currentPage) button.classList.add("btn-coleta-ativo");
+        button.addEventListener("click", () => {
+            currentPage = i;
+            renderizarPaginacao();
+        });
+        container.appendChild(button);
+    }
+}
+
+
+            document.addEventListener("DOMContentLoaded", function () {
+    renderizarPaginacao(); // Renderiza a paginação ao carregar a página
+});
             function toggleOrderDirection() {
                 isAscending = !isAscending;
                 const button = document.getElementById("orderDirection");
@@ -350,33 +496,39 @@ class collection_manager
                 ordenarColetas();
             }
 
-            function ordenarColetas() {
-                const orderBy = document.getElementById("orderBy").value;
-                const container = document.getElementById("coletasContainer");
-                const cards = Array.from(container.getElementsByClassName("card"));
+function ordenarColetas() {
+    const orderBy = document.getElementById("orderBy").value;
+    const container = document.getElementById("coletasContainer");
+    const cards = Array.from(container.getElementsByClassName("card"));
 
-                cards.sort((a, b) => {
-                    let valA = a.getAttribute("data-" + orderBy);
-                    let valB = b.getAttribute("data-" + orderBy);
+    cards.sort((a, b) => {
+        let valA = a.getAttribute("data-" + orderBy) || "";
+        let valB = b.getAttribute("data-" + orderBy) || "";
 
-                    if (orderBy === "data_inicio" || orderBy === "data_fim") {
-                        valA = new Date(valA);
-                        valB = new Date(valB);
-                    } else {
-                        valA = valA.toLowerCase();
-                        valB = valB.toLowerCase();
-                    }
+if (orderBy === "data_inicio" || orderBy === "data_fim" || orderBy === "data_criacao") {
+    valA = new Date(valA);
+    valB = new Date(valB);
+}
+ else {
+            // Transforma valores para lower case para comparação consistente de strings
+            valA = valA.toString().toLowerCase();
+            valB = valB.toString().toLowerCase();
+        }
 
-                    if (isAscending) {
-                        return valA < valB ? -1 : valA > valB ? 1 : 0;
-                    } else {
-                        return valA > valB ? -1 : valA < valB ? 1 : 0;
-                    }
-                });
+        if (isAscending) {
+            return valA < valB ? -1 : valA > valB ? 1 : 0;
+        } else {
+            return valA > valB ? -1 : valA < valB ? 1 : 0;
+        }
+    });
 
-                container.innerHTML = "";
-                cards.forEach(card => container.appendChild(card));
-            }
+    // Limpa o container e reaplica os cards na nova ordem
+    container.innerHTML = "";
+    cards.forEach(card => container.appendChild(card));
+
+    renderizarPaginacao();
+}
+
 function filtrarColetas() {
     const searchTerm = document.getElementById("searchBox").value.toLowerCase();
     const container = document.getElementById("coletasContainer");
@@ -397,6 +549,8 @@ function filtrarColetas() {
         card.style.visibility = matches ? "visible" : "hidden";
         card.style.position = matches ? "static" : "absolute";
     });
+
+    renderizarPaginacao();
 }
 
 
@@ -404,16 +558,43 @@ function filtrarColetas() {
 
             function abrirModal(coletaId) {
                 const coleta = coletasData.find(c => c.id == coletaId);
-        
+        const modalDisciplina = document.getElementById("modalColetaDisciplina");
+
                 document.getElementById("modalColetaNome").textContent = coleta.nome;
                 document.getElementById("modalColetaDescricao").textContent = coleta.descricao ? coleta.descricao : "--";
-                document.getElementById("modalColetaDisciplina").textContent = coleta.curso_nome ? coleta.curso_nome : "Disciplina não encontrada";
+                if (coleta.curso_id && coleta.curso_nome) {
+                    modalDisciplina.textContent = coleta.curso_nome;
+                    modalDisciplina.href = `${M.cfg.wwwroot}/course/view.php?id=${coleta.curso_id}`;
+                } else {
+                    modalDisciplina.textContent = "Disciplina não encontrada";
+                    modalDisciplina.href = "#";
+                }               
                 document.getElementById("modalColetaInicio").textContent = new Date(coleta.data_inicio).toLocaleString();
                 document.getElementById("modalColetaFim").textContent = new Date(coleta.data_fim).toLocaleString();
                 document.getElementById("modalNotificarAlunos").textContent = coleta.notificar_alunos == 1 ? "Sim" : "Não";
                 document.getElementById("modalReceberAlerta").textContent = coleta.receber_alerta == 1 ? "Sim" : "Não";
-                document.getElementById("modalRecursoNome").textContent = coleta.recurso_nome;
-    
+                document.getElementById("modalResourceName").textContent = coleta.resource_name;
+                document.getElementById("modalSectionName").textContent = coleta.section_name;
+                $.ajax({
+                    url: `${M.cfg.wwwroot}/blocks/ifcare/get_associated_class_emotions.php`,
+                    type: "GET",
+                    data: { coleta_id: coletaId },
+                    success: function (response) {
+                        // Verifica se a resposta está vazia ou contém mensagens específicas
+                        if (response.trim() === "<p>Nenhuma emoção ou classe AEQ cadastrada para esta coleta.</p>") {
+                            document.getElementById("modalEmocoes").innerHTML = response; // Exibe a mensagem amigável
+                        } else if (response.trim() === "") {
+                            document.getElementById("modalEmocoes").innerHTML = "<p>Erro: Nenhuma resposta recebida.</p>";
+                        } else {
+                            document.getElementById("modalEmocoes").innerHTML = response; // Insere o conteúdo retornado
+                        }
+                    },
+                    error: function () {
+                        // Exibe mensagem de erro apenas para problemas reais de requisição
+                        document.getElementById("modalEmocoes").innerHTML = "<p>Erro ao carregar emoções e classes AEQ.</p>";
+                    }
+                });
+
                 const coletaUrl = `${M.cfg.wwwroot}/blocks/ifcare/view.php?coletaid=${coleta.id}`;
                 const modalColetaUrlElement = document.getElementById("modalColetaUrl");
                 modalColetaUrlElement.href = coletaUrl;
@@ -422,18 +603,30 @@ function filtrarColetas() {
                 document.getElementById("downloadCSV").setAttribute("data-id", coleta.id);
                 document.getElementById("downloadJSON").setAttribute("data-id", coleta.id);
         
-                document.getElementById("coletaModal").style.display = "block";
+                // Atualiza o botão de exclusão no modal
+                const deleteButton = document.getElementById("deleteColeta");
+                deleteButton.setAttribute("data-id", coleta.id);
+                deleteButton.setAttribute("data-name", coleta.nome);
+
+                const modal = document.getElementById("coletaModal");
+                modal.style.display = "block";
+                    adicionarEventosFechamento(modal);
+
             }
     
-            document.querySelector(".close").onclick = function () {
-                document.getElementById("coletaModal").style.display = "none";
-            };
-    
-            window.onclick = function (event) {
-                if (event.target == document.getElementById("coletaModal")) {
-                    document.getElementById("coletaModal").style.display = "none";
-                }
-            };
+function adicionarEventosFechamento(modal) {
+    // Fecha o modal ao clicar no "x"
+    modal.querySelector(".close").onclick = function () {
+        modal.style.display = "none";
+    };
+
+    // Fecha o modal ao clicar fora do conteúdo
+    modal.addEventListener("click", function (event) {
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    });
+}
 
                     document.getElementById("downloadCSV").onclick = function() {
             const coletaId = this.getAttribute("data-id");
@@ -448,7 +641,31 @@ function filtrarColetas() {
         };
 
   
+function abrirGrafico() {
+    const coletaId = document.getElementById("modalColetaUrl").getAttribute("href").split("=").pop();
+    window.location.href = M.cfg.wwwroot + "/blocks/ifcare/report.php?coletaid=" + coletaId;
+}
+
+
+
+function fecharModalDetalhe() {
+    document.getElementById("coletaModal").style.display = "none";
+}
+
+
+window.onclick = function(event) {
+    if (event.target == document.getElementById("confirmDeleteModal")) {
+        fecharConfirmacao();
+    }
+}
+
+function editarColeta() {
+    const coletaId = document.getElementById("modalColetaUrl").getAttribute("href").split("=").pop();
+    window.location.href = M.cfg.wwwroot + "/blocks/ifcare/edit.php?coletaid=" + coletaId;  // Redireciona para edit_form.php com o ID da coleta
+}
+
         </script>';
+
 
         return $html;
     }
@@ -526,8 +743,8 @@ function filtrarColetas() {
                 mb_convert_encoding($resposta->usuario, 'UTF-8'),
                 mb_convert_encoding($resposta->email, 'UTF-8'),
                 mb_convert_encoding($resposta->role_name, 'UTF-8'),
-                $resposta->pergunta_id, 
-                $resposta->resposta, 
+                $resposta->pergunta_id,
+                $resposta->resposta,
                 date('d/m/Y H:i', strtotime($resposta->data_resposta))
             ]);
         }
@@ -603,7 +820,7 @@ function filtrarColetas() {
             $coleta_data['respostas'][] = [
                 'usuario' => $resposta->usuario,
                 'email' => $resposta->email,
-                'funcao' => $resposta->role_name, 
+                'funcao' => $resposta->role_name,
                 'id_pergunta' => $resposta->pergunta_id,
                 'resposta' => $resposta->resposta,
                 'data_resposta' => $resposta->data_resposta
@@ -614,7 +831,24 @@ function filtrarColetas() {
         exit;
     }
 
-
+    public function obter_emocoes_e_classes($coleta_id)
+    {
+        global $DB;
+    
+        $sql = "SELECT 
+                    classe.nome_classe, 
+                    GROUP_CONCAT(DISTINCT emocao.nome ORDER BY emocao.nome SEPARATOR ', ') AS emocoes
+                FROM {ifcare_associacao_classe_emocao_coleta} assoc
+                JOIN {ifcare_classeaeq} classe ON classe.id = assoc.classeaeq_id
+                JOIN {ifcare_emocao} emocao ON emocao.id = assoc.emocao_id
+                WHERE assoc.cadastrocoleta_id = :coleta_id
+                GROUP BY classe.id, classe.nome_classe
+                ORDER BY FIELD(classe.id, 1, 2, 3), classe.nome_classe";
+    
+        $params = ['coleta_id' => $coleta_id];
+        return $DB->get_records_sql($sql, $params);
+    }
+    
 
 }
 ?>
@@ -624,13 +858,17 @@ function filtrarColetas() {
         <span class="close">&times;</span>
         <h2 id="modalColetaNome"></h2>
         <p><strong>Preview Coleta:</strong> <a id="modalColetaUrl" href="#" target="_blank">Link da Coleta</a></p>
-        <p><strong>Disciplina:</strong> <span id="modalColetaDisciplina"></span></p>
+        <p><strong>Disciplina:</strong> <a id="modalColetaDisciplina" href="#" target="_blank"
+                style="color: #0073AA; text-decoration: none;"></a></p>
         <p><strong>Data de Início:</strong> <span id="modalColetaInicio"></span></p>
         <p><strong>Data de Fim:</strong> <span id="modalColetaFim"></span></p>
-        <p><strong>Descrição:</strong> <span id="modalColetaDescricao"></span></p>
+        <p><strong>Nome da Seção Vinculada:</strong> <span id="modalSectionName"></span></p>
+        <p><strong>Nome da Atividade/Recurso Vinculado:</strong> <span id="modalResourceName"></span></p>
         <p><strong>Notificar Aluno:</strong> <span id="modalNotificarAlunos"></span></p>
         <p><strong>Receber Alerta:</strong> <span id="modalReceberAlerta"></span></p>
-        <p><strong>Recurso/Atividade vinculado:</strong> <span id="modalRecursoNome"></span></p>
+        <p><strong>Descrição:</strong> <span id="modalColetaDescricao"></span></p>
+        <div id="modalEmocoes"></div>
+
 
         <div class="button-group">
             <button id="downloadCSV" class="btn-coleta btn-coleta-secondary">
@@ -639,58 +877,19 @@ function filtrarColetas() {
             <button id="downloadJSON" class="btn-coleta btn-coleta-secondary">
                 <i class="fa fa-file-code"></i> Baixar JSON
             </button>
-            <button id="deleteColeta" class="btn-coleta btn-coleta-secondary" onclick="confirmarExclusao()">
+            <button id="editarColeta" class="btn-coleta btn-coleta-secondary" onclick="editarColeta()">
+                <i class="fa fa-edit"></i> Editar
+            </button>
+            <button id="deleteColeta" class="btn-coleta btn-coleta-secondary" data-id="" data-name=""
+                onclick="window.ifcare.confirmarExclusaoModal(this)">
                 <i class="fa fa-trash"></i> Excluir
+            </button>
+
+            <button id="graficoColeta" class="btn-coleta btn-coleta-secondary" onclick="abrirGrafico()">
+                <i class="fa fa-chart-bar"></i> Gráficos
             </button>
         </div>
     </div>
 </div>
 
-<div id="confirmDeleteModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="fecharConfirmacao()">&times;</span>
-        <h2>Confirmação de Exclusão</h2>
-        <p>Tem certeza de que deseja excluir a coleta "<span id="confirmColetaNome"></span>"? Todos os dados, incluindo as respostas dos alunos, serão removidos permanentemente.</p>
-        <button class="btn-coleta" onclick="excluirColetaConfirmado()">Sim, excluir</button>
-        <button class="btn-coleta" onclick="fecharConfirmacao()">Cancelar</button>
-    </div>
-</div>
-
-<script>
-let coletaIdParaExclusao = null;
-
-function confirmarExclusao() {
-    const coletaNome = document.getElementById("modalColetaNome").textContent;
-    document.getElementById("confirmColetaNome").textContent = coletaNome;
-    coletaIdParaExclusao = document.getElementById("modalColetaUrl").getAttribute("href").split("=").pop();
-    document.getElementById("confirmDeleteModal").style.display = "block";
-}
-
-function fecharConfirmacao() {
-    document.getElementById("confirmDeleteModal").style.display = "none";
-}
-
-function excluirColetaConfirmado() {
-    fecharConfirmacao();
-
-    $.ajax({
-        url: M.cfg.wwwroot + "/blocks/ifcare/delete_collection.php",
-        type: "POST",
-        data: { coleta_id: coletaIdParaExclusao },
-        success: function(response) {
-            alert("Coleta excluída com sucesso!");
-            location.reload(); 
-        },
-        error: function() {
-            alert("Erro ao excluir a coleta.");
-        }
-    });
-}
-
-window.onclick = function(event) {
-    if (event.target == document.getElementById("confirmDeleteModal")) {
-        fecharConfirmacao();
-    }
-}
-</script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

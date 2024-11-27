@@ -11,16 +11,18 @@
         <FIELD NAME="receber_alerta" TYPE="int" LENGTH="1" NOTNULL="true" COMMENT="Se o usuário deve receber alertas"/>
         <FIELD NAME="notificar_alunos" TYPE="int" LENGTH="1" NOTNULL="true" COMMENT="Se os alunos devem ser notificados"/>
         <FIELD NAME="curso_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID do curso associado"/>
-        <FIELD NAME="professor_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID do professor que cadastrou"/>
+        <FIELD NAME="usuario_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID do usuário que cadastrou"/>
         <FIELD NAME="section_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID da seção selecionada pelo professor"/>
-        <FIELD NAME="resource_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID do recurso/atividade selecionado pelo professor"/>
+        <FIELD NAME="resource_id_atrelado" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID do recurso/atividade selecionado pelo professor"/>
+        <FIELD NAME="resource_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID do recurso URL criado"/>
         <FIELD NAME="data_criacao" TYPE="datetime" NOTNULL="true" DEFAULT="CURRENT_TIMESTAMP" COMMENT="Data de criação do registro"/>
         <FIELD NAME="notificacao_enviada" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" COMMENT="Flag para indicar se a notificação foi enviada"/>
+        <FIELD NAME="notificacao_finalizada" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" COMMENT="Flag para indicar se a notificação de fim foi enviada"/>
     </FIELDS>
     <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="curso_fk" TYPE="foreign" FIELDS="curso_id" REFTABLE="ifcare_curso" REFFIELDS="id" ONDELETE="cascade"/>
-        <KEY NAME="professor_fk" TYPE="foreign" FIELDS="professor_id" REFTABLE="ifcare_professor" REFFIELDS="id" ONDELETE="cascade"/>
+        <KEY NAME="usuario_fk" TYPE="foreign" FIELDS="usuario_id" REFTABLE="user" REFFIELDS="id" ONDELETE="cascade"/>
         <KEY NAME="section_fk" TYPE="foreign" FIELDS="section_id" REFTABLE="course_sections" REFFIELDS="id" ONDELETE="cascade"/>
         <KEY NAME="resource_fk" TYPE="foreign" FIELDS="resource_id" REFTABLE="course_modules" REFFIELDS="id" ONDELETE="cascade"/>
     </KEYS>
@@ -137,5 +139,21 @@
         <KEY NAME="curso_fk" TYPE="foreign" FIELDS="curso_id" REFTABLE="course" REFFIELDS="id" ONDELETE="cascade"/>
     </KEYS>
 </TABLE>
+
+<TABLE NAME="ifcare_feedback" COMMENT="Armazena feedbacks dos usuários sobre a coleta">
+    <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" SEQUENCE="true" COMMENT="Identificador único do feedback"/>
+        <FIELD NAME="coleta_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID da coleta associada"/>
+        <FIELD NAME="usuario_id" TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" COMMENT="ID do usuário que forneceu o feedback"/>
+        <FIELD NAME="feedback" TYPE="text" NOTNULL="true" COMMENT="Texto do feedback fornecido pelo usuário"/>
+        <FIELD NAME="data_feedback" TYPE="datetime" NOTNULL="true" COMMENT="Data e hora em que o feedback foi registrado"/>
+    </FIELDS>
+    <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="coleta_fk" TYPE="foreign" FIELDS="coleta_id" REFTABLE="ifcare_cadastrocoleta" REFFIELDS="id" ONDELETE="cascade"/>
+        <KEY NAME="usuario_fk" TYPE="foreign" FIELDS="usuario_id" REFTABLE="user" REFFIELDS="id" ONDELETE="cascade"/>
+    </KEYS>
+</TABLE>
+
 </TABLES>
 </XMLDB>
