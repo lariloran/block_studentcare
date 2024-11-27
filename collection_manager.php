@@ -120,7 +120,20 @@ class collection_manager
     color: #333;
     margin-bottom: 15px;
     text-align: center;
+       max-width: 90%; /* Máximo de 90% da largura da janela */
+    max-height: 80%; /* Máximo de 80% da altura da janela */
+    overflow-y: auto; /* Adiciona rolagem se o conteúdo for muito longo */
 }
+
+.modal-content span#modalColetaDescricao {
+    word-wrap: break-word; /* Força a quebra de palavras longas */
+    overflow-wrap: break-word; /* Garante suporte adicional para quebra de palavras */
+    white-space: pre-wrap; /* Preserva quebras de linha no texto original */
+    display: block; /* Garante que o texto ocupe o espaço do elemento */
+    max-height: 200px; /* Define uma altura máxima para a descrição */
+    overflow-y: auto; /* Adiciona rolagem se o conteúdo exceder o limite */
+}
+
             .close {
                 color: #aaa;
                 float: right;

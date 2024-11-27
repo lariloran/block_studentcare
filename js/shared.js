@@ -77,9 +77,9 @@ window.ifcare.clearLocalStorage = function clearLocalStorage() {
   
       // Mapeamento entre IDs das classes AEQ e seus nomes
       const classeAeqMap = {
-          1: "AUL",
-          2: "APR",
-          3: "AVA"
+          1: "AULA",
+          2: "APREND",
+          3: "AVAL"
       };
   
       // Itera por todas as classes e emoções armazenadas

@@ -117,7 +117,7 @@ class edit_form extends moodleform
         $mform->setDefault('endtime', strtotime($this->coleta->data_fim));
 
         // Descrição
-        $mform->addElement('textarea', 'description', get_string('description', 'block_ifcare'), 'wrap="virtual" rows="5" cols="50"');
+        $mform->addElement('textarea', 'description', get_string('description', 'block_ifcare'), 'wrap="virtual" rows="5" cols="50" maxlength="200"');
         $mform->setType('description', PARAM_TEXT);
         $mform->setDefault('description', $this->coleta->descricao);
 

@@ -78,21 +78,22 @@ class register_form extends moodleform
         $mform->addElement('select', 'resourceid', get_string('select_resource', 'block_ifcare'), array());
         $mform->setType('resourceid', PARAM_INT);
         $mform->addHelpButton('resourceid', 'select_resource', 'block_ifcare');
-
         $current_time = time();
-        $start_time = $current_time + (5 * 60);
-        $future_time = $current_time + (30 * 60);
-
+        
+        // Ajustar para a próxima hora redonda
+        $start_time = strtotime(date('Y-m-d H:00:00', $current_time)) + 3600; // Próxima hora cheia
+        $future_time = $start_time + 3600; // Adiciona 1 hora ao start_time
+        
         $mform->addElement('date_time_selector', 'starttime', get_string('starttime', 'block_ifcare'), array('optional' => false));
         $mform->setDefault('starttime', $start_time);
-
+        
         $mform->addElement('date_time_selector', 'endtime', get_string('endtime', 'block_ifcare'), array('optional' => false));
         $mform->setDefault('endtime', $future_time);
-
-
-        $mform->addElement('textarea', 'description', get_string('description', 'block_ifcare'), 'wrap="virtual" rows="5" cols="50"');
+        
+        
+        $mform->addElement('textarea', 'description', get_string('description', 'block_ifcare'), 'wrap="virtual" rows="5" cols="50" maxlength="200"');
         $mform->setType('description', PARAM_TEXT);
-
+        
         $mform->addElement('hidden', 'emocao_selecionadas', '', array('id' => 'emocao_selecionadas'));
         $mform->setType('emocao_selecionadas', PARAM_RAW);
 
