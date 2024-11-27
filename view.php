@@ -430,6 +430,9 @@ $perguntas_json = json_encode(array_values($perguntas));
         document.getElementById('progress-bar-container').style.display = 'none'; 
     }
 
+    let contadorPerguntas = 1; // Variável para rastrear o número da pergunta exibida
+    let ultimaDirecao = "avancar"; // Variável para rastrear a última direção de navegação
+    
     function mostrarPergunta(index) {
         let pergunta = perguntas[index];
         let cursoNome = <?php echo json_encode($cursoNome); ?>;
@@ -476,7 +479,7 @@ $perguntas_json = json_encode(array_values($perguntas));
 
         setTimeout(() => {
             perguntaContainer.innerHTML = `
-            <p class="pergunta-texto">${pergunta.pergunta_texto}</p>
+          <p class="pergunta-texto">${contadorPerguntas}. ${pergunta.pergunta_texto}</p>
         `;
             perguntaContainer.classList.add('animate');
         }, 100);
@@ -537,6 +540,8 @@ $perguntas_json = json_encode(array_values($perguntas));
             } else {
                 mostrarPergunta(perguntaAtual);
             }
+            contadorPerguntas--; // Decrementa o contador ao voltar
+
         }
     }
 
@@ -558,6 +563,7 @@ $perguntas_json = json_encode(array_values($perguntas));
             if (perguntaAtual < totalPerguntas - 1) {
                 perguntaAtual++;
                 mostrarPergunta(perguntaAtual);
+                contadorPerguntas++; // Incrementa o contador para a próxima pergunta
             } else {
                 // Finaliza coleta
                 enviarRespostas();
