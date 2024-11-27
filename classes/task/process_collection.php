@@ -15,12 +15,10 @@ class process_collection extends \core\task\scheduled_task
         $agora = time();
         mtrace("Iniciando tarefa cron de coleta...");
 
-        // **1. Processar coletas que precisam enviar notificação de início**
         $sql = "SELECT c.*
-            FROM {ifcare_cadastrocoleta} c
-            WHERE :agora BETWEEN c.data_inicio AND c.data_fim
-            AND c.notificar_alunos = 1
-            AND c.notificacao_enviada = 0";
+        FROM {ifcare_cadastrocoleta} c
+        WHERE :agora BETWEEN c.data_inicio AND c.data_fim
+        AND c.notificacao_enviada = 0";
 
         try {
             $coletas_iniciar = $DB->get_records_sql($sql, [
@@ -32,23 +30,30 @@ class process_collection extends \core\task\scheduled_task
         }
 
 
+
         if (!empty($coletas_iniciar)) {
             foreach ($coletas_iniciar as $coleta) {
-                mtrace("Processando notificação de início para a coleta: " . $coleta->nome);
+                mtrace("Processando a coleta: " . $coleta->nome);
 
                 $curso = $DB->get_record('course', ['id' => $coleta->curso_id]);
 
+                // Adicionar a URL para a coleta no curso
                 $this->adicionar_recurso_url($coleta, $curso);
 
-                $this->enviar_notificacao($coleta);
+                // Enviar notificação de início somente se `notificar_alunos` estiver habilitado
+                if ($coleta->notificar_alunos) {
+                    $this->enviar_notificacao($coleta);
+                }
 
+                // Atualizar o campo `notificacao_enviada` independentemente da notificação
                 $DB->set_field('ifcare_cadastrocoleta', 'notificacao_enviada', 1, ['id' => $coleta->id]);
 
-                mtrace("Notificação de início enviada e coleta processada: " . $coleta->nome);
+                mtrace("Processamento concluído para a coleta: " . $coleta->nome);
             }
         } else {
-            mtrace("Nenhuma coleta encontrada para notificar início.");
+            mtrace("Nenhuma coleta encontrada para processar.");
         }
+
 
         // **2. Processar coletas que precisam enviar notificação de fim**
         $sql_finalizar = "SELECT c.*
@@ -112,7 +117,7 @@ class process_collection extends \core\task\scheduled_task
         $eventdata->name = 'collection_finished';
         $eventdata->userfrom = \core_user::get_noreply_user();
         $eventdata->userto = $usuario->id;
-        
+
         $listagem_url = new \moodle_url('/blocks/ifcare/index.php');
 
         $eventdata->subject = "IFCare - Coleta finalizada: {$coleta->nome}";
@@ -123,7 +128,7 @@ class process_collection extends \core\task\scheduled_task
             <p>Confira as respostas no painel do IFCARE clicando <a href='{$listagem_url->out()}'>aqui</a>.</p>";
         $eventdata->smallmessage = "A coleta '{$coleta->nome}' foi finalizada. Confira as respostas no painel do IFCARE <a href='{$listagem_url->out()}'>aqui</a>.";
         $eventdata->notification = 1;
-        
+
         // Enviar a mensagem
         message_send($eventdata);
 
