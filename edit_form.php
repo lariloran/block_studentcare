@@ -3,6 +3,21 @@ require_once("$CFG->libdir/formslib.php");
 
 class edit_form extends moodleform
 {
+    public function get_user_courses($userid)
+    {
+        global $DB;
+        $courses = enrol_get_users_courses($userid, true);
+        $teacher_courses = [];
+
+        foreach ($courses as $course) {
+            $context = context_course::instance($course->id);
+
+            if (has_capability('moodle/course:update', $context, $userid)) {
+                $teacher_courses[] = $course;
+            }
+        }
+        return $teacher_courses;
+    }
     private $coleta;
 
     public function __construct($coleta_id)
@@ -50,7 +65,7 @@ class edit_form extends moodleform
         $mform->setDefault('name', $this->coleta->nome);
 
         if (!$coletaIniciada) {
-            $courses = enrol_get_users_courses($USER->id, true);
+            $courses = $this->get_user_courses($USER->id, true);
             $course_options = [];
             foreach ($courses as $course) {
                 $course_options[$course->id] = $course->fullname;

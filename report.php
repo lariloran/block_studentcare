@@ -60,22 +60,22 @@ $coletas = $DB->get_records_sql($sql, $params);
         <p>Exibe a distribuição de respostas por escala Likert.</p>
         <button class="btn-coleta" onclick="abrirModalGrafico()">Visualizar Gráfico</button>
     </div>
-    <div class="card">
+    <!-- <div class="card">
         <canvas id="modaPreviewChart" width="150" height="100"></canvas>
         <h3>Moda das Respostas</h3>
         <p>Exibe a moda das respostas para cada pergunta.</p>
         <button class="btn-coleta" onclick="abrirModalModa()">Visualizar Moda</button>
-    </div>
+    </div> -->
 
 </div>
 
 <!-- Modal de Tela Cheia para o Gráfico de Moda -->
-<div id="modaModal" class="modal-fullscreen">
+<!-- <div id="modaModal" class="modal-fullscreen">
     <div class="modal-content-fullscreen">
         <span class="close-fullscreen" onclick="fecharModalModa()">&times;</span>
         <canvas id="modaChartFull"></canvas>
     </div>
-</div>
+</div> -->
 
 <!-- Modal de Tela Cheia para o Gráfico de Barras Empilhadas -->
 <div id="graficoModal" class="modal-fullscreen">
@@ -127,31 +127,31 @@ $coletas = $DB->get_records_sql($sql, $params);
         }
     });
 
-    const modaPreviewData = {
-        labels: ['Pergunta 1', 'Pergunta 2', 'Pergunta 3'],
-        datasets: [{
-            label: 'Moda',
-            data: [2, 3, 4],
-            backgroundColor: 'rgba(153, 102, 255, 0.5)'
-        }]
-    };
+    // const modaPreviewData = {
+    //     labels: ['Pergunta 1', 'Pergunta 2', 'Pergunta 3'],
+    //     datasets: [{
+    //         label: 'Moda',
+    //         data: [2, 3, 4],
+    //         backgroundColor: 'rgba(153, 102, 255, 0.5)'
+    //     }]
+    // };
 
-    const modaPreviewCtx = document.getElementById('modaPreviewChart').getContext('2d');
-    new Chart(modaPreviewCtx, {
-        type: 'bar',
-        data: modaPreviewData,
-        options: {
-            responsive: false,
-            plugins: {
-                legend: { display: false },
-                title: { display: false }
-            },
-            scales: {
-                x: { display: false },
-                y: { display: false }
-            }
-        }
-    });
+    // const modaPreviewCtx = document.getElementById('modaPreviewChart').getContext('2d');
+    // new Chart(modaPreviewCtx, {
+    //     type: 'bar',
+    //     data: modaPreviewData,
+    //     options: {
+    //         responsive: false,
+    //         plugins: {
+    //             legend: { display: false },
+    //             title: { display: false }
+    //         },
+    //         scales: {
+    //             x: { display: false },
+    //             y: { display: false }
+    //         }
+    //     }
+    // });
 });
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -234,7 +234,7 @@ function fecharModalAlerta() {
                 .then(response => response.json())
                 .then(data => {
                     updateChart(data.chart_data);      
-                    updateModaChart(data.moda_data);   
+                    //updateModaChart(data.moda_data);   
                 });
         } else {
             if (chart) chart.destroy();
@@ -268,67 +268,67 @@ function fecharModalAlerta() {
         });
     }
 
-    function updateModaChart(moda_data) {
-    const modaCtx = document.getElementById('modaChartFull').getContext('2d');
-    if (modaChart) modaChart.destroy();
+//     function updateModaChart(moda_data) {
+//     const modaCtx = document.getElementById('modaChartFull').getContext('2d');
+//     if (modaChart) modaChart.destroy();
 
-    const likertLabels = {
-        1: "Discordo Totalmente",
-        2: "Discordo",
-        3: "Neutro",
-        4: "Concordo",
-        5: "Concordo Totalmente"
-    };
+//     const likertLabels = {
+//         1: "Discordo Totalmente",
+//         2: "Discordo",
+//         3: "Neutro",
+//         4: "Concordo",
+//         5: "Concordo Totalmente"
+//     };
 
-    modaChart = new Chart(modaCtx, {
-        type: 'bar',
-        data: {
-            labels: moda_data.labels,
-            datasets: [{
-                label: 'Moda das Respostas',
-                data: moda_data.data,
-                backgroundColor: 'rgba(153, 102, 255, 0.5)'
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { display: false },
-                title: {
-                    display: true,
-                    text: 'Moda das Respostas por Pergunta'
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            const modaValue = context.raw;
-                            const modaFrequency = moda_data.frequencies ? moda_data.frequencies[context.dataIndex] : null;
-                            const modaLabel = likertLabels[modaValue] || modaValue;
-                            return modaFrequency !== null
-                                ? `Moda: ${modaLabel} (${modaValue}) - Frequência: ${modaFrequency}`
-                                : `Moda: ${modaLabel} (${modaValue})`;
-                        }
-                    }
-                }
-            },
-            scales: {
-                x: { title: { display: true, text: 'Perguntas' } },
-                y: {
-                    title: { display: true, text: 'Moda' },
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1,
-                        callback: function(value) {
-                            return likertLabels[value] || '';
-                        },
-                        min: 1,
-                        max: 5
-                    }
-                }
-            }
-        }
-    });
-}
+//     modaChart = new Chart(modaCtx, {
+//         type: 'bar',
+//         data: {
+//             labels: moda_data.labels,
+//             datasets: [{
+//                 label: 'Moda das Respostas',
+//                 data: moda_data.data,
+//                 backgroundColor: 'rgba(153, 102, 255, 0.5)'
+//             }]
+//         },
+//         options: {
+//             responsive: true,
+//             plugins: {
+//                 legend: { display: false },
+//                 title: {
+//                     display: true,
+//                     text: 'Moda das Respostas por Pergunta'
+//                 },
+//                 tooltip: {
+//                     callbacks: {
+//                         label: function(context) {
+//                             const modaValue = context.raw;
+//                             const modaFrequency = moda_data.frequencies ? moda_data.frequencies[context.dataIndex] : null;
+//                             const modaLabel = likertLabels[modaValue] || modaValue;
+//                             return modaFrequency !== null
+//                                 ? `Moda: ${modaLabel} (${modaValue}) - Frequência: ${modaFrequency}`
+//                                 : `Moda: ${modaLabel} (${modaValue})`;
+//                         }
+//                     }
+//                 }
+//             },
+//             scales: {
+//                 x: { title: { display: true, text: 'Perguntas' } },
+//                 y: {
+//                     title: { display: true, text: 'Moda' },
+//                     beginAtZero: true,
+//                     ticks: {
+//                         stepSize: 1,
+//                         callback: function(value) {
+//                             return likertLabels[value] || '';
+//                         },
+//                         min: 1,
+//                         max: 5
+//                     }
+//                 }
+//             }
+//         }
+//     });
+// }
 
 </script>
 
