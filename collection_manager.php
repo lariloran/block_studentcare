@@ -630,13 +630,13 @@ function adicionarEventosFechamento(modal) {
 
                     document.getElementById("downloadCSV").onclick = function() {
             const coletaId = this.getAttribute("data-id");
-            const downloadUrl = "download.php?coleta_id=" + coletaId + "&format=csv";
+            const downloadUrl = "Download.php?coleta_id=" + coletaId + "&format=csv";
             window.location.href = downloadUrl;
         };
 
         document.getElementById("downloadJSON").onclick = function() {
             const coletaId = this.getAttribute("data-id");
-            const downloadUrl = "download.php?coleta_id=" + coletaId + "&format=json";
+            const downloadUrl = "Download.php?coleta_id=" + coletaId + "&format=json";
             window.location.href = downloadUrl;
         };
 
