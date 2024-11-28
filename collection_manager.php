@@ -1,20 +1,37 @@
 <?php
 class collection_manager
 {
-
+    
+    //Busca todas asc oletas das disciplinas onde o usuário é professor
     public function get_coletas_by_professor($usuario_id)
     {
-        global $DB;
-
-        $sql = "SELECT id, nome, data_inicio, data_fim, descricao, curso_id, notificar_alunos, receber_alerta , resource_id_atrelado, section_id, data_criacao
-                FROM {ifcare_cadastrocoleta} 
-                WHERE usuario_id = :usuario_id
-                ORDER BY data_criacao DESC";
-
-        $params = ['usuario_id' => $usuario_id];
-
+        global $DB, $CFG;
+    
+        require_once($CFG->dirroot . '/lib/accesslib.php');
+    
+        $sql = "SELECT DISTINCT c.id, c.nome, c.data_inicio, c.data_fim, c.descricao, 
+                                    c.curso_id, c.notificar_alunos, c.receber_alerta, 
+                                    c.resource_id_atrelado, c.section_id, c.data_criacao
+                    FROM {ifcare_cadastrocoleta} c
+                    JOIN {context} ctx ON ctx.instanceid = c.curso_id
+                    JOIN {role_assignments} ra ON ra.contextid = ctx.id
+                    JOIN {role} r ON r.id = ra.roleid
+                    WHERE ctx.contextlevel = :context_course_level
+                      AND (c.usuario_id = :usuario_id_cadastro OR 
+                           (ra.userid = :usuario_id_professor AND r.shortname = :role_teacher))
+                    ORDER BY c.data_criacao DESC";
+    
+        $params = [
+            'context_course_level' => CONTEXT_COURSE, 
+            'usuario_id_cadastro' => $usuario_id,   
+            'usuario_id_professor' => $usuario_id,   
+            'role_teacher' => 'editingteacher',   
+        ];
+    
         return $DB->get_records_sql($sql, $params);
     }
+    
+    
 
 
     private function obter_perguntas_associadas($coleta_id)
