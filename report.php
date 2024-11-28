@@ -12,13 +12,23 @@ echo $OUTPUT->header();
 $selected_coletaid = optional_param('coletaid', '', PARAM_INT);
 
 // Consulta SQL para buscar as coletas junto com o nome completo do curso
-$sql = "SELECT c.id AS coleta_id, c.nome AS coleta_nome, c.curso_id, course.fullname AS curso_nome
-        FROM {ifcare_cadastrocoleta} c
-        JOIN {course} course ON course.id = c.curso_id
-        WHERE c.usuario_id = :usuario_id
-        ORDER BY course.fullname, c.nome";
+$sql = "
+    SELECT DISTINCT c.id AS coleta_id, c.nome AS coleta_nome, c.curso_id, course.fullname AS curso_nome
+    FROM {ifcare_cadastrocoleta} c
+    JOIN {course} course ON course.id = c.curso_id
+    LEFT JOIN {role_assignments} ra ON ra.contextid = (
+        SELECT ctx.id FROM {context} ctx
+        WHERE ctx.instanceid = course.id AND ctx.contextlevel = 50 LIMIT 1
+    )
+    LEFT JOIN {role} r ON r.id = ra.roleid
+    WHERE (c.usuario_id = :usuario_id_1 OR (ra.userid = :usuario_id_2 AND r.shortname = 'editingteacher'))
+    ORDER BY course.fullname, c.nome";
 
-$params = ['usuario_id' => $USER->id];
+$params = [
+    'usuario_id_1' => $USER->id,
+    'usuario_id_2' => $USER->id // Parâmetro separado explicitamente
+];
+
 $coletas = $DB->get_records_sql($sql, $params);
 ?>
 

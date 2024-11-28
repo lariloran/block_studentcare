@@ -267,10 +267,16 @@ $perguntas_json = json_encode(array_values($perguntas));
         <p class="tcle-title"><strong>Termo de Consentimento Livre e Esclarecido (TCLE)</strong></p>
         <p class="tcle-description">
             Sua participação nesta coleta de emoções para a disciplina <strong><?php echo $cursoR->fullname; ?></strong>
-            é muito importante para nós. Ao responder, você autoriza o uso das suas respostas (incluindo seu nome e
-            e-mail) para fins acadêmicos e pedagógicos, contribuindo para pesquisas que buscam aprimorar o ensino e a
-            aprendizagem, promovendo um ambiente educacional mais acolhedor e eficaz. Agradecemos sua colaboração!
+            é muito importante para nós. Ao responder, você autoriza o uso das suas respostas, que serão tratadas de
+            forma
+            confidencial e anônima, exclusivamente para fins acadêmicos e pedagógicos. As informações coletadas serão
+            utilizadas
+            em pesquisas que buscam aprimorar o ensino e a aprendizagem, promovendo um ambiente educacional mais
+            acolhedor e eficaz.
+            Somente o professor responsável terá acesso aos dados, resguardando sua privacidade. Agradecemos sua
+            colaboração!
         </p>
+
         <div id="respostas-tcle" class="respostas-tcle">
             <button class="buttonTcle" id="aceito-btn" type="button" onclick="enviarResposta(1)">Aceito</button>
             <button class="buttonTcle" id="nao-aceito-btn" type="button" onclick="enviarResposta(0)">Não Aceito</button>
@@ -390,44 +396,44 @@ $perguntas_json = json_encode(array_values($perguntas));
     let introducoesExibidas = {};
 
     function gerarMensagem(emocoes, tooltips, classeId, cursoNome, nomeRecurso = null) {
-    const plural = emocoes.length > 1;
+        const plural = emocoes.length > 1;
 
-    const emocoesComTooltip = emocoes.map((emocao, index) => {
-        return `
+        const emocoesComTooltip = emocoes.map((emocao, index) => {
+            return `
         <strong>${emocao}</strong>
         <span class="tooltip-icon">
             &#9432;
             <span class="tooltip-text">${tooltips[index]}</span>
         </span>
     `;
-    }).join(", ");
+        }).join(", ");
 
-    let textoAtividade;
+        let textoAtividade;
 
-    switch (classeId) {
-        case "1": // Emoções Relacionadas às Aulas
-            textoAtividade = nomeRecurso
-                ? `da aula <strong>${nomeRecurso}</strong> da disciplina de <strong>${cursoNome}</strong>`
-                : `das aulas da disciplina de <strong>${cursoNome}</strong>`;
-            break;
+        switch (classeId) {
+            case "1": // Emoções Relacionadas às Aulas
+                textoAtividade = nomeRecurso
+                    ? `da aula <strong>${nomeRecurso}</strong> da disciplina de <strong>${cursoNome}</strong>`
+                    : `das aulas da disciplina de <strong>${cursoNome}</strong>`;
+                break;
 
-        case "2": // Emoções Relacionadas ao Aprendizado
-            textoAtividade = nomeRecurso
-                ? `do estudo do <strong>${nomeRecurso}</strong> pertencente à disciplina de <strong>${cursoNome}</strong>`
-                : `da sua rotina de estudos na disciplina de <strong>${cursoNome}</strong>`;
-            break;
+            case "2": // Emoções Relacionadas ao Aprendizado
+                textoAtividade = nomeRecurso
+                    ? `do estudo do <strong>${nomeRecurso}</strong> pertencente à disciplina de <strong>${cursoNome}</strong>`
+                    : `da sua rotina de estudos na disciplina de <strong>${cursoNome}</strong>`;
+                break;
 
-        case "3": // Emoções Relacionadas às Atividades Avaliativas
-            textoAtividade = nomeRecurso
-                ? `da atividade avaliativa <strong>${nomeRecurso}</strong> da disciplina de <strong>${cursoNome}</strong>`
-                : `de atividades avaliativas da disciplina de <strong>${cursoNome}</strong>`;
-            break;
+            case "3": // Emoções Relacionadas às Atividades Avaliativas
+                textoAtividade = nomeRecurso
+                    ? `da atividade avaliativa <strong>${nomeRecurso}</strong> da disciplina de <strong>${cursoNome}</strong>`
+                    : `de atividades avaliativas da disciplina de <strong>${cursoNome}</strong>`;
+                break;
 
-        default:
-            textoAtividade = `da disciplina de <strong>${cursoNome}</strong>`;
-    }
+            default:
+                textoAtividade = `da disciplina de <strong>${cursoNome}</strong>`;
+        }
 
-    return `
+        return `
     <p>
         As perguntas a seguir referem-se ${plural ? 'às emoções' : 'à emoção'} 
         ${emocoesComTooltip}
@@ -435,13 +441,13 @@ $perguntas_json = json_encode(array_values($perguntas));
         <strong>antes</strong>, <strong>durante</strong> ou <strong>depois</strong> ${textoAtividade}. 
         Por favor, leia cada item com atenção e responda utilizando a escala fornecida.
     </p>`;
-}
+    }
 
-function mostrarTextoInicial(pergunta, emocoesDaClasse, tooltipsDaClasse) {
-    let cursoNome = <?php echo json_encode($cursoNome); ?>;
+    function mostrarTextoInicial(pergunta, emocoesDaClasse, tooltipsDaClasse) {
+        let cursoNome = <?php echo json_encode($cursoNome); ?>;
 
-    // Obter o nome do recurso atrelado
-    let nomeRecurso = <?php
+        // Obter o nome do recurso atrelado
+        let nomeRecurso = <?php
         $resource_name = '--';
         $coleta = $DB->get_record('ifcare_cadastrocoleta', ['id' => $coletaid], '*');
 
@@ -458,22 +464,22 @@ function mostrarTextoInicial(pergunta, emocoesDaClasse, tooltipsDaClasse) {
             }
         }
         echo json_encode($resource_name);
-    ?>;
+        ?>;
 
-    let mensagemInicial = gerarMensagem(
-        emocoesDaClasse,
-        tooltipsDaClasse,
-        pergunta.classe_id,
-        cursoNome,
-        nomeRecurso !== '--' ? nomeRecurso : null
-    );
+        let mensagemInicial = gerarMensagem(
+            emocoesDaClasse,
+            tooltipsDaClasse,
+            pergunta.classe_id,
+            cursoNome,
+            nomeRecurso !== '--' ? nomeRecurso : null
+        );
 
-    document.getElementById('titulo-coleta').innerHTML = mensagemInicial;
-    document.getElementById('pergunta-container').innerHTML = '';
-    document.getElementById('pergunta-container').style.display = 'none'; 
-    document.getElementById('respostas-container').style.display = 'none'; 
-    document.getElementById('progress-bar-container').style.display = 'none'; 
-}
+        document.getElementById('titulo-coleta').innerHTML = mensagemInicial;
+        document.getElementById('pergunta-container').innerHTML = '';
+        document.getElementById('pergunta-container').style.display = 'none';
+        document.getElementById('respostas-container').style.display = 'none';
+        document.getElementById('progress-bar-container').style.display = 'none';
+    }
 
 
 
@@ -534,7 +540,18 @@ function mostrarTextoInicial(pergunta, emocoesDaClasse, tooltipsDaClasse) {
         document.getElementById('respostas-container').style.display = 'flex';
         document.getElementById('progress-bar-container').style.display = 'block';
 
-        let progresso = Math.round(((index + 1) / totalPerguntas) * 100);
+        let progresso;
+
+        if (index === 1) {
+            progresso = 0;
+        } else {
+            progresso = Math.round(((index + 1) / totalPerguntas) * 100);
+            if (index === totalPerguntas - 1 && !respostasSelecionadas[pergunta.id]) {
+                progresso = 99;
+            }
+        }
+
+
         document.getElementById('progress-bar').value = progresso;
         document.getElementById('progress-text').innerText = `${progresso}%`;
 
@@ -597,103 +614,103 @@ function mostrarTextoInicial(pergunta, emocoesDaClasse, tooltipsDaClasse) {
     let feedbackEnviado = false;
 
     function avancarPergunta() {
-    let pergunta = perguntas[perguntaAtual];
-    let tituloAtual = document.getElementById('titulo-coleta').innerText;
+        let pergunta = perguntas[perguntaAtual];
+        let tituloAtual = document.getElementById('titulo-coleta').innerText;
 
-    if (tituloAtual.includes('As perguntas a seguir referem-se')) {
-        perguntaAtual++;
-        mostrarPergunta(perguntaAtual);
-        return;
-    }
-
-    if (respostasSelecionadas[pergunta.id] !== undefined) {
-        if (perguntaAtual < totalPerguntas - 1) {
+        if (tituloAtual.includes('As perguntas a seguir referem-se')) {
             perguntaAtual++;
             mostrarPergunta(perguntaAtual);
-            contadorPerguntas++;
+            return;
+        }
+
+        if (respostasSelecionadas[pergunta.id] !== undefined) {
+            if (perguntaAtual < totalPerguntas - 1) {
+                perguntaAtual++;
+                mostrarPergunta(perguntaAtual);
+                contadorPerguntas++;
+            } else {
+                // Finaliza coleta e exibe modal de feedback
+                enviarRespostas().then(() => {
+                    console.log("Respostas enviadas com sucesso.");
+                    mostrarFeedback();
+                }).catch(error => {
+                    console.error("Erro ao finalizar coleta:", error);
+                    abrirModal('modal-erro');
+                });
+            }
         } else {
-            // Finaliza coleta e exibe modal de feedback
-            enviarRespostas().then(() => {
-                console.log("Respostas enviadas com sucesso.");
-                mostrarFeedback();
-            }).catch(error => {
-                console.error("Erro ao finalizar coleta:", error);
-                abrirModal('modal-erro');
+            abrirModal('modal-erro');
+        }
+    }
+
+    function mostrarFeedback() {
+        // Oculta o quiz
+        const quizContainer = document.getElementById('quiz-container');
+        if (quizContainer) {
+            quizContainer.style.display = 'none';
+        }
+
+        // Exibe o modal de feedback
+        const feedbackContainer = document.getElementById('feedback-container');
+        if (feedbackContainer) {
+            feedbackContainer.style.display = 'block';
+        } else {
+            console.error("Container de feedback não encontrado.");
+        }
+    }
+
+
+
+    function enviarRespostas() {
+        const dadosRespostas = {
+            coleta_id: <?php echo $coletaid; ?>,
+            usuario_id: <?php echo $userid; ?>,
+            respostas: respostasSelecionadas
+        };
+
+        // Retorna a Promise gerada pelo fetch
+        return fetch(window.location.href, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dadosRespostas)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    throw new Error(data.error || "Erro desconhecido");
+                }
             });
-        }
-    } else {
-        abrirModal('modal-erro');
     }
-}
-
-function mostrarFeedback() {
-    // Oculta o quiz
-    const quizContainer = document.getElementById('quiz-container');
-    if (quizContainer) {
-        quizContainer.style.display = 'none';
-    }
-
-    // Exibe o modal de feedback
-    const feedbackContainer = document.getElementById('feedback-container');
-    if (feedbackContainer) {
-        feedbackContainer.style.display = 'block';
-    } else {
-        console.error("Container de feedback não encontrado.");
-    }
-}
-
-
-
-function enviarRespostas() {
-    const dadosRespostas = {
-        coleta_id: <?php echo $coletaid; ?>,
-        usuario_id: <?php echo $userid; ?>,
-        respostas: respostasSelecionadas
-    };
-
-    // Retorna a Promise gerada pelo fetch
-    return fetch(window.location.href, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(dadosRespostas)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (!data.success) {
-            throw new Error(data.error || "Erro desconhecido");
-        }
-    });
-}
 
     function enviarFeedback() {
-    const feedbackText = document.getElementById('feedback-text').value;
+        const feedbackText = document.getElementById('feedback-text').value;
 
-    const dadosFeedback = {
-        coleta_id: <?php echo $coletaid; ?>,
-        usuario_id: <?php echo $userid; ?>,
-        feedback: feedbackText || ""
-    };
+        const dadosFeedback = {
+            coleta_id: <?php echo $coletaid; ?>,
+            usuario_id: <?php echo $userid; ?>,
+            feedback: feedbackText || ""
+        };
 
-    fetch('feedback.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(dadosFeedback)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            console.log("Feedback enviado com sucesso.");
-            irParaHome(); // Redireciona para o curso após o feedback
-        } else {
-            console.error("Erro ao enviar o feedback:", data.error);
-        }
-    })
-    .catch(error => console.error("Erro ao enviar o feedback:", error));
-}
+        fetch('feedback.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dadosFeedback)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log("Feedback enviado com sucesso.");
+                    irParaHome(); // Redireciona para o curso após o feedback
+                } else {
+                    console.error("Erro ao enviar o feedback:", data.error);
+                }
+            })
+            .catch(error => console.error("Erro ao enviar o feedback:", error));
+    }
 
 
 
