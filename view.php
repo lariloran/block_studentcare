@@ -4,12 +4,12 @@ require_login();
 
 $coletaid = required_param('coletaid', PARAM_INT);
 $context = context_course::instance($COURSE->id);
-$PAGE->set_url('/blocks/ifcare/view.php', array('coletaid' => $coletaid));
+$PAGE->set_url('/blocks/studentcare/view.php', array('coletaid' => $coletaid));
 $PAGE->set_context($context);
 $PAGE->set_title("Coleta de Emoções");
 
 
-if (!$DB->record_exists('ifcare_cadastrocoleta', ['id' => $coletaid])) {
+if (!$DB->record_exists('studentcare_cadastrocoleta', ['id' => $coletaid])) {
     echo $OUTPUT->header();
     echo html_writer::tag('div', 'Desculpe, esta coleta não está mais disponível. Entre em contato com o administrador ou professor para mais informações.', ['class' => 'alert alert-info']);
     echo $OUTPUT->footer();
@@ -18,7 +18,7 @@ if (!$DB->record_exists('ifcare_cadastrocoleta', ['id' => $coletaid])) {
 
 $userid = $USER->id;
 
-$coletaR = $DB->get_record('ifcare_cadastrocoleta', ['id' => $coletaid]);
+$coletaR = $DB->get_record('studentcare_cadastrocoleta', ['id' => $coletaid]);
 $cursoR = $DB->get_record('course', ['id' => $coletaR->curso_id]);
 
 $is_enrolled = is_enrolled(context_course::instance($coletaR->curso_id), $userid);
@@ -27,7 +27,7 @@ if (!$is_enrolled) {
     redirect(new moodle_url('/course/view.php', ['id' => $COURSE->id]));
     exit;
 }
-$respostasExistentes = $DB->get_records('ifcare_resposta', [
+$respostasExistentes = $DB->get_records('studentcare_resposta', [
     'coleta_id' => $coletaid,
     'usuario_id' => $userid
 ]);
@@ -116,7 +116,7 @@ if ($respostasExistentes) {
 }
 
 
-$tcle_records = $DB->get_records('ifcare_tcle_resposta', ['usuario_id' => $userid, 'curso_id' => $coletaR->curso_id]);
+$tcle_records = $DB->get_records('studentcare_tcle_resposta', ['usuario_id' => $userid, 'curso_id' => $coletaR->curso_id]);
 
 $tcle_aceito = false;
 foreach ($tcle_records as $record) {
@@ -135,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $coletaid = clean_param($data['coleta_id'], PARAM_INT);
             $usuarioid = clean_param($data['usuario_id'], PARAM_INT);
 
-            $respostasExistentes = $DB->get_records('ifcare_resposta', ['coleta_id' => $coletaid, 'usuario_id' => $usuarioid]);
+            $respostasExistentes = $DB->get_records('studentcare_resposta', ['coleta_id' => $coletaid, 'usuario_id' => $usuarioid]);
 
             if ($respostasExistentes) {
                 header('Content-Type: application/json');
@@ -149,7 +149,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $resposta = clean_param($resposta, PARAM_TEXT);
 
                 if ($resposta !== null) {
-                    $pergunta = $DB->get_record('ifcare_pergunta', ['id' => $pergunta_id]);
+                    $pergunta = $DB->get_record('studentcare_pergunta', ['id' => $pergunta_id]);
                     if ($pergunta) {
                         $nova_resposta = new stdClass();
                         $nova_resposta->pergunta_id = $pergunta->id;
@@ -158,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $nova_resposta->resposta = $resposta;
                         $nova_resposta->data_resposta = date('Y-m-d H:i:s');
 
-                        $DB->insert_record('ifcare_resposta', $nova_resposta);
+                        $DB->insert_record('studentcare_resposta', $nova_resposta);
                     }
                 }
             }
@@ -179,7 +179,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $tcle_aceito_form = optional_param('tcle_aceito', 0, PARAM_INT);
     if ($tcle_aceito_form == 1) {
         if (empty($tcle_records)) {
-            $DB->insert_record('ifcare_tcle_resposta', (object) [
+            $DB->insert_record('studentcare_tcle_resposta', (object) [
                 'usuario_id' => $userid,
                 'coleta_id' => $coletaid,
                 'tcle_aceito' => $tcle_aceito_form,
@@ -242,9 +242,9 @@ if ($agora > strtotime($coletaR->data_fim)) {
 
 $perguntas = $DB->get_records_sql("
     SELECT p.id, p.pergunta_texto, e.nome AS emocao_nome, e.txttooltip AS texto_tooltip, p.classeaeq_id AS classe_id
-    FROM {ifcare_pergunta} p
-    JOIN {ifcare_emocao} e ON e.id = p.emocao_id
-    JOIN {ifcare_associacao_classe_emocao_coleta} a ON a.emocao_id = e.id
+    FROM {studentcare_pergunta} p
+    JOIN {studentcare_emocao} e ON e.id = p.emocao_id
+    JOIN {studentcare_associacao_classe_emocao_coleta} a ON a.emocao_id = e.id
     WHERE a.cadastrocoleta_id = :coletaid
 ", ['coletaid' => $coletaid]);
 
@@ -449,7 +449,7 @@ $perguntas_json = json_encode(array_values($perguntas));
         // Obter o nome do recurso atrelado
         let nomeRecurso = <?php
         $resource_name = '--';
-        $coleta = $DB->get_record('ifcare_cadastrocoleta', ['id' => $coletaid], '*');
+        $coleta = $DB->get_record('studentcare_cadastrocoleta', ['id' => $coletaid], '*');
 
         if ($coleta && $coleta->resource_id_atrelado) {
             $module = $DB->get_record('course_modules', ['id' => $coleta->resource_id_atrelado], 'module');

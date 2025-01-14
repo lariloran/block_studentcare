@@ -7,8 +7,8 @@ global $PAGE, $OUTPUT;
 $courseid = optional_param('courseid', 0, PARAM_INT);
 $context = context_system::instance();
 $PAGE->set_context($context);
-$PAGE->set_url('/blocks/ifcare/manual_aeq.php');
-$PAGE->set_title(get_string('manual_aeq', 'block_ifcare'));
+$PAGE->set_url('/blocks/studentcare/manual_aeq.php');
+$PAGE->set_title(get_string('manual_aeq', 'block_studentcare'));
 $PAGE->set_pagelayout('standard');
 
 echo $OUTPUT->header();
@@ -211,9 +211,9 @@ $sql = "SELECT
             c.nome_classe AS classe_nome,
             e.nome AS emocao_nome,
             p.pergunta_texto 
-        FROM {ifcare_pergunta} p
-        JOIN {ifcare_emocao} e ON p.emocao_id = e.id
-        JOIN {ifcare_classeaeq} c ON p.classeaeq_id = c.id
+        FROM {studentcare_pergunta} p
+        JOIN {studentcare_emocao} e ON p.emocao_id = e.id
+        JOIN {studentcare_classeaeq} c ON p.classeaeq_id = c.id
         ORDER BY c.id, e.nome, p.id"; // Ordenar pelo ID da classe, depois pela emoção e pela pergunta
 
 $perguntas = $DB->get_records_sql($sql);

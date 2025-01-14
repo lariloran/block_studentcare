@@ -11,7 +11,7 @@ if (isset($data['coleta_id']) && isset($data['usuario_id']) && isset($data['feed
         $usuarioid = clean_param($data['usuario_id'], PARAM_INT);
         $feedback = clean_param($data['feedback'], PARAM_TEXT);
 
-        $feedbackExistente = $DB->get_record('ifcare_feedback', [
+        $feedbackExistente = $DB->get_record('studentcare_feedback', [
             'coleta_id' => $coletaid,
             'usuario_id' => $usuarioid
         ]);
@@ -28,7 +28,7 @@ if (isset($data['coleta_id']) && isset($data['usuario_id']) && isset($data['feed
         $novo_feedback->feedback = $feedback;
         $novo_feedback->data_feedback = date('Y-m-d H:i:s');
 
-        $DB->insert_record('ifcare_feedback', $novo_feedback);
+        $DB->insert_record('studentcare_feedback', $novo_feedback);
 
         header('Content-Type: application/json');
         echo json_encode(['success' => true]);

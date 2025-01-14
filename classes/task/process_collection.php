@@ -1,11 +1,11 @@
 <?php
-namespace block_ifcare\task;
+namespace block_studentcare\task;
 
 class process_collection extends \core\task\scheduled_task
 {
     public function get_name()
     {
-        return get_string('process_collection', 'block_ifcare');
+        return get_string('process_collection', 'block_studentcare');
     }
 
     public function execute()
@@ -16,7 +16,7 @@ class process_collection extends \core\task\scheduled_task
         mtrace("Iniciando tarefa cron de coleta...");
 
         $sql = "SELECT c.*
-        FROM {ifcare_cadastrocoleta} c
+        FROM {studentcare_cadastrocoleta} c
         WHERE :agora BETWEEN c.data_inicio AND c.data_fim
         AND c.notificacao_enviada = 0";
 
@@ -46,7 +46,7 @@ class process_collection extends \core\task\scheduled_task
                 }
 
                 // Atualizar o campo `notificacao_enviada` independentemente da notificação
-                $DB->set_field('ifcare_cadastrocoleta', 'notificacao_enviada', 1, ['id' => $coleta->id]);
+                $DB->set_field('studentcare_cadastrocoleta', 'notificacao_enviada', 1, ['id' => $coleta->id]);
 
                 mtrace("Processamento concluído para a coleta: " . $coleta->nome);
             }
@@ -57,7 +57,7 @@ class process_collection extends \core\task\scheduled_task
 
         // **2. Processar coletas que precisam enviar notificação de fim**
         $sql_finalizar = "SELECT c.*
-                      FROM {ifcare_cadastrocoleta} c
+                      FROM {studentcare_cadastrocoleta} c
                       WHERE :agora >= c.data_fim
                       AND c.receber_alerta = 1
                       AND c.notificacao_finalizada = 0";
@@ -78,7 +78,7 @@ class process_collection extends \core\task\scheduled_task
                 $this->enviar_notificacao_fim($coleta);
 
                 // Atualizar a flag de notificação de fim no banco de dados
-                $DB->set_field('ifcare_cadastrocoleta', 'notificacao_finalizada', 1, ['id' => $coleta->id]);
+                $DB->set_field('studentcare_cadastrocoleta', 'notificacao_finalizada', 1, ['id' => $coleta->id]);
 
                 mtrace("Notificação de fim enviada para a coleta: " . $coleta->nome);
             }
@@ -113,27 +113,27 @@ class process_collection extends \core\task\scheduled_task
         $nome_disciplina = $curso->fullname;
 
         $eventdata = new \core\message\message();
-        $eventdata->component = 'block_ifcare';
+        $eventdata->component = 'block_studentcare';
         $eventdata->name = 'collection_finished';
         $eventdata->userfrom = \core_user::get_noreply_user();
         $eventdata->userto = $usuario->id;
 
-        $listagem_url = new \moodle_url('/blocks/ifcare/index.php');
+        $listagem_url = new \moodle_url('/blocks/studentcare/index.php');
 
-        $eventdata->subject = "IFCare - Coleta finalizada: {$coleta->nome}";
-        $eventdata->fullmessage = "Olá! A coleta de emoções '{$coleta->nome}' para a disciplina {$nome_disciplina} foi finalizada. Confira as respostas acessando o painel do IFCARE: {$listagem_url->out()}.";
+        $eventdata->subject = "StudentCare - Coleta finalizada: {$coleta->nome}";
+        $eventdata->fullmessage = "Olá! A coleta de emoções '{$coleta->nome}' para a disciplina {$nome_disciplina} foi finalizada. Confira as respostas acessando o painel do StudentCare: {$listagem_url->out()}.";
         $eventdata->fullmessageformat = FORMAT_PLAIN;
         $eventdata->fullmessagehtml = "<p>Olá!</p>
             <p>A coleta de emoções <strong>{$coleta->nome}</strong> para a disciplina <strong>{$nome_disciplina}</strong> foi finalizada.</p>
-            <p>Confira as respostas no painel do IFCARE clicando <a href='{$listagem_url->out()}'>aqui</a>.</p>";
-        $eventdata->smallmessage = "A coleta '{$coleta->nome}' foi finalizada. Confira as respostas no painel do IFCARE <a href='{$listagem_url->out()}'>aqui</a>.";
+            <p>Confira as respostas no painel do StudentCare clicando <a href='{$listagem_url->out()}'>aqui</a>.</p>";
+        $eventdata->smallmessage = "A coleta '{$coleta->nome}' foi finalizada. Confira as respostas no painel do StudentCare <a href='{$listagem_url->out()}'>aqui</a>.";
         $eventdata->notification = 1;
 
         // Enviar a mensagem
         message_send($eventdata);
 
         // Atualizar a flag de notificação no banco de dados
-        $DB->set_field('ifcare_cadastrocoleta', 'notificacao_finalizada', 1, ['id' => $coleta->id]);
+        $DB->set_field('studentcare_cadastrocoleta', 'notificacao_finalizada', 1, ['id' => $coleta->id]);
 
         mtrace("Notificação de fim enviada com sucesso para a coleta: {$coleta->nome}");
     }
@@ -186,14 +186,14 @@ class process_collection extends \core\task\scheduled_task
         $urlparams->completion = 1;
         $urlparams->completionview = 0;
         $urlparams->section = $section_id;
-        $urlparams->name = "IFCare - Como você está se sentindo hoje?";
+        $urlparams->name = "StudentCare - Como você está se sentindo hoje?";
         $data_inicio_formatada = date('d/m/Y H:i', strtotime($coleta->data_inicio));
         $data_fim_formatada = date('d/m/Y H:i', strtotime($coleta->data_fim));
 
         $urlparams->intro = clean_text("Responda esta coleta <strong>até</strong> {$data_fim_formatada}. Participe e nos ajude a compreender melhor suas emoções!", FORMAT_HTML);
         $urlparams->introformat = FORMAT_HTML;
         $urlparams->showdescription = 1;
-        $urlparams->externalurl = clean_param("{$CFG->wwwroot}/blocks/ifcare/view.php?coletaid={$coleta->id}", PARAM_URL);
+        $urlparams->externalurl = clean_param("{$CFG->wwwroot}/blocks/studentcare/view.php?coletaid={$coleta->id}", PARAM_URL);
         $urlparams->timemodified = time();
 
         mtrace("Preparando para adicionar o recurso URL na seção especificada (Seção {$section_id})");
@@ -206,8 +206,8 @@ class process_collection extends \core\task\scheduled_task
             $cmid = (int) $cmid->id;
             mtrace("Recurso URL adicionado com sucesso com ID: {$cmid}");
 
-            // Atualize o campo resource_id na tabela ifcare_cadastrocoleta
-            $DB->set_field('ifcare_cadastrocoleta', 'resource_id', $cmid, ['id' => $coleta->id]);
+            // Atualize o campo resource_id na tabela studentcare_cadastrocoleta
+            $DB->set_field('studentcare_cadastrocoleta', 'resource_id', $cmid, ['id' => $coleta->id]);
         } else {
             mtrace("Erro: `cmid` não contém um ID válido.");
             return null;
@@ -246,17 +246,17 @@ class process_collection extends \core\task\scheduled_task
 
         foreach ($enrols as $usuario) {
             $eventdata = new \core\message\message();
-            $eventdata->component = 'block_ifcare';
+            $eventdata->component = 'block_studentcare';
             $eventdata->name = 'created_collection';
             $eventdata->userfrom = \core_user::get_noreply_user();
             $eventdata->userto = $usuario->id;
-            $eventdata->subject = "IFCare - Compartilhe suas emoções sobre a disciplina de {$nome_disciplina}";
+            $eventdata->subject = "StudentCare - Compartilhe suas emoções sobre a disciplina de {$nome_disciplina}";
             $eventdata->fullmessage = "Olá! Uma coleta de emoções para a disciplina {$nome_disciplina} foi criada e está disponível até {$data_fim_formatada} para você responder. Sua opinião é muito importante. Por favor, participe!";
             $eventdata->fullmessageformat = FORMAT_PLAIN;
             $eventdata->fullmessagehtml = "<p>Olá!</p>
             <p>Uma coleta de emoções para a disciplina <strong>{$nome_disciplina}</strong> foi criada e está disponível até <strong>{$data_fim_formatada}</strong> para você responder.</p>
-            <p>Sua opinião é muito importante para nós. <a href='{$CFG->wwwroot}/blocks/ifcare/view.php?coletaid={$coleta->id}'>Clique aqui</a> para compartilhar suas emoções e nos ajudar a melhorar sua experiência de aprendizado.</p>";
-            $eventdata->smallmessage = "Uma coleta de emoções para a disciplina {$nome_disciplina} foi criada e está disponível até {$data_fim_formatada}. <a href='{$CFG->wwwroot}/blocks/ifcare/view.php?coletaid={$coleta->id}'>Clique aqui</a> para participar.";
+            <p>Sua opinião é muito importante para nós. <a href='{$CFG->wwwroot}/blocks/studentcare/view.php?coletaid={$coleta->id}'>Clique aqui</a> para compartilhar suas emoções e nos ajudar a melhorar sua experiência de aprendizado.</p>";
+            $eventdata->smallmessage = "Uma coleta de emoções para a disciplina {$nome_disciplina} foi criada e está disponível até {$data_fim_formatada}. <a href='{$CFG->wwwroot}/blocks/studentcare/view.php?coletaid={$coleta->id}'>Clique aqui</a> para participar.";
             $eventdata->notification = 1;
 
             message_send($eventdata);

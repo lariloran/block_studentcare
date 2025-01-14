@@ -1,9 +1,9 @@
 <?php
-class block_ifcare extends block_base
+class block_studentcare extends block_base
 {
     public function init()
     {
-        $this->title = get_string('pluginname', 'block_ifcare');
+        $this->title = get_string('pluginname', 'block_studentcare');
     }
 
     public function get_content()
@@ -30,12 +30,12 @@ class block_ifcare extends block_base
         }
 
         if ($has_teacher_or_admin_role) {
-            $this->content->text = html_writer::link(new moodle_url('/blocks/ifcare/index.php'), get_string('manage_collections', 'block_ifcare')) . '<br>' .
-                html_writer::link(new moodle_url('/blocks/ifcare/report.php'), get_string('view_dashboard', 'block_ifcare')) . '<br>' .
-                html_writer::link(new moodle_url('/blocks/ifcare/manual_aeq.php'), get_string('manual_aeq', 'block_ifcare')) . '<br>' .
-                html_writer::link(new moodle_url('/blocks/ifcare/faq.php'), get_string('faq', 'block_ifcare'));
+            $this->content->text = html_writer::link(new moodle_url('/blocks/studentcare/index.php'), get_string('manage_collections', 'block_studentcare')) . '<br>' .
+                html_writer::link(new moodle_url('/blocks/studentcare/report.php'), get_string('view_dashboard', 'block_studentcare')) . '<br>' .
+                html_writer::link(new moodle_url('/blocks/studentcare/manual_aeq.php'), get_string('manual_aeq', 'block_studentcare')) . '<br>' .
+                html_writer::link(new moodle_url('/blocks/studentcare/faq.php'), get_string('faq', 'block_studentcare'));
         } else {
-            $this->content->text = get_string('welcome', 'block_ifcare');
+            $this->content->text = get_string('welcome', 'block_studentcare');
         }
 
         return $this->content;

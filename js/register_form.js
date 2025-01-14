@@ -20,7 +20,7 @@ require(["jquery", "core/notification"], function ($, notification) {
           $("#recurso").val($("#id_resourceid").val());
     
           // Limpa o localStorage da coleta atual antes de enviar
-          window.ifcare.clearLocalStorage();
+          window.studentcare.clearLocalStorage();
     
           // Reenvia o formulário após a confirmação
           $("form.mform").off("submit").submit();
@@ -35,14 +35,14 @@ require(["jquery", "core/notification"], function ($, notification) {
     $("#id_classe_aeq").change(function () {
       var classeAeqId = $(this).val();
       if (classeAeqId) {
-        window.ifcare.loadEmotions(classeAeqId);
+        window.studentcare.loadEmotions(classeAeqId);
       }
     });
 
     var initialCourseid = $("#id_courseid").val();
     if (initialCourseid) {
-      window.ifcare.loadSections(initialCourseid);
-      window.ifcare.loadEmotions($("#id_classe_aeq").val());
+      window.studentcare.loadSections(initialCourseid);
+      window.studentcare.loadEmotions($("#id_classe_aeq").val());
     }
   });
 });

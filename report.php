@@ -3,9 +3,9 @@ require_once('../../config.php');
 require_login();
 
 $context = context_course::instance($COURSE->id);
-$PAGE->set_url('/blocks/ifcare/report.php');
+$PAGE->set_url('/blocks/studentcare/report.php');
 $PAGE->set_context($context);
-$PAGE->set_title(get_string('report', 'block_ifcare'));
+$PAGE->set_title(get_string('report', 'block_studentcare'));
 
 echo $OUTPUT->header();
 
@@ -14,7 +14,7 @@ $selected_coletaid = optional_param('coletaid', '', PARAM_INT);
 // Consulta SQL para buscar as coletas junto com o nome completo do curso
 $sql = "
     SELECT DISTINCT c.id AS coleta_id, c.nome AS coleta_nome, c.curso_id, course.fullname AS curso_nome
-    FROM {ifcare_cadastrocoleta} c
+    FROM {studentcare_cadastrocoleta} c
     JOIN {course} course ON course.id = c.curso_id
     LEFT JOIN {role_assignments} ra ON ra.contextid = (
         SELECT ctx.id FROM {context} ctx
@@ -240,7 +240,7 @@ function fecharModalAlerta() {
 
     function loadChartData(coletaid) {
         if (coletaid) {
-            fetch('/blocks/ifcare/load_collection_data.php?coletaid=' + coletaid)
+            fetch('/blocks/studentcare/load_collection_data.php?coletaid=' + coletaid)
                 .then(response => response.json())
                 .then(data => {
                     updateChart(data.chart_data);      

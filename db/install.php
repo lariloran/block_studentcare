@@ -3,7 +3,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 
-function xmldb_block_ifcare_install() {
+function xmldb_block_studentcare_install() {
     global $DB;
 
 // AEQ CLASS INSERTS.
@@ -14,7 +14,7 @@ $records_aeq_class = [
 ];
 
 foreach ($records_aeq_class as $record) {
-    $DB->insert_record('ifcare_classeaeq', $record);
+    $DB->insert_record('studentcare_classeaeq', $record);
 }
 
 // EMOTIONS-CLASS INSERTS.
@@ -46,7 +46,7 @@ $records_emotions = [
 ];
 
 foreach ($records_emotions as $record) {
-    $DB->insert_record('ifcare_emocao', $record);
+    $DB->insert_record('studentcare_emocao', $record);
 }
 
 $records_questions = [
@@ -295,7 +295,7 @@ $records_questions = [
 ];
 
 foreach ($records_questions as $record) {
-    $DB->insert_record('ifcare_pergunta', $record);
+    $DB->insert_record('studentcare_pergunta', $record);
 }
 }
 ?>

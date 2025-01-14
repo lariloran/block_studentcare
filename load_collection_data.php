@@ -5,8 +5,8 @@ $coletaid = required_param('coletaid', PARAM_INT);
 
 $emocao_respostas = $DB->get_records_sql("
     SELECT CONCAT(p.id, '-', r.resposta) AS unique_key, p.id AS pergunta_id, p.pergunta_texto, r.resposta, COUNT(r.id) as quantidade
-    FROM {ifcare_resposta} r
-    JOIN {ifcare_pergunta} p ON r.pergunta_id = p.id
+    FROM {studentcare_resposta} r
+    JOIN {studentcare_pergunta} p ON r.pergunta_id = p.id
     WHERE r.coleta_id = :coletaid
     GROUP BY p.id, p.pergunta_texto, r.resposta
     ORDER BY p.id, r.resposta

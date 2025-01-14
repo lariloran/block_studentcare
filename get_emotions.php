@@ -6,7 +6,7 @@ $classeaeqid = required_param('classeaeqid', PARAM_INT);
 
 global $DB;
 $response = ['emotions' => []]; 
-$emotions = $DB->get_records('ifcare_emocao', array('classeaeq_id' => $classeaeqid), '', 'id, nome');
+$emotions = $DB->get_records('studentcare_emocao', array('classeaeq_id' => $classeaeqid), '', 'id, nome');
 
 foreach ($emotions as $emotion) {
     $response['emotions'][] = [

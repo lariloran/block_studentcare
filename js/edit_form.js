@@ -4,15 +4,15 @@ require(["jquery", "core/notification"], function ($, notification) {
       function loadInitialSelections() {
           const storedSelections = JSON.parse($("#emocao_associadas").val() || "{}");
           Object.keys(storedSelections).forEach(function (classeId) {
-              window.ifcare.saveToLocalStorage(classeId, storedSelections[classeId]);
+              window.studentcare.saveToLocalStorage(classeId, storedSelections[classeId]);
           });
-          window.ifcare.renderResumo();
+          window.studentcare.renderResumo();
       }
 
       // Atualiza as emoções no select múltiplo e no resumo
       function loadAllSelections() {
-          const storedSelections = window.ifcare.getFromLocalStorage();
-          window.ifcare.renderResumo();
+          const storedSelections = window.studentcare.getFromLocalStorage();
+          window.studentcare.renderResumo();
 
           // Preenche o campo oculto com as seleções armazenadas
           $("#emocao_associadas").val(JSON.stringify(storedSelections));
@@ -41,7 +41,7 @@ require(["jquery", "core/notification"], function ($, notification) {
                   $("#recurso").val($("#id_resourceid").val());
 
                   // Limpa o localStorage da coleta atual antes de enviar
-                  window.ifcare.clearLocalStorage();
+                  window.studentcare.clearLocalStorage();
 
                   // Reenvia o formulário após a confirmação
                   $("form.mform").off("submit").submit();
@@ -55,14 +55,14 @@ require(["jquery", "core/notification"], function ($, notification) {
       $("#id_classe_aeq").change(function () {
           const classeAeqId = $(this).val();
           if (classeAeqId) {
-              window.ifcare.loadEmotionsEdit(classeAeqId);
+              window.studentcare.loadEmotionsEdit(classeAeqId);
           }
       });
 
       // Carrega as emoções da classe selecionada e o resumo
       const initialCourseid = $("#id_courseid").val();
       if (initialCourseid) {
-          window.ifcare.loadEmotionsEdit($("#id_classe_aeq").val());
+          window.studentcare.loadEmotionsEdit($("#id_classe_aeq").val());
           loadAllSelections();
       }
   });

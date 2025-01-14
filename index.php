@@ -7,14 +7,14 @@ require_login();
 
 $context = context_system::instance();
 $PAGE->set_context($context);
-$PAGE->set_url(new moodle_url('/blocks/ifcare/index.php'));
-$PAGE->set_title(get_string('header', 'block_ifcare'));
+$PAGE->set_url(new moodle_url('/blocks/studentcare/index.php'));
+$PAGE->set_title(get_string('header', 'block_studentcare'));
 
 
 echo $OUTPUT->header();
 
 
-$PAGE->requires->js(new moodle_url('/blocks/ifcare/js/shared.js'));
+$PAGE->requires->js(new moodle_url('/blocks/studentcare/js/shared.js'));
 
 
 echo html_writer::start_tag('div', ['class' => 'container-fluid']);

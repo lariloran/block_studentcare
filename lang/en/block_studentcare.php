@@ -1,6 +1,6 @@
 <?php
 
-$string['pluginname'] = 'IFCare';
+$string['pluginname'] = 'StudentCare';
 $string['header'] = 'Gerenciar Coletas';
 $string['report'] = 'Dashboard de Coletas';
 
@@ -47,13 +47,13 @@ $string['faq'] = 'Perguntas Frequentes (FAQ)';
 $string['process_collection'] = 'Processar Coleta';
 
 $string['messageprovider:created_collection'] = 'Notificação enviada aos alunos quando uma nova coleta é criada.';
-$string['ifcare:addinstance'] = 'Adicionar uma nova instância do bloco IFCare';
-$string['ifcare:myaddinstance'] = 'Adicionar uma nova instância do bloco IFCare ao painel';
-$string['ifcare:receivenotifications'] = 'Receber notificações sobre coletas criadas no IFCare';
-$string['ifcare:managecollections'] = 'Gerenciar o bloco IFCare';
+$string['studentcare:addinstance'] = 'Adicionar uma nova instância do bloco StudentCare';
+$string['studentcare:myaddinstance'] = 'Adicionar uma nova instância do bloco StudentCare ao painel';
+$string['studentcare:receivenotifications'] = 'Receber notificações sobre coletas criadas no StudentCare';
+$string['studentcare:managecollections'] = 'Gerenciar o bloco StudentCare';
 
 // Mensagem de boas-vindas
-$string['welcome'] = 'Bem-vindos ao IFCare!';
+$string['welcome'] = 'Bem-vindos ao StudentCare!';
 
 ///Tooltips
 $string['select_section_help'] = 'Escolha a seção onde deseja realizar a coleta de emoções. Cada seção representa um módulo ou semana do curso. Ao selecionar uma seção, será criado automaticamente um recurso do tipo <strong>URL</strong> na seção escolhida.';

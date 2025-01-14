@@ -43,35 +43,35 @@ require(["jquery", "core/notification"], function ($, notification) {
         }
     </style>
 `);
-    window.ifcare = window.ifcare || {};
+    window.studentcare = window.studentcare || {};
     var selecoes = {};
     // Função para salvar seleções no localStorage, vinculando ao ID da coleta atual
-    window.ifcare.saveToLocalStorage = function saveToLocalStorage(classeId, emotions) {
-      const storedSelections = JSON.parse(localStorage.getItem("ifcareSelections")) || {};
+    window.studentcare.saveToLocalStorage = function saveToLocalStorage(classeId, emotions) {
+      const storedSelections = JSON.parse(localStorage.getItem("studentcareSelections")) || {};
       storedSelections[classeId] = emotions;
   
-      localStorage.setItem("ifcareSelections", JSON.stringify(storedSelections));
+      localStorage.setItem("studentcareSelections", JSON.stringify(storedSelections));
   };
   
 
-  window.ifcare.getFromLocalStorage = function getFromLocalStorage() {
-    return JSON.parse(localStorage.getItem("ifcareSelections")) || {};
+  window.studentcare.getFromLocalStorage = function getFromLocalStorage() {
+    return JSON.parse(localStorage.getItem("studentcareSelections")) || {};
 };
 
 
-window.ifcare.clearLocalStorage = function clearLocalStorage() {
-  localStorage.removeItem("ifcareSelections");
+window.studentcare.clearLocalStorage = function clearLocalStorage() {
+  localStorage.removeItem("studentcareSelections");
 };
 
     // Atualiza o campo oculto com o JSON das seleções
-    window.ifcare.updateHiddenField = function updateHiddenField() {
-      const storedSelections = window.ifcare.getFromLocalStorage();
+    window.studentcare.updateHiddenField = function updateHiddenField() {
+      const storedSelections = window.studentcare.getFromLocalStorage();
       $("#emocao_selecionadas").val(JSON.stringify(storedSelections));
     };
 
     // Atualiza o resumo visual das seleções
-    window.ifcare.renderResumo = function renderResumo() {
-      const storedSelections = window.ifcare.getFromLocalStorage();
+    window.studentcare.renderResumo = function renderResumo() {
+      const storedSelections = window.studentcare.getFromLocalStorage();
       const emotionContainer = $("#emocoes-selecionadas");
       emotionContainer.empty();
   
@@ -106,7 +106,7 @@ window.ifcare.clearLocalStorage = function clearLocalStorage() {
                       .text("×")
                       .on("click", function () {
                           // Remove a emoção do localStorage
-                          const updatedSelections = window.ifcare.getFromLocalStorage();
+                          const updatedSelections = window.studentcare.getFromLocalStorage();
                           updatedSelections[classeId] = updatedSelections[classeId].filter(
                               (e) => e.id !== emocao.id
                           );
@@ -119,10 +119,10 @@ window.ifcare.clearLocalStorage = function clearLocalStorage() {
   
                           // Atualiza o localStorage e o campo oculto
                           localStorage.setItem(
-                              "ifcareSelections",
+                              "studentcareSelections",
                               JSON.stringify(updatedSelections)
                           );
-                          window.ifcare.updateHiddenField();
+                          window.studentcare.updateHiddenField();
   
                           // Remove o balão visual
                           tag.remove();
@@ -150,17 +150,17 @@ window.ifcare.clearLocalStorage = function clearLocalStorage() {
         });
 
       // Salva no localStorage
-      window.ifcare.saveToLocalStorage(classeId, selectedEmotions);
+      window.studentcare.saveToLocalStorage(classeId, selectedEmotions);
 
       // Atualiza o resumo e o campo oculto
-      window.ifcare.updateHiddenField();
-      window.ifcare.renderResumo();
+      window.studentcare.updateHiddenField();
+      window.studentcare.renderResumo();
     });
 
-    window.ifcare.loadEmotions = function loadEmotions(classeAeqId) {
+    window.studentcare.loadEmotions = function loadEmotions(classeAeqId) {
       if (classeAeqId) {
         $.ajax({
-          url: M.cfg.wwwroot + "/blocks/ifcare/get_emotions.php",
+          url: M.cfg.wwwroot + "/blocks/studentcare/get_emotions.php",
           method: "GET",
           data: { classeaeqid: classeAeqId },
           success: function (response) {
@@ -204,10 +204,10 @@ window.ifcare.clearLocalStorage = function clearLocalStorage() {
         });
       }
     };
-    window.ifcare.loadEmotionsEdit = function loadEmotionsEdit(classeAeqId) {
+    window.studentcare.loadEmotionsEdit = function loadEmotionsEdit(classeAeqId) {
       if (classeAeqId) {
           $.ajax({
-              url: M.cfg.wwwroot + "/blocks/ifcare/get_emotions.php",
+              url: M.cfg.wwwroot + "/blocks/studentcare/get_emotions.php",
               method: "GET",
               data: { classeaeqid: classeAeqId },
               success: function (response) {
@@ -274,10 +274,10 @@ window.ifcare.clearLocalStorage = function clearLocalStorage() {
       }
   };
   
-    window.ifcare.loadSections = function loadSections(courseid) {
+    window.studentcare.loadSections = function loadSections(courseid) {
       if (courseid) {
         $.ajax({
-          url: M.cfg.wwwroot + "/blocks/ifcare/get_sections.php",
+          url: M.cfg.wwwroot + "/blocks/studentcare/get_sections.php",
           method: "GET",
           data: { courseid: courseid },
           success: function (response) {
@@ -302,7 +302,7 @@ window.ifcare.clearLocalStorage = function clearLocalStorage() {
               var sectionid = sections.sections[0].value;
               $("#id_sectionid").val(firstSectionId);
               $.ajax({
-                url: M.cfg.wwwroot + "/blocks/ifcare/get_resources.php",
+                url: M.cfg.wwwroot + "/blocks/studentcare/get_resources.php",
                 method: "GET",
                 data: { courseid: courseid, sectionid: sectionid },
                 success: function (response) {
@@ -391,10 +391,10 @@ window.ifcare.clearLocalStorage = function clearLocalStorage() {
       }
     };
 
-    window.ifcare.loadResources = function loadResources(courseid, sectionid) {
+    window.studentcare.loadResources = function loadResources(courseid, sectionid) {
       if (courseid && sectionid) {
         $.ajax({
-          url: M.cfg.wwwroot + "/blocks/ifcare/get_resources.php",
+          url: M.cfg.wwwroot + "/blocks/studentcare/get_resources.php",
           method: "GET",
           data: { courseid: courseid, sectionid: sectionid },
           success: function (response) {
@@ -454,7 +454,7 @@ window.ifcare.clearLocalStorage = function clearLocalStorage() {
       }
     };
 
-    window.ifcare.getTimestampFromSelector = function getTimestampFromSelector(
+    window.studentcare.getTimestampFromSelector = function getTimestampFromSelector(
       selectorId
     ) {
       var year = parseInt($(`#${selectorId}_year`).val());
@@ -476,7 +476,7 @@ window.ifcare.clearLocalStorage = function clearLocalStorage() {
       return new Date(year, month, day, hour, minute).getTime() / 1000;
     };
 
-    window.ifcare.validateDates = function validateDates() {
+    window.studentcare.validateDates = function validateDates() {
       var startTimestamp = getTimestampFromSelector("id_starttime");
       var endTimestamp = getTimestampFromSelector("id_endtime");
       var currentTimestamp = Math.floor(Date.now() / 1000);
@@ -498,7 +498,7 @@ window.ifcare.clearLocalStorage = function clearLocalStorage() {
       return true;
     };
 
-    window.ifcare.updateTimestamps = function updateTimestamps() {
+    window.studentcare.updateTimestamps = function updateTimestamps() {
       var startTimestamp = getTimestampFromSelector("id_starttime");
       var endTimestamp = getTimestampFromSelector("id_endtime");
 
@@ -506,8 +506,8 @@ window.ifcare.clearLocalStorage = function clearLocalStorage() {
       $("#end_timestamp_hidden").val(endTimestamp);
     };
 
-    window.ifcare.excluirColeta = function excluirColeta(coletaId) {
-      return fetch(M.cfg.wwwroot + "/blocks/ifcare/delete_collection.php", {
+    window.studentcare.excluirColeta = function excluirColeta(coletaId) {
+      return fetch(M.cfg.wwwroot + "/blocks/studentcare/delete_collection.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -525,7 +525,7 @@ window.ifcare.clearLocalStorage = function clearLocalStorage() {
             card.style.display = "none"; // Oculta o card
             card.remove(); // Remove o card do DOM
           }
-          window.location.href = M.cfg.wwwroot + "/blocks/ifcare/index.php";
+          window.location.href = M.cfg.wwwroot + "/blocks/studentcare/index.php";
 
           return true; // Indica sucesso
         } else {
@@ -534,7 +534,7 @@ window.ifcare.clearLocalStorage = function clearLocalStorage() {
       });
     };
 
-    window.ifcare.confirmarExclusaoModal = function confirmarExclusaoModal(
+    window.studentcare.confirmarExclusaoModal = function confirmarExclusaoModal(
       button
     ) {
       const coletaId = button.getAttribute("data-id");
@@ -548,7 +548,7 @@ window.ifcare.clearLocalStorage = function clearLocalStorage() {
         "Cancelar",
         function () {
           // Chama a função de exclusão e exibe mensagem de sucesso
-          window.ifcare
+          window.studentcare
             .excluirColeta(coletaId)
             .then(() => {})
             .catch((error) => {
@@ -568,14 +568,14 @@ window.ifcare.clearLocalStorage = function clearLocalStorage() {
     $("#id_courseid").change(function () {
       var courseid = $(this).val();
       if (courseid) {
-        window.ifcare.loadSections(courseid);
+        window.studentcare.loadSections(courseid);
       }
     });
 
     $("#id_sectionid").change(function () {
       var courseid = $("#id_courseid").val();
       var sectionid = $(this).val();
-      window.ifcare.loadResources(courseid, sectionid);
+      window.studentcare.loadResources(courseid, sectionid);
     });
   });
 });

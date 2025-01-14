@@ -3,7 +3,7 @@
 $messageproviders = array(
     // Notificação para quando uma coleta é criada
     'created_collection' => [
-        'capability' => 'block/ifcare:receivenotifications',
+        'capability' => 'block/studentcare:receivenotifications',
         'defaults' => [
             'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
             'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
@@ -13,7 +13,7 @@ $messageproviders = array(
 
     // Notificação para quando uma coleta é finalizada
     'collection_finished' => [
-        'capability' => 'block/ifcare:receivenotifications',
+        'capability' => 'block/studentcare:receivenotifications',
         'defaults' => [
             'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
             'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,

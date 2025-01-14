@@ -12,7 +12,7 @@ class collection_manager
         $sql = "SELECT DISTINCT c.id, c.nome, c.data_inicio, c.data_fim, c.descricao, 
                                     c.curso_id, c.notificar_alunos, c.receber_alerta, 
                                     c.resource_id_atrelado, c.section_id, c.data_criacao
-                    FROM {ifcare_cadastrocoleta} c
+                    FROM {studentcare_cadastrocoleta} c
                     JOIN {context} ctx ON ctx.instanceid = c.curso_id
                     JOIN {role_assignments} ra ON ra.contextid = ctx.id
                     JOIN {role} r ON r.id = ra.roleid
@@ -42,10 +42,10 @@ class collection_manager
                        classe.nome_classe, 
                        emocao.nome AS emocao_nome, 
                        pergunta.pergunta_texto
-                FROM {ifcare_associacao_classe_emocao_coleta} assoc
-                JOIN {ifcare_classeaeq} classe ON classe.id = assoc.classeaeq_id
-                JOIN {ifcare_emocao} emocao ON emocao.id = assoc.emocao_id
-                JOIN {ifcare_pergunta} pergunta ON pergunta.emocao_id = emocao.id
+                FROM {studentcare_associacao_classe_emocao_coleta} assoc
+                JOIN {studentcare_classeaeq} classe ON classe.id = assoc.classeaeq_id
+                JOIN {studentcare_emocao} emocao ON emocao.id = assoc.emocao_id
+                JOIN {studentcare_pergunta} pergunta ON pergunta.emocao_id = emocao.id
                 WHERE assoc.cadastrocoleta_id = :coleta_id";
 
         $params = ['coleta_id' => $coleta_id];
@@ -59,7 +59,7 @@ class collection_manager
         $transaction = $DB->start_delegated_transaction();
 
         try {
-            $resource_id_instance = $DB->get_field('ifcare_cadastrocoleta', 'resource_id', ['id' => $coleta_id]);
+            $resource_id_instance = $DB->get_field('studentcare_cadastrocoleta', 'resource_id', ['id' => $coleta_id]);
 
             if ($resource_id_instance) {
                 // Busca diretamente o ID em `course_modules` onde `instance` é igual ao `resource_id`
@@ -72,11 +72,11 @@ class collection_manager
             }
 
 
-            $DB->delete_records('ifcare_resposta', ['coleta_id' => $coleta_id]);
+            $DB->delete_records('studentcare_resposta', ['coleta_id' => $coleta_id]);
 
-            $DB->delete_records('ifcare_associacao_classe_emocao_coleta', ['cadastrocoleta_id' => $coleta_id]);
+            $DB->delete_records('studentcare_associacao_classe_emocao_coleta', ['cadastrocoleta_id' => $coleta_id]);
 
-            $DB->delete_records('ifcare_cadastrocoleta', ['id' => $coleta_id]);
+            $DB->delete_records('studentcare_cadastrocoleta', ['id' => $coleta_id]);
 
             $transaction->allow_commit();
         } catch (Exception $e) {
@@ -368,7 +368,7 @@ class collection_manager
 
         $html .= '<div class="card-list" id="coletasContainer">';
 
-        $html .= '<div class="card" style="text-align: center; cursor: pointer;" onclick="window.location.href=\'' . new moodle_url('/blocks/ifcare/register.php') . '\'">
+        $html .= '<div class="card" style="text-align: center; cursor: pointer;" onclick="window.location.href=\'' . new moodle_url('/blocks/studentcare/register.php') . '\'">
         <h3 style="font-size: 50px; color: #4CAF50; margin: 20px 0;">
             <i class="fa fa-plus-circle"></i>
         </h3>
@@ -593,7 +593,7 @@ function filtrarColetas() {
                 document.getElementById("modalResourceName").textContent = coleta.resource_name;
                 document.getElementById("modalSectionName").textContent = coleta.section_name;
                 $.ajax({
-                    url: `${M.cfg.wwwroot}/blocks/ifcare/get_associated_class_emotions.php`,
+                    url: `${M.cfg.wwwroot}/blocks/studentcare/get_associated_class_emotions.php`,
                     type: "GET",
                     data: { coleta_id: coletaId },
                     success: function (response) {
@@ -612,7 +612,7 @@ function filtrarColetas() {
                     }
                 });
 
-                const coletaUrl = `${M.cfg.wwwroot}/blocks/ifcare/view.php?coletaid=${coleta.id}`;
+                const coletaUrl = `${M.cfg.wwwroot}/blocks/studentcare/view.php?coletaid=${coleta.id}`;
                 const modalColetaUrlElement = document.getElementById("modalColetaUrl");
                 modalColetaUrlElement.href = coletaUrl;
                 modalColetaUrlElement.textContent = coleta.nome;
@@ -660,7 +660,7 @@ function adicionarEventosFechamento(modal) {
   
 function abrirGrafico() {
     const coletaId = document.getElementById("modalColetaUrl").getAttribute("href").split("=").pop();
-    window.location.href = M.cfg.wwwroot + "/blocks/ifcare/report.php?coletaid=" + coletaId;
+    window.location.href = M.cfg.wwwroot + "/blocks/studentcare/report.php?coletaid=" + coletaId;
 }
 
 
@@ -678,7 +678,7 @@ window.onclick = function(event) {
 
 function editarColeta() {
     const coletaId = document.getElementById("modalColetaUrl").getAttribute("href").split("=").pop();
-    window.location.href = M.cfg.wwwroot + "/blocks/ifcare/edit.php?coletaid=" + coletaId;  // Redireciona para edit_form.php com o ID da coleta
+    window.location.href = M.cfg.wwwroot + "/blocks/studentcare/edit.php?coletaid=" + coletaId;  // Redireciona para edit_form.php com o ID da coleta
 }
 
         </script>';
@@ -694,7 +694,7 @@ function editarColeta() {
         global $DB;
 
         $sql = "SELECT id, nome, data_inicio, data_fim, descricao, curso_id, notificar_alunos, receber_alerta 
-                FROM {ifcare_cadastrocoleta} 
+                FROM {studentcare_cadastrocoleta} 
                 WHERE id = :coleta_id";
         $params = ['coleta_id' => $coleta_id];
         $coleta = $DB->get_record_sql($sql, $params);
@@ -712,9 +712,9 @@ function editarColeta() {
 
         $sql_respostas = "SELECT r.id, a.username AS usuario, a.email, p.id AS pergunta_id, p.pergunta_texto, r.resposta, r.data_resposta, 
         ra.roleid, role.shortname AS role_name
-        FROM {ifcare_resposta} r
+        FROM {studentcare_resposta} r
         JOIN {user} a ON a.id = r.usuario_id
-        JOIN {ifcare_pergunta} p ON p.id = r.pergunta_id
+        JOIN {studentcare_pergunta} p ON p.id = r.pergunta_id
         JOIN {role_assignments} ra ON ra.userid = a.id
         JOIN {role} role ON role.id = ra.roleid
         WHERE r.coleta_id = :coleta_id
@@ -775,7 +775,7 @@ function editarColeta() {
         global $DB;
 
         $sql = "SELECT nome, data_inicio, data_fim, descricao, curso_id, notificar_alunos, receber_alerta 
-                FROM {ifcare_cadastrocoleta} 
+                FROM {studentcare_cadastrocoleta} 
                 WHERE id = :coleta_id";
 
         $params = ['coleta_id' => $coleta_id];
@@ -795,9 +795,9 @@ function editarColeta() {
 
         $sql_respostas = "SELECT r.id, a.username AS usuario, a.email, p.id AS pergunta_id, p.pergunta_texto, r.resposta, r.data_resposta, 
                           ra.roleid, role.shortname AS role_name
-                          FROM {ifcare_resposta} r
+                          FROM {studentcare_resposta} r
                           JOIN {user} a ON a.id = r.usuario_id
-                          JOIN {ifcare_pergunta} p ON p.id = r.pergunta_id
+                          JOIN {studentcare_pergunta} p ON p.id = r.pergunta_id
                           JOIN {role_assignments} ra ON ra.userid = a.id
                           JOIN {role} role ON role.id = ra.roleid
                           WHERE r.coleta_id = :coleta_id
@@ -855,9 +855,9 @@ function editarColeta() {
         $sql = "SELECT 
                     classe.nome_classe, 
                     GROUP_CONCAT(DISTINCT emocao.nome ORDER BY emocao.nome SEPARATOR ', ') AS emocoes
-                FROM {ifcare_associacao_classe_emocao_coleta} assoc
-                JOIN {ifcare_classeaeq} classe ON classe.id = assoc.classeaeq_id
-                JOIN {ifcare_emocao} emocao ON emocao.id = assoc.emocao_id
+                FROM {studentcare_associacao_classe_emocao_coleta} assoc
+                JOIN {studentcare_classeaeq} classe ON classe.id = assoc.classeaeq_id
+                JOIN {studentcare_emocao} emocao ON emocao.id = assoc.emocao_id
                 WHERE assoc.cadastrocoleta_id = :coleta_id
                 GROUP BY classe.id, classe.nome_classe
                 ORDER BY FIELD(classe.id, 1, 2, 3), classe.nome_classe";
@@ -898,7 +898,7 @@ function editarColeta() {
                 <i class="fa fa-edit"></i> Editar
             </button>
             <button id="deleteColeta" class="btn-coleta btn-coleta-secondary" data-id="" data-name=""
-                onclick="window.ifcare.confirmarExclusaoModal(this)">
+                onclick="window.studentcare.confirmarExclusaoModal(this)">
                 <i class="fa fa-trash"></i> Excluir
             </button>
 

@@ -1,6 +1,6 @@
 <?php
 $capabilities = [
-    'block/ifcare:myaddinstance' => [
+    'block/studentcare:myaddinstance' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'riskbitmask' => RISK_SPAM | RISK_XSS,
@@ -11,7 +11,7 @@ $capabilities = [
             'student' => CAP_PREVENT,
         ],
     ],
-    'block/ifcare:addinstance' => [
+    'block/studentcare:addinstance' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'riskbitmask' => RISK_SPAM | RISK_XSS,
@@ -21,7 +21,7 @@ $capabilities = [
             'student' => CAP_PREVENT,
         ],
     ],
-    'block/ifcare:receivenotifications' => [
+    'block/studentcare:receivenotifications' => [
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => [
@@ -30,7 +30,7 @@ $capabilities = [
             'editingteacher' => CAP_ALLOW,
         ],
     ],
-    'block/ifcare:managecollections' => [  
+    'block/studentcare:managecollections' => [  
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,  
         'archetypes' => [
