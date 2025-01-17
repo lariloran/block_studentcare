@@ -829,7 +829,7 @@ function editarColeta() {
                 'id' => $pergunta->pergunta_id,
                 'classe_aeq' => $pergunta->nome_classe,
                 'emocao' => $pergunta->emocao_nome,
-                'texto_pergunta' => $pergunta->pergunta_texto
+                'texto_pergunta' => get_string($pergunta->pergunta_texto, 'block_studentcare')
             ];
         }
 

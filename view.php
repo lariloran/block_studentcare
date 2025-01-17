@@ -257,7 +257,32 @@ if (!$perguntas) {
     exit;
 }
 
-$perguntas_json = json_encode(array_values($perguntas));
+$perguntas_traduzidas = [];
+
+foreach ($perguntas as $pergunta) {
+    if (!empty($pergunta->pergunta_texto)) {
+        try {
+            // Tenta traduzir a pergunta usando get_string
+            $pergunta->pergunta_texto = get_string($pergunta->pergunta_texto, 'block_studentcare');
+        } catch (Exception $e) {
+            // Caso ocorra um erro no get_string, registra no log e usa texto padrão
+            error_log('Erro no get_string: ' . $e->getMessage() . ' - Chave: ' . $pergunta->pergunta_texto);
+            $pergunta->pergunta_texto = 'Texto da pergunta não disponível';
+        }
+    } else {
+        // Caso o texto da pergunta esteja vazio, registra no log e usa texto padrão
+        error_log('Pergunta texto vazio para ID: ' . $pergunta->id);
+        $pergunta->pergunta_texto = 'Texto da pergunta não definido';
+    }
+
+    // Adiciona a pergunta processada ao array de perguntas traduzidas
+    $perguntas_traduzidas[] = $pergunta;
+}
+
+
+$perguntas_json = json_encode(array_values($perguntas_traduzidas));
+
+
 ?>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 

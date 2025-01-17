@@ -27,6 +27,7 @@ $records_emotions = [
     (object)['id' => 6, 'classeaeq_id' => 1, 'nome' => 'Vergonha', 'txttooltip' => 'Um sentimento desconfortável ou doloroso causado pela percepção de que algo que você fez ou disse foi errado ou embaraçoso.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
     (object)['id' => 7, 'classeaeq_id' => 1, 'nome' => 'Desespero', 'txttooltip' => 'Um sentimento de completa falta de esperança, onde parece que não há soluções ou saídas para uma situação difícil.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
     (object)['id' => 8, 'classeaeq_id' => 1, 'nome' => 'Tédio', 'txttooltip' => 'Um estado de falta de interesse ou estímulo, muitas vezes associado à repetição ou à ausência de desafios.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
+   
     (object)['id' => 9, 'classeaeq_id' => 2, 'nome' => 'Alegria', 'txttooltip' => 'Uma sensação de satisfação e bem-estar, normalmente associada a experiências agradáveis e positivas.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
     (object)['id' => 10, 'classeaeq_id' => 2, 'nome' => 'Esperança', 'txttooltip' => 'Um sentimento otimista sobre o futuro, acreditando que algo bom vai acontecer.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
     (object)['id' => 11, 'classeaeq_id' => 2, 'nome' => 'Orgulho', 'txttooltip' => 'Um sentimento de satisfação consigo mesmo ou com os outros por realizações, sucesso ou habilidades.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
@@ -35,6 +36,7 @@ $records_emotions = [
     (object)['id' => 14, 'classeaeq_id' => 2, 'nome' => 'Vergonha', 'txttooltip' => 'Um sentimento desconfortável ou doloroso causado pela percepção de que algo que você fez ou disse foi errado ou embaraçoso.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
     (object)['id' => 15, 'classeaeq_id' => 2, 'nome' => 'Desespero', 'txttooltip' => 'Um sentimento de completa falta de esperança, onde parece que não há soluções ou saídas para uma situação difícil.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
     (object)['id' => 16, 'classeaeq_id' => 2, 'nome' => 'Tédio', 'txttooltip' => 'Um estado de falta de interesse ou estímulo, muitas vezes associado à repetição ou à ausência de desafios.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
+  
     (object)['id' => 17, 'classeaeq_id' => 3, 'nome' => 'Alegria', 'txttooltip' => 'Uma sensação de satisfação e bem-estar, normalmente associada a experiências agradáveis e positivas.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
     (object)['id' => 18, 'classeaeq_id' => 3, 'nome' => 'Esperança', 'txttooltip' => 'Um sentimento otimista sobre o futuro, acreditando que algo bom vai acontecer.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
     (object)['id' => 19, 'classeaeq_id' => 3, 'nome' => 'Orgulho', 'txttooltip' => 'Um sentimento de satisfação consigo mesmo ou com os outros por realizações, sucesso ou habilidades.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
@@ -50,16 +52,17 @@ foreach ($records_emotions as $record) {
 }
 
 $records_questions = [
-    (object)['id' => 1, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'Estar na aula dessa disciplina me deixa muito animado.'],
-    (object)['id' => 2, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'Gosto de estar nesta aula.'],
-    (object)['id' => 3, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'Depois dessa aula, começo a ansiar pela próxima aula.'],
-    (object)['id' => 4, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'Estou ansioso(a) para aprender muito nesta aula.'],
-    (object)['id' => 5, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'Estou feliz por ter entendido o conteúdo da disciplina.'],
-    (object)['id' => 6, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'Fico contente que valeu a pena ir à aula.'],
-    (object)['id' => 7, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'Estou motivado(a) para ir a esta aula porque é empolgante.'],
-    (object)['id' => 8, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'Minha alegria nesta aula me faz querer participar.'],
-    (object)['id' => 9, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'É tão empolgante a aula que eu poderia ficar por horas ouvindo o professor.'],
-    (object)['id' => 10, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'Eu Gosto tanto de participar que fico energizado(a).'],
+    (object)['id' => 1, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'class-related-enjoyment-1'],
+    (object)['id' => 2, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'class-related-enjoyment-2'],
+    (object)['id' => 3, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'class-related-enjoyment-3'],
+    (object)['id' => 4, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'class-related-enjoyment-4'],
+    (object)['id' => 5, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'class-related-enjoyment-5'],
+    (object)['id' => 6, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'class-related-enjoyment-6'],
+    (object)['id' => 7, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'class-related-enjoyment-7'],
+    (object)['id' => 8, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'class-related-enjoyment-8'],
+    (object)['id' => 9, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'class-related-enjoyment-9'],
+    (object)['id' => 10, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'class-related-enjoyment-10'],
+   
     (object)['id' => 11, 'emocao_id' => 2, 'classeaeq_id' => 1, 'pergunta_texto' => 'Eu me Estou confiante quando vou à aula.'],
     (object)['id' => 12, 'emocao_id' => 2, 'classeaeq_id' => 1, 'pergunta_texto' => 'Estou cheio(a) de esperança.'],
     (object)['id' => 13, 'emocao_id' => 2, 'classeaeq_id' => 1, 'pergunta_texto' => 'Estou otimista de que conseguirei acompanhar o conteúdo.'],
@@ -68,6 +71,7 @@ $records_questions = [
     (object)['id' => 16, 'emocao_id' => 2, 'classeaeq_id' => 1, 'pergunta_texto' => 'Estar confiante de que entenderei o conteúdo me motiva.'],
     (object)['id' => 17, 'emocao_id' => 2, 'classeaeq_id' => 1, 'pergunta_texto' => 'Minha confiança me motiva a me preparar para a aula.'],
     (object)['id' => 18, 'emocao_id' => 2, 'classeaeq_id' => 1, 'pergunta_texto' => 'Minhas esperanças de que terei sucesso me motivam a investir muito esforço.'],
+    
     (object)['id' => 19, 'emocao_id' => 3, 'classeaeq_id' => 1, 'pergunta_texto' => 'Tenho orgulho de mim mesmo(a).'],
     (object)['id' => 20, 'emocao_id' => 3, 'classeaeq_id' => 1, 'pergunta_texto' => 'Tenho orgulho de conseguir acompanhar o conteúdo.'],
     (object)['id' => 21, 'emocao_id' => 3, 'classeaeq_id' => 1, 'pergunta_texto' => 'Tenho orgulho de fazer melhor do que os outros neste curso.'],
@@ -77,6 +81,7 @@ $records_questions = [
     (object)['id' => 25, 'emocao_id' => 3, 'classeaeq_id' => 1, 'pergunta_texto' => 'Por ser orgulhoso das minhas conquistas neste curso, estou motivado(a) a continuar.'],
     (object)['id' => 26, 'emocao_id' => 3, 'classeaeq_id' => 1, 'pergunta_texto' => 'Gostaria de contar aos meus amigos sobre como me saí bem neste curso.'],
     (object)['id' => 27, 'emocao_id' => 3, 'classeaeq_id' => 1, 'pergunta_texto' => 'Quando vou bem na aula, meu coração se enche de orgulho.'],
+  
     (object)['id' => 28, 'emocao_id' => 4, 'classeaeq_id' => 1, 'pergunta_texto' => 'Sinto-me frustrado(a) na aula.'],
     (object)['id' => 29, 'emocao_id' => 4, 'classeaeq_id' => 1, 'pergunta_texto' => 'Me sinto com raiva.'],
     (object)['id' => 30, 'emocao_id' => 4, 'classeaeq_id' => 1, 'pergunta_texto' => 'Pensar na baixa qualidade do curso me deixa irritado(a).'],
@@ -86,6 +91,7 @@ $records_questions = [
     (object)['id' => 34, 'emocao_id' => 4, 'classeaeq_id' => 1, 'pergunta_texto' => 'Eu gostaria de poder dizer aos professores o que penso.'],
     (object)['id' => 35, 'emocao_id' => 4, 'classeaeq_id' => 1, 'pergunta_texto' => 'Sinto a raiva crescendo dentro de mim.'],
     (object)['id' => 36, 'emocao_id' => 4, 'classeaeq_id' => 1, 'pergunta_texto' => 'Por estar com raiva, fico inquieto(a) na aula.'],
+    
     (object)['id' => 37, 'emocao_id' => 5, 'classeaeq_id' => 1, 'pergunta_texto' => 'Pensar na aula me deixa inquieto(a).'],
     (object)['id' => 38, 'emocao_id' => 5, 'classeaeq_id' => 1, 'pergunta_texto' => 'Sinto medo.'],
     (object)['id' => 39, 'emocao_id' => 5, 'classeaeq_id' => 1, 'pergunta_texto' => 'Sinto-me nervoso(a) na aula.'],
@@ -98,6 +104,7 @@ $records_questions = [
     (object)['id' => 46, 'emocao_id' => 5, 'classeaeq_id' => 1, 'pergunta_texto' => 'Quando penso na aula, fico enjoado(a).'],
     (object)['id' => 47, 'emocao_id' => 5, 'classeaeq_id' => 1, 'pergunta_texto' => 'Fico tenso(a) na aula.'],
     (object)['id' => 48, 'emocao_id' => 5, 'classeaeq_id' => 1, 'pergunta_texto' => 'Quando não entendo algo importante na aula, meu coração acelera.'],
+   
     (object)['id' => 49, 'emocao_id' => 6, 'classeaeq_id' => 1, 'pergunta_texto' => 'Fico envergonhado(a).'],
     (object)['id' => 50, 'emocao_id' => 6, 'classeaeq_id' => 1, 'pergunta_texto' => 'Me sinto envergonhado(a).'],
     (object)['id' => 51, 'emocao_id' => 6, 'classeaeq_id' => 1, 'pergunta_texto' => 'Se os outros soubessem que não entendo o conteúdo, ficaria envergonhado(a).'],
@@ -109,6 +116,7 @@ $records_questions = [
     (object)['id' => 57, 'emocao_id' => 6, 'classeaeq_id' => 1, 'pergunta_texto' => 'Quando digo algo na aula, sinto que fico vermelho(a).'],
     (object)['id' => 58, 'emocao_id' => 6, 'classeaeq_id' => 1, 'pergunta_texto' => 'Porque fico envergonhado(a), fico tenso(a) e inibido(a).'],
     (object)['id' => 59, 'emocao_id' => 6, 'classeaeq_id' => 1, 'pergunta_texto' => 'Quando falo na aula, começo a gaguejar.'],
+   
     (object)['id' => 60, 'emocao_id' => 7, 'classeaeq_id' => 1, 'pergunta_texto' => 'Só de pensar nessa aula, sinto-me sem esperanças.'],
     (object)['id' => 61, 'emocao_id' => 7, 'classeaeq_id' => 1, 'pergunta_texto' => 'Sinto-me desamparado(a).'],
     (object)['id' => 62, 'emocao_id' => 7, 'classeaeq_id' => 1, 'pergunta_texto' => 'Antes mesmo de a aula começar, já me conformo com o fato de que não vou entender o conteúdo.'],
@@ -119,6 +127,7 @@ $records_questions = [
     (object)['id' => 67, 'emocao_id' => 7, 'classeaeq_id' => 1, 'pergunta_texto' => 'É inútil me preparar para a aula, já que não entendo o material de qualquer forma.'],
     (object)['id' => 68, 'emocao_id' => 7, 'classeaeq_id' => 1, 'pergunta_texto' => 'Porque não entendo o material, pareço desconectado(a) e resignado(a).'],
     (object)['id' => 69, 'emocao_id' => 7, 'classeaeq_id' => 1, 'pergunta_texto' => 'Sinto-me tão desamparado(a) que toda a minha energia se esgota.'],
+   
     (object)['id' => 70, 'emocao_id' => 8, 'classeaeq_id' => 1, 'pergunta_texto' => 'Fico entediado(a).'],
     (object)['id' => 71, 'emocao_id' => 8, 'classeaeq_id' => 1, 'pergunta_texto' => 'Acho esta aula bastante maçante.'],
     (object)['id' => 72, 'emocao_id' => 8, 'classeaeq_id' => 1, 'pergunta_texto' => 'A palestra me entedia.'],
@@ -130,16 +139,7 @@ $records_questions = [
     (object)['id' => 78, 'emocao_id' => 8, 'classeaeq_id' => 1, 'pergunta_texto' => 'Fico inquieto(a) porque não posso esperar para que a aula termine.'],
     (object)['id' => 79, 'emocao_id' => 8, 'classeaeq_id' => 1, 'pergunta_texto' => 'Durante a aula, sinto que poderia afundar na minha cadeira.'],
     (object)['id' => 80, 'emocao_id' => 8, 'classeaeq_id' => 1, 'pergunta_texto' => 'Começo a bocejar na aula porque estou tão entediado(a).'],
-    (object)['id' => 233, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'Fico animado(a) para ir à aula.'],
-    (object)['id' => 234, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'Gosto de estar na aula.'],
-    (object)['id' => 235, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'Depois da aula, começo a ansiar pela próxima aula.'],
-    (object)['id' => 236, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'Estou ansioso(a) para aprender muito nesta aula.'],
-    (object)['id' => 237, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'Estou feliz por ter entendido o material.'],
-    (object)['id' => 238, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'Fico contente que valeu a pena ir à aula.'],
-    (object)['id' => 239, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'Estou motivado(a) para ir a esta aula porque é empolgante.'],
-    (object)['id' => 240, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'Meu prazer nesta aula me faz querer participar.'],
-    (object)['id' => 241, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'É tão empolgante que eu poderia ficar na aula por horas ouvindo o professor.'],
-    (object)['id' => 242, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'Gosto tanto de participar que fico energizado(a).'],
+
     (object)['id' => 158, 'emocao_id' => 9, 'classeaeq_id' => 2, 'pergunta_texto' => 'Estou ansioso para estudar.'],
     (object)['id' => 159, 'emocao_id' => 9, 'classeaeq_id' => 2, 'pergunta_texto' => 'Eu gosto do desafio de aprender o material.'],
     (object)['id' => 160, 'emocao_id' => 9, 'classeaeq_id' => 2, 'pergunta_texto' => 'Eu gosto de adquirir novos conhecimentos.'],
@@ -150,6 +150,7 @@ $records_questions = [
     (object)['id' => 165, 'emocao_id' => 9, 'classeaeq_id' => 2, 'pergunta_texto' => 'Certas matérias são tão agradáveis que estou motivado a fazer leituras adicionais sobre elas.'],
     (object)['id' => 166, 'emocao_id' => 9, 'classeaeq_id' => 2, 'pergunta_texto' => 'Quando meus estudos vão bem, isso me dá uma empolgação.'],
     (object)['id' => 167, 'emocao_id' => 9, 'classeaeq_id' => 2, 'pergunta_texto' => 'Fico fisicamente animado quando meus estudos vão bem.'],
+    
     (object)['id' => 168, 'emocao_id' => 10, 'classeaeq_id' => 2, 'pergunta_texto' => 'Eu tenho uma visão otimista em relação ao estudo.'],
     (object)['id' => 169, 'emocao_id' => 10, 'classeaeq_id' => 2, 'pergunta_texto' => 'Eu me sinto confiante ao estudar.'],
     (object)['id' => 170, 'emocao_id' => 10, 'classeaeq_id' => 2, 'pergunta_texto' => 'Eu me sinto confiante de que serei capaz de dominar o material.'],
@@ -157,11 +158,13 @@ $records_questions = [
     (object)['id' => 172, 'emocao_id' => 10, 'classeaeq_id' => 2, 'pergunta_texto' => 'O pensamento de alcançar meus objetivos de aprendizado me inspira.'],
     (object)['id' => 173, 'emocao_id' => 10, 'classeaeq_id' => 2, 'pergunta_texto' => 'Meu senso de confiança me motiva.'],
     (object)['id' => 174, 'emocao_id' => 10, 'classeaeq_id' => 2, 'pergunta_texto' => 'Estou orgulhoso de mim mesmo.'],
+   
     (object)['id' => 175, 'emocao_id' => 11, 'classeaeq_id' => 2, 'pergunta_texto' => 'Estou orgulhoso da minha capacidade.'],
     (object)['id' => 176, 'emocao_id' => 11, 'classeaeq_id' => 2, 'pergunta_texto' => 'Acho que posso me orgulhar das minhas conquistas nos estudos.'],
     (object)['id' => 177, 'emocao_id' => 11, 'classeaeq_id' => 2, 'pergunta_texto' => 'Porque quero me orgulhar das minhas conquistas, estou muito motivado.'],
     (object)['id' => 178, 'emocao_id' => 11, 'classeaeq_id' => 2, 'pergunta_texto' => 'Quando resolvo um problema difícil nos meus estudos, meu coração bate de orgulho.'],
     (object)['id' => 179, 'emocao_id' => 11, 'classeaeq_id' => 2, 'pergunta_texto' => 'Quando me destaco no meu trabalho, fico cheio de orgulho.'],
+   
     (object)['id' => 180, 'emocao_id' => 12, 'classeaeq_id' => 2, 'pergunta_texto' => 'Fico com raiva quando tenho que estudar.'],
     (object)['id' => 181, 'emocao_id' => 12, 'classeaeq_id' => 2, 'pergunta_texto' => 'Estudar me irrita.'],
     (object)['id' => 182, 'emocao_id' => 12, 'classeaeq_id' => 2, 'pergunta_texto' => 'Fico com raiva enquanto estudo.'],
@@ -171,6 +174,8 @@ $records_questions = [
     (object)['id' => 186, 'emocao_id' => 12, 'classeaeq_id' => 2, 'pergunta_texto' => 'Fico tão bravo que sinto vontade de jogar o livro didático pela janela.'],
     (object)['id' => 187, 'emocao_id' => 12, 'classeaeq_id' => 2, 'pergunta_texto' => 'Quando fico muito tempo sentado na minha mesa, minha irritação me deixa inquieto.'],
     (object)['id' => 188, 'emocao_id' => 12, 'classeaeq_id' => 2, 'pergunta_texto' => 'Depois de estudar por um longo período, fico tão irritado que fico tenso.'],
+  
+  
     (object)['id' => 189, 'emocao_id' => 13, 'classeaeq_id' => 2, 'pergunta_texto' => 'Quando olho para os livros que ainda tenho que ler, fico ansioso.'],
     (object)['id' => 190, 'emocao_id' => 13, 'classeaeq_id' => 2, 'pergunta_texto' => 'Fico tenso e nervoso enquanto estudo.'],
     (object)['id' => 191, 'emocao_id' => 13, 'classeaeq_id' => 2, 'pergunta_texto' => 'Quando não consigo acompanhar meus estudos, isso me deixa com medo.'],
@@ -182,6 +187,7 @@ $records_questions = [
     (object)['id' => 197, 'emocao_id' => 13, 'classeaeq_id' => 2, 'pergunta_texto' => 'Quando tenho que estudar, começo a me sentir enjoado.'],
     (object)['id' => 198, 'emocao_id' => 13, 'classeaeq_id' => 2, 'pergunta_texto' => 'À medida que o tempo acaba, meu coração começa a acelerar.'],
     (object)['id' => 199, 'emocao_id' => 13, 'classeaeq_id' => 2, 'pergunta_texto' => 'A preocupação em não completar o material me faz suar.'],
+   
     (object)['id' => 200, 'emocao_id' => 14, 'classeaeq_id' => 2, 'pergunta_texto' => 'Eu me sinto envergonhado.'],
     (object)['id' => 201, 'emocao_id' => 14, 'classeaeq_id' => 2, 'pergunta_texto' => 'Eu me sinto envergonhado pela minha constante procrastinação.'],
     (object)['id' => 202, 'emocao_id' => 14, 'classeaeq_id' => 2, 'pergunta_texto' => 'Eu me sinto envergonhado por não conseguir absorver os detalhes mais simples.'],
@@ -193,6 +199,7 @@ $records_questions = [
     (object)['id' => 208, 'emocao_id' => 14, 'classeaeq_id' => 2, 'pergunta_texto' => 'Eu não quero que ninguém saiba quando não consegui entender algo.'],
     (object)['id' => 209, 'emocao_id' => 14, 'classeaeq_id' => 2, 'pergunta_texto' => 'Quando alguém percebe o quanto eu pouco entendo, evito contato visual.'],
     (object)['id' => 210, 'emocao_id' => 14, 'classeaeq_id' => 2, 'pergunta_texto' => 'Eu fico vermelho quando não sei a resposta a uma pergunta relacionada ao material do curso.'],
+  
     (object)['id' => 211, 'emocao_id' => 15, 'classeaeq_id' => 2, 'pergunta_texto' => 'Eu me sinto sem esperança quando penso em estudar.'],
     (object)['id' => 212, 'emocao_id' => 15, 'classeaeq_id' => 2, 'pergunta_texto' => 'Eu me sinto impotente.'],
     (object)['id' => 213, 'emocao_id' => 15, 'classeaeq_id' => 2, 'pergunta_texto' => 'Eu me sinto resignado.'],
@@ -204,6 +211,7 @@ $records_questions = [
     (object)['id' => 219, 'emocao_id' => 15, 'classeaeq_id' => 2, 'pergunta_texto' => 'Eu gostaria de poder desistir porque não consigo lidar com isso.'],
     (object)['id' => 220, 'emocao_id' => 15, 'classeaeq_id' => 2, 'pergunta_texto' => 'Minha falta de confiança me deixa exausto antes mesmo de começar.'],
     (object)['id' => 221, 'emocao_id' => 15, 'classeaeq_id' => 2, 'pergunta_texto' => 'Minha desesperança minou toda a minha energia.'],
+   
     (object)['id' => 222, 'emocao_id' => 16, 'classeaeq_id' => 2, 'pergunta_texto' => 'O material me entedia até a morte.'],
     (object)['id' => 223, 'emocao_id' => 16, 'classeaeq_id' => 2, 'pergunta_texto' => 'Estudar para meus cursos me entedia.'],
     (object)['id' => 224, 'emocao_id' => 16, 'classeaeq_id' => 2, 'pergunta_texto' => 'Estudar é chato e monótono.'],
@@ -215,6 +223,7 @@ $records_questions = [
     (object)['id' => 230, 'emocao_id' => 16, 'classeaeq_id' => 2, 'pergunta_texto' => 'Porque estou entediado, fico cansado sentado na minha mesa.'],
     (object)['id' => 231, 'emocao_id' => 16, 'classeaeq_id' => 2, 'pergunta_texto' => 'O material me entedia tanto que me sinto exausto.'],
     (object)['id' => 232, 'emocao_id' => 16, 'classeaeq_id' => 2, 'pergunta_texto' => 'Enquanto estudo, pareço me distrair porque é tão chato.'],
+   
     (object)['id' => 81, 'emocao_id' => 17, 'classeaeq_id' => 3, 'pergunta_texto' => 'Eu me sinto ansioso quando vou à aula.'],
     (object)['id' => 82, 'emocao_id' => 17, 'classeaeq_id' => 3, 'pergunta_texto' => 'Eu gosto de fazer a prova.'],
     (object)['id' => 83, 'emocao_id' => 17, 'classeaeq_id' => 3, 'pergunta_texto' => 'Estou ansioso para demonstrar meu conhecimento.'],
@@ -225,6 +234,7 @@ $records_questions = [
     (object)['id' => 88, 'emocao_id' => 17, 'classeaeq_id' => 3, 'pergunta_texto' => 'Antes de fazer a prova, sinto uma sensação de expectativa.'],
     (object)['id' => 89, 'emocao_id' => 17, 'classeaeq_id' => 3, 'pergunta_texto' => 'Meu coração bate mais rápido de alegria.'],
     (object)['id' => 90, 'emocao_id' => 17, 'classeaeq_id' => 3, 'pergunta_texto' => 'Eu brilho de felicidade.'],
+  
     (object)['id' => 91, 'emocao_id' => 18, 'classeaeq_id' => 3, 'pergunta_texto' => 'Estou otimista de que tudo vai dar certo.'],
     (object)['id' => 92, 'emocao_id' => 18, 'classeaeq_id' => 3, 'pergunta_texto' => 'Estou muito confiante.'],
     (object)['id' => 93, 'emocao_id' => 18, 'classeaeq_id' => 3, 'pergunta_texto' => 'Tenho grande esperança de que minhas habilidades serão suficientes.'],
@@ -233,6 +243,7 @@ $records_questions = [
     (object)['id' => 96, 'emocao_id' => 18, 'classeaeq_id' => 3, 'pergunta_texto' => 'Começo a estudar para a prova com grande esperança e expectativa.'],
     (object)['id' => 97, 'emocao_id' => 18, 'classeaeq_id' => 3, 'pergunta_texto' => 'Minha confiança me motiva a me preparar bem.'],
     (object)['id' => 98, 'emocao_id' => 18, 'classeaeq_id' => 3, 'pergunta_texto' => 'Esperando ter sucesso, estou motivado a investir muito esforço.'],
+  
     (object)['id' => 99, 'emocao_id' => 19, 'classeaeq_id' => 3, 'pergunta_texto' => 'Estou muito satisfeito comigo mesmo.'],
     (object)['id' => 100, 'emocao_id' => 19, 'classeaeq_id' => 3, 'pergunta_texto' => 'Estou orgulhoso de mim mesmo.'],
     (object)['id' => 101, 'emocao_id' => 19, 'classeaeq_id' => 3, 'pergunta_texto' => 'Acho que posso me orgulhar do meu conhecimento.'],
@@ -243,12 +254,14 @@ $records_questions = [
     (object)['id' => 106, 'emocao_id' => 19, 'classeaeq_id' => 3, 'pergunta_texto' => 'Quando recebo os resultados do teste, meu coração bate com orgulho.'],
     (object)['id' => 107, 'emocao_id' => 19, 'classeaeq_id' => 3, 'pergunta_texto' => 'Depois da prova, me sinto como se estivesse mais alto porque estou tão orgulhoso.'],
     (object)['id' => 108, 'emocao_id' => 19, 'classeaeq_id' => 3, 'pergunta_texto' => 'Saio da prova com a aparência de um vencedor no meu rosto.'],
+   
     (object)['id' => 109, 'emocao_id' => 20, 'classeaeq_id' => 3, 'pergunta_texto' => 'Eu me sinto aliviado.'],
     (object)['id' => 110, 'emocao_id' => 20, 'classeaeq_id' => 3, 'pergunta_texto' => 'Eu me sinto livre.'],
     (object)['id' => 111, 'emocao_id' => 20, 'classeaeq_id' => 3, 'pergunta_texto' => 'Eu me sinto muito aliviado.'],
     (object)['id' => 112, 'emocao_id' => 20, 'classeaeq_id' => 3, 'pergunta_texto' => 'A tensão no meu estômago está se dissipando.'],
     (object)['id' => 113, 'emocao_id' => 20, 'classeaeq_id' => 3, 'pergunta_texto' => 'Finalmente posso respirar aliviado novamente.'],
     (object)['id' => 114, 'emocao_id' => 20, 'classeaeq_id' => 3, 'pergunta_texto' => 'Posso finalmente rir novamente.'],
+   
     (object)['id' => 115, 'emocao_id' => 21, 'classeaeq_id' => 3, 'pergunta_texto' => 'Eu fico bravo.'],
     (object)['id' => 116, 'emocao_id' => 21, 'classeaeq_id' => 3, 'pergunta_texto' => 'Eu estou bastante irritado.'],
     (object)['id' => 117, 'emocao_id' => 21, 'classeaeq_id' => 3, 'pergunta_texto' => 'Eu fico bravo com a pressão de tempo que não deixa tempo suficiente para me preparar.'],
@@ -259,6 +272,7 @@ $records_questions = [
     (object)['id' => 122, 'emocao_id' => 21, 'classeaeq_id' => 3, 'pergunta_texto' => 'Eu gostaria de poder expressar minha raiva livremente.'],
     (object)['id' => 123, 'emocao_id' => 21, 'classeaeq_id' => 3, 'pergunta_texto' => 'Minha raiva faz meu sangue ferver.'],
     (object)['id' => 124, 'emocao_id' => 21, 'classeaeq_id' => 3, 'pergunta_texto' => 'Eu fico tão bravo que começo a sentir calor e ruborizar.'],
+   
     (object)['id' => 125, 'emocao_id' => 22, 'classeaeq_id' => 3, 'pergunta_texto' => 'Antes da prova, me sinto nervoso e inquieto.'],
     (object)['id' => 126, 'emocao_id' => 22, 'classeaeq_id' => 3, 'pergunta_texto' => 'Estou muito nervoso.'],
     (object)['id' => 127, 'emocao_id' => 22, 'classeaeq_id' => 3, 'pergunta_texto' => 'Eu me sinto em pânico ao escrever a prova.'],
@@ -271,6 +285,7 @@ $records_questions = [
     (object)['id' => 134, 'emocao_id' => 22, 'classeaeq_id' => 3, 'pergunta_texto' => 'Eu me sinto enjoado.'],
     (object)['id' => 135, 'emocao_id' => 22, 'classeaeq_id' => 3, 'pergunta_texto' => 'No início do teste, meu coração começa a disparar.'],
     (object)['id' => 136, 'emocao_id' => 22, 'classeaeq_id' => 3, 'pergunta_texto' => 'Minhas mãos ficam trêmulas.'],
+  
     (object)['id' => 137, 'emocao_id' => 23, 'classeaeq_id' => 3, 'pergunta_texto' => 'Eu me sinto humilhado.'],
     (object)['id' => 138, 'emocao_id' => 23, 'classeaeq_id' => 3, 'pergunta_texto' => 'Eu me sinto envergonhado.'],
     (object)['id' => 139, 'emocao_id' => 23, 'classeaeq_id' => 3, 'pergunta_texto' => 'Não consigo nem pensar em como seria embaraçoso falhar na prova.'],
@@ -281,6 +296,7 @@ $records_questions = [
     (object)['id' => 144, 'emocao_id' => 23, 'classeaeq_id' => 3, 'pergunta_texto' => 'Quando recebo uma nota ruim, prefiro não enfrentar meu professor novamente.'],
     (object)['id' => 145, 'emocao_id' => 23, 'classeaeq_id' => 3, 'pergunta_texto' => 'Porque estou envergonhado, meu pulso acelera.'],
     (object)['id' => 146, 'emocao_id' => 23, 'classeaeq_id' => 3, 'pergunta_texto' => 'Quando os outros descobrem sobre minhas notas ruins, começo a corar.'],
+  
     (object)['id' => 147, 'emocao_id' => 24, 'classeaeq_id' => 3, 'pergunta_texto' => 'Eu fico deprimido porque sinto que não tenho muita esperança para a prova.'],
     (object)['id' => 148, 'emocao_id' => 24, 'classeaeq_id' => 3, 'pergunta_texto' => 'Eu me sinto sem esperança.'],
     (object)['id' => 149, 'emocao_id' => 24, 'classeaeq_id' => 3, 'pergunta_texto' => 'Eu perdi toda a esperança de que tenho a habilidade de me sair bem na prova.'],
