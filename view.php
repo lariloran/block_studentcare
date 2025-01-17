@@ -11,10 +11,15 @@ $PAGE->set_title("Coleta de Emoções");
 
 if (!$DB->record_exists('studentcare_cadastrocoleta', ['id' => $coletaid])) {
     echo $OUTPUT->header();
-    echo html_writer::tag('div', 'Desculpe, esta coleta não está mais disponível. Entre em contato com o administrador ou professor para mais informações.', ['class' => 'alert alert-info']);
+    echo html_writer::tag(
+        'div',
+        get_string('collection_not_available', 'block_studentcare'),
+        ['class' => 'alert alert-info']
+    );
     echo $OUTPUT->footer();
     exit;
 }
+
 
 $userid = $USER->id;
 
@@ -102,14 +107,14 @@ if ($respostasExistentes) {
             background-color: #45a049;
         }
     </style>
-    <div id="modal-ja-respondido" class="modal" style="display:block;">
-        <div class="modal-content">
-            <span class="close" onclick="irParaHome()">&times;</span>
-            <h2>Coleta já Respondida</h2>
-            <p>Você já respondeu a esta coleta de emoções. Obrigado pela sua participação!</p>
-            <button class="modal-btn" onclick="irParaHome()">Voltar para o curso</button>
-        </div>
-    </div>';
+<div id="modal-ja-respondido" class="modal" style="display:block;">
+    <div class="modal-content">
+        <span class="close" onclick="irParaHome()">&times;</span>
+        <h2>' . get_string('collection_already_answered', 'block_studentcare') . '</h2>
+        <p>' . get_string('collection_already_answered_message', 'block_studentcare') . '</p>
+        <button class="modal-btn" onclick="irParaHome()">' . get_string('return_to_course', 'block_studentcare') . '</button>
+    </div>
+</div>';
 
     echo $OUTPUT->footer();
     return;
@@ -229,13 +234,21 @@ echo '<style>
 </style>';
 
 $agora = time();
+
 if ($agora < strtotime($coletaR->data_inicio)) {
-    echo "<div class='mensagem-sucesso'>A coleta ainda não começou. Ela estará disponível a partir de " . date('d/m/Y H:i', strtotime($coletaR->data_inicio)) . ".</div>";
+    echo "<div class='mensagem-sucesso'>" . 
+        get_string('collection_not_started', 'block_studentcare', 
+        userdate(strtotime($coletaR->data_inicio), get_string('date_format', 'block_studentcare'))) . 
+        "</div>";
     echo $OUTPUT->footer();
     return;
 }
+
 if ($agora > strtotime($coletaR->data_fim)) {
-    echo "<div class='mensagem-aviso'>O prazo para responder a esta coleta expirou em " . date('d/m/Y H:i', strtotime($coletaR->data_fim)) . ".</div>";
+    echo "<div class='mensagem-aviso'>" . 
+        get_string('collection_expired', 'block_studentcare', 
+        userdate(strtotime($coletaR->data_fim), get_string('date_format', 'block_studentcare'))) . 
+        "</div>";
     echo $OUTPUT->footer();
     return;
 }
@@ -251,11 +264,12 @@ $perguntas = $DB->get_records_sql("
 $cursoNome = $cursoR->fullname;
 
 if (!$perguntas) {
-    $mensagem = "Nenhuma pergunta foi encontrada para esta coleta. Entre em contato com o professor da disciplina de <strong>{$cursoNome}</strong> para mais informações.";
+    $mensagem = get_string('no_questions_found', 'block_studentcare', format_string($cursoNome));
     echo html_writer::tag('div', $mensagem, ['class' => 'alert alert-info']);
     echo $OUTPUT->footer();
     exit;
 }
+
 
 $perguntas_traduzidas = [];
 
@@ -289,25 +303,22 @@ $perguntas_json = json_encode(array_values($perguntas_traduzidas));
 <div id="tcle-container" style="display: <?php echo $tcle_aceito ? 'none' : 'block'; ?>;">
     <form id="tcle-form" method="POST" class="tcle-form">
         <input type="hidden" id="tcle_aceito" name="tcle_aceito" value="0">
-        <p class="tcle-title"><strong>Termo de Consentimento Livre e Esclarecido (TCLE)</strong></p>
+        <p class="tcle-title"><strong><?php echo get_string('tcle_title', 'block_studentcare'); ?></strong></p>
         <p class="tcle-description">
-            Sua participação nesta coleta de emoções para a disciplina <strong><?php echo $cursoR->fullname; ?></strong>
-            é muito importante para nós. Ao responder, você autoriza o uso das suas respostas, que serão tratadas de
-            forma
-            confidencial e anônima, exclusivamente para fins acadêmicos e pedagógicos. As informações coletadas serão
-            utilizadas
-            em pesquisas que buscam aprimorar o ensino e a aprendizagem, promovendo um ambiente educacional mais
-            acolhedor e eficaz.
-            Somente o professor responsável terá acesso aos dados, resguardando sua privacidade. Agradecemos sua
-            colaboração!
+            <?php echo get_string('tcle_description', 'block_studentcare', format_string($cursoR->fullname)); ?>
         </p>
 
         <div id="respostas-tcle" class="respostas-tcle">
-            <button class="buttonTcle" id="aceito-btn" type="button" onclick="enviarResposta(1)">Aceito</button>
-            <button class="buttonTcle" id="nao-aceito-btn" type="button" onclick="enviarResposta(0)">Não Aceito</button>
+            <button class="buttonTcle" id="aceito-btn" type="button" onclick="enviarResposta(1)">
+                <?php echo get_string('tcle_accept', 'block_studentcare'); ?>
+            </button>
+            <button class="buttonTcle" id="nao-aceito-btn" type="button" onclick="enviarResposta(0)">
+                <?php echo get_string('tcle_decline', 'block_studentcare'); ?>
+            </button>
         </div>
     </form>
 </div>
+
 
 <?php if ($tcle_aceito): ?>
     <div id="quiz-container">
@@ -324,64 +335,79 @@ $perguntas_json = json_encode(array_values($perguntas_traduzidas));
         <div id="respostas-container">
             <button class="emoji-button" data-value="1">
                 <span class="emoji" id="emoji-1"></span>
-                <span>Discordo Totalmente</span>
+                <span><?php echo get_string('strongly_disagree', 'block_studentcare'); ?></span>
             </button>
             <button class="emoji-button" data-value="2">
                 <span class="emoji" id="emoji-2"></span>
-                <span>Discordo</span>
+                <span><?php echo get_string('disagree', 'block_studentcare'); ?></span>
             </button>
             <button class="emoji-button" data-value="3">
                 <span class="emoji" id="emoji-3"></span>
-                <span>Neutro</span>
+                <span><?php echo get_string('neutral', 'block_studentcare'); ?></span>
             </button>
             <button class="emoji-button" data-value="4">
                 <span class="emoji" id="emoji-4"></span>
-                <span>Concordo</span>
+                <span><?php echo get_string('agree', 'block_studentcare'); ?></span>
             </button>
             <button class="emoji-button" data-value="5">
                 <span class="emoji" id="emoji-5"></span>
-                <span>Concordo Totalmente</span>
+                <span><?php echo get_string('strongly_agree', 'block_studentcare'); ?></span>
             </button>
-        </div>
+    </div>
 
-        <div id="controls">
-            <button id="voltar-btn" onclick="voltarPergunta()">Voltar</button>
-            <a href="https://poa.ifrs.edu.br/index.php/editais-2/apoio-academico" target="_blank"
-                id="ajuda-emocional-link">Precisa de ajuda emocional?</a>
 
-            <button id="avancar-btn" onclick="avancarPergunta()">Avançar</button>
-        </div>
+    <div id="controls">
+    <button id="voltar-btn" onclick="voltarPergunta()">
+        <?php echo get_string('back', 'block_studentcare'); ?>
+    </button>
+    <a href="https://poa.ifrs.edu.br/index.php/editais-2/apoio-academico" target="_blank"
+        id="ajuda-emocional-link">
+        <?php echo get_string('need_emotional_help', 'block_studentcare'); ?>
+    </a>
+    <button id="avancar-btn" onclick="avancarPergunta()">
+        <?php echo get_string('next', 'block_studentcare'); ?>
+    </button>
+</div>
+
     </div>
 <?php endif; ?>
 
 <div id="feedback-container"
     style="display: none; text-align: center; margin: 0 auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); max-width: 600px;">
-    <h3 class="feedback-title" style="font-size: 18px; font-weight: bold; margin-bottom: 15px; color: #333;">O que você
-        achou desta coleta?</h3>
-    <textarea id="feedback-text" rows="4" cols="50" placeholder="Escreva seu feedback aqui..."
+    <h3 class="feedback-title" style="font-size: 18px; font-weight: bold; margin-bottom: 15px; color: #333;">
+        <?php echo get_string('feedback_title', 'block_studentcare'); ?>
+    </h3>
+    <textarea id="feedback-text" rows="4" cols="50" placeholder="<?php echo get_string('feedback_placeholder', 'block_studentcare'); ?>"
         style="width: 100%; max-width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 15px; font-size: 16px;"></textarea>
     <div class="feedback-btn-container" style="display: flex; justify-content: center;">
-        <button class="buttonTcle" onclick="enviarFeedback()" style="padding: 10px 20px;">Enviar Feedback</button>
+        <button class="buttonTcle" onclick="enviarFeedback()" style="padding: 10px 20px;">
+            <?php echo get_string('feedback_submit', 'block_studentcare'); ?>
+        </button>
     </div>
 </div>
+
 
 
 
 <div id="modal-erro" class="modal">
     <div class="modal-content">
         <span class="close" onclick="fecharModal('modal-erro')">&times;</span>
-        <h2>Atenção</h2>
-        <p>Por favor, selecione uma resposta antes de avançar.</p>
-        <button class="modal-btn" onclick="fecharModal('modal-erro')">Entendido</button>
+        <h2><?php echo get_string('error_title', 'block_studentcare'); ?></h2>
+        <p><?php echo get_string('error_message', 'block_studentcare'); ?></p>
+        <button class="modal-btn" onclick="fecharModal('modal-erro')">
+            <?php echo get_string('understood', 'block_studentcare'); ?>
+        </button>
     </div>
 </div>
 
 <div id="modal-sucesso" class="modal">
     <div class="modal-content">
         <span class="close" onclick="fecharModal('modal-sucesso')">&times;</span>
-        <h2>Coleta Concluída</h2>
-        <p>Você completou todas as perguntas da coleta. Obrigado por participar!</p>
-        <button class="modal-btn" onclick="irParaHome()">Voltar para o curso</button>
+        <h2><?php echo get_string('success_title', 'block_studentcare'); ?></h2>
+        <p><?php echo get_string('success_message', 'block_studentcare'); ?></p>
+        <button class="modal-btn" onclick="irParaHome()">
+            <?php echo get_string('return_to_course', 'block_studentcare'); ?>
+        </button>
     </div>
 </div>
 

@@ -150,139 +150,135 @@ echo '<style>
 
 echo html_writer::start_div('faq-container');
 
+// Campo de busca com placeholder traduzido
 echo html_writer::start_div('faq-search');
-echo html_writer::empty_tag('input', array('type' => 'text', 'id' => 'faqSearch', 'placeholder' => 'Pesquise pelo título ou conteúdo...'));
+echo html_writer::empty_tag('input', array(
+    'type' => 'text',
+    'id' => 'faqSearch',
+    'placeholder' => get_string('faq_search_placeholder', 'block_studentcare')
+));
 echo html_writer::end_div();
 
+// Título da seção traduzido
 echo html_writer::start_div('faq-header');
-echo html_writer::tag('h3', 'Como podemos ajudar?', ['class' => 'faq-title']);
+echo html_writer::tag('h3', get_string('faq_title', 'block_studentcare'), ['class' => 'faq-title']);
 echo html_writer::end_div();
 
 echo html_writer::start_div('faq-topics');
 
 echo html_writer::start_div('faq-topic', array(
-    'onclick' => 'openModal("O que é o studentcare?", `
-    <div class="modal-header">
-        <h2><i class="fas fa-info-circle"></i> O que é o studentcare?</h2>
-    </div>
-    <div class="modal-content-body">
-        <p>O <strong>studentcare</strong> é um plugin de bloco desenvolvido para a plataforma Moodle com o objetivo de <em>monitorar as emoções acadêmicas</em> dos estudantes. Ele utiliza como base o <strong>AEQ (Achievement Emotions Questionnaire)</strong>, um instrumento amplamente reconhecido na avaliação de emoções relacionadas ao desempenho acadêmico.</p>
-        <h3><i class="fas fa-tools"></i> Funcionalidades Principais</h3>
-        <ul>
-            <li>Permite que professores criem <strong>coletas de emoções</strong>, selecionando classes e emoções específicas.</li>
-            <li>Oferece aos estudantes uma interface interativa para responder às coletas usando uma escala Likert com emojis.</li>
-            <li>Gera gráficos interativos para os professores visualizarem os dados coletados, auxiliando na análise das emoções acadêmicas.</li>
-            <li>Facilita a exportação dos dados em formatos como <i>CSV</i> e <i>JSON</i> para análises externas.</li>
-        </ul>
-        <h3><i class="fas fa-bullseye"></i> Objetivo</h3>
-        <p>O principal objetivo do <strong>studentcare</strong> é auxiliar professores e instituições de ensino a identificar e monitorar as emoções acadêmicas dos estudantes, contribuindo para intervenções pedagógicas mais personalizadas e assertivas, visando melhorar o desempenho acadêmico e reduzir problemas como desmotivação e evasão escolar.</p>
-        <h3><i class="fas fa-graduation-cap"></i> Benefícios</h3>
-        <ul>
-            <li>Apoio no <strong>planejamento pedagógico</strong> baseado em dados emocionais dos alunos.</li>
-            <li>Melhoria no <strong>engajamento e bem-estar</strong> dos estudantes.</li>
-            <li>Ferramenta de fácil integração ao Moodle, sendo acessível a professores e administradores.</li>
-        </ul>
-    </div>
+    'onclick' => 'openModal("' . get_string('faq_topic_title', 'block_studentcare') . '", `
+        <div class="modal-header">
+            <h2>' . get_string('faq_modal_header', 'block_studentcare') . '</h2>
+        </div>
+        <div class="modal-content-body">
+            <p>' . get_string('faq_modal_body', 'block_studentcare') . '</p>
+            <h3>' . get_string('faq_functionalities_title', 'block_studentcare') . '</h3>
+            <ul>' . get_string('faq_functionalities_list', 'block_studentcare') . '</ul>
+            <h3>' . get_string('faq_objective_title', 'block_studentcare') . '</h3>
+            <p>' . get_string('faq_objective_text', 'block_studentcare') . '</p>
+            <h3>' . get_string('faq_benefits_title', 'block_studentcare') . '</h3>
+            <ul>' . get_string('faq_benefits_list', 'block_studentcare') . '</ul>
+        </div>
     `)'
 ));
+
 echo html_writer::tag('div', '🧠', array('class' => 'faq-topic-icon'));
-echo html_writer::tag('div', 'O que é o studentcare?', array('class' => 'faq-topic-title'));
+echo html_writer::tag('div', get_string('faq_topic_title', 'block_studentcare'), array('class' => 'faq-topic-title'));
 echo html_writer::end_div();
 
+
 echo html_writer::start_div('faq-topic', array(
-    'onclick' => 'openModal("Como utilizar o plugin studentcare?", `
+    'onclick' => 'openModal("' . get_string('faq_how_to_use_title', 'block_studentcare') . '", `
+
     <div class="modal-header">
-        <h2><i class="fas fa-info-circle"></i> Como utilizar o plugin studentcare?</h2>
-    </div>   
-<p>O plugin <strong>studentcare</strong> é uma ferramenta poderosa integrada ao Moodle, que permite aos professores coletar, monitorar e analisar as emoções acadêmicas de forma interativa e eficiente. Aqui está um guia para utilizá-lo:</p>
-    <h3>👩‍🏫 Passos para o professor cadastrar uma coleta:</h3>
+        <h2><i class="fas fa-info-circle"></i> ' . get_string('faq_how_to_use_title', 'block_studentcare') . '</h2>
+    </div>
+    <p>' . get_string('faq_how_to_use_intro', 'block_studentcare') . '</p>
+
+    <h3>' . get_string('faq_how_to_use_teacher_steps_title', 'block_studentcare') . '</h3>
     <ul>
-        <li><strong>📋 Acesse o painel do plugin studentcare:</strong> Localize o plugin diretamente no painel do Moodle para facilitar a gestão centralizada, sem necessidade de instalação em cursos específicos.</li>
-        <li><strong>📚 Preencha as informações da coleta:</strong> Adicione as datas de início e fim e descrição(opcional)</li>
-        <li><strong>📝 Escolha o curso, seção e recurso:</strong> Vincule a coleta a um curso e selecione uma seção específica. Caso necessário, associe a coleta a um recurso existente.</li>
-        <li><strong>🎭 Selecione as classes e emoções do AEQ:</strong> Utilize o formulário para escolher as classes de emoções acadêmicas (aulas, aprendizado, provas) e emoções específicas. Essas seleções definirão as perguntas que os alunos responderão.</li>
-        <li><strong>🔔 Configure notificações e alertas:</strong> Ative notificações automáticas para alunos e receba alertas sobre o andamento da coleta.</li>
+        <li>' . get_string('faq_teacher_step_1', 'block_studentcare') . '</li>
+        <li>' . get_string('faq_teacher_step_2', 'block_studentcare') . '</li>
+        <li>' . get_string('faq_teacher_step_3', 'block_studentcare') . '</li>
+        <li>' . get_string('faq_teacher_step_4', 'block_studentcare') . '</li>
+        <li>' . get_string('faq_teacher_step_5', 'block_studentcare') . '</li>
     </ul>
-    <h3>📊 Após o cadastro da coleta:</h3>
+
+    <h3>' . get_string('faq_after_registration_title', 'block_studentcare') . '</h3>
     <ul>
-        <li><strong>📤 Exportação de dados:</strong> Os dados das respostas podem ser exportados em formatos como JSON e CSV para análise mais detalhada.</li>
-        <li><strong>📈 Visualização de gráficos:</strong> O professor pode acessar relatórios interativos com gráficos para interpretar os dados coletados e ajustar estratégias pedagógicas conforme necessário.</li>
-        <li><strong>❌ Exclusão de coletas:</strong> Caso a coleta não seja mais necessária, o professor pode excluí-la diretamente pelo painel do plugin.</li>
+        <li>' . get_string('faq_after_registration_export', 'block_studentcare') . '</li>
+        <li>' . get_string('faq_after_registration_graphs', 'block_studentcare') . '</li>
+        <li>' . get_string('faq_after_registration_delete', 'block_studentcare') . '</li>
     </ul>
-    <h3>👨‍🎓 Para os alunos:</h3>
+
+    <h3>' . get_string('faq_for_students_title', 'block_studentcare') . '</h3>
     <ul>
-        <li><strong>🔔 Receba notificações personalizadas:</strong> Os alunos são notificados via e-mail e no Moodle sobre as coletas disponíveis.</li>
-        <li><strong>📝 Responda às coletas:</strong> As perguntas são exibidas de forma interativa em uma escala Likert de 1 a 5, com base nas classes e emoções selecionadas pelo professor.</li>
-        <li><strong>📜 Aceite ou recuse o TCLE:</strong> Antes de responder às perguntas, os alunos devem aceitar ou recusar o Termo de Consentimento Livre e Esclarecido (TCLE).</li>
+        <li>' . get_string('faq_students_notifications', 'block_studentcare') . '</li>
+        <li>' . get_string('faq_students_answer', 'block_studentcare') . '</li>
+        <li>' . get_string('faq_students_tcle', 'block_studentcare') . '</li>
     </ul>
-    <h3>📘 Recursos adicionais:</h3>
+
+    <h3>' . get_string('faq_additional_resources_title', 'block_studentcare') . '</h3>
     <ul>
-        <li><strong>📖 Manual do AEQ:</strong> O plugin disponibiliza o <a href=' . new moodle_url('/blocks/studentcare/manual_aeq.php') . '>Manual AEQ</a>, que fornece detalhes sobre as classes, emoções e perguntas do AEQ.</li>
-        <li><strong>🌐 Criação automática de recursos:</strong> Após o cadastro, o plugin cria automaticamente um recurso do tipo URL vinculado à seção escolhida pelo professor, facilitando o acesso dos alunos.</li>
-        <li><strong>📊 Gráficos e relatórios:</strong> Dados das respostas são exibidos em gráficos interativos para facilitar a análise.</li>
+        <li>' . get_string('faq_resources_manual', 'block_studentcare') . '</li>
+        <li>' . get_string('faq_resources_auto_creation', 'block_studentcare') . '</li>
+        <li>' . get_string('faq_resources_graphs', 'block_studentcare') . '</li>
     </ul>
-    <p>O plugin studentcare foi projetado para ser intuitivo e eficiente, otimizando o processo de coleta e análise de emoções acadêmicas. Ele auxilia na criação de estratégias pedagógicas baseadas em dados reais, promovendo um ambiente de aprendizado mais saudável e adaptado às necessidades dos alunos.</p>
+
+    <p>' . get_string('faq_how_to_use_conclusion', 'block_studentcare') . '</p>
 `)'
 ));
 
 
+
 echo html_writer::tag('div', '📋', array('class' => 'faq-topic-icon'));
-echo html_writer::tag('div', 'Como utilizar o plugin studentcare?', array('class' => 'faq-topic-title'));
+echo html_writer::tag('div', get_string('faq_how_to_use_title', 'block_studentcare'), array('class' => 'faq-topic-title'));
 echo html_writer::end_div();
 
 
 echo html_writer::start_div('faq-topic', array(
-    'onclick' => 'openModal("Principais funcionalidades do plugin studentcare", `
+    'onclick' => 'openModal("' . get_string('faq_topic_functionalities_title', 'block_studentcare') . '", `
     <div class="modal-header">
-        <h2><i class="fas fa-tools"></i> Principais funcionalidades do plugin studentcare</h2>
+        <h2><i class="fas fa-tools"></i> ' . get_string('faq_topic_functionalities_title', 'block_studentcare') . '</h2>
     </div>
     <div class="modal-content-body">
-        <p>O <strong>studentcare</strong> é um plugin desenvolvido para facilitar o monitoramento das emoções acadêmicas no Moodle, trazendo diversas funcionalidades pensadas para professores e administradores. Confira algumas das principais:</p>
-        <ul>
-            <li><strong>📘 Manual AEQ:</strong> O plugin inclui acesso ao <a href="/blocks/studentcare/manual_aeq.php" target="_blank">Manual AEQ</a>, que explica detalhadamente o embasamento teórico e a estrutura do <em>Achievement Emotions Questionnaire (AEQ)</em>.</li>
-            <li><strong>✍️ Cadastro e edição de coletas:</strong> Os professores podem criar novas coletas específicas para suas disciplinas, editar configurações de coletas já existentes e escolher quais classes e emoções do AEQ serão trabalhadas.</li>
-            <li><strong>🗑️ Exclusão de coletas:</strong> Caso necessário, coletas podem ser facilmente removidas pelo professor.</li>
-            <li><strong>🔗 Vinculação de recursos:</strong> Durante o cadastro, é possível associar um recurso específico de uma seção da disciplina à coleta, integrando ainda mais o conteúdo da aula com a coleta.</li>
-            <li><strong>🌐 Criação automática de recurso URL:</strong> Para cada coleta criada, o plugin adiciona automaticamente um recurso do tipo URL na seção escolhida pelo professor.</li>
-            <li><strong>📬 Notificações e e-mails personalizados:</strong> Após o cadastro de uma coleta, notificações e e-mails customizados para a disciplina são enviados automaticamente aos alunos.</li>
-            <li><strong>📝 TCLE interativo:</strong> Antes de responder à coleta, o aluno visualiza um Termo de Consentimento Livre e Esclarecido (TCLE) e pode aceitá-lo ou recusá-lo.</li>
-            <li><strong>🤖 Respostas interativas:</strong> As questões do AEQ são apresentadas de forma interativa e baseadas nas classes e emoções escolhidas pelo professor.</li>
-            <li><strong>📊 Monitoramento e alertas:</strong> O professor pode acompanhar o progresso da coleta em tempo real e receber alertas sobre o andamento.</li>
-            <li><strong>📈 Visualização de resultados:</strong> Os dados coletados são exibidos em gráficos interativos e relatórios, permitindo uma análise prática e visual das emoções dos alunos.</li>
-            <li><strong>📂 Exportação de dados:</strong> Respostas dos alunos podem ser exportadas em formatos como JSON e CSV, facilitando análises externas ou arquivamento.</li>
-            <li><strong>📋 Gerenciamento centralizado:</strong> Instalado no painel do Moodle, o plugin oferece um gerenciamento simplificado e integrado, sem a necessidade de instalá-lo separadamente em cada curso.</li>
-        </ul>
-        <p>Essas funcionalidades tornam o <strong>studentcare</strong> uma ferramenta poderosa e prática para compreender as emoções acadêmicas dos alunos e melhorar o processo de ensino e aprendizagem.</p>
+        <p>' . get_string('faq_topic_functionalities_description', 'block_studentcare') . '</p>
+        ' . get_string('faq_topic_functionalities_list', 'block_studentcare') . '
+        <p>' . get_string('faq_topic_functionalities_closing', 'block_studentcare') . '</p>
     </div>
     `)'
 ));
+
 echo html_writer::tag('div', '🛠️', array('class' => 'faq-topic-icon'));
-echo html_writer::tag('div', 'Principais funcionalidades do plugin studentcare', array('class' => 'faq-topic-title'));
+echo html_writer::tag('div', get_string('faq_topic_functionalities_title', 'block_studentcare'), array('class' => 'faq-topic-title'));
 echo html_writer::end_div();
 
 
 
+
 echo html_writer::start_div('faq-topic', array(
-    'onclick' => 'openModal("Quem desenvolveu o studentcare?", `
+    'onclick' => 'openModal("' . get_string('faq_topic_developers_title', 'block_studentcare') . '", `
     <div class="modal-header">
-        <h2><i class="fas fa-user-graduate"></i> Quem desenvolveu o studentcare?</h2>
+        <h2><i class="fas fa-user-graduate"></i> ' . get_string('faq_topic_developers_title', 'block_studentcare') . '</h2>
     </div>
     <div class="modal-content-body">
-        <p>O <strong>studentcare</strong> é um projeto desenvolvido como Trabalho de Conclusão de Curso (TCC) pelo aluno <strong>Rafael Lariloran Costa Rodrigues</strong> (<a href="http://lattes.cnpq.br/1281350600184120" target="_blank">Lattes</a>), estudante do curso superior em <em>Sistemas para Internet</em> do <strong>Instituto Federal de Educação, Ciência e Tecnologia do Rio Grande do Sul (IFRS) – Campus Porto Alegre</strong>.</p>
-        <p>O artigo referente ao projeto está disponível no <a href="https://repositorio.ifrs.edu.br/handle/123456789/935" target="_blank">repositório do IFRS - Campus Porto Alegre</a>.</p>
-        <h3><i class="fas fa-chalkboard-teacher"></i> Orientação</h3>
-        <p>O projeto foi orientado pela <strong>Profa. Dra. Márcia Häfele Islabão Franco</strong> (<a href="http://lattes.cnpq.br/2551214616925074" target="_blank">Lattes</a>) e coorientado pelo <strong>Prof. Dr. Marcelo Augusto Rauh Schmitt</strong> (<a href="http://lattes.cnpq.br/1958021878056697" target="_blank">Lattes</a>), ambos docentes do IFRS Porto Alegre.</p>
-        <h3><i class="fas fa-envelope"></i> Contato</h3>
-        <p>Se você encontrou algum <strong>bug, problema ou possui dúvidas</strong>, envie um e-mail para:</p>
+        <p>' . get_string('faq_topic_developers_description', 'block_studentcare') . '</p>
+        <h3><i class="fas fa-chalkboard-teacher"></i> ' . get_string('faq_topic_developers_guidance', 'block_studentcare') . '</h3>
+        <p>' . get_string('faq_topic_developers_guidance_description', 'block_studentcare') . '</p>
+        <h3><i class="fas fa-envelope"></i> ' . get_string('faq_topic_developers_contact', 'block_studentcare') . '</h3>
+        <p>' . get_string('faq_topic_developers_contact_description', 'block_studentcare') . '</p>
         <ul>
             <li><a href="mailto:lariloran2@gmail.com">lariloran2@gmail.com</a></li>
         </ul>
     </div>
     `)'
 ));
+
 echo html_writer::tag('div', '📟', array('class' => 'faq-topic-icon'));
-echo html_writer::tag('div', 'Quem desenvolveu o studentcare?', array('class' => 'faq-topic-title'));
+echo html_writer::tag('div', get_string('faq_topic_developers_title', 'block_studentcare'), array('class' => 'faq-topic-title'));
 echo html_writer::end_div();
+
 
 
 

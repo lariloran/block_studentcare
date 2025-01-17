@@ -33,6 +33,263 @@ $string['coleta_atualizada_com_sucesso'] = 'A coleta foi atualizada com sucesso.
 
 $string['editcoleta'] = 'Editar Coleta';
 $string['editcoleta_subtitle'] = 'Edição da coleta: {$a}';
+$string['add-collection'] = 'Adicionar Nova Coleta';
+$string['new_collection'] = 'Nova Coleta';
+
+$string['search_label'] = 'Buscar';
+$string['search_placeholder'] = 'Buscar por nome, disciplina, descrição, tipo de recurso...';
+$string['order_by_label'] = 'Ordenar por';
+$string['order_by_creation_date'] = 'Data de Criação';
+$string['order_by_collection_name'] = 'Nome da Coleta';
+$string['order_by_start_date'] = 'Data de Início';
+$string['order_by_end_date'] = 'Data de Fim';
+$string['order_by_course'] = 'Disciplina';
+$string['ascending'] = 'Ascendente';
+$string['descending'] = 'Descendente';
+$string['show_label'] = 'Exibir';
+$string['show_5_per_page'] = '5 por página';
+$string['show_10_per_page'] = '10 por página';
+$string['show_15_per_page'] = '15 por página';
+$string['show_20_per_page'] = '20 por página';
+
+$string['selection_summary'] = 'Resumo das Seleções';
+$string['preview_coleta'] = 'Preview Coleta';
+$string['link_coleta'] = 'Link da Coleta';
+$string['disciplina'] = 'Disciplina';
+$string['data_inicio'] = 'Data de Início';
+$string['data_fim'] = 'Data de Fim';
+$string['nome_secao_vinculada'] = 'Nome da Seção Vinculada';
+$string['nome_atividade_recurso_vinculado'] = 'Nome da Atividade/Recurso Vinculado';
+$string['notificar_aluno'] = 'Notificar Aluno';
+$string['receber_alerta'] = 'Receber Alerta';
+$string['descricao'] = 'Descrição';
+$string['baixar_csv'] = 'Baixar CSV';
+$string['baixar_json'] = 'Baixar JSON';
+$string['editar'] = 'Editar';
+$string['excluir'] = 'Excluir';
+$string['graficos'] = 'Gráficos';
+
+$string['course'] = 'Disciplina';
+$string['start_date'] = 'Data de Início';
+$string['end_date'] = 'Data de Fim';
+$string['details'] = 'Detalhes';
+
+$string['select_collection'] = 'Selecione uma Coleta';
+$string['choose_option'] = '-- Escolha --';
+
+$string['select_collection_alert'] = 'Por favor, selecione uma coleta antes de visualizar o gráfico.';
+
+$string['strongly_disagree'] = 'Discordo Totalmente';
+$string['disagree'] = 'Discordo';
+$string['neutral'] = 'Neutro';
+$string['agree'] = 'Concordo';
+$string['strongly_agree'] = 'Concordo Totalmente';
+
+$string['stacked_bar'] = 'Barras Empilhadas';
+$string['stacked_bar_description'] = 'Exibe a distribuição de respostas por escala Likert.';
+$string['view_chart'] = 'Visualizar Gráfico';
+
+
+$string['collection_not_available'] = 'Desculpe, esta coleta não está mais disponível. Entre em contato com o administrador ou professor para mais informações.';
+
+$string['collection_already_answered'] = 'Coleta já Respondida';
+$string['collection_already_answered_message'] = 'Você já respondeu a esta coleta de emoções. Obrigado pela sua participação!';
+$string['return_to_course'] = 'Voltar para o curso';
+
+$string['collection_not_started'] = 'A coleta ainda não começou. Ela estará disponível a partir de {datetime}.';
+$string['collection_expired'] = 'O prazo para responder a esta coleta expirou em {datetime}.';
+$string['date_format'] = '%d/%m/%Y %H:%M';
+
+$string['no_questions_found'] = 'Nenhuma pergunta foi encontrada para esta coleta. Entre em contato com o professor da disciplina de <strong>{$a}</strong> para mais informações.';
+
+$string['tcle_title'] = 'Termo de Consentimento Livre e Esclarecido (TCLE)';
+$string['tcle_description'] = 'Sua participação nesta coleta de emoções para a disciplina <strong>{$a}</strong> é muito importante para nós. Ao responder, você autoriza o uso das suas respostas, que serão tratadas de forma confidencial e anônima, exclusivamente para fins acadêmicos e pedagógicos. As informações coletadas serão utilizadas em pesquisas que buscam aprimorar o ensino e a aprendizagem, promovendo um ambiente educacional mais acolhedor e eficaz. Somente o professor responsável terá acesso aos dados, resguardando sua privacidade. Agradecemos sua colaboração!';
+$string['tcle_accept'] = 'Aceito';
+$string['tcle_decline'] = 'Não Aceito';
+
+$string['back'] = 'Voltar';
+$string['need_emotional_help'] = 'Precisa de ajuda emocional?';
+$string['next'] = 'Avançar';
+
+$string['feedback_title'] = 'O que você achou desta coleta?';
+$string['feedback_placeholder'] = 'Escreva seu feedback aqui...';
+$string['feedback_submit'] = 'Enviar Feedback';
+
+$string['error_title'] = 'Atenção';
+$string['error_message'] = 'Por favor, selecione uma resposta antes de avançar.';
+$string['understood'] = 'Entendido';
+$string['success_title'] = 'Coleta Concluída';
+$string['success_message'] = 'Você completou todas as perguntas da coleta. Obrigado por participar!';
+$string['return_to_course'] = 'Voltar para o curso';
+
+
+$string['faq_search_placeholder'] = 'Pesquise pelo título ou conteúdo...';
+$string['faq_title'] = 'Como podemos ajudar?';
+
+// pt_br
+$string['faq_topic_title'] = 'O que é o StudentCare?';
+$string['faq_modal_header'] = '<i class="fas fa-info-circle"></i> O que é o StudentCare?';
+$string['faq_modal_body'] = 'O <strong>StudentCare</strong> é um plugin de bloco desenvolvido para a plataforma Moodle com o objetivo de <em>monitorar as emoções acadêmicas</em> dos estudantes. Ele utiliza como base o <strong>AEQ (Achievement Emotions Questionnaire)</strong>, um instrumento amplamente reconhecido na avaliação de emoções relacionadas ao desempenho acadêmico.';
+$string['faq_functionalities_title'] = '<i class="fas fa-tools"></i> Funcionalidades Principais';
+$string['faq_functionalities_list'] = '
+    <li>Permite que professores criem <strong>coletas de emoções</strong>, selecionando classes e emoções específicas.</li>
+    <li>Oferece aos estudantes uma interface interativa para responder às coletas usando uma escala Likert com emojis.</li>
+    <li>Gera gráficos interativos para os professores visualizarem os dados coletados, auxiliando na análise das emoções acadêmicas.</li>
+    <li>Facilita a exportação dos dados em formatos como <i>CSV</i> e <i>JSON</i> para análises externas.</li>
+';
+$string['faq_objective_title'] = '<i class="fas fa-bullseye"></i> Objetivo';
+$string['faq_objective_text'] = 'O principal objetivo do <strong>StudentCare</strong> é auxiliar professores e instituições de ensino a identificar e monitorar as emoções acadêmicas dos estudantes, contribuindo para intervenções pedagógicas mais personalizadas e assertivas, visando melhorar o desempenho acadêmico e reduzir problemas como desmotivação e evasão escolar.';
+$string['faq_benefits_title'] = '<i class="fas fa-graduation-cap"></i> Benefícios';
+$string['faq_benefits_list'] = '
+    <li>Apoio no <strong>planejamento pedagógico</strong> baseado em dados emocionais dos alunos.</li>
+    <li>Melhoria no <strong>engajamento e bem-estar</strong> dos estudantes.</li>
+    <li>Ferramenta de fácil integração ao Moodle, sendo acessível a professores e administradores.</li>
+';
+
+$string['faq_how_to_use_title'] = 'Como utilizar o plugin StudentCare?';
+$string['faq_how_to_use_intro'] = 'O plugin StudentCare é uma ferramenta poderosa integrada ao Moodle, que permite aos professores coletar, monitorar e analisar as emoções acadêmicas de forma interativa e eficiente. Aqui está um guia para utilizá-lo:';
+
+$string['faq_how_to_use_teacher_steps_title'] = '👩‍🏫 Passos para o professor cadastrar uma coleta:';
+$string['faq_teacher_step_1'] = '📋 Acesse o painel do plugin StudentCare: Localize o plugin diretamente no painel do Moodle para facilitar a gestão centralizada, sem necessidade de instalação em cursos específicos.';
+$string['faq_teacher_step_2'] = '📚 Preencha as informações da coleta: Adicione as datas de início e fim e descrição (opcional).';
+$string['faq_teacher_step_3'] = '📝 Escolha o curso, seção e recurso: Vincule a coleta a um curso e selecione uma seção específica. Caso necessário, associe a coleta a um recurso existente.';
+$string['faq_teacher_step_4'] = '🎭 Selecione as classes e emoções do AEQ: Utilize o formulário para escolher as classes de emoções acadêmicas (aulas, aprendizado, provas) e emoções específicas. Essas seleções definirão as perguntas que os alunos responderão.';
+$string['faq_teacher_step_5'] = '🔔 Configure notificações e alertas: Ative notificações automáticas para alunos e receba alertas sobre o andamento da coleta.';
+
+$string['faq_after_registration_title'] = '📊 Após o cadastro da coleta:';
+$string['faq_after_registration_export'] = '📤 Exportação de dados: Os dados das respostas podem ser exportados em formatos como JSON e CSV para análise mais detalhada.';
+$string['faq_after_registration_graphs'] = '📈 Visualização de gráficos: O professor pode acessar relatórios interativos com gráficos para interpretar os dados coletados e ajustar estratégias pedagógicas conforme necessário.';
+$string['faq_after_registration_delete'] = '❌ Exclusão de coletas: Caso a coleta não seja mais necessária, o professor pode excluí-la diretamente pelo painel do plugin.';
+
+$string['faq_for_students_title'] = '👨‍🎓 Para os alunos:';
+$string['faq_students_notifications'] = '🔔 Receba notificações personalizadas: Os alunos são notificados via e-mail e no Moodle sobre as coletas disponíveis.';
+$string['faq_students_answer'] = '📝 Responda às coletas: As perguntas são exibidas de forma interativa em uma escala Likert de 1 a 5, com base nas classes e emoções selecionadas pelo professor.';
+$string['faq_students_tcle'] = '📜 Aceite ou recuse o TCLE: Antes de responder às perguntas, os alunos devem aceitar ou recusar o Termo de Consentimento Livre e Esclarecido (TCLE).';
+
+$string['faq_additional_resources_title'] = '📘 Recursos adicionais:';
+$string['faq_resources_manual'] = '📖 Manual do AEQ: O plugin disponibiliza o <a href=\'/blocks/studentcare/manual_aeq.php\'>Manual AEQ</a>, que fornece detalhes sobre as classes, emoções e perguntas do AEQ.';
+$string['faq_resources_auto_creation'] = '🌐 Criação automática de recursos: Após o cadastro, o plugin cria automaticamente um recurso do tipo URL vinculado à seção escolhida pelo professor, facilitando o acesso dos alunos.';
+$string['faq_resources_graphs'] = '📊 Gráficos e relatórios: Dados das respostas são exibidos em gráficos interativos para facilitar a análise.';
+
+$string['faq_how_to_use_conclusion'] = 'O plugin StudentCare foi projetado para ser intuitivo e eficiente, otimizando o processo de coleta e análise de emoções acadêmicas. Ele auxilia na criação de estratégias pedagógicas baseadas em dados reais, promovendo um ambiente de aprendizado mais saudável e adaptado às necessidades dos alunos.';
+
+$string['faq_topic_functionalities_title'] = 'Principais funcionalidades do plugin StudentCare';
+$string['faq_topic_functionalities_description'] = 'O <strong>StudentCare</strong> é um plugin desenvolvido para facilitar o monitoramento das emoções acadêmicas no Moodle, trazendo diversas funcionalidades pensadas para professores e administradores. Confira algumas das principais:';
+$string['faq_topic_functionalities_list'] = '<ul>
+    <li><strong>📘 Manual AEQ:</strong> O plugin inclui acesso ao <a href="/blocks/studentcare/manual_aeq.php" target="_blank">Manual AEQ</a>, que explica detalhadamente o embasamento teórico e a estrutura do <em>Achievement Emotions Questionnaire (AEQ)</em>.</li>
+    <li><strong>✍️ Cadastro e edição de coletas:</strong> Os professores podem criar novas coletas específicas para suas disciplinas, editar configurações de coletas já existentes e escolher quais classes e emoções do AEQ serão trabalhadas.</li>
+    <li><strong>🗑️ Exclusão de coletas:</strong> Caso necessário, coletas podem ser facilmente removidas pelo professor.</li>
+    <li><strong>🔗 Vinculação de recursos:</strong> Durante o cadastro, é possível associar um recurso específico de uma seção da disciplina à coleta, integrando ainda mais o conteúdo da aula com a coleta.</li>
+    <li><strong>🌐 Criação automática de recurso URL:</strong> Para cada coleta criada, o plugin adiciona automaticamente um recurso do tipo URL na seção escolhida pelo professor.</li>
+    <li><strong>📬 Notificações e e-mails personalizados:</strong> Após o cadastro de uma coleta, notificações e e-mails customizados para a disciplina são enviados automaticamente aos alunos.</li>
+    <li><strong>📝 TCLE interativo:</strong> Antes de responder à coleta, o aluno visualiza um Termo de Consentimento Livre e Esclarecido (TCLE) e pode aceitá-lo ou recusá-lo.</li>
+    <li><strong>🤖 Respostas interativas:</strong> As questões do AEQ são apresentadas de forma interativa e baseadas nas classes e emoções escolhidas pelo professor.</li>
+    <li><strong>📊 Monitoramento e alertas:</strong> O professor pode acompanhar o progresso da coleta em tempo real e receber alertas sobre o andamento.</li>
+    <li><strong>📈 Visualização de resultados:</strong> Os dados coletados são exibidos em gráficos interativos e relatórios, permitindo uma análise prática e visual das emoções dos alunos.</li>
+    <li><strong>📂 Exportação de dados:</strong> Respostas dos alunos podem ser exportadas em formatos como JSON e CSV, facilitando análises externas ou arquivamento.</li>
+    <li><strong>📋 Gerenciamento centralizado:</strong> Instalado no painel do Moodle, o plugin oferece um gerenciamento simplificado e integrado, sem a necessidade de instalá-lo separadamente em cada curso.</li>
+</ul>';
+$string['faq_topic_functionalities_closing'] = 'Essas funcionalidades tornam o <strong>StudentCare</strong> uma ferramenta poderosa e prática para compreender as emoções acadêmicas dos alunos e melhorar o processo de ensino e aprendizagem.';
+
+$string['faq_topic_developers_title'] = 'Quem desenvolveu o StudentCare?';
+$string['faq_topic_developers_description'] = 'O <strong>StudentCare</strong> é um projeto desenvolvido como Trabalho de Conclusão de Curso (TCC) pelo aluno <strong>Rafael Lariloran Costa Rodrigues</strong> (<a href="http://lattes.cnpq.br/1281350600184120" target="_blank">Lattes</a>), estudante do curso superior em <em>Sistemas para Internet</em> do <strong>Instituto Federal de Educação, Ciência e Tecnologia do Rio Grande do Sul (IFRS) – Campus Porto Alegre</strong>.';
+$string['faq_topic_developers_guidance'] = 'Orientação';
+$string['faq_topic_developers_guidance_description'] = 'O projeto foi orientado pela <strong>Profa. Dra. Márcia Häfele Islabão Franco</strong> (<a href="http://lattes.cnpq.br/2551214616925074" target="_blank">Lattes</a>) e coorientado pelo <strong>Prof. Dr. Marcelo Augusto Rauh Schmitt</strong> (<a href="http://lattes.cnpq.br/1958021878056697" target="_blank">Lattes</a>), ambos docentes do IFRS Porto Alegre.';
+$string['faq_topic_developers_contact'] = 'Contato';
+$string['faq_topic_developers_contact_description'] = 'Se você encontrou algum <strong>bug, problema ou possui dúvidas</strong>, envie um e-mail para:';
+
+$string['start_here_title'] = 'Comece por aqui';
+$string['start_here_description'] = 'O <strong>Achievement Emotions Questionnaire (AEQ)</strong> é um instrumento de avaliação psicológica desenvolvido para medir as emoções acadêmicas dos estudantes em contextos educacionais. Criado por <strong>Reinhard Pekrun</strong> e seus colaboradores, o AEQ é fundamentado na teoria de Controle-Valorização, que analisa como as emoções influenciam o desempenho e a motivação acadêmica.';
+$string['how_it_works'] = 'Como funciona?';
+$string['start_here_questionnaire_description'] = 'O AEQ utiliza um questionário estruturado com perguntas baseadas em uma escala <em>Likert</em>, onde os estudantes avaliam suas emoções relacionadas a três situações principais:';
+$string['emotion_classrooms'] = 'Emoções relacionadas às aulas';
+$string['emotion_classrooms_description'] = 'Sentimentos como alegria, tédio e raiva vivenciados antes, durante e depois de frequentar aulas.';
+$string['emotion_study'] = 'Emoções relacionadas ao estudo';
+$string['emotion_study_description'] = 'Sentimentos como orgulho, frustração e ansiedade experimentados durante o processo de aprendizagem.';
+$string['emotion_exams'] = 'Emoções relacionadas às provas';
+$string['emotion_exams_description'] = 'Sentimentos como alívio, esperança e vergonha antes, durante e após avaliações.';
+$string['how_to_use'] = 'Formas de uso';
+$string['start_here_usage'] = 'O AEQ é amplamente utilizado em contextos educacionais e de pesquisa para:';
+$string['evaluate_impact'] = 'Avaliar o impacto das emoções acadêmicas no desempenho dos estudantes.';
+$string['identify_patterns'] = 'Identificar padrões emocionais que possam levar à desmotivação ou evasão escolar.';
+$string['assist_educators'] = 'Auxiliar educadores e administradores a desenvolver estratégias pedagógicas que promovam um ambiente emocionalmente saudável.';
+$string['purpose'] = 'Propósito';
+$string['main_objective'] = 'O principal objetivo do AEQ é fornecer uma ferramenta para compreender as emoções acadêmicas e seu papel no aprendizado, ajudando a melhorar a experiência educacional e reduzir barreiras emocionais ao sucesso acadêmico.';
+$string['classes_aeq'] = 'Classes AEQ';
+$string['what_are_aeq_classes'] = 'O que são as Classes do AEQ?';
+$string['aeq_classes_description'] = 'As classes do AEQ são categorias que agrupam as emoções acadêmicas com base no contexto em que elas ocorrem. Cada classe foi projetada para avaliar as emoções experimentadas antes, durante e depois de atividades acadêmicas específicas, como assistir aulas, estudar ou realizar testes/provas. Esses momentos são críticos, pois representam as situações de maior impacto emocional na trajetória acadêmica de um estudante.';
+$string['classroom_related_emotions'] = 'Emoções Relacionadas às Aulas';
+$string['classroom_emotions_description'] = 'Esta classe avalia as emoções experimentadas ao participar de aulas (<i>Class-Related Emotions</i>). Ela engloba sentimentos vivenciados antes de entrar na sala de aula (por exemplo, expectativa ou nervosismo), durante a aula (como interesse ou frustração) e depois da aula (como alívio ou orgulho).';
+$string['learning_related_emotions'] = 'Emoções Relacionadas ao Aprendizado';
+$string['learning_emotions_description'] = 'Focada nas emoções associadas ao processo de estudo ou aprendizagem (<i>Learning-Related Emotions</i>), esta classe aborda os sentimentos que surgem antes de iniciar uma sessão de estudo (como motivação ou desânimo), durante o estudo (como concentração ou irritação) e depois de estudar (como satisfação ou frustração).';
+$string['test_related_emotions'] = 'Emoções Relacionadas a Atividades Avaliativas (testes/provas)';
+$string['test_emotions_description'] = 'Esta classe examina as emoções vivenciadas em momentos de avaliação, como testes e provas (<i>Test-Related Emotions</i>). Considera os sentimentos experimentados antes de uma prova (como ansiedade ou confiança), durante a realização (como nervosismo ou foco) e após o término (como alívio ou vergonha).';
+$string['anger'] = 'Raiva';
+$string['joy'] = 'Alegria';
+$string['anxiety'] = 'Ansiedade';
+$string['shame'] = 'Vergonha';
+$string['hopelessness'] = 'Desesperança';
+$string['boredom'] = 'Tédio';
+$string['hope'] = 'Esperança';
+$string['pride'] = 'Orgulho';
+$string['relief'] = 'Alívio';
+$string['enjoyment'] = 'Alegria';
+
+$string['aeq_questions'] = 'Perguntas do AEQ';
+$string['aeq_description'] = 'As perguntas do <strong>Achievement Emotions Questionnaire (AEQ)</strong> foram desenvolvidas para medir as emoções acadêmicas de forma estruturada, em três contextos principais: aulas, estudo e testes/provas. Elas avaliam as emoções vivenciadas antes, durante e depois de cada uma dessas situações.';
+$string['how_it_works'] = 'Como Funcionam?';
+$string['how_it_works_description'] = 'Cada pergunta apresenta uma afirmação que descreve um estado emocional. Os estudantes avaliam como essa afirmação reflete suas experiências pessoais, utilizando uma escala do tipo <em>Likert</em>, que varia de 1 (discordo totalmente) a 5 (concordo totalmente).';
+$string['example_questions'] = 'Exemplos de Perguntas';
+$string['classroom_related'] = 'Relacionadas às Aulas';
+$string['example_classroom_question'] = 'Eu fico animado em ir para a aula.';
+$string['study_related'] = 'Relacionadas ao Estudo';
+$string['example_study_question'] = 'Eu me sinto otimista sobre o meu progresso nos estudos.';
+$string['test_related'] = 'Relacionadas a Testes/Provas';
+$string['example_test_question'] = 'Eu fico ansioso antes de uma prova.';
+$string['question_organization'] = 'Organização das Perguntas';
+$string['question_organization_description'] = 'As perguntas estão organizadas em blocos que ajudam os participantes a acessar memórias específicas, tornando as respostas mais representativas. Essa estrutura permite compreender melhor como as emoções afetam o desempenho acadêmico.';
+$string['manual_aeq_title'] = 'Guia para Utilização do AEQ';
+
+
+$string['academic_emotions'] = 'Emoções Acadêmicas';
+$string['aeq_description'] = 'O <strong>Achievement Emotions Questionnaire (AEQ)</strong> trabalha com uma ampla gama de emoções acadêmicas (<i>Achievement Emotions</i>), organizadas em três contextos principais: aulas, estudo e provas. Aqui estão as emoções avaliadas em cada contexto e o que elas representam:';
+$string['classroom_related_emotions'] = 'Emoções Relacionadas às Aulas';
+$string['classroom_joy_description'] = 'Sentimento de prazer e entusiasmo ao participar das aulas.';
+$string['classroom_hope_description'] = 'Confiança de que será possível acompanhar o conteúdo e participar ativamente.';
+$string['classroom_pride_description'] = 'Satisfação por compreender o conteúdo ou contribuir positivamente.';
+$string['classroom_anger_description'] = 'Frustração ou irritação causada pela dinâmica ou qualidade da aula.';
+$string['classroom_anxiety_description'] = 'Inquietação ou nervosismo relacionado ao ambiente ou ao conteúdo da aula.';
+$string['classroom_shame_description'] = 'Embaraço por dificuldades de expressão ou compreensão do conteúdo.';
+$string['classroom_hopelessness_description'] = 'Sentimento de desistência ou falta de perspectiva em relação ao aprendizado.';
+$string['classroom_boredom_description'] = 'Sensação de monotonia ou falta de interesse na aula.';
+$string['learning_related_emotions'] = 'Emoções Relacionadas ao Aprendizado';
+$string['learning_joy_description'] = 'Prazer em aprender e explorar novos conhecimentos.';
+$string['learning_hope_description'] = 'Otimismo sobre a capacidade de dominar o material estudado.';
+$string['learning_pride_description'] = 'Satisfação pelos resultados alcançados durante o processo de estudo.';
+$string['learning_anger_description'] = 'Irritação com a quantidade de material ou dificuldades no estudo.';
+$string['learning_anxiety_description'] = 'Medo ou tensão diante de dificuldades no aprendizado.';
+$string['learning_shame_description'] = 'Embaraço por não conseguir absorver ou aplicar o conteúdo adequadamente.';
+$string['learning_hopelessness_description'] = 'Desmotivação por acreditar que não conseguirá entender ou avançar no estudo.';
+$string['learning_boredom_description'] = 'Sensação de desinteresse ao lidar com material monótono ou pouco estimulante.';
+$string['test_related_emotions'] = 'Emoções Relacionadas às Atividades Avaliativas (testes/provas)';
+$string['test_joy_description'] = 'Satisfação ao demonstrar conhecimento ou enfrentar desafios em provas.';
+$string['test_hope_description'] = 'Confiança em um bom desempenho e sucesso na avaliação.';
+$string['test_pride_description'] = 'Satisfação pelos esforços de preparação e desempenho na prova.';
+$string['test_relief_description'] = 'Sensação de tranquilidade ao concluir uma avaliação.';
+$string['test_anger_description'] = 'Frustração com o tempo, dificuldade ou injustiça percebida na prova.';
+$string['test_anxiety_description'] = 'Preocupação intensa antes ou durante a avaliação.';
+$string['test_shame_description'] = 'Embaraço por desempenho insatisfatório ou erros cometidos.';
+$string['test_hopelessness_description'] = 'Sentimento de desistência ou falta de confiança no sucesso da prova.';
+
+$string['start_here'] = 'Comece por aqui';
+
+$string['confirmation_delete_title'] = 'Confirmação de Exclusão';
+$string['confirmation_delete_message'] = 'Tem certeza de que deseja excluir a coleta "<strong>{coletaNome}</strong>"? Esta ação não pode ser desfeita e todos os dados relacionados serão removidos.';
+$string['delete_button'] = 'Excluir';
+$string['cancel_button'] = 'Cancelar';
+$string['error_title'] = 'Erro';
+$string['error_message'] = 'Ocorreu um erro ao tentar excluir a coleta. Por favor, tente novamente.';
+
 
 $string['coleta_limitada_aviso'] = 'A coleta foi iniciada em {$a->datainicio}. Algumas alterações estão limitadas. Para mais detalhes desta coleta, retorne à <a href="{$a->listagemurl}">listagem</a>.';
 $string['coleta_atualizada_com_sucesso'] = 'A coleta foi atualizada com sucesso.';
@@ -51,6 +308,8 @@ $string['studentcare:addinstance'] = 'Adicionar uma nova instância do bloco Stu
 $string['studentcare:myaddinstance'] = 'Adicionar uma nova instância do bloco StudentCare ao painel';
 $string['studentcare:receivenotifications'] = 'Receber notificações sobre coletas criadas no StudentCare';
 $string['studentcare:managecollections'] = 'Gerenciar o bloco StudentCare';
+$string['manual_aeq_search_placeholder'] = 'Pesquise pelo título ou conteúdo...';
+$string['chart_title'] = 'Distribuição de Respostas por Escala Likert';
 
 // Mensagem de boas-vindas
 $string['welcome'] = 'Bem-vindos ao StudentCare!';

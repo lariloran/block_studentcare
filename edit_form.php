@@ -198,11 +198,12 @@ class edit_form extends moodleform
         if (!$coletaIniciada) {
             $mform->addElement('html', '
             <div class="fitem">
-                <div class="fitemtitle">Resumo das Seleções</div>
+                <div class="fitemtitle">' . get_string('selection_summary', 'block_studentcare') . '</div>
                 <div id="emocoes-selecionadas" class="selected-emotions-container"></div>
             </div>
         ');
-        }
+        
+        }    
         // Checkboxes
         $mform->addElement('advcheckbox', 'alertprogress', get_string('alertprogress', 'block_studentcare'), null, ['group' => 1], [0, 1]);
         $mform->setDefault('alertprogress', $this->coleta->receber_alerta);

@@ -119,11 +119,12 @@ class register_form extends moodleform
         $mform->addHelpButton('emocoes', 'emotions', 'block_studentcare');
 
         $mform->addElement('html', '
-            <div class="fitem">
-                <div class="fitemtitle">Resumo das Seleções</div>
-                    <div id="emocoes-selecionadas" class="selected-emotions-container"></div>
-            </div>
-        ');
+        <div class="fitem">
+            <div class="fitemtitle">' . get_string('selection_summary', 'block_studentcare') . '</div>
+            <div id="emocoes-selecionadas" class="selected-emotions-container"></div>
+        </div>
+    ');
+    
 
         $mform->addElement('advcheckbox', 'alertprogress', get_string('alertprogress', 'block_studentcare'), null, array('group' => 1), array(0, 1));
         $mform->setDefault('alertprogress', 1);
