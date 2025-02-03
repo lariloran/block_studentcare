@@ -13,13 +13,14 @@ $PAGE->set_title(get_string('header', 'block_studentcare'));
 
 echo $OUTPUT->header();
  
-echo '<div id="confirmation-delete" 
-data-message-delete="' . get_string('confirm_message_delete', 'block_studentcare') . '"
-        data-title="' . get_string('confirm_title', 'block_studentcare') . '"
-         data-yes="' . get_string('confirm_button_yes', 'block_studentcare') . '"
-        data-no="' . get_string('confirm_button_no', 'block_studentcare') . '"
+echo '<div id="confirmation-delete" style="display: none;" 
+    data-message-delete="' . get_string('confirm_message_delete', 'block_studentcare') . '"
+    data-title="' . get_string('confirm_title', 'block_studentcare') . '"
+    data-yes="' . get_string('confirm_button_yes', 'block_studentcare') . '"
+    data-no="' . get_string('confirm_button_no', 'block_studentcare') . '"
 >
- </div>';
+</div>';
+
 
  
 $PAGE->requires->js(new moodle_url('/blocks/studentcare/js/shared.js'));

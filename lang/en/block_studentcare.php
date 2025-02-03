@@ -95,7 +95,7 @@ $string['collection_already_answered'] = 'Collection Already Answered';
 $string['collection_already_answered_message'] = 'You have already answered this emotion collection. Thank you for your participation!';
 $string['return_to_course'] = 'Return to the course';
 
-$string['collection_not_started'] = 'The collection has not started yet. It will be available from {datetime}.';
+$string['collection_not_started'] = 'The collection has not started yet.';
 $string['collection_expired'] = 'The deadline to answer this collection expired on {datetime}.';
 $string['date_format'] = '%d/%m/%Y %H:%M';
 
@@ -127,7 +127,7 @@ $string['faq_title'] = 'How can we help?';
 // General strings for FAQ
 $string['faq_topic_title'] = 'What is StudentCare?';
 $string['faq_modal_header'] = '<i class="fas fa-info-circle"></i> What is StudentCare?';
-$string['faq_modal_body'] = '<strong>studentcare</strong> is a block plugin developed for the Moodle platform aimed at <em>monitoring academic emotions</em> of students. It is based on the <strong>AEQ (Achievement Emotions Questionnaire)</strong>, a widely recognized instrument for assessing emotions related to academic performance.';
+$string['faq_modal_body'] = '<strong>StudentCare</strong> is a block plugin developed for the Moodle platform aimed at <em>monitoring academic emotions</em> of students. It is based on the <strong>AEQ (Achievement Emotions Questionnaire)</strong>, a widely recognized instrument for assessing emotions related to academic performance.';
 $string['faq_functionalities_title'] = '<i class="fas fa-tools"></i> Key Features';
 $string['faq_functionalities_list'] = '
     <li>Allows teachers to create <strong>emotion collections</strong>, selecting specific classes and emotions.</li>
@@ -136,7 +136,7 @@ $string['faq_functionalities_list'] = '
     <li>Facilitates data export in formats like <i>CSV</i> and <i>JSON</i> for external analysis.</li>
 ';
 $string['faq_objective_title'] = '<i class="fas fa-bullseye"></i> Objective';
-$string['faq_objective_text'] = 'The main objective of <strong>studentcare</strong> is to assist teachers and educational institutions in identifying and monitoring the academic emotions of students, contributing to more personalized and assertive pedagogical interventions, aiming to improve academic performance and reduce issues like demotivation and school dropout.';
+$string['faq_objective_text'] = 'The main objective of <strong>StudentCare</strong> is to assist teachers and educational institutions in identifying and monitoring the academic emotions of students, contributing to more personalized and assertive pedagogical interventions, aiming to improve academic performance and reduce issues like demotivation and school dropout.';
 $string['faq_benefits_title'] = '<i class="fas fa-graduation-cap"></i> Benefits';
 $string['faq_benefits_list'] = '
     <li>Support in <strong>pedagogical planning</strong> based on students’ emotional data.</li>
@@ -144,11 +144,11 @@ $string['faq_benefits_list'] = '
     <li>Easy integration into Moodle, accessible to teachers and administrators.</li>
 ';
 
-$string['faq_how_to_use_title'] = 'How to use the studentcare plugin?';
-$string['faq_how_to_use_intro'] = 'The studentcare plugin is a powerful tool integrated into Moodle, allowing teachers to collect, monitor, and analyze academic emotions interactively and efficiently. Here is a guide to using it:';
+$string['faq_how_to_use_title'] = 'How to use the StudentCare plugin?';
+$string['faq_how_to_use_intro'] = 'The StudentCare plugin is a powerful tool integrated into Moodle, allowing teachers to collect, monitor, and analyze academic emotions interactively and efficiently. Here is a guide to using it:';
 
-$string['faq_topic_functionalities_title'] = 'Main functionalities of the studentcare plugin';
-$string['faq_topic_functionalities_description'] = '<strong>studentcare</strong> is a plugin developed to facilitate monitoring academic emotions in Moodle, providing several features designed for teachers and administrators. Here are some highlights:';
+$string['faq_topic_functionalities_title'] = 'Main functionalities of the StudentCare plugin';
+$string['faq_topic_functionalities_description'] = '<strong>studentCare</strong> is a plugin developed to facilitate monitoring academic emotions in Moodle, providing several features designed for teachers and administrators. Here are some highlights:';
 $string['faq_topic_functionalities_list'] = '<ul>
     <li><strong>📘 AEQ Manual:</strong> The plugin includes access to the <a href="/blocks/studentcare/manual_aeq.php" target="_blank">AEQ Manual</a>, which details the theoretical foundation and structure of the <em>Achievement Emotions Questionnaire (AEQ)</em>.</li>
     <li><strong>✍️ Collection registration and editing:</strong> Teachers can create new collections specific to their subjects, edit settings of existing collections, and choose which AEQ classes and emotions will be worked on.</li>
@@ -163,10 +163,10 @@ $string['faq_topic_functionalities_list'] = '<ul>
     <li><strong>📂 Data export:</strong> Students’ responses can be exported in formats like JSON and CSV, facilitating external analysis or archiving.</li>
     <li><strong>📋 Centralized management:</strong> Installed in the Moodle dashboard, the plugin offers simplified and integrated management without the need for separate installation in each course.</li>
 </ul>';
-$string['faq_topic_functionalities_closing'] = 'These features make <strong>studentcare</strong> a powerful and practical tool for understanding students’ academic emotions and improving the teaching and learning process.';
+$string['faq_topic_functionalities_closing'] = 'These features make <strong>StudentCare</strong> a powerful and practical tool for understanding students’ academic emotions and improving the teaching and learning process.';
 
-$string['faq_topic_developers_title'] = 'Who developed studentcare?';
-$string['faq_topic_developers_description'] = '<strong>studentcare</strong> is a project developed as a Final Graduation Project (TCC) by the student <strong>Rafael Lariloran Costa Rodrigues</strong> (<a href="http://lattes.cnpq.br/1281350600184120" target="_blank">Lattes</a>), a student in the <em>Systems for Internet</em> course at the <strong>Federal Institute of Education, Science, and Technology of Rio Grande do Sul (IFRS) – Porto Alegre Campus</strong>.';
+$string['faq_topic_developers_title'] = 'Who developed StudentCare?';
+$string['faq_topic_developers_description'] = '<strong>StudentCare</strong> is a project developed as a Final Graduation Project (TCC) by the student <strong>Rafael Lariloran Costa Rodrigues</strong> (<a href="http://lattes.cnpq.br/1281350600184120" target="_blank">Lattes</a>), a student in the <em>Systems for Internet</em> course at the <strong>Federal Institute of Education, Science, and Technology of Rio Grande do Sul (IFRS) – Porto Alegre Campus</strong>.';
 $string['faq_topic_developers_guidance'] = 'Guidance';
 $string['faq_topic_developers_guidance_description'] = 'The project was supervised by <strong>Profa. Dra. Márcia Häfele Islabão Franco</strong> (<a href="http://lattes.cnpq.br/2551214616925074" target="_blank">Lattes</a>) and co-supervised by <strong>Prof. Dr. Marcelo Augusto Rauh Schmitt</strong> (<a href="http://lattes.cnpq.br/1958021878056697" target="_blank">Lattes</a>), both professors at IFRS Porto Alegre.';
 $string['faq_topic_developers_contact'] = 'Contact';
@@ -249,7 +249,7 @@ $string['start_here'] = 'Start here';
 
 
 $string['faq_how_to_use_teacher_steps_title'] = '👩‍🏫 Steps for teachers to register a collection:';
-$string['faq_teacher_step_1'] = '📋 Access the studentcare plugin panel: Locate the plugin directly in the Moodle panel to facilitate centralized management, without the need for installation in specific courses.';
+$string['faq_teacher_step_1'] = '📋 Access the StudentCare plugin panel: Locate the plugin directly in the Moodle panel to facilitate centralized management, without the need for installation in specific courses.';
 $string['faq_teacher_step_2'] = '📚 Fill in the collection information: Add start and end dates and an optional description.';
 $string['faq_teacher_step_3'] = '📝 Choose the course, section, and resource: Link the collection to a course and select a specific section. If needed, associate the collection with an existing resource.';
 $string['faq_teacher_step_4'] = '🎭 Select AEQ classes and emotions: Use the form to choose academic emotion classes (classes, learning, tests) and specific emotions. These selections will define the questions students will answer.';
@@ -270,11 +270,22 @@ $string['faq_resources_manual'] = '📖 AEQ Manual: The plugin provides the <a h
 $string['faq_resources_auto_creation'] = '🌐 Automatic resource creation: After registration, the plugin automatically creates a URL-type resource linked to the section chosen by the teacher, facilitating student access.';
 $string['faq_resources_graphs'] = '📊 Graphs and reports: Response data is displayed in interactive graphs for easy analysis.';
 
-$string['faq_how_to_use_conclusion'] = 'The studentcare plugin is designed to be intuitive and efficient, optimizing the process of collecting and analyzing academic emotions. It helps create pedagogical strategies based on real data, promoting a healthier and more adaptive learning environment.';
+$string['faq_how_to_use_conclusion'] = 'The StudentCare plugin is designed to be intuitive and efficient, optimizing the process of collecting and analyzing academic emotions. It helps create pedagogical strategies based on real data, promoting a healthier and more adaptive learning environment.';
 
 $string['coleta_limitada_aviso'] = 'The collection started on {$a->datainicio}. Some changes are limited. For more details about this collection, return to the <a href="{$a->listagemurl}">list</a>.';
 $string['coleta_atualizada_com_sucesso'] = 'The collection was successfully updated.';
 $string['returntolist'] = 'Return to the list';
+
+$string['collection_title'] = 'StudentCare - How are you feeling today?';
+$string['collection_intro'] = 'Please complete this survey <strong>by</strong> {date}. Participate and help us better understand your emotions!';
+
+$string['event_subject'] = 'StudentCare - Share your emotions about the course {disciplina}';
+$string['event_fullmessage'] = 'Hello! An emotion collection for the course {disciplina} has been created and is available until {datafim} for you to respond. Your feedback is very important. Please participate!';
+$string['event_fullmessagehtml'] = '<p>Hello!</p>
+<p>An emotion collection for the course <strong>{disciplina}</strong> has been created and is available until <strong>{datafim}</strong> for you to respond.</p>
+<p>Your feedback is very important to us. <a href="{url}">Click here</a> to share your emotions and help us improve your learning experience.</p>';
+$string['event_smallmessage'] = 'An emotion collection for the course {disciplina} has been created and is available until {datafim}. <a href="{url}">Click here</a> to participate.';
+
 
 // Management and navigation strings
 $string['manage_collections'] = 'Manage Collections';

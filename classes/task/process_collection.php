@@ -186,11 +186,11 @@ class process_collection extends \core\task\scheduled_task
         $urlparams->completion = 1;
         $urlparams->completionview = 0;
         $urlparams->section = $section_id;
-        $urlparams->name = "StudentCare - Como você está se sentindo hoje?";
+        $urlparams->name = get_string('collection_title', 'block_studentcare');
         $data_inicio_formatada = date('d/m/Y H:i', strtotime($coleta->data_inicio));
         $data_fim_formatada = date('d/m/Y H:i', strtotime($coleta->data_fim));
 
-        $urlparams->intro = clean_text("Responda esta coleta <strong>até</strong> {$data_fim_formatada}. Participe e nos ajude a compreender melhor suas emoções!", FORMAT_HTML);
+        $urlparams->intro = clean_text(str_replace('{date}', $data_fim_formatada, get_string('collection_intro', 'block_studentcare')), FORMAT_HTML);
         $urlparams->introformat = FORMAT_HTML;
         $urlparams->showdescription = 1;
         $urlparams->externalurl = clean_param("{$CFG->wwwroot}/blocks/studentcare/view.php?coletaid={$coleta->id}", PARAM_URL);
@@ -250,17 +250,38 @@ class process_collection extends \core\task\scheduled_task
             $eventdata->name = 'created_collection';
             $eventdata->userfrom = \core_user::get_noreply_user();
             $eventdata->userto = $usuario->id;
-            $eventdata->subject = "StudentCare - Compartilhe suas emoções sobre a disciplina de {$nome_disciplina}";
-            $eventdata->fullmessage = "Olá! Uma coleta de emoções para a disciplina {$nome_disciplina} foi criada e está disponível até {$data_fim_formatada} para você responder. Sua opinião é muito importante. Por favor, participe!";
+        
+            // Substituição dos placeholders nas mensagens
+            $subjectTemplate = get_string('event_subject', 'block_studentcare');
+            $eventdata->subject = str_replace('{disciplina}', $nome_disciplina, $subjectTemplate);
+        
+            $fullMessageTemplate = get_string('event_fullmessage', 'block_studentcare');
+            $eventdata->fullmessage = str_replace(
+                array('{disciplina}', '{datafim}'),
+                array($nome_disciplina, $data_fim_formatada),
+                $fullMessageTemplate
+            );
             $eventdata->fullmessageformat = FORMAT_PLAIN;
-            $eventdata->fullmessagehtml = "<p>Olá!</p>
-            <p>Uma coleta de emoções para a disciplina <strong>{$nome_disciplina}</strong> foi criada e está disponível até <strong>{$data_fim_formatada}</strong> para você responder.</p>
-            <p>Sua opinião é muito importante para nós. <a href='{$CFG->wwwroot}/blocks/studentcare/view.php?coletaid={$coleta->id}'>Clique aqui</a> para compartilhar suas emoções e nos ajudar a melhorar sua experiência de aprendizado.</p>";
-            $eventdata->smallmessage = "Uma coleta de emoções para a disciplina {$nome_disciplina} foi criada e está disponível até {$data_fim_formatada}. <a href='{$CFG->wwwroot}/blocks/studentcare/view.php?coletaid={$coleta->id}'>Clique aqui</a> para participar.";
+        
+            $fullMessageHtmlTemplate = get_string('event_fullmessagehtml', 'block_studentcare');
+            $eventdata->fullmessagehtml = str_replace(
+                array('{disciplina}', '{datafim}', '{url}'),
+                array($nome_disciplina, $data_fim_formatada, "{$CFG->wwwroot}/blocks/studentcare/view.php?coletaid={$coleta->id}"),
+                $fullMessageHtmlTemplate
+            );
+        
+            $smallMessageTemplate = get_string('event_smallmessage', 'block_studentcare');
+            $eventdata->smallmessage = str_replace(
+                array('{disciplina}', '{datafim}', '{url}'),
+                array($nome_disciplina, $data_fim_formatada, "{$CFG->wwwroot}/blocks/studentcare/view.php?coletaid={$coleta->id}"),
+                $smallMessageTemplate
+            );
+        
             $eventdata->notification = 1;
-
+        
             message_send($eventdata);
         }
+        
 
     }
 

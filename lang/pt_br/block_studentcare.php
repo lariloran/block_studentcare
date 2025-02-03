@@ -96,7 +96,7 @@ $string['collection_already_answered'] = 'Coleta já Respondida';
 $string['collection_already_answered_message'] = 'Você já respondeu a esta coleta de emoções. Obrigado pela sua participação!';
 $string['return_to_course'] = 'Voltar para o curso';
 
-$string['collection_not_started'] = 'A coleta ainda não começou. Ela estará disponível a partir de {datetime}.';
+$string['collection_not_started'] = 'A coleta ainda não começou.';
 $string['collection_expired'] = 'O prazo para responder a esta coleta expirou em {datetime}.';
 $string['date_format'] = '%d/%m/%Y %H:%M';
 
@@ -285,6 +285,16 @@ $string['coleta_limitada_aviso'] = 'A coleta foi iniciada em {$a->datainicio}. A
 $string['coleta_atualizada_com_sucesso'] = 'A coleta foi atualizada com sucesso.';
 $string['returntolist'] = 'Voltar para a listagem';
 
+$string['collection_title'] = 'StudentCare - Como você está se sentindo hoje?';
+$string['collection_intro'] = 'Responda esta coleta <strong>até</strong> {date}. Participe e nos ajude a compreender melhor suas emoções!';
+
+$string['event_subject'] = 'StudentCare - Compartilhe suas emoções sobre a disciplina de {disciplina}';
+$string['event_fullmessage'] = 'Olá! Uma coleta de emoções para a disciplina {disciplina} foi criada e está disponível até {datafim} para você responder. Sua opinião é muito importante. Por favor, participe!';
+$string['event_fullmessagehtml'] = '<p>Olá!</p>
+<p>Uma coleta de emoções para a disciplina <strong>{disciplina}</strong> foi criada e está disponível até <strong>{datafim}</strong> para você responder.</p>
+<p>Sua opinião é muito importante para nós. <a href="{url}">Clique aqui</a> para compartilhar suas emoções e nos ajudar a melhorar sua experiência de aprendizado.</p>';
+$string['event_smallmessage'] = 'Uma coleta de emoções para a disciplina {disciplina} foi criada e está disponível até {datafim}. <a href="{url}">Clique aqui</a> para participar.';
+
 
 // Strings de gerenciamento e navegação
 $string['manage_collections'] = 'Gerenciar Coletas';
@@ -307,7 +317,7 @@ $string['no'] = 'Não';
 $string['confirm_title'] = 'Confirmação';
 $string['confirm_message'] = 'Deseja salvar as informações desta coleta de emoções?';
 $string['confirm_message_update'] = 'Deseja alterar as informações desta coleta de emoções?';
-$string['confirm_message_delete'] = 'Tem certeza de que deseja excluir a coleta "<strong>{coletaNome}</strong>"? Esta ação não pode ser desfeita e todos os dados relacionados serão removidos.';
+$string['confirm_message_delete'] = 'Tem certeza de que deseja excluir essa coleta? Esta ação não pode ser desfeita e todos os dados relacionados serão removidos.';
 $string['confirm_button_yes'] = 'Confirmar';
 $string['confirm_button_no'] = 'Cancelar';
 
