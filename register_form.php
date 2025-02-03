@@ -106,7 +106,7 @@ class register_form extends moodleform
         $classes2 = $DB->get_records('studentcare_classeaeq');
         $options2 = array();
         foreach ($classes2 as $class) {
-            $classeAeq2 = new ClasseAeq($class->nome_classe);
+            $classeAeq2 = new ClasseAeq(get_string($class->nome_classe, 'block_studentcare'));
             $options2[$class->id] = $classeAeq2->getNomeClasse();
         }
 
@@ -134,6 +134,13 @@ class register_form extends moodleform
         $mform->setDefault('notify_students', 1);
         $mform->addHelpButton('notify_students', 'notify_students', 'block_studentcare');
 
+        echo '<div id="confirmation-data" 
+        data-title="' . get_string('confirm_title', 'block_studentcare') . '"
+        data-message="' . get_string('confirm_message', 'block_studentcare') . '"
+         data-yes="' . get_string('confirm_button_yes', 'block_studentcare') . '"
+        data-no="' . get_string('confirm_button_no', 'block_studentcare') . '"
+       >
+         </div>';
 
         // Botões de enviar e cancelar agrupados
         $buttonarray = [];
@@ -145,6 +152,8 @@ class register_form extends moodleform
         $mform->addElement('hidden', 'userid', $USER->id);
         $mform->setType('userid', PARAM_INT);
 
+
+    
         $PAGE->requires->js(new moodle_url('/blocks/studentcare/js/shared.js'));
         $PAGE->requires->js(new moodle_url('/blocks/studentcare/js/register_form.js'));
     }

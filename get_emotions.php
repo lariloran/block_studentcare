@@ -11,7 +11,7 @@ $emotions = $DB->get_records('studentcare_emocao', array('classeaeq_id' => $clas
 foreach ($emotions as $emotion) {
     $response['emotions'][] = [
         'value' => $emotion->id,
-        'name' => $emotion->nome
+        'name' => get_string($emotion->nome, 'block_studentcare')
     ];
 }
 

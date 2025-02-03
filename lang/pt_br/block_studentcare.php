@@ -224,16 +224,6 @@ $string['learning_related_emotions'] = 'Emoções Relacionadas ao Aprendizado';
 $string['learning_emotions_description'] = 'Focada nas emoções associadas ao processo de estudo ou aprendizagem (<i>Learning-Related Emotions</i>), esta classe aborda os sentimentos que surgem antes de iniciar uma sessão de estudo (como motivação ou desânimo), durante o estudo (como concentração ou irritação) e depois de estudar (como satisfação ou frustração).';
 $string['test_related_emotions'] = 'Emoções Relacionadas a Atividades Avaliativas (testes/provas)';
 $string['test_emotions_description'] = 'Esta classe examina as emoções vivenciadas em momentos de avaliação, como testes e provas (<i>Test-Related Emotions</i>). Considera os sentimentos experimentados antes de uma prova (como ansiedade ou confiança), durante a realização (como nervosismo ou foco) e após o término (como alívio ou vergonha).';
-$string['anger'] = 'Raiva';
-$string['joy'] = 'Alegria';
-$string['anxiety'] = 'Ansiedade';
-$string['shame'] = 'Vergonha';
-$string['hopelessness'] = 'Desesperança';
-$string['boredom'] = 'Tédio';
-$string['hope'] = 'Esperança';
-$string['pride'] = 'Orgulho';
-$string['relief'] = 'Alívio';
-$string['enjoyment'] = 'Alegria';
 
 $string['aeq_questions'] = 'Perguntas do AEQ';
 $string['aeq_description'] = 'As perguntas do <strong>Achievement Emotions Questionnaire (AEQ)</strong> foram desenvolvidas para medir as emoções acadêmicas de forma estruturada, em três contextos principais: aulas, estudo e testes/provas. Elas avaliam as emoções vivenciadas antes, durante e depois de cada uma dessas situações.';
@@ -311,8 +301,63 @@ $string['studentcare:managecollections'] = 'Gerenciar o bloco StudentCare';
 $string['manual_aeq_search_placeholder'] = 'Pesquise pelo título ou conteúdo...';
 $string['chart_title'] = 'Distribuição de Respostas por Escala Likert';
 
+$string['yes'] = 'Sim'; 
+$string['no'] = 'Não';
+
+$string['confirm_title'] = 'Confirmação';
+$string['confirm_message'] = 'Deseja salvar as informações desta coleta de emoções?';
+$string['confirm_message_update'] = 'Deseja alterar as informações desta coleta de emoções?';
+$string['confirm_message_delete'] = 'Tem certeza de que deseja excluir a coleta "<strong>{coletaNome}</strong>"? Esta ação não pode ser desfeita e todos os dados relacionados serão removidos.';
+$string['confirm_button_yes'] = 'Confirmar';
+$string['confirm_button_no'] = 'Cancelar';
+
+$string['questions_referring'] = 'As perguntas a seguir referem-se';
+$string['plural_emotions'] = 'às emoções';
+$string['singular_emotion'] = 'à emoção';
+$string['that_you_can_feel'] = 'que você pode sentir';
+$string['before'] = 'antes';
+$string['during'] = 'durante';
+$string['after'] = 'depois';
+$string['in_course'] = 'da disciplina de';
+$string['from_course'] = 'da disciplina de';
+$string['from_class'] = 'das aulas da disciplina de';
+$string['from_study'] = 'do estudo';
+$string['from_assessment'] = 'da atividade avaliativa';
+
+$string['please_read_each_item'] = 'Por favor, leia cada item com atenção e responda utilizando a escala fornecida.';
+
+$string['emotion-colect']= 'Coleta de Emoções';
+
 // Mensagem de boas-vindas
 $string['welcome'] = 'Bem-vindos ao StudentCare!';
+
+// Classes
+$string['class-related'] = 'Emoções Relacionadas às aulas';
+$string['learning-related'] = 'Emoções Relacionadas ao aprendizado';
+$string['test-related'] = 'Emoções Relacionadas às atividades avaliativas';
+
+// Emotions
+$string['anger'] = 'Raiva';
+$string['joy'] = 'Alegria';
+$string['anxiety'] = 'Ansiedade';
+$string['shame'] = 'Vergonha';
+$string['hopelessness'] = 'Desesperança';
+$string['boredom'] = 'Tédio';
+$string['hope'] = 'Esperança';
+$string['pride'] = 'Orgulho';
+$string['relief'] = 'Alívio';
+$string['enjoyment'] = 'Alegria';
+
+$string['anger-txttooltip'] = 'Uma emoção intensa, muitas vezes resultante de frustração ou injustiça, que pode levar a ações impulsivas.';
+$string['anxiety-txttooltip'] = 'Um sentimento de preocupação, nervosismo ou medo sobre eventos futuros ou situações incertas.';
+$string['shame-txttooltip'] = 'Um sentimento desconfortável ou doloroso causado pela percepção de que algo que você fez ou disse foi errado ou embaraçoso.';
+$string['hopelessness-txttooltip'] = 'Um sentimento de completa falta de esperança, onde parece que não há soluções ou saídas para uma situação difícil.';
+$string['boredom-txttooltip'] = 'Um estado de falta de interesse ou estímulo, muitas vezes associado à repetição ou à ausência de desafios.';
+$string['hope-txttooltip'] = 'Um sentimento otimista sobre o futuro, acreditando que algo bom vai acontecer.';
+$string['pride-txttooltip'] = 'Um sentimento de satisfação consigo mesmo ou com os outros por realizações, sucesso ou habilidades.';
+$string['relief-txttooltip'] = 'Um sentimento de tranquilidade e conforto que surge quando uma situação estressante, difícil ou dolorosa chega ao fim ou é resolvida.';
+$string['enjoyment-txttooltip'] = 'Uma sensação de satisfação e bem-estar, normalmente associada a experiências agradáveis e positivas.';
+
 
 ///Tooltips
 $string['select_section_help'] = 'Escolha a seção onde deseja realizar a coleta de emoções. Cada seção representa um módulo ou semana do curso. Ao selecionar uma seção, será criado automaticamente um recurso do tipo <strong>URL</strong> na seção escolhida.';

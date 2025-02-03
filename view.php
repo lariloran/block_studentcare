@@ -6,7 +6,7 @@ $coletaid = required_param('coletaid', PARAM_INT);
 $context = context_course::instance($COURSE->id);
 $PAGE->set_url('/blocks/studentcare/view.php', array('coletaid' => $coletaid));
 $PAGE->set_context($context);
-$PAGE->set_title("Coleta de Emoções");
+$PAGE->set_title(get_string('emotion-colect', 'block_studentcare'));
 
 
 if (!$DB->record_exists('studentcare_cadastrocoleta', ['id' => $coletaid])) {
@@ -236,18 +236,24 @@ echo '<style>
 $agora = time();
 
 if ($agora < strtotime($coletaR->data_inicio)) {
-    echo "<div class='mensagem-sucesso'>" . 
-        get_string('collection_not_started', 'block_studentcare', 
-        userdate(strtotime($coletaR->data_inicio), get_string('date_format', 'block_studentcare'))) . 
+    echo "<div class='mensagem-sucesso'>" .
+        get_string(
+            'collection_not_started',
+            'block_studentcare',
+            userdate(strtotime($coletaR->data_inicio), get_string('date_format', 'block_studentcare'))
+        ) .
         "</div>";
     echo $OUTPUT->footer();
     return;
 }
 
 if ($agora > strtotime($coletaR->data_fim)) {
-    echo "<div class='mensagem-aviso'>" . 
-        get_string('collection_expired', 'block_studentcare', 
-        userdate(strtotime($coletaR->data_fim), get_string('date_format', 'block_studentcare'))) . 
+    echo "<div class='mensagem-aviso'>" .
+        get_string(
+            'collection_expired',
+            'block_studentcare',
+            userdate(strtotime($coletaR->data_fim), get_string('date_format', 'block_studentcare'))
+        ) .
         "</div>";
     echo $OUTPUT->footer();
     return;
@@ -295,6 +301,42 @@ foreach ($perguntas as $pergunta) {
 
 
 $perguntas_json = json_encode(array_values($perguntas_traduzidas));
+
+echo '<div id="translation-data" 
+    data-in_course="' . get_string('in_course', 'block_studentcare') . '"
+    data-from_course="' . get_string('from_course', 'block_studentcare') . '"
+    data-from_class="' . get_string('from_class', 'block_studentcare') . '"
+    data-from_study="' . get_string('from_study', 'block_studentcare') . '"
+    data-from_assessment="' . get_string('from_assessment', 'block_studentcare') . '"
+    data-questions_referring="' . get_string('questions_referring', 'block_studentcare') . '"
+    data-plural_emotions="' . get_string('plural_emotions', 'block_studentcare') . '"
+    data-singular_emotion="' . get_string('singular_emotion', 'block_studentcare') . '"
+    data-that_you_can_feel="' . get_string('that_you_can_feel', 'block_studentcare') . '"
+    data-before="' . get_string('before', 'block_studentcare') . '"
+    data-during="' . get_string('during', 'block_studentcare') . '"
+    data-after="' . get_string('after', 'block_studentcare') . '"
+    data-please_read_each_item="' . get_string('please_read_each_item', 'block_studentcare') . '"
+    data-anger_txttooltip="' . get_string('anger-txttooltip', 'block_studentcare') . '"
+    data-anxiety_txttooltip="' . get_string('anxiety-txttooltip', 'block_studentcare') . '"
+    data-shame_txttooltip="' . get_string('shame-txttooltip', 'block_studentcare') . '"
+    data-hopelessness_txttooltip="' . get_string('hopelessness-txttooltip', 'block_studentcare') . '"
+    data-boredom_txttooltip="' . get_string('boredom-txttooltip', 'block_studentcare') . '"
+    data-hope_txttooltip="' . get_string('hope-txttooltip', 'block_studentcare') . '"
+    data-pride_txttooltip="' . get_string('pride-txttooltip', 'block_studentcare') . '"
+    data-relief_txttooltip="' . get_string('relief-txttooltip', 'block_studentcare') . '"
+    data-enjoyment_txttooltip="' . get_string('enjoyment-txttooltip', 'block_studentcare') . '"
+    data-anger="' . get_string('anger', 'block_studentcare') . '"
+    data-joy="' . get_string('joy', 'block_studentcare') . '"
+    data-anxiety="' . get_string('anxiety', 'block_studentcare') . '"
+    data-shame="' . get_string('shame', 'block_studentcare') . '"
+    data-hopelessness="' . get_string('hopelessness', 'block_studentcare') . '"
+    data-boredom="' . get_string('boredom', 'block_studentcare') . '"
+    data-hope="' . get_string('hope', 'block_studentcare') . '"
+    data-pride="' . get_string('pride', 'block_studentcare') . '"
+    data-relief="' . get_string('relief', 'block_studentcare') . '"
+    data-enjoyment="' . get_string('enjoyment', 'block_studentcare') . '"
+>
+</div>';
 
 
 ?>
@@ -353,21 +395,20 @@ $perguntas_json = json_encode(array_values($perguntas_traduzidas));
                 <span class="emoji" id="emoji-5"></span>
                 <span><?php echo get_string('strongly_agree', 'block_studentcare'); ?></span>
             </button>
-    </div>
+        </div>
 
 
-    <div id="controls">
-    <button id="voltar-btn" onclick="voltarPergunta()">
-        <?php echo get_string('back', 'block_studentcare'); ?>
-    </button>
-    <a href="https://poa.ifrs.edu.br/index.php/editais-2/apoio-academico" target="_blank"
-        id="ajuda-emocional-link">
-        <?php echo get_string('need_emotional_help', 'block_studentcare'); ?>
-    </a>
-    <button id="avancar-btn" onclick="avancarPergunta()">
-        <?php echo get_string('next', 'block_studentcare'); ?>
-    </button>
-</div>
+        <div id="controls">
+            <button id="voltar-btn" onclick="voltarPergunta()">
+                <?php echo get_string('back', 'block_studentcare'); ?>
+            </button>
+            <a href="https://poa.ifrs.edu.br/index.php/editais-2/apoio-academico" target="_blank" id="ajuda-emocional-link">
+                <?php echo get_string('need_emotional_help', 'block_studentcare'); ?>
+            </a>
+            <button id="avancar-btn" onclick="avancarPergunta()">
+                <?php echo get_string('next', 'block_studentcare'); ?>
+            </button>
+        </div>
 
     </div>
 <?php endif; ?>
@@ -377,7 +418,8 @@ $perguntas_json = json_encode(array_values($perguntas_traduzidas));
     <h3 class="feedback-title" style="font-size: 18px; font-weight: bold; margin-bottom: 15px; color: #333;">
         <?php echo get_string('feedback_title', 'block_studentcare'); ?>
     </h3>
-    <textarea id="feedback-text" rows="4" cols="50" placeholder="<?php echo get_string('feedback_placeholder', 'block_studentcare'); ?>"
+    <textarea id="feedback-text" rows="4" cols="50"
+        placeholder="<?php echo get_string('feedback_placeholder', 'block_studentcare'); ?>"
         style="width: 100%; max-width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 15px; font-size: 16px;"></textarea>
     <div class="feedback-btn-container" style="display: flex; justify-content: center;">
         <button class="buttonTcle" onclick="enviarFeedback()" style="padding: 10px 20px;">
@@ -412,6 +454,7 @@ $perguntas_json = json_encode(array_values($perguntas_traduzidas));
 </div>
 
 <script>
+    // Mapa de emojis usando as chaves em português
     const emotionEmojiMap = {
         'Alegria': ['😐', '🙂', '😀', '😄', '😍'],
         'Esperança': ['😟', '😐', '🙂', '😊', '✨'],
@@ -423,8 +466,25 @@ $perguntas_json = json_encode(array_values($perguntas_traduzidas));
         'Tédio': ['🤩', '🙂', '😐', '😕', '😴']
     };
 
+    // Mapeamento para converter termos em inglês para a chave em português
+    const emotionKeyMapping = {
+        'enjoyment': 'Alegria',
+        'hope': 'Esperança',
+        'pride': 'Orgulho',
+        'anger': 'Raiva',
+        'anxiety': 'Ansiedade',
+        'shame': 'Vergonha',
+        'hopelessness': 'Desespero',
+        'boredom': 'Tédio'
+    };
+
     function updateEmojisForEmotion(emocao) {
-        const emojis = emotionEmojiMap[emocao] || ['😕', '😟', '😐', '🙂', '😀'];
+        // Converte a emoção para minúsculas para comparação
+        const emoLower = emocao.toLowerCase();
+        // Se existir um mapeamento para a emoção, use-o; caso contrário, use a emoção original
+        const key = emotionKeyMapping[emoLower] || emocao;
+        const emojis = emotionEmojiMap[key] || ['😕', '😟', '😐', '🙂', '😀'];
+
         document.getElementById('emoji-1').textContent = emojis[0];
         document.getElementById('emoji-2').textContent = emojis[1];
         document.getElementById('emoji-3').textContent = emojis[2];
@@ -446,17 +506,22 @@ $perguntas_json = json_encode(array_values($perguntas_traduzidas));
     let ultimaClasseId = null;
     let introducoesExibidas = {};
 
+    function getTranslation(attr) {
+        var element = document.getElementById('translation-data');
+        return element ? element.getAttribute('data-' + attr) : '';
+    }
+
     function gerarMensagem(emocoes, tooltips, classeId, cursoNome, nomeRecurso = null) {
         const plural = emocoes.length > 1;
 
         const emocoesComTooltip = emocoes.map((emocao, index) => {
             return `
-        <strong>${emocao}</strong>
-        <span class="tooltip-icon">
-            &#9432;
-            <span class="tooltip-text">${tooltips[index]}</span>
-        </span>
-    `;
+            <strong>${emocao}</strong>
+            <span class="tooltip-icon">
+                &#9432;
+                <span class="tooltip-text">${tooltips[index]}</span>
+            </span>
+        `;
         }).join(", ");
 
         let textoAtividade;
@@ -464,34 +529,31 @@ $perguntas_json = json_encode(array_values($perguntas_traduzidas));
         switch (classeId) {
             case "1": // Emoções Relacionadas às Aulas
                 textoAtividade = nomeRecurso
-                    ? `da aula <strong>${nomeRecurso}</strong> da disciplina de <strong>${cursoNome}</strong>`
-                    : `das aulas da disciplina de <strong>${cursoNome}</strong>`;
+                    ? `${getTranslation('in_course')} <strong>${nomeRecurso}</strong> ${getTranslation('from_course')} <strong>${cursoNome}</strong>`
+                    : `${getTranslation('from_class')} <strong>${cursoNome}</strong>`;
                 break;
-
             case "2": // Emoções Relacionadas ao Aprendizado
                 textoAtividade = nomeRecurso
-                    ? `do estudo do <strong>${nomeRecurso}</strong> pertencente à disciplina de <strong>${cursoNome}</strong>`
-                    : `da sua rotina de estudos na disciplina de <strong>${cursoNome}</strong>`;
+                    ? `${getTranslation('from_study')} <strong>${nomeRecurso}</strong> ${getTranslation('from_course')} <strong>${cursoNome}</strong>`
+                    : `${getTranslation('from_study')} ${getTranslation('from_course')} <strong>${cursoNome}</strong>`;
                 break;
-
             case "3": // Emoções Relacionadas às Atividades Avaliativas
                 textoAtividade = nomeRecurso
-                    ? `da atividade avaliativa <strong>${nomeRecurso}</strong> da disciplina de <strong>${cursoNome}</strong>`
-                    : `de atividades avaliativas da disciplina de <strong>${cursoNome}</strong>`;
+                    ? `${getTranslation('from_assessment')} <strong>${nomeRecurso}</strong> ${getTranslation('from_course')} <strong>${cursoNome}</strong>`
+                    : `${getTranslation('from_assessment')} ${getTranslation('from_course')} <strong>${cursoNome}</strong>`;
                 break;
-
             default:
-                textoAtividade = `da disciplina de <strong>${cursoNome}</strong>`;
+                textoAtividade = `${getTranslation('from_course')} <strong>${cursoNome}</strong>`;
         }
 
         return `
-    <p>
-        As perguntas a seguir referem-se ${plural ? 'às emoções' : 'à emoção'} 
-        ${emocoesComTooltip}
-        que você pode sentir 
-        <strong>antes</strong>, <strong>durante</strong> ou <strong>depois</strong> ${textoAtividade}. 
-        Por favor, leia cada item com atenção e responda utilizando a escala fornecida.
-    </p>`;
+        <p>
+            ${getTranslation('questions_referring')} ${plural ? getTranslation('plural_emotions') : getTranslation('singular_emotion')} 
+            ${emocoesComTooltip}
+            ${getTranslation('that_you_can_feel')} 
+            <strong>${getTranslation('before')}</strong>, <strong>${getTranslation('during')}</strong> or <strong>${getTranslation('after')}</strong> ${textoAtividade}. 
+            ${getTranslation('please_read_each_item')}
+        </p>`;
     }
 
     function mostrarTextoInicial(pergunta, emocoesDaClasse, tooltipsDaClasse) {
@@ -544,13 +606,19 @@ $perguntas_json = json_encode(array_values($perguntas_traduzidas));
         const emocoesDaClasse = [...new Set(
             perguntas
                 .filter(p => p.classe_id === pergunta.classe_id)
-                .map(p => p.emocao_nome)
+                .map(p => {
+                    // Converte para minúsculas e substitui espaços ou hífens por underlines para corresponder ao formato dos atributos
+                    let key = p.emocao_nome.replace(/[\s-]+/g, '_').toLowerCase();
+                    return getTranslation(key);
+                })
         )];
+
         const tooltipsDaClasse = [...new Set(
             perguntas
                 .filter(p => p.classe_id === pergunta.classe_id)
-                .map(p => p.texto_tooltip)
+                .map(p => getTranslation(p.texto_tooltip.replace(/-/g, '_')))
         )];
+
 
         if (pergunta.classe_id !== ultimaClasseId) {
             if (!introducoesExibidas[pergunta.classe_id]) {
@@ -563,15 +631,36 @@ $perguntas_json = json_encode(array_values($perguntas_traduzidas));
 
         document.getElementById('pergunta-container').style.display = 'block';
 
-        updateEmojisForEmotion(pergunta.emocao_nome);
+        const emotionKeyMapping = {
+            'alegria': 'Alegria',
+            'enjoyment': 'Alegria',
+            'esperança': 'Esperança',
+            'hope': 'Esperança',
+            'orgulho': 'Orgulho',
+            'pride': 'Orgulho',
+            'raiva': 'Raiva',
+            'anger': 'Raiva',
+            'ansiedade': 'Ansiedade',
+            'anxiety': 'Ansiedade',
+            'vergonha': 'Vergonha',
+            'shame': 'Vergonha',
+            'desespero': 'Desespero',
+            'hopelessness': 'Desespero',
+            'tédio': 'Tédio',
+            'boredom': 'Tédio'
+        };
+
+        const normalizedEmotion = emotionKeyMapping[pergunta.emocao_nome.toLowerCase()] || pergunta.emocao_nome;
+        updateEmojisForEmotion(normalizedEmotion);
 
         document.getElementById('titulo-coleta').innerHTML = `
-        ${cursoNome} - ${pergunta.emocao_nome}
-        <span class="tooltip-icon">
-            &#9432;
-            <span class="tooltip-text">${pergunta.texto_tooltip}</span>
-        </span>
-    `;
+    ${cursoNome} - ${getTranslation(pergunta.emocao_nome.toLowerCase().replace(/-/g, '_'))}
+    <span class="tooltip-icon">
+        &#9432;
+        <span class="tooltip-text">${getTranslation(pergunta.texto_tooltip.replace(/-/g, '_'))}</span>
+    </span>
+`;
+
 
         let perguntaContainer = document.getElementById('pergunta-container');
         if (!perguntaContainer) {
@@ -646,11 +735,17 @@ $perguntas_json = json_encode(array_values($perguntas_traduzidas));
 
             if (perguntaAtual === primeiraPerguntaDaClasse) {
                 let emocoesDaClasse = [...new Set(
-                    perguntas.filter(p => p.classe_id === classeAtual).map(p => p.emocao_nome)
+                    perguntas
+                        .filter(p => p.classe_id === classeAtual)
+                        .map(p => M.util.get_string(p.emocao_nome, 'block_studentcare'))
                 )];
+
                 let tooltipsDaClasse = [...new Set(
-                    perguntas.filter(p => p.classe_id === classeAtual).map(p => p.texto_tooltip)
+                    perguntas
+                        .filter(p => p.classe_id === classeAtual)
+                        .map(p => M.util.get_string(p.texto_tooltip, 'block_studentcare'))
                 )];
+
                 mostrarTextoInicial(pergunta, emocoesDaClasse, tooltipsDaClasse);
             } else {
                 mostrarPergunta(perguntaAtual);
@@ -668,7 +763,7 @@ $perguntas_json = json_encode(array_values($perguntas_traduzidas));
         let pergunta = perguntas[perguntaAtual];
         let tituloAtual = document.getElementById('titulo-coleta').innerText;
 
-        if (tituloAtual.includes('As perguntas a seguir referem-se')) {
+        if (tituloAtual.includes("As perguntas a seguir referem-se") || tituloAtual.includes("The following questions refer to")) {
             perguntaAtual++;
             mostrarPergunta(perguntaAtual);
             return;
@@ -719,7 +814,6 @@ $perguntas_json = json_encode(array_values($perguntas_traduzidas));
             respostas: respostasSelecionadas
         };
 
-        // Retorna a Promise gerada pelo fetch
         return fetch(window.location.href, {
             method: 'POST',
             headers: {

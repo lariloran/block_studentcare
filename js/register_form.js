@@ -9,26 +9,32 @@ require(["jquery", "core/notification"], function ($, notification) {
       // Previne o envio padrão do formulário para exibir a confirmação
       e.preventDefault();
     
-      notification.confirm(
-        "Confirmação",
-        "Deseja salvar as informações desta coleta de emoções?",
-        "Confirmar",
-        "Cancelar",
-        function () {
-          // Este código só será executado se o usuário confirmar
-          $("#setor").val($("#id_sectionid").val());
-          $("#recurso").val($("#id_resourceid").val());
+        // Lê os dados da div com o id 'confirmation-data'
+        var confirmTitle = document.getElementById('confirmation-data').getAttribute('data-title');
+        var confirmMessage = document.getElementById('confirmation-data').getAttribute('data-message');
+        var confirmButtonYes = document.getElementById('confirmation-data').getAttribute('data-yes');
+        var confirmButtonNo = document.getElementById('confirmation-data').getAttribute('data-no');
+        // Código do diálogo de confirmação
+        notification.confirm(
+            confirmTitle,  // Título da confirmação
+            confirmMessage,  // Mensagem de confirmação
+            confirmButtonYes,  // Texto do botão "Confirmar"
+            confirmButtonNo,  // Texto do botão "Cancelar"
+            function () {
+                // Este código será executado se o usuário confirmar
+                $("#setor").val($("#id_sectionid").val());
+                $("#recurso").val($("#id_resourceid").val());
     
-          // Limpa o localStorage da coleta atual antes de enviar
-          window.studentcare.clearLocalStorage();
+                // Limpa o localStorage da coleta atual antes de enviar
+                window.studentcare.clearLocalStorage();
     
-          // Reenvia o formulário após a confirmação
-          $("form.mform").off("submit").submit();
-        },
-        function () {
-          // Ação ao cancelar no diálogo de confirmação (nada necessário aqui)
-        }
-      );
+                // Reenvia o formulário após a confirmação
+                $("form.mform").off("submit").submit();
+            },
+            function () {}
+        );
+
+    
     });
     
 

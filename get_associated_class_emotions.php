@@ -17,7 +17,7 @@ try {
 
     $output = '';
     foreach ($emocoes_classes as $item) {
-        $output .= '<p><strong>' . s($item->nome_classe) . ':</strong> ' . s($item->emocoes) . '</p>';
+        $output .= '<p><strong>' . s(get_string($item->nome_classe, 'block_studentcare')) . ':</strong> ' . s(get_string($item->emocoes, 'block_studentcare')) . '</p>';
     }
 
     echo $output;

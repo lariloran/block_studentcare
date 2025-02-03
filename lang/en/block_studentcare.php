@@ -198,16 +198,7 @@ $string['learning_related_emotions'] = 'Learning-Related Emotions';
 $string['learning_emotions_description'] = 'Focused on the emotions associated with the study or learning process (<i>Learning-Related Emotions</i>), this class addresses the feelings that arise before starting a study session (such as motivation or discouragement), during study (such as concentration or irritation), and after studying (such as satisfaction or frustration).';
 $string['test_related_emotions'] = 'Test-Related Emotions';
 $string['test_emotions_description'] = 'This class examines the emotions experienced during evaluation moments, such as tests and exams (<i>Test-Related Emotions</i>). It considers feelings experienced before a test (such as anxiety or confidence), during the test (such as nervousness or focus), and after the test (such as relief or shame).';
-$string['anger'] = 'Anger';
-$string['joy'] = 'Joy';
-$string['anxiety'] = 'Anxiety';
-$string['shame'] = 'Shame';
-$string['hopelessness'] = 'Hopelessness';
-$string['boredom'] = 'Boredom';
-$string['hope'] = 'Hope';
-$string['pride'] = 'Pride';
-$string['relief'] = 'Relief';
-$string['enjoyment'] = 'Enjoyment';
+
 
 $string['academic_emotions'] = 'Academic Emotions';
 $string['aeq_description'] = 'The <strong>Achievement Emotions Questionnaire (AEQ)</strong> works with a wide range of academic emotions (<i>Achievement Emotions</i>), organized into three main contexts: classes, study, and exams. Here are the emotions assessed in each context and what they represent:';
@@ -300,8 +291,63 @@ $string['studentcare:managecollections'] = 'Manage the StudentCare block';
 $string['manual_aeq_search_placeholder'] = 'Search by title or content...';
 $string['chart_title'] = 'Distribution of Responses by Likert Scale';
 
+$string['yes_en'] = 'Yes'; 
+$string['no_en'] = 'No'; 
+
+$string['confirm_title'] = 'Confirmation';
+$string['confirm_message'] = 'Do you want to save the information of this emotion collection?';
+$string['confirm_message_update'] = 'Do you want to modify the information for this emotion collection?';
+$string['confirm_message_delete'] = 'Are you sure you want to delete the collection? This action cannot be undone and all related data will be removed.';
+$string['confirm_button_yes'] = 'Confirm';
+$string['confirm_button_no'] = 'Cancel';
+
+$string['questions_referring'] = 'The following questions refer to';
+$string['plural_emotions'] = 'emotions';
+$string['singular_emotion'] = 'emotion';
+$string['that_you_can_feel'] = 'that you can feel';
+$string['before'] = 'before';
+$string['during'] = 'during';
+$string['after'] = 'after';
+// No arquivo lang/en/block_studentcare.php
+$string['in_course'] = 'from the class';
+$string['from_course'] = 'of the course';
+$string['from_class'] = 'from the classes of';
+$string['from_study'] = 'from studying';
+$string['from_assessment'] = 'from the assessment activity';
+
+$string['please_read_each_item'] = 'Please read each item carefully and respond using the provided scale.';
+
 // Welcome message
 $string['welcome'] = 'Welcome to StudentCare!';
+
+// Classes
+$string['class-related'] = 'Class-Related Emotions';
+$string['learning-related'] = 'Learning-Related Emotions';
+$string['test-related'] = 'Test-Related Emotions';
+
+// Emotions
+$string['anger'] = 'Anger';
+$string['joy'] = 'Joy';
+$string['anxiety'] = 'Anxiety';
+$string['shame'] = 'Shame';
+$string['hopelessness'] = 'Hopelessness';
+$string['boredom'] = 'Boredom';
+$string['hope'] = 'Hope';
+$string['pride'] = 'Pride';
+$string['relief'] = 'Relief';
+$string['enjoyment'] = 'Enjoyment';
+
+$string['emotion-colect'] = 'Emotion Collection';
+
+$string['anger-txttooltip'] = 'An intense emotion, often resulting from frustration or injustice, that can lead to impulsive actions.';
+$string['anxiety-txttooltip'] = 'A feeling of worry, nervousness, or fear about future events or uncertain situations.';
+$string['shame-txttooltip'] = 'An uncomfortable or painful feeling caused by the perception that something you did or said was wrong or embarrassing.';
+$string['hopelessness-txttooltip'] = 'A feeling of complete lack of hope, where it seems that there are no solutions or escapes from a difficult situation.';
+$string['boredom-txttooltip'] = 'A state of disinterest or lack of stimulation, often associated with repetition or the absence of challenges.';
+$string['hope-txttooltip'] = 'An optimistic feeling about the future, believing that something good will happen.';
+$string['pride-txttooltip'] = 'A feeling of satisfaction with oneself or others for achievements, success, or abilities.';
+$string['relief-txttooltip'] = 'A feeling of calm and comfort that arises when a stressful, difficult, or painful situation comes to an end or is resolved.';
+$string['enjoyment-txttooltip'] = 'A sense of satisfaction and well-being, usually associated with pleasant and positive experiences.';
 
 ///Tooltips
 $string['select_section_help'] = 'Choose the section where you want to conduct the emotion collection. Each section represents a course module or week. When selecting a section, a <strong>URL</strong> type resource will automatically be created in the chosen section.';
@@ -310,13 +356,6 @@ $string['aeqclasses_help'] = 'Choose the AEQ classes you want to use in the emot
 $string['emotions_help'] = 'Choose the emotions you want to include in the collection. Each selected emotion will display a different set of related questions during the collection, allowing a detailed analysis of academic emotions. The emotions are associated with AEQ classes, which represent different categories of academic emotions. To learn more about the emotions and their classifications, check the information in the <strong>AEQ Manual</strong> available in the block panel.';
 $string['alertprogress_help'] = 'Enable this option to send a notification when the collection is completed. When enabled, an email notification and a Moodle pop-up will inform you that the emotion collection has been completed.';
 $string['notify_students_help'] = 'Enable this option to send a notification to students when a new collection is created. When enabled, students will receive an email notification and a Moodle pop-up informing them about the creation of the emotion collection.';
-
-$string['confirmation_delete_title'] = 'Delete Confirmation';
-$string['confirmation_delete_message'] = 'Are you sure you want to delete the collection "<strong>{coletaNome}</strong>"? This action cannot be undone, and all related data will be removed.';
-$string['delete_button'] = 'Delete';
-$string['cancel_button'] = 'Cancel';
-$string['error_title'] = 'Error';
-$string['error_message'] = 'An error occurred while trying to delete the collection. Please try again.';
 
 // Perguntas class related
 $string['class-related-enjoyment-1'] = 'I get excited about going to class. ';

@@ -8,9 +8,9 @@ function xmldb_block_studentcare_install() {
 
 // AEQ CLASS INSERTS.
 $records_aeq_class = [
-    (object)['id' => 1, 'nome_classe' => 'Emoções Relacionadas às aulas'],
-    (object)['id' => 2, 'nome_classe' => 'Emoções Relacionadas ao aprendizado'],
-    (object)['id' => 3, 'nome_classe' => 'Emoções Relacionadas às atividades avaliativas']
+    (object)['id' => 1, 'nome_classe' => 'class-related'], 
+    (object)['id' => 2, 'nome_classe' => 'learning-related'], 
+    (object)['id' => 3, 'nome_classe' => 'test-related']
 ];
 
 foreach ($records_aeq_class as $record) {
@@ -19,32 +19,32 @@ foreach ($records_aeq_class as $record) {
 
 // EMOTIONS-CLASS INSERTS.
 $records_emotions = [
-    (object)['id' => 1, 'classeaeq_id' => 1, 'nome' => 'Alegria', 'txttooltip' => 'Uma sensação de satisfação e bem-estar, normalmente associada a experiências agradáveis e positivas.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
-    (object)['id' => 2, 'classeaeq_id' => 1, 'nome' => 'Esperança', 'txttooltip' => 'Um sentimento otimista sobre o futuro, acreditando que algo bom vai acontecer.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
-    (object)['id' => 3, 'classeaeq_id' => 1, 'nome' => 'Orgulho', 'txttooltip' => 'Um sentimento de satisfação consigo mesmo ou com os outros por realizações, sucesso ou habilidades.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
-    (object)['id' => 4, 'classeaeq_id' => 1, 'nome' => 'Raiva', 'txttooltip' => 'Uma emoção intensa, muitas vezes resultante de frustração ou injustiça, que pode levar a ações impulsivas.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
-    (object)['id' => 5, 'classeaeq_id' => 1, 'nome' => 'Ansiedade', 'txttooltip' => 'Um sentimento de preocupação, nervosismo ou medo sobre eventos futuros ou situações incertas.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
-    (object)['id' => 6, 'classeaeq_id' => 1, 'nome' => 'Vergonha', 'txttooltip' => 'Um sentimento desconfortável ou doloroso causado pela percepção de que algo que você fez ou disse foi errado ou embaraçoso.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
-    (object)['id' => 7, 'classeaeq_id' => 1, 'nome' => 'Desespero', 'txttooltip' => 'Um sentimento de completa falta de esperança, onde parece que não há soluções ou saídas para uma situação difícil.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
-    (object)['id' => 8, 'classeaeq_id' => 1, 'nome' => 'Tédio', 'txttooltip' => 'Um estado de falta de interesse ou estímulo, muitas vezes associado à repetição ou à ausência de desafios.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
+    (object)['id' => 1, 'classeaeq_id' => 1, 'nome' => 'enjoyment', 'txttooltip' => 'enjoyment-txttooltip', 'antes' => 1, 'durante' => 1, 'depois' => 1],
+    (object)['id' => 2, 'classeaeq_id' => 1, 'nome' => 'hope', 'txttooltip' => 'hope-txttooltip', 'antes' => 1, 'durante' => 1, 'depois' => 1],
+    (object)['id' => 3, 'classeaeq_id' => 1, 'nome' => 'pride', 'txttooltip' => 'pride-txttooltip', 'antes' => 1, 'durante' => 1, 'depois' => 1],
+    (object)['id' => 4, 'classeaeq_id' => 1, 'nome' => 'anger', 'txttooltip' => 'anger-txttooltip', 'antes' => 1, 'durante' => 1, 'depois' => 1],
+    (object)['id' => 5, 'classeaeq_id' => 1, 'nome' => 'anxiety', 'txttooltip' => 'anxiety-txttooltip', 'antes' => 1, 'durante' => 1, 'depois' => 1],
+    (object)['id' => 6, 'classeaeq_id' => 1, 'nome' => 'shame', 'txttooltip' => 'shame-txttooltip', 'antes' => 1, 'durante' => 1, 'depois' => 1],
+    (object)['id' => 7, 'classeaeq_id' => 1, 'nome' => 'hopelessness', 'txttooltip' => 'hopelessness-txttooltip', 'antes' => 1, 'durante' => 1, 'depois' => 1],
+    (object)['id' => 8, 'classeaeq_id' => 1, 'nome' => 'boredom', 'txttooltip' => 'boredom-txttooltip', 'antes' => 1, 'durante' => 1, 'depois' => 1],
    
-    (object)['id' => 9, 'classeaeq_id' => 2, 'nome' => 'Alegria', 'txttooltip' => 'Uma sensação de satisfação e bem-estar, normalmente associada a experiências agradáveis e positivas.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
-    (object)['id' => 10, 'classeaeq_id' => 2, 'nome' => 'Esperança', 'txttooltip' => 'Um sentimento otimista sobre o futuro, acreditando que algo bom vai acontecer.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
-    (object)['id' => 11, 'classeaeq_id' => 2, 'nome' => 'Orgulho', 'txttooltip' => 'Um sentimento de satisfação consigo mesmo ou com os outros por realizações, sucesso ou habilidades.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
-    (object)['id' => 12, 'classeaeq_id' => 2, 'nome' => 'Raiva', 'txttooltip' => 'Uma emoção intensa, muitas vezes resultante de frustração ou injustiça, que pode levar a ações impulsivas.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
-    (object)['id' => 13, 'classeaeq_id' => 2, 'nome' => 'Ansiedade', 'txttooltip' => 'Um sentimento de preocupação, nervosismo ou medo sobre eventos futuros ou situações incertas.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
-    (object)['id' => 14, 'classeaeq_id' => 2, 'nome' => 'Vergonha', 'txttooltip' => 'Um sentimento desconfortável ou doloroso causado pela percepção de que algo que você fez ou disse foi errado ou embaraçoso.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
-    (object)['id' => 15, 'classeaeq_id' => 2, 'nome' => 'Desespero', 'txttooltip' => 'Um sentimento de completa falta de esperança, onde parece que não há soluções ou saídas para uma situação difícil.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
-    (object)['id' => 16, 'classeaeq_id' => 2, 'nome' => 'Tédio', 'txttooltip' => 'Um estado de falta de interesse ou estímulo, muitas vezes associado à repetição ou à ausência de desafios.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
+    (object)['id' => 9, 'classeaeq_id' => 2, 'nome' => 'enjoyment', 'txttooltip' => 'enjoyment-txttooltip', 'antes' => 1, 'durante' => 1, 'depois' => 1],
+    (object)['id' => 10, 'classeaeq_id' => 2, 'nome' => 'hope', 'txttooltip' => 'hope-txttooltip', 'antes' => 1, 'durante' => 1, 'depois' => 1],
+    (object)['id' => 11, 'classeaeq_id' => 2, 'nome' => 'pride', 'txttooltip' => 'pride-txttooltip', 'antes' => 1, 'durante' => 1, 'depois' => 1],
+    (object)['id' => 12, 'classeaeq_id' => 2, 'nome' => 'anger', 'txttooltip' => 'anger-txttooltip', 'antes' => 1, 'durante' => 1, 'depois' => 1],
+    (object)['id' => 13, 'classeaeq_id' => 2, 'nome' => 'anxiety', 'txttooltip' => 'anxiety-txttooltip', 'antes' => 1, 'durante' => 1, 'depois' => 1],
+    (object)['id' => 14, 'classeaeq_id' => 2, 'nome' => 'shame', 'txttooltip' => 'shame-txttooltip', 'antes' => 1, 'durante' => 1, 'depois' => 1],
+    (object)['id' => 15, 'classeaeq_id' => 2, 'nome' => 'hopelessness', 'txttooltip' => 'hopelessness-txttooltip', 'antes' => 1, 'durante' => 1, 'depois' => 1],
+    (object)['id' => 16, 'classeaeq_id' => 2, 'nome' => 'boredom', 'txttooltip' => 'boredom-txttooltip', 'antes' => 1, 'durante' => 1, 'depois' => 1],
   
-    (object)['id' => 17, 'classeaeq_id' => 3, 'nome' => 'Alegria', 'txttooltip' => 'Uma sensação de satisfação e bem-estar, normalmente associada a experiências agradáveis e positivas.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
-    (object)['id' => 18, 'classeaeq_id' => 3, 'nome' => 'Esperança', 'txttooltip' => 'Um sentimento otimista sobre o futuro, acreditando que algo bom vai acontecer.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
-    (object)['id' => 19, 'classeaeq_id' => 3, 'nome' => 'Orgulho', 'txttooltip' => 'Um sentimento de satisfação consigo mesmo ou com os outros por realizações, sucesso ou habilidades.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
-    (object)['id' => 20, 'classeaeq_id' => 3, 'nome' => 'Alívio', 'txttooltip' => 'Um sentimento de tranquilidade e conforto que surge quando uma situação estressante, difícil ou dolorosa chega ao fim ou é resolvida.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
-    (object)['id' => 21, 'classeaeq_id' => 3, 'nome' => 'Raiva', 'txttooltip' => 'Uma emoção intensa, muitas vezes resultante de frustração ou injustiça, que pode levar a ações impulsivas.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
-    (object)['id' => 22, 'classeaeq_id' => 3, 'nome' => 'Ansiedade', 'txttooltip' => 'Um sentimento de preocupação, nervosismo ou medo sobre eventos futuros ou situações incertas.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
-    (object)['id' => 23, 'classeaeq_id' => 3, 'nome' => 'Vergonha', 'txttooltip' => 'Um sentimento desconfortável ou doloroso causado pela percepção de que algo que você fez ou disse foi errado ou embaraçoso.', 'antes' => 1, 'durante' => 1, 'depois' => 1],
-    (object)['id' => 24, 'classeaeq_id' => 3, 'nome' => 'Desespero', 'txttooltip' => 'Um sentimento de completa falta de esperança, onde parece que não há soluções ou saídas para uma situação difícil.', 'antes' => 1, 'durante' => 1, 'depois' => 1]
+    (object)['id' => 17, 'classeaeq_id' => 3, 'nome' => 'enjoyment', 'txttooltip' => 'enjoyment-txttooltip', 'antes' => 1, 'durante' => 1, 'depois' => 1],
+    (object)['id' => 18, 'classeaeq_id' => 3, 'nome' => 'hope', 'txttooltip' => 'hope-txttooltip', 'antes' => 1, 'durante' => 1, 'depois' => 1],
+    (object)['id' => 19, 'classeaeq_id' => 3, 'nome' => 'pride', 'txttooltip' => 'pride-txttooltip', 'antes' => 1, 'durante' => 1, 'depois' => 1],
+    (object)['id' => 20, 'classeaeq_id' => 3, 'nome' => 'relief', 'txttooltip' => 'relief-txttooltip', 'antes' => 1, 'durante' => 1, 'depois' => 1],
+    (object)['id' => 21, 'classeaeq_id' => 3, 'nome' => 'anger', 'txttooltip' => 'anger-txttooltip', 'antes' => 1, 'durante' => 1, 'depois' => 1],
+    (object)['id' => 22, 'classeaeq_id' => 3, 'nome' => 'anxiety', 'txttooltip' => 'anxiety-txttooltip', 'antes' => 1, 'durante' => 1, 'depois' => 1],
+    (object)['id' => 23, 'classeaeq_id' => 3, 'nome' => 'shame', 'txttooltip' => 'shame-txttooltip', 'antes' => 1, 'durante' => 1, 'depois' => 1],
+    (object)['id' => 24, 'classeaeq_id' => 3, 'nome' => 'hopelessness', 'txttooltip' => 'hopelessness-txttooltip', 'antes' => 1, 'durante' => 1, 'depois' => 1]
 ];
 
 foreach ($records_emotions as $record) {

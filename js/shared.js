@@ -538,14 +538,17 @@ window.studentcare.clearLocalStorage = function clearLocalStorage() {
       button
     ) {
       const coletaId = button.getAttribute("data-id");
-      const coletaNome = button.getAttribute("data-name");
+      var confirmTitle = document.getElementById('confirmation-delete').getAttribute('data-title');
+      var confirmMessage = document.getElementById('confirmation-delete').getAttribute('data-message-delete');
+      var confirmButtonYes = document.getElementById('confirmation-delete').getAttribute('data-yes');
+      var confirmButtonNo = document.getElementById('confirmation-delete').getAttribute('data-no');
 
+      // Código do diálogo de confirmação
       notification.confirm(
-        "Confirmação de Exclusão",
-        `Tem certeza de que deseja excluir a coleta "<strong>${coletaNome}</strong>"? 
-        Esta ação não pode ser desfeita e todos os dados relacionados serão removidos.`,
-        "Excluir",
-        "Cancelar",
+          confirmTitle,  // Título da confirmação
+          confirmMessage,  // Mensagem de confirmação
+          confirmButtonYes,  // Texto do botão "Confirmar"
+          confirmButtonNo,  // Texto do botão "Cancelar"
         function () {
           // Chama a função de exclusão e exibe mensagem de sucesso
           window.studentcare

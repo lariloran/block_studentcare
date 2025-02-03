@@ -142,7 +142,7 @@ class edit_form extends moodleform
             $classes = $DB->get_records('studentcare_classeaeq');
             $class_options = [];
             foreach ($classes as $class) {
-                $class_options[$class->id] = $class->nome_classe;
+                $class_options[$class->id] = get_string($class->nome_classe, 'block_studentcare');
             }
             $mform->addElement('select', 'classe_aeq', get_string('aeqclasses', 'block_studentcare'), $class_options);
             $mform->setType('classe_aeq', PARAM_INT);
@@ -172,7 +172,7 @@ class edit_form extends moodleform
                     // Adicionar ao array com os detalhes completos
                     $selected_emotions[$classe_id][] = [
                         'id' => $emocao->id,
-                        'name' => $emocao->nome
+                        'name' => get_string($emocao->nome, 'block_studentcare')
                     ];
                 }
             }
@@ -214,6 +214,14 @@ class edit_form extends moodleform
             $mform->setDefault('notify_students', $this->coleta->notificar_alunos);
             $mform->addHelpButton('notify_students', 'notify_students', 'block_studentcare');
         }
+
+        echo '<div id="confirmation-data" 
+        data-title="' . get_string('confirm_title', 'block_studentcare') . '"
+        data-message="' . get_string('confirm_message_update', 'block_studentcare') . '"
+        data-yes="' . get_string('confirm_button_yes', 'block_studentcare') . '"
+        data-no="' . get_string('confirm_button_no', 'block_studentcare') . '">
+         </div>';
+
         // Botões de enviar e cancelar agrupados
         $buttonarray = [];
         $buttonarray[] = $mform->createElement('submit', 'save', get_string('update', 'block_studentcare'));
@@ -228,6 +236,7 @@ class edit_form extends moodleform
         $mform->setType('recurso', PARAM_INT);
 
 
+         
         $PAGE->requires->js(new moodle_url('/blocks/studentcare/js/shared.js'));
         $PAGE->requires->js(new moodle_url('/blocks/studentcare/js/edit_form.js'));
     }
