@@ -101,6 +101,12 @@ $string['date_format'] = '%d/%m/%Y %H:%M';
 
 $string['no_questions_found'] = 'No questions were found for this collection. Please contact the teacher of the course <strong>{$a}</strong> for more information.';
 
+$string['yes'] = 'Yes'; 
+$string['no'] = 'No';
+
+$string['dontlink'] = 'Do not link to any activity/resource';
+$string['noemotion'] = 'No emotion registered for this collection.';
+
 $string['tcle_title'] = 'Informed Consent Form (ICF)';
 $string['tcle_description'] = 'Your participation in this emotion collection for the course <strong>{$a}</strong> is very important to us. By responding, you authorize the use of your answers, which will be treated confidentially and anonymously, exclusively for academic and pedagogical purposes. The collected information will be used in research aimed at improving teaching and learning, promoting a more welcoming and effective educational environment. Only the responsible teacher will have access to the data, safeguarding your privacy. We appreciate your collaboration!';
 $string['tcle_accept'] = 'Accept';

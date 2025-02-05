@@ -314,6 +314,9 @@ $string['chart_title'] = 'Distribuição de Respostas por Escala Likert';
 $string['yes'] = 'Sim'; 
 $string['no'] = 'Não';
 
+$string['dontlink'] = 'Não vincular a nenhuma atividade/recurso';
+$string['noemotion'] = 'Nenhuma emoção cadastrada para esta coleta.';
+
 $string['confirm_title'] = 'Confirmação';
 $string['confirm_message'] = 'Deseja salvar as informações desta coleta de emoções?';
 $string['confirm_message_update'] = 'Deseja alterar as informações desta coleta de emoções?';

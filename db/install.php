@@ -157,7 +157,6 @@ $records_questions = [
     (object)['id' => 171, 'emocao_id' => 10, 'classeaeq_id' => 2, 'pergunta_texto' => 'learning-related-hope-4'],
     (object)['id' => 172, 'emocao_id' => 10, 'classeaeq_id' => 2, 'pergunta_texto' => 'learning-related-hope-5'],
     (object)['id' => 173, 'emocao_id' => 10, 'classeaeq_id' => 2, 'pergunta_texto' => 'learning-related-hope-6'],
-    (object)['id' => 174, 'emocao_id' => 10, 'classeaeq_id' => 2, 'pergunta_texto' => 'learning-related-hope-7'],
    
     (object)['id' => 175, 'emocao_id' => 11, 'classeaeq_id' => 2, 'pergunta_texto' => 'learning-related-pride-1'],
     (object)['id' => 176, 'emocao_id' => 11, 'classeaeq_id' => 2, 'pergunta_texto' => 'learning-related-pride-2'],

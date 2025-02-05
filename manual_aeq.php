@@ -220,12 +220,12 @@ $perguntas = $DB->get_records_sql($sql);
 
 $dados_organizados = [];
 foreach ($perguntas as $pergunta) {
-    $classe = $pergunta->classe_nome;
-    $emocao = $pergunta->emocao_nome;
+    $classe = get_string($pergunta->classe_nome, 'block_studentcare');
+    $emocao = get_string($pergunta->emocao_nome, 'block_studentcare');
     if (!empty($pergunta->pergunta_texto) && get_string_manager()->string_exists($pergunta->pergunta_texto, 'block_studentcare')) {
         $texto = get_string($pergunta->pergunta_texto, 'block_studentcare');
     } else {
-        $texto = 'Texto não definido'; // Texto padrão ou mensagem de fallback
+        $texto = 'Text not definied'; // Texto padrão ou mensagem de fallback
     }
         
 

@@ -11,7 +11,7 @@ try {
     $emocoes_classes = $manager->obter_emocoes_e_classes($coleta_id);
 
     if (empty($emocoes_classes)) {
-        echo '<p>Nenhuma emoção cadastrada para esta coleta.</p>';
+        echo get_string('noemotion', 'block_studentcare');
         exit;
     }
 

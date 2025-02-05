@@ -96,7 +96,7 @@ class edit_form extends moodleform
         $resources = [];
 
         // Adiciona a opção padrão
-        $resources[''] = 'Não vincular a nenhuma atividade/recurso';
+        $resources[''] = get_string('dontlink', 'block_studentcare');
 
         // Verifica se a seção existe e contém recursos
         if (isset($modinfo->sections[$this->coleta->section_id]) && is_array($modinfo->sections[$this->coleta->section_id])) {

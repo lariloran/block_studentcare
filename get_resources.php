@@ -18,7 +18,7 @@ try {
 
     $default_option = [
         'value' => '',
-        'name' => 'Não vincular a nenhuma atividade/recurso'
+        'name' => get_string('dontlink', 'block_studentcare')
     ];
     $response['resources'][] = $default_option;
 

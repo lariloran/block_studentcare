@@ -590,8 +590,8 @@ class collection_manager
                 }               
                 document.getElementById("modalColetaInicio").textContent = new Date(coleta.data_inicio).toLocaleString();
                 document.getElementById("modalColetaFim").textContent = new Date(coleta.data_fim).toLocaleString();
-                document.getElementById("modalNotificarAlunos").textContent = coleta.notificar_alunos == 1 ? "Sim" : "Não";
-                document.getElementById("modalReceberAlerta").textContent = coleta.receber_alerta == 1 ? "Sim" : "Não";
+                document.getElementById("modalNotificarAlunos").textContent = coleta.notificar_alunos == 1 ? "' . get_string('yes', 'block_studentcare') . '" : "' . get_string('no', 'block_studentcare') . '";
+                document.getElementById("modalReceberAlerta").textContent = coleta.receber_alerta == 1 ? "' . get_string('yes', 'block_studentcare') . '" : "' . get_string('no', 'block_studentcare') . '";
                 document.getElementById("modalResourceName").textContent = coleta.resource_name;
                 document.getElementById("modalSectionName").textContent = coleta.section_name;
                 $.ajax({
@@ -742,8 +742,9 @@ class collection_manager
             date('d/m/Y H:i', strtotime($coleta->data_fim)),
             mb_convert_encoding($coleta->descricao, 'UTF-8'),
             $curso_nome,
-            $coleta->notificar_alunos ? 'Sim' : 'Não',
-            $coleta->receber_alerta ? 'Sim' : 'Não'
+            $coleta->notificar_alunos ? get_string('yes', 'moodle') : get_string('no', 'block_studentcare'),
+            $coleta->receber_alerta ? get_string('yes', 'moodle') : get_string('no', 'block_studentcare')
+            
         ]);
 
         fputcsv($output, ['ID da Pergunta', 'Classe AEQ', 'Emoção', 'Pergunta']);
@@ -822,8 +823,8 @@ class collection_manager
             'data_fim' => $coleta->data_fim,
             'descricao' => $coleta->descricao,
             'curso_nome' => $curso_nome,
-            'notificar_alunos' => $coleta->notificar_alunos ? 'Sim' : 'Não',
-            'receber_alerta' => $coleta->receber_alerta ? 'Sim' : 'Não',
+            'notificar_alunos' => $coleta->notificar_alunos ? get_string('yes', 'block_studentcare') : get_string('no', 'block_studentcare'),
+            'receber_alerta' => $coleta->receber_alerta ? get_string('yes', 'block_studentcare') : get_string('no', 'block_studentcare'),
             'perguntas' => [],
             'respostas' => []
         ];
