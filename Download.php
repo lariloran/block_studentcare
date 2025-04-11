@@ -26,7 +26,7 @@
 require_once(__DIR__ . '/../../config.php');
 require_once('collection_manager.php');
 
-$coleta_id = required_param('coleta_id', PARAM_INT);
+$coletaid = required_param('coleta_id', PARAM_INT);
 
 require_login();
 
@@ -43,11 +43,10 @@ ob_clean();
 $manager = new collection_manager();
 
 if (isset($_GET['format']) && $_GET['format'] === 'json') {
-    $manager->download_json($coleta_id);
-} elseif (isset($_GET['format']) && $_GET['format'] === 'csv') {
-    $manager->download_csv($coleta_id);
+    $manager->download_json($coletaid);
+} else if (isset($_GET['format']) && $_GET['format'] === 'csv') {
+    $manager->download_csv($coletaid);
 } else {
     echo "Formato de download inválido.";
     exit();
 }
-?>
