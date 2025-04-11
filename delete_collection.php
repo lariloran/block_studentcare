@@ -17,13 +17,14 @@
 /**
  * the first page to view the studentcare
  *
+ * @package block_studentcare
+ * @copyright  2024 Rafael Rodrigues
  * @author Rafael Rodrigues
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package block_studentcare
  */
 
 require_once('../../config.php');
-require_once('collection_manager.php'); 
+require_once('collection_manager.php');
 
 require_login();
 
