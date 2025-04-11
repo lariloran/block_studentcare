@@ -71,4 +71,3 @@ class block_studentcare extends block_base {
         ];
     }
 }
-?>
