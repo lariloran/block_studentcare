@@ -37,23 +37,28 @@ class block_studentcare extends block_base {
         $this->content = new stdClass;
         $this->content->footer = '';
 
-        $user_courses = enrol_get_users_courses($USER->id);
+        $usercourses = enrol_get_users_courses($USER->id);
 
-        $has_teacher_or_admin_role = false;
+        $hasteacheroradminrole = false;
 
-        foreach ($user_courses as $course) {
-            $course_context = context_course::instance($course->id);
-            if (has_capability('moodle/course:update', $course_context, $USER->id)) {
-                $has_teacher_or_admin_role = true;
+        foreach ($usercourses as $course) {
+            $coursecontext = context_course::instance($course->id);
+            if (has_capability('moodle/course:update', $coursecontext, $USER->id)) {
+                $hasteacheroradminrole = true;
                 break;
             }
         }
 
-        if ($has_teacher_or_admin_role) {
-            $this->content->text = html_writer::link(new moodle_url('/blocks/studentcare/index.php'), get_string('manage_collections', 'block_studentcare')) . '<br>' .
-                html_writer::link(new moodle_url('/blocks/studentcare/report.php'), get_string('view_dashboard', 'block_studentcare')) . '<br>' .
-                html_writer::link(new moodle_url('/blocks/studentcare/manual_aeq.php'), get_string('manual_aeq', 'block_studentcare')) . '<br>' .
-                html_writer::link(new moodle_url('/blocks/studentcare/faq.php'), get_string('faq', 'block_studentcare'));
+        if ($hasteacheroradminrole) {
+            $this->content->text =
+                    html_writer::link(new moodle_url('/blocks/studentcare/index.php'),
+                        get_string('manage_collections', 'block_studentcare')) . '<br>' .
+                    html_writer::link(new moodle_url('/blocks/studentcare/report.php'),
+                        get_string('view_dashboard', 'block_studentcare')) . '<br>' .
+                    html_writer::link(new moodle_url('/blocks/studentcare/manual_aeq.php'),
+                        get_string('manual_aeq', 'block_studentcare')) . '<br>' .
+                    html_writer::link(new moodle_url('/blocks/studentcare/faq.php'),
+                        get_string('faq', 'block_studentcare'));
         } else {
             $this->content->text = get_string('welcome', 'block_studentcare');
         }
