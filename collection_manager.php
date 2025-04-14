@@ -25,30 +25,30 @@
 class collection_manager {
 
     //Busca todas as coletas das disciplinas onde o usuário é professor.
-    public function excluir_coleta($coleta_id) {
+    public function excluir_coleta($coletaid) {
         global $DB, $CFG;
 
         $transaction = $DB->start_delegated_transaction();
 
         try {
-            $resource_id_instance = $DB->get_field('studentcare_cadastrocoleta', 'resource_id', ['id' => $coleta_id]);
+            $resourceidinstance = $DB->get_field('studentcare_cadastrocoleta', 'resource_id', ['id' => $coletaid]);
 
-            if ($resource_id_instance) {
+            if ($resourceidinstance) {
                 // Busca diretamente o ID em `course_modules` onde `instance` é igual ao `resource_id`.
-                $course_module_id = $DB->get_field('course_modules', 'id', ['instance' => $resource_id_instance]);
+                $course_module_id = $DB->get_field('course_modules', 'id', ['instance' => $resourceidinstance]);
 
-                if ($course_module_id) {
+                if ($coursemoduleid) {
                     require_once($CFG->dirroot . '/course/lib.php');
                     course_delete_module($course_module_id);
                 }
             }
 
 
-            $DB->delete_records('studentcare_resposta', ['coleta_id' => $coleta_id]);
+            $DB->delete_records('studentcare_resposta', ['coleta_id' => $coletaid]);
 
-            $DB->delete_records('studentcare_associacao_classe_emocao_coleta', ['cadastrocoleta_id' => $coleta_id]);
+            $DB->delete_records('studentcare_associacao_classe_emocao_coleta', ['cadastrocoleta_id' => $coletaid]);
 
-            $DB->delete_records('studentcare_cadastrocoleta', ['id' => $coleta_id]);
+            $DB->delete_records('studentcare_cadastrocoleta', ['id' => $coletaid]);
 
             $transaction->allow_commit();
         } catch (Exception $e) {
@@ -57,7 +57,7 @@ class collection_manager {
         }
     }
 
-    public function listar_coletas($usuario_id) {
+    public function listar_coletas($usuarioid) {
         global $DB, $CFG, $PAGE;
         require_once($CFG->dirroot . '/course/lib.php');
 
@@ -335,7 +335,6 @@ class collection_manager {
     </div>
     ';
 
-
         $html .= '<div class="card-list" id="coletasContainer">';
 
         $html .= '<div class="card" style="text-align: center; cursor: pointer;" onclick="window.location.href=\'' . new moodle_url('/blocks/studentcare/register.php') . '\'">
@@ -346,36 +345,36 @@ class collection_manager {
     </div>';
 
 
-        $coletas = $this->get_coletas_by_professor($usuario_id);
+        $coletas = $this->get_coletas_by_professor($usuarioid);
 
         if (!empty($coletas)) {
             foreach ($coletas as $coleta) {
                 $curso = $DB->get_record('course', ['id' => $coleta->curso_id], 'fullname');
-                $curso_nome = $curso ? format_string($curso->fullname) : 'Disciplina não encontrada';
-                $coleta->curso_nome = $curso_nome;
+                $cursonome = $curso ? format_string($curso->fullname) : 'Disciplina não encontrada';
+                $coleta->curso_nome = $cursonome;
 
-                $resource_info = '--';
-                $resource_name = '--';
-                $section_name = '--';
+                $resourceinfo = '--';
+                $resourcename = '--';
+                $sectionname = '--';
 
                 $module = $DB->get_record('course_modules', ['id' => $coleta->resource_id_atrelado], 'module');
                 if ($module) {
-                    $mod_info = $DB->get_record('modules', ['id' => $module->module], 'name');
-                    if ($mod_info) {
-                        $resource_info = ucfirst($mod_info->name);
+                    $modinfo = $DB->get_record('modules', ['id' => $module->module], 'name');
+                    if ($modinfo) {
+                        $resourceinfo = ucfirst($modinfo->name);
                     }
-                    $resource_name_record = $DB->get_record('course_modules', ['id' => $coleta->resource_id_atrelado], 'id, instance');
-                    if ($resource_name_record) {
-                        $resource_name = $DB->get_field($mod_info->name, 'name', ['id' => $resource_name_record->instance]);
+                    $resourcename_record = $DB->get_record('course_modules', ['id' => $coleta->resource_id_atrelado], 'id, instance');
+                    if ($resourcename_record) {
+                        $resourcename = $DB->get_field($modinfo->name, 'name', ['id' => $resourcename_record->instance]);
                     }
                 }
 
-                $section_name = get_section_name($coleta->curso_id, $coleta->section_id);
+                $sectionname = get_section_name($coleta->curso_id, $coleta->section_id);
 
 
-                $coleta->recurso_nome = $resource_info;
-                $coleta->resource_name = $resource_name;
-                $coleta->section_name = $section_name;
+                $coleta->recurso_nome = $resourceinfo;
+                $coleta->resource_name = $resourcename;
+                $coleta->section_name = $sectionname;
 
                 $html .= '<div class="card" 
                 data-id="' . $coleta->id . '" 
@@ -383,21 +382,18 @@ class collection_manager {
                 data-data_inicio="' . $coleta->data_inicio . '" 
                 data-data_fim="' . $coleta->data_fim . '" 
                 data-data_criacao="' . $coleta->data_criacao . '" 
-                data-curso_nome="' . $curso_nome . '" 
+                data-curso_nome="' . $cursonome . '" 
                 data-recurso_nome="' . $coleta->recurso_nome . '" 
                 data-resource_name="' . format_string($coleta->resource_name) . '" 
                 data-section_name="' . format_string($coleta->section_name) . '">
                 <h3>' . format_string(mb_strimwidth($coleta->nome, 0, 40, "...")) . '</h3>
-                <p><strong>' . get_string('course', 'block_studentcare') . ':</strong> ' . $curso_nome . '</p>
+                <p><strong>' . get_string('course', 'block_studentcare') . ':</strong> ' . $cursonome . '</p>
                 <p><strong>' . get_string('start_date', 'block_studentcare') . ':</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_inicio)) . '</p>
                 <p><strong>' . get_string('end_date', 'block_studentcare') . ':</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_fim)) . '</p>
                 <button class="btn-coleta" onclick="abrirModal(' . $coleta->id . ')"><i class="fa fa-info-circle"></i> ' . get_string('details', 'block_studentcare') . '</button>
              </div>';
-
-
             }
         }
-
 
         $html .= '</div>';
 
@@ -650,7 +646,8 @@ class collection_manager {
 
             function editarColeta() {
                 const coletaId = document.getElementById("modalColetaUrl").getAttribute("href").split("=").pop();
-                window.location.href = M.cfg.wwwroot + "/blocks/studentcare/edit.php?coletaid=" + coletaId;  // Redireciona para edit_form.php com o ID da coleta
+                window.location.href = M.cfg.wwwroot + "/blocks/studentcare/edit.php?coletaid=" + coletaId;  
+                // Redireciona para edit_form.php com o ID da coleta
             }
 
         </script>';
@@ -659,7 +656,7 @@ class collection_manager {
         return $html;
     }
 
-    public function get_coletas_by_professor($usuario_id) {
+    public function get_coletas_by_professor($usuarioid) {
         global $DB, $CFG;
 
         require_once($CFG->dirroot . '/lib/accesslib.php');
@@ -676,32 +673,33 @@ class collection_manager {
                            (ra.userid = :usuario_id_professor AND r.shortname = :role_teacher))
                     ORDER BY c.data_criacao DESC";
 
-        $params = ['context_course_level' => CONTEXT_COURSE, 'usuario_id_cadastro' => $usuario_id, 'usuario_id_professor' => $usuario_id, 'role_teacher' => 'editingteacher',];
+        $params = ['context_course_level' => CONTEXT_COURSE, 'usuario_id_cadastro' => $usuarioid, 'usuario_id_professor' => $usuarioid, 'role_teacher' => 'editingteacher',];
 
         return $DB->get_records_sql($sql, $params);
     }
 
-    public function download_csv($coleta_id) {
+    public function download_csv($coletaid) {
         global $DB;
 
         $sql = "SELECT id, nome, data_inicio, data_fim, descricao, curso_id, notificar_alunos, receber_alerta 
                 FROM {studentcare_cadastrocoleta} 
                 WHERE id = :coleta_id";
-        $params = ['coleta_id' => $coleta_id];
+        $params = ['coleta_id' => $coletaid];
         $coleta = $DB->get_record_sql($sql, $params);
 
         $curso = $DB->get_record('course', ['id' => $coleta->curso_id], 'fullname');
-        $curso_nome = $curso ? format_string($curso->fullname) : 'Disciplina não encontrada';
+        $cursonome = $curso ? format_string($curso->fullname) : 'Disciplina não encontrada';
 
         if (!$coleta) {
             echo "Coleta não encontrada.";
             return;
         }
 
-        $perguntas = $this->obter_perguntas_associadas($coleta_id);
+        $perguntas = $this->obter_perguntas_associadas($coletaid);
 
 
-        $sql_respostas = "SELECT r.id, a.username AS usuario, a.email, p.id AS pergunta_id, p.pergunta_texto, r.resposta, r.data_resposta, 
+        $sql_respostas = "SELECT r.id, a.username AS usuario, a.email, p.id AS pergunta_id, p.pergunta_texto, r.resposta,
+            r.data_resposta, 
         ra.roleid, role.shortname AS role_name
         FROM {studentcare_resposta} r
         JOIN {user} a ON a.id = r.usuario_id
@@ -725,7 +723,7 @@ class collection_manager {
         fputs($output, "\xEF\xBB\xBF");
 
         fputcsv($output, ['Nome', 'Data de Início', 'Data de Fim', 'Descrição', 'Disciplina', 'Notificar Aluno', 'Receber Alerta']);
-        fputcsv($output, [mb_convert_encoding($coleta->nome, 'UTF-8'), date('d/m/Y H:i', strtotime($coleta->data_inicio)), date('d/m/Y H:i', strtotime($coleta->data_fim)), mb_convert_encoding($coleta->descricao, 'UTF-8'), $curso_nome, $coleta->notificar_alunos ? get_string('yes', 'moodle') : get_string('no', 'block_studentcare'), $coleta->receber_alerta ? get_string('yes', 'moodle') : get_string('no', 'block_studentcare')
+        fputcsv($output, [mb_convert_encoding($coleta->nome, 'UTF-8'), date('d/m/Y H:i', strtotime($coleta->data_inicio)), date('d/m/Y H:i', strtotime($coleta->data_fim)), mb_convert_encoding($coleta->descricao, 'UTF-8'), $cursonome, $coleta->notificar_alunos ? get_string('yes', 'moodle') : get_string('no', 'block_studentcare'), $coleta->receber_alerta ? get_string('yes', 'moodle') : get_string('no', 'block_studentcare')
 
         ]);
 
@@ -744,7 +742,7 @@ class collection_manager {
         exit;
     }
 
-    private function obter_perguntas_associadas($coleta_id) {
+    private function obter_perguntas_associadas($coletaid) {
         global $DB;
 
         $sql = "SELECT pergunta.id AS pergunta_id, 
@@ -757,18 +755,18 @@ class collection_manager {
                 JOIN {studentcare_pergunta} pergunta ON pergunta.emocao_id = emocao.id
                 WHERE assoc.cadastrocoleta_id = :coleta_id";
 
-        $params = ['coleta_id' => $coleta_id];
+        $params = ['coleta_id' => $coletaid];
         return $DB->get_records_sql($sql, $params);
     }
 
-    public function download_json($coleta_id) {
+    public function download_json($coletaid) {
         global $DB;
 
         $sql = "SELECT nome, data_inicio, data_fim, descricao, curso_id, notificar_alunos, receber_alerta 
                 FROM {studentcare_cadastrocoleta} 
                 WHERE id = :coleta_id";
 
-        $params = ['coleta_id' => $coleta_id];
+        $params = ['coleta_id' => $coletaid];
         $coleta = $DB->get_record_sql($sql, $params);
 
         if (!$coleta) {
@@ -777,14 +775,14 @@ class collection_manager {
         }
 
         $curso = $DB->get_record('course', ['id' => $coleta->curso_id], 'fullname');
-        $curso_nome = $curso ? format_string($curso->fullname) : 'Disciplina não encontrada';
+        $cursonome = $curso ? format_string($curso->fullname) : 'Disciplina não encontrada';
 
-        $perguntas = $this->obter_perguntas_associadas($coleta_id);
+        $perguntas = $this->obter_perguntas_associadas($coletaid);
 
         $context = context_course::instance($coleta->curso_id);
 
-        $sql_respostas = "SELECT r.id, a.username AS usuario, a.email, p.id AS pergunta_id, p.pergunta_texto, r.resposta, r.data_resposta, 
-                          ra.roleid, role.shortname AS role_name
+        $sql_respostas = "SELECT r.id, a.username AS usuario, a.email, p.id AS pergunta_id, p.pergunta_texto, r.resposta,
+                            r.data_resposta, ra.roleid, role.shortname AS role_name
                           FROM {studentcare_resposta} r
                           JOIN {user} a ON a.id = r.usuario_id
                           JOIN {studentcare_pergunta} p ON p.id = r.pergunta_id
@@ -802,10 +800,11 @@ class collection_manager {
         header('Content-Type: application/json');
         header('Content-Disposition: attachment; filename="' . $coleta->nome . '.json"');
 
-        $coleta_data = ['nome' => $coleta->nome, 'data_inicio' => $coleta->data_inicio, 'data_fim' => $coleta->data_fim, 'descricao' => $coleta->descricao, 'curso_nome' => $curso_nome, 'notificar_alunos' => $coleta->notificar_alunos ? get_string('yes', 'block_studentcare') : get_string('no', 'block_studentcare'), 'receber_alerta' => $coleta->receber_alerta ? get_string('yes', 'block_studentcare') : get_string('no', 'block_studentcare'), 'perguntas' => [], 'respostas' => []];
+        $coleta_data = ['nome' => $coleta->nome, 'data_inicio' => $coleta->data_inicio, 'data_fim' => $coleta->data_fim, 'descricao' => $coleta->descricao, 'curso_nome' => $cursonome, 'notificar_alunos' => $coleta->notificar_alunos ? get_string('yes', 'block_studentcare') : get_string('no', 'block_studentcare'), 'receber_alerta' => $coleta->receber_alerta ? get_string('yes', 'block_studentcare') : get_string('no', 'block_studentcare'), 'perguntas' => [], 'respostas' => []];
 
         foreach ($perguntas as $pergunta) {
-            $texto_pergunta = (!empty($pergunta->pergunta_texto) && get_string_manager()->string_exists($pergunta->pergunta_texto, 'block_studentcare')) ? get_string($pergunta->pergunta_texto, 'block_studentcare') : 'Texto não definido'; // Fallback para texto padrão
+            $texto_pergunta = (!empty($pergunta->pergunta_texto) && get_string_manager()->string_exists($pergunta->pergunta_texto, 'block_studentcare')) ? get_string($pergunta->pergunta_texto, 'block_studentcare') : 'Texto não definido';
+            // Fallback para texto padrão
 
             $coleta_data['perguntas'][] = ['id' => $pergunta->pergunta_id, 'classe_aeq' => $pergunta->nome_classe, 'emocao' => $pergunta->emocao_nome, 'texto_pergunta' => $texto_pergunta];
         }
@@ -819,7 +818,7 @@ class collection_manager {
         exit;
     }
 
-    public function obter_emocoes_e_classes($coleta_id) {
+    public function obter_emocoes_e_classes($coletaid) {
         global $DB;
 
         $sql = "SELECT 
@@ -832,7 +831,7 @@ class collection_manager {
                 GROUP BY classe.id, classe.nome_classe
                 ORDER BY FIELD(classe.id, 1, 2, 3), classe.nome_classe";
 
-        $params = ['coleta_id' => $coleta_id];
+        $params = ['coleta_id' => $coletaid];
         return $DB->get_records_sql($sql, $params);
     }
 
@@ -845,12 +844,11 @@ class collection_manager {
     <div class="modal-content">
         <span class="close">&times;</span>
         <h2 id="modalColetaNome"></h2>
-        <p><strong><?php echo get_string('preview_coleta', 'block_studentcare'); ?>:</strong> <a id="modalColetaUrl" href="#"
-                                                                                                 target="_blank"><?php echo get_string('link_coleta', 'block_studentcare'); ?></a>
+        <p><strong><?php echo get_string('preview_coleta', 'block_studentcare'); ?>:</strong>
+            <a id="modalColetaUrl" href="#" target="_blank"><?php echo get_string('link_coleta', 'block_studentcare'); ?></a>
         </p>
-        <p><strong><?php echo get_string('disciplina', 'block_studentcare'); ?>:</strong> <a id="modalColetaDisciplina" href="#"
-                                                                                             target="_blank"
-                                                                                             style="color: #0073AA; text-decoration: none;"></a>
+        <p><strong><?php echo get_string('disciplina', 'block_studentcare'); ?>:</strong>
+            <a id="modalColetaDisciplina" href="#" target="_blank" style="color: #0073AA; text-decoration: none;"></a>
         </p>
         <p><strong><?php echo get_string('data_inicio', 'block_studentcare'); ?>:</strong> <span id="modalColetaInicio"></span></p>
         <p><strong><?php echo get_string('data_fim', 'block_studentcare'); ?>:</strong> <span id="modalColetaFim"></span></p>

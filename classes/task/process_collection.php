@@ -50,7 +50,7 @@ class process_collection extends \core\task\scheduled_task {
         AND c.notificacao_enviada = 0";
 
         try {
-            $coletasiniciar = $DB->get_records_sql($sql, ['agora' => date('Y-m-d H:i:s', $agora),]);
+            $coletasiniciar = $DB->get_records_sql($sql, ['agora' => date('Y-m-d H:i:s', $agora)]);
         } catch (\dml_exception $e) {
             mtrace("Erro ao buscar coletas: " . $e->getMessage());
             return;
@@ -80,14 +80,14 @@ class process_collection extends \core\task\scheduled_task {
         }
 
         // **2. Processar coletas que precisam enviar notificação de fim**.
-        $sql_finalizar = "SELECT c.*
+        $sqlfinalizar = "SELECT c.*
                       FROM {studentcare_cadastrocoleta} c
                       WHERE :agora >= c.data_fim
                       AND c.receber_alerta = 1
                       AND c.notificacao_finalizada = 0";
 
         try {
-            $coletasfinalizar = $DB->get_records_sql($sql_finalizar, ['agora' => date('Y-m-d H:i:s', $agora),]);
+            $coletasfinalizar = $DB->get_records_sql($sqlfinalizar, ['agora' => date('Y-m-d H:i:s', $agora)]);
         } catch (\dml_exception $e) {
             mtrace("Erro ao buscar coletas para notificação de fim: " . $e->getMessage());
             return;
@@ -116,7 +116,7 @@ class process_collection extends \core\task\scheduled_task {
         global $DB, $USER, $CFG;
 
         $coleta->curso_id = clean_param($coleta->curso_id, PARAM_INT);
-        $section_id = clean_param($coleta->section_id, PARAM_INT);
+        $sectionid = clean_param($coleta->section_id, PARAM_INT);
 
         require_once($CFG->dirroot . '/course/modlib.php');
 
@@ -137,9 +137,9 @@ class process_collection extends \core\task\scheduled_task {
             $sections[0] = [];
         }
 
-        $section_id = $coleta->section_id;
+        $sectionid = $coleta->section_id;
         mtrace("Total de seções encontradas: " . count($sections));
-        mtrace("Processando a seção especificada: Seção {$section_id}");
+        mtrace("Processando a seção especificada: Seção {$sectionid}");
 
         $urlparams = new \stdClass();
         $urlparams->course = $curso->id;
@@ -158,18 +158,18 @@ class process_collection extends \core\task\scheduled_task {
         $urlparams->display = 0;
         $urlparams->completion = 1;
         $urlparams->completionview = 0;
-        $urlparams->section = $section_id;
+        $urlparams->section = $sectionid;
         $urlparams->name = get_string('collection_title', 'block_studentcare');
-        $data_inicio_formatada = date('d/m/Y H:i', strtotime($coleta->data_inicio));
-        $data_fim_formatada = date('d/m/Y H:i', strtotime($coleta->data_fim));
+        $datainicioformatada = date('d/m/Y H:i', strtotime($coleta->data_inicio));
+        $datafimformatada = date('d/m/Y H:i', strtotime($coleta->data_fim));
 
-        $urlparams->intro = clean_text(str_replace('{date}', $data_fim_formatada, get_string('collection_intro', 'block_studentcare')), FORMAT_HTML);
+        $urlparams->intro = clean_text(str_replace('{date}', $datafimformatada, get_string('collection_intro', 'block_studentcare')), FORMAT_HTML);
         $urlparams->introformat = FORMAT_HTML;
         $urlparams->showdescription = 1;
         $urlparams->externalurl = clean_param("{$CFG->wwwroot}/blocks/studentcare/view.php?coletaid={$coleta->id}", PARAM_URL);
         $urlparams->timemodified = time();
 
-        mtrace("Preparando para adicionar o recurso URL na seção especificada (Seção {$section_id})");
+        mtrace("Preparando para adicionar o recurso URL na seção especificada (Seção {$sectionid})");
         mtrace("Nome do recurso: {$urlparams->name}");
         mtrace("URL: {$urlparams->externalurl}");
 
@@ -185,7 +185,6 @@ class process_collection extends \core\task\scheduled_task {
             mtrace("Erro: `cmid` não contém um ID válido.");
             return null;
         }
-
 
         mtrace("Finalizando a adição de recurso URL para a coleta: {$coleta->nome}");
     }
@@ -205,7 +204,7 @@ class process_collection extends \core\task\scheduled_task {
 
         $nomedisciplina = $curso->fullname;
 
-        $data_fim_formatada = date('d/m/Y H:i', strtotime($coleta->data_fim));
+        $datafimformatada = date('d/m/Y H:i', strtotime($coleta->data_fim));
 
         $enrols = $DB->get_records_sql("
             SELECT u.id, u.email
@@ -222,28 +221,26 @@ class process_collection extends \core\task\scheduled_task {
             $eventdata->userto = $usuario->id;
 
             // Substituição dos placeholders nas mensagens
-            $subjectTemplate = get_string('event_subject', 'block_studentcare');
-            $eventdata->subject = str_replace('{disciplina}', $nomedisciplina, $subjectTemplate);
+            $subjecttemplate = get_string('event_subject', 'block_studentcare');
+            $eventdata->subject = str_replace('{disciplina}', $nomedisciplina, $subjecttemplate);
 
-            $fullMessageTemplate = get_string('event_fullmessage', 'block_studentcare');
-            $eventdata->fullmessage = str_replace(array('{disciplina}', '{datafim}'), array($nomedisciplina, $data_fim_formatada),
-                $fullMessageTemplate);
+            $fullmessagetemplate = get_string('event_fullmessage', 'block_studentcare');
+            $eventdata->fullmessage = str_replace(array('{disciplina}', '{datafim}'), array($nomedisciplina, $datafimformatada),
+                $fullmessagetemplate);
             $eventdata->fullmessageformat = FORMAT_PLAIN;
 
             $fullMessageHtmlTemplate = get_string('event_fullmessagehtml', 'block_studentcare');
             $eventdata->fullmessagehtml = str_replace(array('{disciplina}', '{datafim}', '{url}'),
-                array($nomedisciplina, $data_fim_formatada, "{$CFG->wwwroot}/blocks/studentcare/view.php?coletaid={$coleta->id}"), $fullMessageHtmlTemplate);
+                array($nomedisciplina, $datafimformatada, "{$CFG->wwwroot}/blocks/studentcare/view.php?coletaid={$coleta->id}"), $fullMessageHtmlTemplate);
 
             $smallMessageTemplate = get_string('event_smallmessage', 'block_studentcare');
             $eventdata->smallmessage = str_replace(array('{disciplina}', '{datafim}', '{url}'),
-                array($nomedisciplina, $data_fim_formatada, "{$CFG->wwwroot}/blocks/studentcare/view.php?coletaid={$coleta->id}"), $smallMessageTemplate);
+                array($nomedisciplina, $datafimformatada, "{$CFG->wwwroot}/blocks/studentcare/view.php?coletaid={$coleta->id}"), $smallMessageTemplate);
 
             $eventdata->notification = 1;
 
             message_send($eventdata);
         }
-
-
     }
 
     /**
