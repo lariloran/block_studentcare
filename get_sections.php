@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * the first page to view the studentcare
+ * Get sections
  *
  * @package block_studentcare
  * @copyright  2024 Rafael Rodrigues
@@ -29,15 +29,15 @@ require_login();
 $courseid = required_param('courseid', PARAM_INT);
 
 $modinfo = get_fast_modinfo($courseid);
-$sections = $modinfo->get_section_info_all(); 
-$response = ['sections' => []]; 
+$sections = $modinfo->get_section_info_all();
+$response = ['sections' => []];
 
 foreach ($sections as $section) {
     if ($section->uservisible) {
         $sectionname = get_section_name($courseid, $section->section);
         $response['sections'][] = [
             'value' => $section->section,
-            'name' => $sectionname
+            'name' => $sectionname,
         ];
     }
 }

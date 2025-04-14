@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * the first page to view the studentcare
+ * edit_form
  *
  * @package block_studentcare
  * @copyright  2024 Rafael Rodrigues
@@ -25,10 +25,8 @@
 
 require_once("$CFG->libdir/formslib.php");
 
-class edit_form extends moodleform
-{
-    public function get_user_courses($userid)
-    {
+class edit_form extends moodleform {
+    public function get_user_courses($userid) {
         global $DB;
         $courses = enrol_get_users_courses($userid, true);
         $teacher_courses = [];
@@ -42,10 +40,10 @@ class edit_form extends moodleform
         }
         return $teacher_courses;
     }
+
     private $coleta;
 
-    public function __construct($coleta_id)
-    {
+    public function __construct($coleta_id) {
         global $DB;
 
         if (!$coleta_id || !is_numeric($coleta_id)) {
@@ -71,8 +69,7 @@ class edit_form extends moodleform
         parent::__construct();
     }
 
-    public function definition()
-    {
+    public function definition() {
         global $PAGE, $DB, $USER;
 
         // Verifica se a coleta já foi iniciada
@@ -144,7 +141,6 @@ class edit_form extends moodleform
         $mform->setDefault('resourceid', $default_resourceid);
 
 
-
         // Datas de início e fim
         if (!$coletaIniciada) {
             $mform->addElement('date_time_selector', 'starttime', get_string('starttime', 'block_studentcare'), ['optional' => false]);
@@ -173,26 +169,26 @@ class edit_form extends moodleform
             $mform->setDefault('classe_aeq', $this->coleta->classeaeq_id);
             $mform->addHelpButton('classe_aeq', 'aeqclasses', 'block_studentcare');
 
-            
+
             $selected_emotions = [];
 
             // Obter as emoções associadas organizadas por classe
             $emocao_associadas = $DB->get_records('studentcare_associacao_classe_emocao_coleta', [
                 'cadastrocoleta_id' => $this->coleta->id
             ]);
-            
+
             foreach ($emocao_associadas as $associacao) {
                 $classe_id = $associacao->classeaeq_id;
                 $emocao_id = $associacao->emocao_id;
-            
+
                 // Buscar o nome da emoção pelo ID
                 $emocao = $DB->get_record('studentcare_emocao', ['id' => $emocao_id], 'id, nome');
-            
+
                 if ($emocao) {
                     if (!isset($selected_emotions[$classe_id])) {
                         $selected_emotions[$classe_id] = [];
                     }
-            
+
                     // Adicionar ao array com os detalhes completos
                     $selected_emotions[$classe_id][] = [
                         'id' => $emocao->id,
@@ -200,7 +196,7 @@ class edit_form extends moodleform
                     ];
                 }
             }
-            
+
             $emotions = $DB->get_records('studentcare_emocao');
             $emotion_options = [];
             foreach ($emotions as $emotion) {
@@ -226,8 +222,8 @@ class edit_form extends moodleform
                 <div id="emocoes-selecionadas" class="selected-emotions-container"></div>
             </div>
         ');
-        
-        }    
+
+        }
         // Checkboxes
         $mform->addElement('advcheckbox', 'alertprogress', get_string('alertprogress', 'block_studentcare'), null, ['group' => 1], [0, 1]);
         $mform->setDefault('alertprogress', $this->coleta->receber_alerta);
@@ -260,13 +256,11 @@ class edit_form extends moodleform
         $mform->setType('recurso', PARAM_INT);
 
 
-         
         $PAGE->requires->js(new moodle_url('/blocks/studentcare/js/shared.js'));
         $PAGE->requires->js(new moodle_url('/blocks/studentcare/js/edit_form.js'));
     }
 
-    public function process_form($data)
-    {
+    public function process_form($data) {
         global $DB, $SESSION;
 
         // Verifica se a coleta já foi iniciada
@@ -315,19 +309,19 @@ class edit_form extends moodleform
                     $emocao_selecionadas = [];
                 }
 
-            // Adicionar as novas emoções
-            foreach ($emocao_selecionadas as $classe_aeq_id => $emocoes) {
-                if (is_array($emocoes)) {
-                    foreach ($emocoes as $emocao) {
-                        $assoc = new stdClass();
-                        $assoc->cadastrocoleta_id = $this->coleta->id;
-                        $assoc->classeaeq_id = clean_param($classe_aeq_id, PARAM_INT);
-                        $assoc->emocao_id = clean_param($emocao['id'], PARAM_INT);
+                // Adicionar as novas emoções
+                foreach ($emocao_selecionadas as $classe_aeq_id => $emocoes) {
+                    if (is_array($emocoes)) {
+                        foreach ($emocoes as $emocao) {
+                            $assoc = new stdClass();
+                            $assoc->cadastrocoleta_id = $this->coleta->id;
+                            $assoc->classeaeq_id = clean_param($classe_aeq_id, PARAM_INT);
+                            $assoc->emocao_id = clean_param($emocao['id'], PARAM_INT);
 
-                        $DB->insert_record('studentcare_associacao_classe_emocao_coleta', $assoc);
+                            $DB->insert_record('studentcare_associacao_classe_emocao_coleta', $assoc);
+                        }
                     }
                 }
-            }
             } catch (dml_exception $e) {
                 debugging('Erro ao atualizar as emoções associadas: ' . $e->getMessage());
                 throw new moodle_exception('erro_ao_atualizar_emocoes', 'block_studentcare');
@@ -336,65 +330,58 @@ class edit_form extends moodleform
 
         // Redirecionar com sucesso
         $SESSION->mensagem_sucesso = get_string('coleta_atualizada_com_sucesso', 'block_studentcare');
-        redirect(new moodle_url('/blocks/studentcare/index.php', ));
+        redirect(new moodle_url('/blocks/studentcare/index.php',));
     }
 
 
 }
 
 
-class CadastroColeta
-{
+class CadastroColeta {
     private $nome;
     private $dataInicio;
     private $horaInicio;
     private $dataFim;
-    private $horaFim;
+    private $horafim;
     private $descricao;
-    private $receberAlerta;
-    private $notificarAlunos;
-    private $cursoId;
-    private $professorId;
-    private $classesAEQ;
+    private $receberalerta;
+    private $notificaralunos;
+    private $cursoid;
+    private $professorid;
+    private $classesaeq;
 
-    public function __construct($nome, $dataInicio, $horaInicio, $dataFim, $horaFim, $descricao, $receberAlerta, $notificarAlunos, $cursoId, $professorId)
-    {
+    public function __construct($nome, $dataInicio, $horaInicio, $dataFim, $horafim, $descricao, $receberalerta, $notificaralunos, $cursoid, $professorid) {
         $this->nome = $nome;
         $this->dataInicio = $dataInicio;
         $this->horaInicio = $horaInicio;
         $this->dataFim = $dataFim;
-        $this->horaFim = $horaFim;
+        $this->horaFim = $horafim;
         $this->descricao = $descricao;
-        $this->receberAlerta = $receberAlerta;
-        $this->notificarAlunos = $notificarAlunos;
-        $this->cursoId = $cursoId;
-        $this->professorId = $professorId;
+        $this->receberAlerta = $receberalerta;
+        $this->notificarAlunos = $notificaralunos;
+        $this->cursoId = $cursoid;
+        $this->professorId = $professorid;
         $this->classesAEQ = [];
     }
 
-    public function adicionarClasse($classe, $emoções)
-    {
+    public function adicionarclasse($classe, $emoções) {
         $this->classesAEQ[$classe] = $emoções;
     }
 }
 
-class ClasseAeq
-{
-    private $nomeClasse;
+class ClasseAeq {
+    private $nomeclasse;
 
-    public function __construct($nomeClasse)
-    {
-        $this->nomeClasse = $nomeClasse;
+    public function __construct($nomeclasse) {
+        $this->nomeClasse = $nomeclasse;
     }
 
-    public function getNomeClasse()
-    {
+    public function getNomeClasse() {
         return $this->nomeClasse;
     }
 
-    public function setNomeClasse($nomeClasse)
-    {
-        $this->nomeClasse = $nomeClasse;
+    public function setNomeClasse($nomeclasse) {
+        $this->nomeClasse = $nomeclasse;
     }
 }
 

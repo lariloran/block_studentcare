@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * the first page to view the studentcare
+ * Get resources
  *
  * @package block_studentcare
  * @copyright  2024 Rafael Rodrigues
@@ -29,7 +29,7 @@ require_login();
 $courseid = required_param('courseid', PARAM_INT);
 $sectionnum = required_param('sectionid', PARAM_INT);
 
-$response = ['resources' => []]; 
+$response = ['resources' => []];
 
 try {
     $modinfo = get_fast_modinfo($courseid);
@@ -38,22 +38,22 @@ try {
         throw new Exception("Não há atividade/recurso nesta seção.");
     }
 
-    $section_modules = $modinfo->get_sections()[$sectionnum];
+    $sectionmodules = $modinfo->get_sections()[$sectionnum];
 
-    $default_option = [
+    $defaultoption = [
         'value' => '',
-        'name' => get_string('dontlink', 'block_studentcare')
+        'name' => get_string('dontlink', 'block_studentcare'),
     ];
-    $response['resources'][] = $default_option;
+    $response['resources'][] = $defaultoption;
 
-    $resources = []; 
-    foreach ($section_modules as $cmid) {
+    $resources = [];
+    foreach ($sectionmodules as $cmid) {
         $mod = $modinfo->cms[$cmid];
-        
+
         if ($mod->uservisible) {
             $resources[] = [
                 'value' => $cmid,
-                'name' => $mod->name
+                'name' => $mod->name,
             ];
         }
     }
@@ -62,11 +62,11 @@ try {
         return strcmp($a['name'], $b['name']);
     });
 
-    $response['resources'] = array_merge([$default_option], $resources);
+    $response['resources'] = array_merge([$defaultoption], $resources);
 } catch (Exception $e) {
     $response['resources'][] = [
         'value' => '',
-        'name' => $e->getMessage()
+        'name' => $e->getMessage(),
     ];
 }
 

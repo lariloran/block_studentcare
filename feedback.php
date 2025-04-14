@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * the first page to view the studentcare
+ * feedback
  *
  * @package block_studentcare
  * @copyright  2024 Rafael Rodrigues
@@ -35,24 +35,24 @@ if (isset($data['coleta_id']) && isset($data['usuario_id']) && isset($data['feed
         $usuarioid = clean_param($data['usuario_id'], PARAM_INT);
         $feedback = clean_param($data['feedback'], PARAM_TEXT);
 
-        $feedbackExistente = $DB->get_record('studentcare_feedback', [
+        $feedbackexistente = $DB->get_record('studentcare_feedback', [
             'coleta_id' => $coletaid,
-            'usuario_id' => $usuarioid
+            'usuario_id' => $usuarioid,
         ]);
 
-        if ($feedbackExistente) {
+        if ($feedbackexistente) {
             header('Content-Type: application/json');
             echo json_encode(['success' => false, 'error' => 'Você já enviou feedback para esta coleta.']);
             exit;
         }
 
-        $novo_feedback = new stdClass();
-        $novo_feedback->coleta_id = $coletaid;
-        $novo_feedback->usuario_id = $usuarioid;
-        $novo_feedback->feedback = $feedback;
-        $novo_feedback->data_feedback = date('Y-m-d H:i:s');
+        $novofeedback = new stdClass();
+        $novofeedback->coleta_id = $coletaid;
+        $novofeedback->usuario_id = $usuarioid;
+        $novofeedback->feedback = $feedback;
+        $novofeedback->data_feedback = date('Y-m-d H:i:s');
 
-        $DB->insert_record('studentcare_feedback', $novo_feedback);
+        $DB->insert_record('studentcare_feedback', $novofeedback);
 
         header('Content-Type: application/json');
         echo json_encode(['success' => true]);
@@ -68,4 +68,3 @@ if (isset($data['coleta_id']) && isset($data['usuario_id']) && isset($data['feed
     echo json_encode(['success' => false, 'error' => 'Dados incompletos.']);
     exit;
 }
-?>

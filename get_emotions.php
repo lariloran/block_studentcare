@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * the first page to view the studentcare
+ * Get emotions
  *
  * @package block_studentcare
  * @copyright  2024 Rafael Rodrigues
@@ -29,8 +29,8 @@ require_login();
 $classeaeqid = required_param('classeaeqid', PARAM_INT);
 
 global $DB;
-$response = ['emotions' => []]; 
-$emotions = $DB->get_records('studentcare_emocao', array('classeaeq_id' => $classeaeqid), '', 'id, nome');
+$response = ['emotions' => []];
+$emotions = $DB->get_records('studentcare_emocao', ['classeaeq_id' => $classeaeqid,], '', 'id, nome');
 
 foreach ($emotions as $emotion) {
     $response['emotions'][] = [

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * the first page to view the studentcare
+ * Code to delete collection
  *
  * @package block_studentcare
  * @copyright  2024 Rafael Rodrigues
@@ -28,9 +28,8 @@ require_once('collection_manager.php');
 
 require_login();
 
-$coleta_id = required_param('coleta_id', PARAM_INT);
-$collection_manager = new collection_manager();
-$collection_manager->excluir_coleta($coleta_id);
+$coletaid = required_param('coleta_id', PARAM_INT);
+$collectionmanager = new collection_manager();
+$collectionmanager->excluir_coleta($coletaid);
 echo json_encode(['status' => 'success']);
 exit;
-?>

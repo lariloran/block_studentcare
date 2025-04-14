@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * the first page to view the studentcare
+ * faq javascript
  *
  * @package block_studentcare
  * @copyright  2024 Rafael Rodrigues
@@ -174,13 +174,13 @@ echo '<style>
 
 echo html_writer::start_div('faq-container');
 
-// Campo de busca com placeholder traduzido
+// Campo de busca com placeholder traduzido.
 echo html_writer::start_div('faq-search');
-echo html_writer::empty_tag('input', array(
-    'type' => 'text',
-    'id' => 'faqSearch',
-    'placeholder' => get_string('faq_search_placeholder', 'block_studentcare')
-));
+echo html_writer::empty_tag('input', [
+        'type' => 'text',
+        'id' => 'faqSearch',
+        'placeholder' => get_string('faq_search_placeholder', 'block_studentcare')]
+);
 echo html_writer::end_div();
 
 // Título da seção traduzido
@@ -190,7 +190,7 @@ echo html_writer::end_div();
 
 echo html_writer::start_div('faq-topics');
 
-echo html_writer::start_div('faq-topic', array(
+echo html_writer::start_div('faq-topic', [
     'onclick' => 'openModal("' . get_string('faq_topic_title', 'block_studentcare') . '", `
         <div class="modal-header">
             <h2>' . get_string('faq_modal_header', 'block_studentcare') . '</h2>
@@ -205,14 +205,14 @@ echo html_writer::start_div('faq-topic', array(
             <ul>' . get_string('faq_benefits_list', 'block_studentcare') . '</ul>
         </div>
     `)'
-));
+]);
 
-echo html_writer::tag('div', '🧠', array('class' => 'faq-topic-icon'));
-echo html_writer::tag('div', get_string('faq_topic_title', 'block_studentcare'), array('class' => 'faq-topic-title'));
+echo html_writer::tag('div', '🧠', ['class' => 'faq-topic-icon']);
+echo html_writer::tag('div', get_string('faq_topic_title', 'block_studentcare'), ['class' => 'faq-topic-title']);
 echo html_writer::end_div();
 
 
-echo html_writer::start_div('faq-topic', array(
+echo html_writer::start_div('faq-topic', [
     'onclick' => 'openModal("' . get_string('faq_how_to_use_title', 'block_studentcare') . '", `
 
     <div class="modal-header">
@@ -252,16 +252,15 @@ echo html_writer::start_div('faq-topic', array(
 
     <p>' . get_string('faq_how_to_use_conclusion', 'block_studentcare') . '</p>
 `)'
-));
+]);
 
 
-
-echo html_writer::tag('div', '📋', array('class' => 'faq-topic-icon'));
-echo html_writer::tag('div', get_string('faq_how_to_use_title', 'block_studentcare'), array('class' => 'faq-topic-title'));
+echo html_writer::tag('div', '📋', ['class' => 'faq-topic-icon']);
+echo html_writer::tag('div', get_string('faq_how_to_use_title', 'block_studentcare'), ['class' => 'faq-topic-title']);
 echo html_writer::end_div();
 
 
-echo html_writer::start_div('faq-topic', array(
+echo html_writer::start_div('faq-topic', [
     'onclick' => 'openModal("' . get_string('faq_topic_functionalities_title', 'block_studentcare') . '", `
     <div class="modal-header">
         <h2><i class="fas fa-tools"></i> ' . get_string('faq_topic_functionalities_title', 'block_studentcare') . '</h2>
@@ -272,16 +271,15 @@ echo html_writer::start_div('faq-topic', array(
         <p>' . get_string('faq_topic_functionalities_closing', 'block_studentcare') . '</p>
     </div>
     `)'
-));
+]);
 
-echo html_writer::tag('div', '🛠️', array('class' => 'faq-topic-icon'));
-echo html_writer::tag('div', get_string('faq_topic_functionalities_title', 'block_studentcare'), array('class' => 'faq-topic-title'));
+echo html_writer::tag('div', '🛠️', ['class' => 'faq-topic-icon']);
+echo html_writer::tag('div', get_string('faq_topic_functionalities_title', 'block_studentcare'),
+    ['class' => 'faq-topic-title']);
 echo html_writer::end_div();
 
 
-
-
-echo html_writer::start_div('faq-topic', array(
+echo html_writer::start_div('faq-topic', [
     'onclick' => 'openModal("' . get_string('faq_topic_developers_title', 'block_studentcare') . '", `
     <div class="modal-header">
         <h2><i class="fas fa-user-graduate"></i> ' . get_string('faq_topic_developers_title', 'block_studentcare') . '</h2>
@@ -297,10 +295,10 @@ echo html_writer::start_div('faq-topic', array(
         </ul>
     </div>
     `)'
-));
+]);
 
-echo html_writer::tag('div', '📟', array('class' => 'faq-topic-icon'));
-echo html_writer::tag('div', get_string('faq_topic_developers_title', 'block_studentcare'), array('class' => 'faq-topic-title'));
+echo html_writer::tag('div', '📟', ['class' => 'faq-topic-icon']);
+echo html_writer::tag('div', get_string('faq_topic_developers_title', 'block_studentcare'), ['class' => 'faq-topic-title']);
 echo html_writer::end_div();
 
 

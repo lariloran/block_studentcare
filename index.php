@@ -15,11 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * the first page to view the studentcare
+ * Index page
  *
+ * @package block_studentcare
+ * @copyright  2024 Rafael Rodrigues
  * @author Rafael Rodrigues
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package block_studentcare
  */
 
 require_once('../../config.php');
@@ -34,7 +35,7 @@ $PAGE->set_title(get_string('header', 'block_studentcare'));
 
 
 echo $OUTPUT->header();
- 
+
 echo '<div id="confirmation-delete" style="display: none;" 
     data-message-delete="' . get_string('confirm_message_delete', 'block_studentcare') . '"
     data-title="' . get_string('confirm_title', 'block_studentcare') . '"
@@ -44,7 +45,7 @@ echo '<div id="confirmation-delete" style="display: none;"
 </div>';
 
 
- 
+
 $PAGE->requires->js(new moodle_url('/blocks/studentcare/js/shared.js'));
 
 
@@ -52,14 +53,13 @@ echo html_writer::start_tag('div', ['class' => 'container-fluid']);
 echo html_writer::start_tag('div', ['class' => 'row']);
 echo html_writer::start_tag('div', ['class' => 'col-md-12']);
 
-// Listagem de coletas com o card de criação
+// Listagem de coletas com o card de criação.
 $collectionManager = new collection_manager();
-$usuario_id = $USER->id;
-echo $collectionManager->listar_coletas($usuario_id);
+$usuarioid = $USER->id;
+echo $collectionManager->listar_coletas($usuarioid);
 
 echo html_writer::end_tag('div');
 echo html_writer::end_tag('div');
 echo html_writer::end_tag('div');
 
 echo $OUTPUT->footer();
-?>

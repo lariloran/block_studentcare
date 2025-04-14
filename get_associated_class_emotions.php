@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * the first page to view the studentcare
+ * Get class emotions
  *
  * @package block_studentcare
  * @copyright  2024 Rafael Rodrigues
@@ -24,24 +24,25 @@
  */
 
 require_once('../../config.php');
-require_once('collection_manager.php'); 
+require_once('collection_manager.php');
 
 require_login();
 
-$coleta_id = required_param('coleta_id', PARAM_INT);
+$coletaid = required_param('coleta_id', PARAM_INT);
 
 try {
     $manager = new collection_manager();
-    $emocoes_classes = $manager->obter_emocoes_e_classes($coleta_id);
+    $emocoesclasses = $manager->obter_emocoes_e_classes($coletaid);
 
-    if (empty($emocoes_classes)) {
+    if (empty($emocoesclasses)) {
         echo get_string('noemotion', 'block_studentcare');
         exit;
     }
 
     $output = '';
-    foreach ($emocoes_classes as $item) {
-        $output .= '<p><strong>' . s(get_string($item->nome_classe, 'block_studentcare')) . ':</strong> ' . s(get_string($item->emocoes, 'block_studentcare')) . '</p>';
+    foreach ($emocoesclasses as $item) {
+        $output .= '<p><strong>' . s(get_string($item->nome_classe, 'block_studentcare')) . ':</strong> ' .
+            s(get_string($item->emocoes, 'block_studentcare')) . '</p>';
     }
 
     echo $output;
