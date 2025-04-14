@@ -43,7 +43,6 @@ class collection_manager {
                 }
             }
 
-
             $DB->delete_records('studentcare_resposta', ['coleta_id' => $coletaid]);
 
             $DB->delete_records('studentcare_associacao_classe_emocao_coleta', ['cadastrocoleta_id' => $coletaid]);
@@ -312,8 +311,8 @@ class collection_manager {
 
         $html .= '<div class="filter-container-coleta">
         <label for="searchBox"><strong>' . get_string('search_label', 'block_studentcare') . ':</strong></label>
-        <input type="text" id="searchBox" placeholder="' . get_string('search_placeholder', 'block_studentcare') . '" onkeyup="filtrarColetas()">
-    
+        <input type="text" id="searchBox" placeholder="' . get_string('search_placeholder', 'block_studentcare') .
+            '" onkeyup="filtrarColetas()">
         <label for="orderBy"><strong>' . get_string('order_by_label', 'block_studentcare') . ':</strong></label>
         <select id="orderBy" onchange="ordenarColetas()">
             <option value="data_criacao">' . get_string('order_by_creation_date', 'block_studentcare') . '</option>
@@ -323,7 +322,8 @@ class collection_manager {
             <option value="curso_nome">' . get_string('order_by_course', 'block_studentcare') . '</option>
         </select>
     
-        <button id="orderDirection" onclick="toggleOrderDirection()">' . get_string('ascending', 'block_studentcare') . ' <i class="icon fa fa-arrow-up"></i></button>
+        <button id="orderDirection" onclick="toggleOrderDirection()">' . get_string('ascending', 'block_studentcare') .
+            ' <i class="icon fa fa-arrow-up"></i></button>
     
         <label for="pageSize"><strong>' . get_string('show_label', 'block_studentcare') . ':</strong></label>
         <select id="pageSize" onchange="atualizarPaginacao()">
@@ -337,13 +337,13 @@ class collection_manager {
 
         $html .= '<div class="card-list" id="coletasContainer">';
 
-        $html .= '<div class="card" style="text-align: center; cursor: pointer;" onclick="window.location.href=\'' . new moodle_url('/blocks/studentcare/register.php') . '\'">
+        $html .= '<div class="card" style="text-align: center; cursor: pointer;" onclick="window.location.href=\'' .
+            new moodle_url('/blocks/studentcare/register.php') . '\'">
         <h3 style="font-size: 50px; color: #4CAF50; margin: 20px 0;">
             <i class="fa fa-plus-circle"></i>
         </h3>
         <p style="font-size: 18px; font-weight: bold; color: #333;">' . get_string('new_collection', 'block_studentcare') . '</p>
     </div>';
-
 
         $coletas = $this->get_coletas_by_professor($usuarioid);
 
@@ -363,14 +363,14 @@ class collection_manager {
                     if ($modinfo) {
                         $resourceinfo = ucfirst($modinfo->name);
                     }
-                    $resourcename_record = $DB->get_record('course_modules', ['id' => $coleta->resource_id_atrelado], 'id, instance');
+                    $resourcename_record = $DB->get_record('course_modules', ['id' => $coleta->resource_id_atrelado], 'id,
+                        instance');
                     if ($resourcename_record) {
                         $resourcename = $DB->get_field($modinfo->name, 'name', ['id' => $resourcename_record->instance]);
                     }
                 }
 
                 $sectionname = get_section_name($coleta->curso_id, $coleta->section_id);
-
 
                 $coleta->recurso_nome = $resourceinfo;
                 $coleta->resource_name = $resourcename;
@@ -388,9 +388,12 @@ class collection_manager {
                 data-section_name="' . format_string($coleta->section_name) . '">
                 <h3>' . format_string(mb_strimwidth($coleta->nome, 0, 40, "...")) . '</h3>
                 <p><strong>' . get_string('course', 'block_studentcare') . ':</strong> ' . $cursonome . '</p>
-                <p><strong>' . get_string('start_date', 'block_studentcare') . ':</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_inicio)) . '</p>
-                <p><strong>' . get_string('end_date', 'block_studentcare') . ':</strong> ' . date('d/m/Y H:i', strtotime($coleta->data_fim)) . '</p>
-                <button class="btn-coleta" onclick="abrirModal(' . $coleta->id . ')"><i class="fa fa-info-circle"></i> ' . get_string('details', 'block_studentcare') . '</button>
+                <p><strong>' . get_string('start_date', 'block_studentcare') . ':</strong> ' .
+                    date('d/m/Y H:i', strtotime($coleta->data_inicio)) . '</p>
+                <p><strong>' . get_string('end_date', 'block_studentcare') . ':</strong> ' .
+                    date('d/m/Y H:i', strtotime($coleta->data_fim)) . '</p>
+                <button class="btn-coleta" onclick="abrirModal(' . $coleta->id . ')"><i class="fa fa-info-circle"></i> ' .
+                    get_string('details', 'block_studentcare') . '</button>
              </div>';
             }
         }
@@ -557,9 +560,9 @@ class collection_manager {
                 document.getElementById("modalColetaInicio").textContent = new Date(coleta.data_inicio).toLocaleString();
                 document.getElementById("modalColetaFim").textContent = new Date(coleta.data_fim).toLocaleString();
                 document.getElementById("modalNotificarAlunos").textContent = coleta.notificar_alunos == 1 ? "' .
-                    get_string('yes', 'block_studentcare') . '" : "' . get_string('no', 'block_studentcare') . '";
+            get_string('yes', 'block_studentcare') . '" : "' . get_string('no', 'block_studentcare') . '";
                 document.getElementById("modalReceberAlerta").textContent = coleta.receber_alerta == 1 ? "' .
-                    get_string('yes', 'block_studentcare') . '" : "' . get_string('no', 'block_studentcare') . '";
+            get_string('yes', 'block_studentcare') . '" : "' . get_string('no', 'block_studentcare') . '";
                 document.getElementById("modalResourceName").textContent = coleta.resource_name;
                 document.getElementById("modalSectionName").textContent = coleta.section_name;
                 $.ajax({
@@ -654,7 +657,6 @@ class collection_manager {
 
         </script>';
 
-
         return $html;
     }
 
@@ -675,7 +677,8 @@ class collection_manager {
                            (ra.userid = :usuario_id_professor AND r.shortname = :role_teacher))
                     ORDER BY c.data_criacao DESC";
 
-        $params = ['context_course_level' => CONTEXT_COURSE, 'usuario_id_cadastro' => $usuarioid, 'usuario_id_professor' => $usuarioid, 'role_teacher' => 'editingteacher',];
+        $params = ['context_course_level' => CONTEXT_COURSE, 'usuario_id_cadastro' => $usuarioid,
+            'usuario_id_professor' => $usuarioid, 'role_teacher' => 'editingteacher',];
 
         return $DB->get_records_sql($sql, $params);
     }
@@ -699,7 +702,6 @@ class collection_manager {
 
         $perguntas = $this->obter_perguntas_associadas($coletaid);
 
-
         $sql_respostas = "SELECT r.id, a.username AS usuario, a.email, p.id AS pergunta_id, p.pergunta_texto, r.resposta,
             r.data_resposta, 
         ra.roleid, role.shortname AS role_name
@@ -719,7 +721,8 @@ class collection_manager {
         ob_clean();
 
         header('Content-Type: text/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename="' . mb_convert_encoding($coleta->nome, 'UTF-8') . '.csv"');
+        header('Content-Disposition: attachment; filename="' . mb_convert_encoding($coleta->nome, 'UTF-8') .
+            '.csv"');
 
         $output = fopen('php://output', 'w');
         fputs($output, "\xEF\xBB\xBF");
@@ -829,7 +832,6 @@ class collection_manager {
             $coleta_data['perguntas'][] = ['id' => $pergunta->pergunta_id, 'classe_aeq' => $pergunta->nome_classe,
                 'emocao' => $pergunta->emocao_nome, 'texto_pergunta' => $texto_pergunta];
         }
-
 
         foreach ($respostas as $resposta) {
             $coleta_data['respostas'][] = ['usuario' => $resposta->usuario, 'email' => $resposta->email,
