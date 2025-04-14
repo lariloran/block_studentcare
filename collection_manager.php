@@ -1,59 +1,32 @@
 <?php
-class collection_manager
-{
-    
-    //Busca todas asc oletas das disciplinas onde o usuário é professor
-    public function get_coletas_by_professor($usuario_id)
-    {
-        global $DB, $CFG;
-    
-        require_once($CFG->dirroot . '/lib/accesslib.php');
-    
-        $sql = "SELECT DISTINCT c.id, c.nome, c.data_inicio, c.data_fim, c.descricao, 
-                                    c.curso_id, c.notificar_alunos, c.receber_alerta, 
-                                    c.resource_id_atrelado, c.section_id, c.data_criacao
-                    FROM {studentcare_cadastrocoleta} c
-                    JOIN {context} ctx ON ctx.instanceid = c.curso_id
-                    JOIN {role_assignments} ra ON ra.contextid = ctx.id
-                    JOIN {role} r ON r.id = ra.roleid
-                    WHERE ctx.contextlevel = :context_course_level
-                      AND (c.usuario_id = :usuario_id_cadastro OR 
-                           (ra.userid = :usuario_id_professor AND r.shortname = :role_teacher))
-                    ORDER BY c.data_criacao DESC";
-    
-        $params = [
-            'context_course_level' => CONTEXT_COURSE, 
-            'usuario_id_cadastro' => $usuario_id,   
-            'usuario_id_professor' => $usuario_id,   
-            'role_teacher' => 'editingteacher',   
-        ];
-    
-        return $DB->get_records_sql($sql, $params);
-    }
-    
-    
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-    private function obter_perguntas_associadas($coleta_id)
-    {
-        global $DB;
+/**
+ * Collection Manager
+ *
+ * @package block_studentcare
+ * @copyright  2024 Rafael Rodrigues
+ * @author Rafael Rodrigues
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class collection_manager {
 
-        $sql = "SELECT pergunta.id AS pergunta_id, 
-                       classe.nome_classe, 
-                       emocao.nome AS emocao_nome, 
-                       pergunta.pergunta_texto
-                FROM {studentcare_associacao_classe_emocao_coleta} assoc
-                JOIN {studentcare_classeaeq} classe ON classe.id = assoc.classeaeq_id
-                JOIN {studentcare_emocao} emocao ON emocao.id = assoc.emocao_id
-                JOIN {studentcare_pergunta} pergunta ON pergunta.emocao_id = emocao.id
-                WHERE assoc.cadastrocoleta_id = :coleta_id";
-
-        $params = ['coleta_id' => $coleta_id];
-        return $DB->get_records_sql($sql, $params);
-    }
-
-    public function excluir_coleta($coleta_id)
-    {
+    //Busca todas as coletas das disciplinas onde o usuário é professor.
+    public function excluir_coleta($coleta_id) {
         global $DB, $CFG;
 
         $transaction = $DB->start_delegated_transaction();
@@ -62,7 +35,7 @@ class collection_manager
             $resource_id_instance = $DB->get_field('studentcare_cadastrocoleta', 'resource_id', ['id' => $coleta_id]);
 
             if ($resource_id_instance) {
-                // Busca diretamente o ID em `course_modules` onde `instance` é igual ao `resource_id`
+                // Busca diretamente o ID em `course_modules` onde `instance` é igual ao `resource_id`.
                 $course_module_id = $DB->get_field('course_modules', 'id', ['instance' => $resource_id_instance]);
 
                 if ($course_module_id) {
@@ -85,9 +58,7 @@ class collection_manager
         }
     }
 
-    
-    public function listar_coletas($usuario_id)
-    {
+    public function listar_coletas($usuario_id) {
         global $DB, $CFG, $PAGE;
         require_once($CFG->dirroot . '/course/lib.php');
 
@@ -364,17 +335,17 @@ class collection_manager
         </select>
     </div>
     ';
-    
+
 
         $html .= '<div class="card-list" id="coletasContainer">';
-       
+
         $html .= '<div class="card" style="text-align: center; cursor: pointer;" onclick="window.location.href=\'' . new moodle_url('/blocks/studentcare/register.php') . '\'">
         <h3 style="font-size: 50px; color: #4CAF50; margin: 20px 0;">
             <i class="fa fa-plus-circle"></i>
         </h3>
         <p style="font-size: 18px; font-weight: bold; color: #333;">' . get_string('new_collection', 'block_studentcare') . '</p>
     </div>';
-    
+
 
         $coletas = $this->get_coletas_by_professor($usuario_id);
 
@@ -689,10 +660,29 @@ class collection_manager
         return $html;
     }
 
+    public function get_coletas_by_professor($usuario_id) {
+        global $DB, $CFG;
 
+        require_once($CFG->dirroot . '/lib/accesslib.php');
 
-    public function download_csv($coleta_id)
-    {
+        $sql = "SELECT DISTINCT c.id, c.nome, c.data_inicio, c.data_fim, c.descricao, 
+                                    c.curso_id, c.notificar_alunos, c.receber_alerta, 
+                                    c.resource_id_atrelado, c.section_id, c.data_criacao
+                    FROM {studentcare_cadastrocoleta} c
+                    JOIN {context} ctx ON ctx.instanceid = c.curso_id
+                    JOIN {role_assignments} ra ON ra.contextid = ctx.id
+                    JOIN {role} r ON r.id = ra.roleid
+                    WHERE ctx.contextlevel = :context_course_level
+                      AND (c.usuario_id = :usuario_id_cadastro OR 
+                           (ra.userid = :usuario_id_professor AND r.shortname = :role_teacher))
+                    ORDER BY c.data_criacao DESC";
+
+        $params = ['context_course_level' => CONTEXT_COURSE, 'usuario_id_cadastro' => $usuario_id, 'usuario_id_professor' => $usuario_id, 'role_teacher' => 'editingteacher',];
+
+        return $DB->get_records_sql($sql, $params);
+    }
+
+    public function download_csv($coleta_id) {
         global $DB;
 
         $sql = "SELECT id, nome, data_inicio, data_fim, descricao, curso_id, notificar_alunos, receber_alerta 
@@ -736,47 +726,43 @@ class collection_manager
         fputs($output, "\xEF\xBB\xBF");
 
         fputcsv($output, ['Nome', 'Data de Início', 'Data de Fim', 'Descrição', 'Disciplina', 'Notificar Aluno', 'Receber Alerta']);
-        fputcsv($output, [
-            mb_convert_encoding($coleta->nome, 'UTF-8'),
-            date('d/m/Y H:i', strtotime($coleta->data_inicio)),
-            date('d/m/Y H:i', strtotime($coleta->data_fim)),
-            mb_convert_encoding($coleta->descricao, 'UTF-8'),
-            $curso_nome,
-            $coleta->notificar_alunos ? get_string('yes', 'moodle') : get_string('no', 'block_studentcare'),
-            $coleta->receber_alerta ? get_string('yes', 'moodle') : get_string('no', 'block_studentcare')
-            
+        fputcsv($output, [mb_convert_encoding($coleta->nome, 'UTF-8'), date('d/m/Y H:i', strtotime($coleta->data_inicio)), date('d/m/Y H:i', strtotime($coleta->data_fim)), mb_convert_encoding($coleta->descricao, 'UTF-8'), $curso_nome, $coleta->notificar_alunos ? get_string('yes', 'moodle') : get_string('no', 'block_studentcare'), $coleta->receber_alerta ? get_string('yes', 'moodle') : get_string('no', 'block_studentcare')
+
         ]);
 
         fputcsv($output, ['ID da Pergunta', 'Classe AEQ', 'Emoção', 'Pergunta']);
         foreach ($perguntas as $pergunta) {
-            fputcsv($output, [
-                $pergunta->pergunta_id,
-                mb_convert_encoding($pergunta->nome_classe, 'UTF-8'),
-                mb_convert_encoding($pergunta->emocao_nome, 'UTF-8'),
-                !empty($pergunta->pergunta_texto) && get_string_manager()->string_exists($pergunta->pergunta_texto, 'block_studentcare') 
-        ? mb_convert_encoding(get_string($pergunta->pergunta_texto, 'block_studentcare'), 'UTF-8') 
-        : mb_convert_encoding('Texto não definido', 'UTF-8') // Texto padrão
+            fputcsv($output, [$pergunta->pergunta_id, mb_convert_encoding($pergunta->nome_classe, 'UTF-8'), mb_convert_encoding($pergunta->emocao_nome, 'UTF-8'), !empty($pergunta->pergunta_texto) && get_string_manager()->string_exists($pergunta->pergunta_texto, 'block_studentcare') ? mb_convert_encoding(get_string($pergunta->pergunta_texto, 'block_studentcare'), 'UTF-8') : mb_convert_encoding('Texto não definido', 'UTF-8') // Texto padrão
             ]);
         }
 
         fputcsv($output, ['Usuario', 'Email', 'Role', 'ID da Pergunta', 'Resposta', 'Data de Resposta']);
         foreach ($respostas as $resposta) {
-            fputcsv($output, [
-                mb_convert_encoding($resposta->usuario, 'UTF-8'),
-                mb_convert_encoding($resposta->email, 'UTF-8'),
-                mb_convert_encoding($resposta->role_name, 'UTF-8'),
-                $resposta->pergunta_id,
-                $resposta->resposta,
-                date('d/m/Y H:i', strtotime($resposta->data_resposta))
-            ]);
+            fputcsv($output, [mb_convert_encoding($resposta->usuario, 'UTF-8'), mb_convert_encoding($resposta->email, 'UTF-8'), mb_convert_encoding($resposta->role_name, 'UTF-8'), $resposta->pergunta_id, $resposta->resposta, date('d/m/Y H:i', strtotime($resposta->data_resposta))]);
         }
 
         fclose($output);
         exit;
     }
 
-    public function download_json($coleta_id)
-    {
+    private function obter_perguntas_associadas($coleta_id) {
+        global $DB;
+
+        $sql = "SELECT pergunta.id AS pergunta_id, 
+                       classe.nome_classe, 
+                       emocao.nome AS emocao_nome, 
+                       pergunta.pergunta_texto
+                FROM {studentcare_associacao_classe_emocao_coleta} assoc
+                JOIN {studentcare_classeaeq} classe ON classe.id = assoc.classeaeq_id
+                JOIN {studentcare_emocao} emocao ON emocao.id = assoc.emocao_id
+                JOIN {studentcare_pergunta} pergunta ON pergunta.emocao_id = emocao.id
+                WHERE assoc.cadastrocoleta_id = :coleta_id";
+
+        $params = ['coleta_id' => $coleta_id];
+        return $DB->get_records_sql($sql, $params);
+    }
+
+    public function download_json($coleta_id) {
         global $DB;
 
         $sql = "SELECT nome, data_inicio, data_fim, descricao, curso_id, notificar_alunos, receber_alerta 
@@ -817,51 +803,26 @@ class collection_manager
         header('Content-Type: application/json');
         header('Content-Disposition: attachment; filename="' . $coleta->nome . '.json"');
 
-        $coleta_data = [
-            'nome' => $coleta->nome,
-            'data_inicio' => $coleta->data_inicio,
-            'data_fim' => $coleta->data_fim,
-            'descricao' => $coleta->descricao,
-            'curso_nome' => $curso_nome,
-            'notificar_alunos' => $coleta->notificar_alunos ? get_string('yes', 'block_studentcare') : get_string('no', 'block_studentcare'),
-            'receber_alerta' => $coleta->receber_alerta ? get_string('yes', 'block_studentcare') : get_string('no', 'block_studentcare'),
-            'perguntas' => [],
-            'respostas' => []
-        ];
+        $coleta_data = ['nome' => $coleta->nome, 'data_inicio' => $coleta->data_inicio, 'data_fim' => $coleta->data_fim, 'descricao' => $coleta->descricao, 'curso_nome' => $curso_nome, 'notificar_alunos' => $coleta->notificar_alunos ? get_string('yes', 'block_studentcare') : get_string('no', 'block_studentcare'), 'receber_alerta' => $coleta->receber_alerta ? get_string('yes', 'block_studentcare') : get_string('no', 'block_studentcare'), 'perguntas' => [], 'respostas' => []];
 
         foreach ($perguntas as $pergunta) {
-            $texto_pergunta = (!empty($pergunta->pergunta_texto) && get_string_manager()->string_exists($pergunta->pergunta_texto, 'block_studentcare')) 
-                ? get_string($pergunta->pergunta_texto, 'block_studentcare') 
-                : 'Texto não definido'; // Fallback para texto padrão
-        
-            $coleta_data['perguntas'][] = [
-                'id' => $pergunta->pergunta_id,
-                'classe_aeq' => $pergunta->nome_classe,
-                'emocao' => $pergunta->emocao_nome,
-                'texto_pergunta' => $texto_pergunta
-            ];
+            $texto_pergunta = (!empty($pergunta->pergunta_texto) && get_string_manager()->string_exists($pergunta->pergunta_texto, 'block_studentcare')) ? get_string($pergunta->pergunta_texto, 'block_studentcare') : 'Texto não definido'; // Fallback para texto padrão
+
+            $coleta_data['perguntas'][] = ['id' => $pergunta->pergunta_id, 'classe_aeq' => $pergunta->nome_classe, 'emocao' => $pergunta->emocao_nome, 'texto_pergunta' => $texto_pergunta];
         }
-        
+
 
         foreach ($respostas as $resposta) {
-            $coleta_data['respostas'][] = [
-                'usuario' => $resposta->usuario,
-                'email' => $resposta->email,
-                'funcao' => $resposta->role_name,
-                'id_pergunta' => $resposta->pergunta_id,
-                'resposta' => $resposta->resposta,
-                'data_resposta' => $resposta->data_resposta
-            ];
+            $coleta_data['respostas'][] = ['usuario' => $resposta->usuario, 'email' => $resposta->email, 'funcao' => $resposta->role_name, 'id_pergunta' => $resposta->pergunta_id, 'resposta' => $resposta->resposta, 'data_resposta' => $resposta->data_resposta];
         }
 
         echo json_encode($coleta_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
         exit;
     }
 
-    public function obter_emocoes_e_classes($coleta_id)
-    {
+    public function obter_emocoes_e_classes($coleta_id) {
         global $DB;
-    
+
         $sql = "SELECT 
                     classe.nome_classe, 
                     GROUP_CONCAT(DISTINCT emocao.nome ORDER BY emocao.nome SEPARATOR ', ') AS emocoes
@@ -871,28 +832,37 @@ class collection_manager
                 WHERE assoc.cadastrocoleta_id = :coleta_id
                 GROUP BY classe.id, classe.nome_classe
                 ORDER BY FIELD(classe.id, 1, 2, 3), classe.nome_classe";
-    
+
         $params = ['coleta_id' => $coleta_id];
         return $DB->get_records_sql($sql, $params);
     }
-    
+
 
 }
+
 ?>
 
 <div id="coletaModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
         <h2 id="modalColetaNome"></h2>
-        <p><strong><?php echo get_string('preview_coleta', 'block_studentcare'); ?>:</strong> <a id="modalColetaUrl" href="#" target="_blank"><?php echo get_string('link_coleta', 'block_studentcare'); ?></a></p>
-        <p><strong><?php echo get_string('disciplina', 'block_studentcare'); ?>:</strong> <a id="modalColetaDisciplina" href="#" target="_blank"
-                style="color: #0073AA; text-decoration: none;"></a></p>
+        <p><strong><?php echo get_string('preview_coleta', 'block_studentcare'); ?>:</strong> <a id="modalColetaUrl" href="#"
+                                                                                                 target="_blank"><?php echo get_string('link_coleta', 'block_studentcare'); ?></a>
+        </p>
+        <p><strong><?php echo get_string('disciplina', 'block_studentcare'); ?>:</strong> <a id="modalColetaDisciplina" href="#"
+                                                                                             target="_blank"
+                                                                                             style="color: #0073AA; text-decoration: none;"></a>
+        </p>
         <p><strong><?php echo get_string('data_inicio', 'block_studentcare'); ?>:</strong> <span id="modalColetaInicio"></span></p>
         <p><strong><?php echo get_string('data_fim', 'block_studentcare'); ?>:</strong> <span id="modalColetaFim"></span></p>
-        <p><strong><?php echo get_string('nome_secao_vinculada', 'block_studentcare'); ?>:</strong> <span id="modalSectionName"></span></p>
-        <p><strong><?php echo get_string('nome_atividade_recurso_vinculado', 'block_studentcare'); ?>:</strong> <span id="modalResourceName"></span></p>
-        <p><strong><?php echo get_string('notificar_aluno', 'block_studentcare'); ?>:</strong> <span id="modalNotificarAlunos"></span></p>
-        <p><strong><?php echo get_string('receber_alerta', 'block_studentcare'); ?>:</strong> <span id="modalReceberAlerta"></span></p>
+        <p><strong><?php echo get_string('nome_secao_vinculada', 'block_studentcare'); ?>:</strong> <span
+                    id="modalSectionName"></span></p>
+        <p><strong><?php echo get_string('nome_atividade_recurso_vinculado', 'block_studentcare'); ?>:</strong> <span
+                    id="modalResourceName"></span></p>
+        <p><strong><?php echo get_string('notificar_aluno', 'block_studentcare'); ?>:</strong> <span
+                    id="modalNotificarAlunos"></span></p>
+        <p><strong><?php echo get_string('receber_alerta', 'block_studentcare'); ?>:</strong> <span id="modalReceberAlerta"></span>
+        </p>
         <p><strong><?php echo get_string('descricao', 'block_studentcare'); ?>:</strong> <span id="modalColetaDescricao"></span></p>
         <div id="modalEmocoes"></div>
 
@@ -907,7 +877,7 @@ class collection_manager
                 <i class="fa fa-edit"></i> <?php echo get_string('editar', 'block_studentcare'); ?>
             </button>
             <button id="deleteColeta" class="btn-coleta btn-coleta-secondary" data-id="" data-name=""
-                onclick="window.studentcare.confirmarExclusaoModal(this)">
+                    onclick="window.studentcare.confirmarExclusaoModal(this)">
                 <i class="fa fa-trash"></i> <?php echo get_string('excluir', 'block_studentcare'); ?>
             </button>
 

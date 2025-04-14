@@ -15,11 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * the first page to view the studentcare
+ * Get class emotions
  *
+ * @package block_studentcare
+ * @copyright  2024 Rafael Rodrigues
  * @author Rafael Rodrigues
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package block_studentcare
  */
 
 require_once('../../config.php');
@@ -207,7 +208,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $tcle_aceito_form = optional_param('tcle_aceito', 0, PARAM_INT);
     if ($tcle_aceito_form == 1) {
         if (empty($tcle_records)) {
-            $DB->insert_record('studentcare_tcle_resposta', (object) [
+            $DB->insert_record('studentcare_tcle_resposta', (object)[
                 'usuario_id' => $userid,
                 'coleta_id' => $coletaid,
                 'tcle_aceito' => $tcle_aceito_form,
@@ -437,21 +438,20 @@ echo '<div id="translation-data"
 <?php endif; ?>
 
 <div id="feedback-container"
-    style="display: none; text-align: center; margin: 0 auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); max-width: 600px;">
+     style="display: none; text-align: center; margin: 0 auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px;
+     background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); max-width: 600px;">
     <h3 class="feedback-title" style="font-size: 18px; font-weight: bold; margin-bottom: 15px; color: #333;">
         <?php echo get_string('feedback_title', 'block_studentcare'); ?>
     </h3>
     <textarea id="feedback-text" rows="4" cols="50"
-        placeholder="<?php echo get_string('feedback_placeholder', 'block_studentcare'); ?>"
-        style="width: 100%; max-width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 15px; font-size: 16px;"></textarea>
+              placeholder="<?php echo get_string('feedback_placeholder', 'block_studentcare'); ?>"
+              style="width: 100%; max-width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 15px; font-size: 16px;"></textarea>
     <div class="feedback-btn-container" style="display: flex; justify-content: center;">
         <button class="buttonTcle" onclick="enviarFeedback()" style="padding: 10px 20px;">
             <?php echo get_string('feedback_submit', 'block_studentcare'); ?>
         </button>
     </div>
 </div>
-
-
 
 
 <div id="modal-erro" class="modal">
@@ -525,7 +525,6 @@ echo '<div id="translation-data"
     }
 
 
-
     let ultimaClasseId = null;
     let introducoesExibidas = {};
 
@@ -552,17 +551,20 @@ echo '<div id="translation-data"
         switch (classeId) {
             case "1": // Emoções Relacionadas às Aulas
                 textoAtividade = nomeRecurso
-                    ? `${getTranslation('in_course')} <strong>${nomeRecurso}</strong> ${getTranslation('from_course')} <strong>${cursoNome}</strong>`
+                    ? `${getTranslation('in_course')} <strong>${nomeRecurso}</strong> ${getTranslation('from_course')}
+                    <strong>${cursoNome}</strong>`
                     : `${getTranslation('from_class')} <strong>${cursoNome}</strong>`;
                 break;
             case "2": // Emoções Relacionadas ao Aprendizado
                 textoAtividade = nomeRecurso
-                    ? `${getTranslation('from_study')} <strong>${nomeRecurso}</strong> ${getTranslation('from_course')} <strong>${cursoNome}</strong>`
+                    ? `${getTranslation('from_study')} <strong>${nomeRecurso}</strong> ${getTranslation('from_course')}
+                    <strong>${cursoNome}</strong>`
                     : `${getTranslation('from_study')} ${getTranslation('from_course')} <strong>${cursoNome}</strong>`;
                 break;
             case "3": // Emoções Relacionadas às Atividades Avaliativas
                 textoAtividade = nomeRecurso
-                    ? `${getTranslation('from_assessment')} <strong>${nomeRecurso}</strong> ${getTranslation('from_course')} <strong>${cursoNome}</strong>`
+                    ? `${getTranslation('from_assessment')} <strong>${nomeRecurso}</strong> ${getTranslation('from_course')}
+                    <strong>${cursoNome}</strong>`
                     : `${getTranslation('from_assessment')} ${getTranslation('from_course')} <strong>${cursoNome}</strong>`;
                 break;
             default:
@@ -571,10 +573,12 @@ echo '<div id="translation-data"
 
         return `
         <p>
-            ${getTranslation('questions_referring')} ${plural ? getTranslation('plural_emotions') : getTranslation('singular_emotion')} 
+            ${getTranslation('questions_referring')}
+            ${plural ? getTranslation('plural_emotions') : getTranslation('singular_emotion')}
             ${emocoesComTooltip}
-            ${getTranslation('that_you_can_feel')} 
-            <strong>${getTranslation('before')}</strong>, <strong>${getTranslation('during')}</strong> or <strong>${getTranslation('after')}</strong> ${textoAtividade}. 
+            ${getTranslation('that_you_can_feel')}
+            <strong>${getTranslation('before')}</strong>, <strong>${getTranslation('during')}</strong> or
+            <strong>${getTranslation('after')}</strong> ${textoAtividade}.
             ${getTranslation('please_read_each_item')}
         </p>`;
     }
@@ -584,23 +588,24 @@ echo '<div id="translation-data"
 
         // Obter o nome do recurso atrelado
         let nomeRecurso = <?php
-        $resource_name = '--';
-        $coleta = $DB->get_record('studentcare_cadastrocoleta', ['id' => $coletaid], '*');
+            $resource_name = '--';
+            $coleta = $DB->get_record('studentcare_cadastrocoleta', ['id' => $coletaid], '*');
 
-        if ($coleta && $coleta->resource_id_atrelado) {
-            $module = $DB->get_record('course_modules', ['id' => $coleta->resource_id_atrelado], 'module');
-            if ($module) {
-                $mod_info = $DB->get_record('modules', ['id' => $module->module], 'name');
-                if ($mod_info) {
-                    $resource_name_record = $DB->get_record('course_modules', ['id' => $coleta->resource_id_atrelado], 'id, instance');
-                    if ($resource_name_record) {
-                        $resource_name = $DB->get_field($mod_info->name, 'name', ['id' => $resource_name_record->instance]);
+            if ($coleta && $coleta->resource_id_atrelado) {
+                $module = $DB->get_record('course_modules', ['id' => $coleta->resource_id_atrelado], 'module');
+                if ($module) {
+                    $mod_info = $DB->get_record('modules', ['id' => $module->module], 'name');
+                    if ($mod_info) {
+                        $resource_name_record = $DB->get_record('course_modules',
+                            ['id' => $coleta->resource_id_atrelado], 'id, instance');
+                        if ($resource_name_record) {
+                            $resource_name = $DB->get_field($mod_info->name, 'name', ['id' => $resource_name_record->instance]);
+                        }
                     }
                 }
             }
-        }
-        echo json_encode($resource_name);
-        ?>;
+            echo json_encode($resource_name);
+            ?>;
 
         let mensagemInicial = gerarMensagem(
             emocoesDaClasse,
@@ -618,7 +623,6 @@ echo '<div id="translation-data"
     }
 
 
-
     let contadorPerguntas = 1; // Variável para rastrear o número da pergunta exibida
     let ultimaDirecao = "avancar"; // Variável para rastrear a última direção de navegação
 
@@ -630,7 +634,8 @@ echo '<div id="translation-data"
             perguntas
                 .filter(p => p.classe_id === pergunta.classe_id)
                 .map(p => {
-                    // Converte para minúsculas e substitui espaços ou hífens por underlines para corresponder ao formato dos atributos
+                    // Converte para minúsculas e substitui espaços ou hífens por underlines para corresponder ao formato dos
+                    // atributos.
                     let key = p.emocao_nome.replace(/[\s-]+/g, '_').toLowerCase();
                     return getTranslation(key);
                 })
@@ -746,7 +751,6 @@ echo '<div id="translation-data"
     }
 
 
-
     function voltarPergunta() {
         if (perguntaAtual > 0) {
             perguntaAtual--;
@@ -829,7 +833,6 @@ echo '<div id="translation-data"
     }
 
 
-
     function enviarRespostas() {
         const dadosRespostas = {
             coleta_id: <?php echo $coletaid; ?>,
@@ -881,7 +884,6 @@ echo '<div id="translation-data"
     }
 
 
-
     function abrirModal(modalId) {
         document.getElementById(modalId).style.display = 'block';
     }
@@ -902,7 +904,6 @@ echo $OUTPUT->footer();
 ?>
 
 </script>
-
 
 
 <style>
