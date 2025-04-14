@@ -1,15 +1,44 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Process Collection
+ *
+ * @package block_studentcare
+ * @copyright  2024 Rafael Rodrigues
+ * @author Rafael Rodrigues
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace block_studentcare\task;
 
-class process_collection extends \core\task\scheduled_task
-{
-    public function get_name()
-    {
+class process_collection extends \core\task\scheduled_task {
+    /**
+     * A method that gets the name of the collection.
+     *
+     * @return string
+     */
+    public function get_name() {
         return get_string('process_collection', 'block_studentcare');
     }
 
-    public function execute()
-    {
+    /**
+     * A method that executes collection task.
+     */
+    public function execute() {
         global $DB;
 
         $agora = time();
@@ -21,18 +50,14 @@ class process_collection extends \core\task\scheduled_task
         AND c.notificacao_enviada = 0";
 
         try {
-            $coletas_iniciar = $DB->get_records_sql($sql, [
-                'agora' => date('Y-m-d H:i:s', $agora),
-            ]);
+            $coletasiniciar = $DB->get_records_sql($sql, ['agora' => date('Y-m-d H:i:s', $agora),]);
         } catch (\dml_exception $e) {
             mtrace("Erro ao buscar coletas: " . $e->getMessage());
             return;
         }
 
-
-
-        if (!empty($coletas_iniciar)) {
-            foreach ($coletas_iniciar as $coleta) {
+        if (!empty($coletasiniciar)) {
+            foreach ($coletasiniciar as $coleta) {
                 mtrace("Processando a coleta: " . $coleta->nome);
 
                 $curso = $DB->get_record('course', ['id' => $coleta->curso_id]);
@@ -54,8 +79,7 @@ class process_collection extends \core\task\scheduled_task
             mtrace("Nenhuma coleta encontrada para processar.");
         }
 
-
-        // **2. Processar coletas que precisam enviar notificação de fim**
+        // **2. Processar coletas que precisam enviar notificação de fim**.
         $sql_finalizar = "SELECT c.*
                       FROM {studentcare_cadastrocoleta} c
                       WHERE :agora >= c.data_fim
@@ -63,16 +87,14 @@ class process_collection extends \core\task\scheduled_task
                       AND c.notificacao_finalizada = 0";
 
         try {
-            $coletas_finalizar = $DB->get_records_sql($sql_finalizar, [
-                'agora' => date('Y-m-d H:i:s', $agora),
-            ]);
+            $coletasfinalizar = $DB->get_records_sql($sql_finalizar, ['agora' => date('Y-m-d H:i:s', $agora),]);
         } catch (\dml_exception $e) {
             mtrace("Erro ao buscar coletas para notificação de fim: " . $e->getMessage());
             return;
         }
 
-        if (!empty($coletas_finalizar)) {
-            foreach ($coletas_finalizar as $coleta) {
+        if (!empty($coletasfinalizar)) {
+            foreach ($coletasfinalizar as $coleta) {
                 mtrace("Processando notificação de fim para a coleta: " . $coleta->nome);
 
                 $this->enviar_notificacao_fim($coleta);
@@ -87,59 +109,10 @@ class process_collection extends \core\task\scheduled_task
         }
     }
 
-
-    private function enviar_notificacao_fim($coleta)
-    {
-        global $DB, $CFG;
-
-        // Verificar se a notificação já foi enviada
-        if ($coleta->notificacao_finalizada) {
-            mtrace("Notificação de fim já enviada para a coleta: {$coleta->nome}");
-            return;
-        }
-
-        $usuario = $DB->get_record('user', ['id' => $coleta->usuario_id]);
-        if (!$usuario) {
-            mtrace("Erro: Usuário que cadastrou a coleta não foi encontrado. Coleta: {$coleta->nome}");
-            return;
-        }
-
-        $curso = $DB->get_record('course', ['id' => $coleta->curso_id]);
-        if (!$curso) {
-            mtrace("Erro: Curso não encontrado para a coleta {$coleta->nome} (ID do curso: {$coleta->curso_id})");
-            return;
-        }
-
-        $nome_disciplina = $curso->fullname;
-
-        $eventdata = new \core\message\message();
-        $eventdata->component = 'block_studentcare';
-        $eventdata->name = 'collection_finished';
-        $eventdata->userfrom = \core_user::get_noreply_user();
-        $eventdata->userto = $usuario->id;
-
-        $listagem_url = new \moodle_url('/blocks/studentcare/index.php');
-
-        $eventdata->subject = "StudentCare - Coleta finalizada: {$coleta->nome}";
-        $eventdata->fullmessage = "Olá! A coleta de emoções '{$coleta->nome}' para a disciplina {$nome_disciplina} foi finalizada. Confira as respostas acessando o painel do StudentCare: {$listagem_url->out()}.";
-        $eventdata->fullmessageformat = FORMAT_PLAIN;
-        $eventdata->fullmessagehtml = "<p>Olá!</p>
-            <p>A coleta de emoções <strong>{$coleta->nome}</strong> para a disciplina <strong>{$nome_disciplina}</strong> foi finalizada.</p>
-            <p>Confira as respostas no painel do StudentCare clicando <a href='{$listagem_url->out()}'>aqui</a>.</p>";
-        $eventdata->smallmessage = "A coleta '{$coleta->nome}' foi finalizada. Confira as respostas no painel do StudentCare <a href='{$listagem_url->out()}'>aqui</a>.";
-        $eventdata->notification = 1;
-
-        // Enviar a mensagem
-        message_send($eventdata);
-
-        // Atualizar a flag de notificação no banco de dados
-        $DB->set_field('studentcare_cadastrocoleta', 'notificacao_finalizada', 1, ['id' => $coleta->id]);
-
-        mtrace("Notificação de fim enviada com sucesso para a coleta: {$coleta->nome}");
-    }
-
-    private function adicionar_recurso_url($coleta, $curso)
-    {
+    /**
+     * A method that adds URL resource to a collection.
+     */
+    private function adicionar_recurso_url($coleta, $curso) {
         global $DB, $USER, $CFG;
 
         $coleta->curso_id = clean_param($coleta->curso_id, PARAM_INT);
@@ -200,10 +173,10 @@ class process_collection extends \core\task\scheduled_task
         mtrace("Nome do recurso: {$urlparams->name}");
         mtrace("URL: {$urlparams->externalurl}");
 
-        $cmid = \add_moduleinfo((object) $urlparams, $curso, null);
+        $cmid = \add_moduleinfo((object)$urlparams, $curso, null);
 
         if (is_object($cmid) && property_exists($cmid, 'id')) {
-            $cmid = (int) $cmid->id;
+            $cmid = (int)$cmid->id;
             mtrace("Recurso URL adicionado com sucesso com ID: {$cmid}");
 
             // Atualize o campo resource_id na tabela studentcare_cadastrocoleta
@@ -214,15 +187,14 @@ class process_collection extends \core\task\scheduled_task
         }
 
 
-
         mtrace("Finalizando a adição de recurso URL para a coleta: {$coleta->nome}");
     }
 
-
-    private function enviar_notificacao($coleta)
-    {
+    /**
+     * A method sends a notification.
+     */
+    private function enviar_notificacao($coleta) {
         global $DB, $CFG;
-
 
         $curso = $DB->get_record('course', ['id' => $coleta->curso_id]);
 
@@ -231,7 +203,7 @@ class process_collection extends \core\task\scheduled_task
             return;
         }
 
-        $nome_disciplina = $curso->fullname;
+        $nomedisciplina = $curso->fullname;
 
         $data_fim_formatada = date('d/m/Y H:i', strtotime($coleta->data_fim));
 
@@ -240,9 +212,7 @@ class process_collection extends \core\task\scheduled_task
             FROM {user_enrolments} ue
             JOIN {enrol} e ON ue.enrolid = e.id
             JOIN {user} u ON ue.userid = u.id
-            WHERE e.courseid = :courseid",
-            ['courseid' => $coleta->curso_id]
-        );
+            WHERE e.courseid = :courseid", ['courseid' => $coleta->curso_id]);
 
         foreach ($enrols as $usuario) {
             $eventdata = new \core\message\message();
@@ -250,39 +220,85 @@ class process_collection extends \core\task\scheduled_task
             $eventdata->name = 'created_collection';
             $eventdata->userfrom = \core_user::get_noreply_user();
             $eventdata->userto = $usuario->id;
-        
+
             // Substituição dos placeholders nas mensagens
             $subjectTemplate = get_string('event_subject', 'block_studentcare');
-            $eventdata->subject = str_replace('{disciplina}', $nome_disciplina, $subjectTemplate);
-        
+            $eventdata->subject = str_replace('{disciplina}', $nomedisciplina, $subjectTemplate);
+
             $fullMessageTemplate = get_string('event_fullmessage', 'block_studentcare');
-            $eventdata->fullmessage = str_replace(
-                array('{disciplina}', '{datafim}'),
-                array($nome_disciplina, $data_fim_formatada),
-                $fullMessageTemplate
-            );
+            $eventdata->fullmessage = str_replace(array('{disciplina}', '{datafim}'), array($nomedisciplina, $data_fim_formatada),
+                $fullMessageTemplate);
             $eventdata->fullmessageformat = FORMAT_PLAIN;
-        
+
             $fullMessageHtmlTemplate = get_string('event_fullmessagehtml', 'block_studentcare');
-            $eventdata->fullmessagehtml = str_replace(
-                array('{disciplina}', '{datafim}', '{url}'),
-                array($nome_disciplina, $data_fim_formatada, "{$CFG->wwwroot}/blocks/studentcare/view.php?coletaid={$coleta->id}"),
-                $fullMessageHtmlTemplate
-            );
-        
+            $eventdata->fullmessagehtml = str_replace(array('{disciplina}', '{datafim}', '{url}'),
+                array($nomedisciplina, $data_fim_formatada, "{$CFG->wwwroot}/blocks/studentcare/view.php?coletaid={$coleta->id}"), $fullMessageHtmlTemplate);
+
             $smallMessageTemplate = get_string('event_smallmessage', 'block_studentcare');
-            $eventdata->smallmessage = str_replace(
-                array('{disciplina}', '{datafim}', '{url}'),
-                array($nome_disciplina, $data_fim_formatada, "{$CFG->wwwroot}/blocks/studentcare/view.php?coletaid={$coleta->id}"),
-                $smallMessageTemplate
-            );
-        
+            $eventdata->smallmessage = str_replace(array('{disciplina}', '{datafim}', '{url}'),
+                array($nomedisciplina, $data_fim_formatada, "{$CFG->wwwroot}/blocks/studentcare/view.php?coletaid={$coleta->id}"), $smallMessageTemplate);
+
             $eventdata->notification = 1;
-        
+
             message_send($eventdata);
         }
-        
 
+
+    }
+
+    /**
+     * A method that sends ending notification.
+     */
+    private function enviar_notificacao_fim($coleta) {
+        global $DB, $CFG;
+
+        // Verificar se a notificação já foi enviada
+        if ($coleta->notificacao_finalizada) {
+            mtrace("Notificação de fim já enviada para a coleta: {$coleta->nome}");
+            return;
+        }
+
+        $usuario = $DB->get_record('user', ['id' => $coleta->usuario_id]);
+        if (!$usuario) {
+            mtrace("Erro: Usuário que cadastrou a coleta não foi encontrado. Coleta: {$coleta->nome}");
+            return;
+        }
+
+        $curso = $DB->get_record('course', ['id' => $coleta->curso_id]);
+        if (!$curso) {
+            mtrace("Erro: Curso não encontrado para a coleta {$coleta->nome} (ID do curso: {$coleta->curso_id})");
+            return;
+        }
+
+        $nomedisciplina = $curso->fullname;
+
+        $eventdata = new \core\message\message();
+        $eventdata->component = 'block_studentcare';
+        $eventdata->name = 'collection_finished';
+        $eventdata->userfrom = \core_user::get_noreply_user();
+        $eventdata->userto = $usuario->id;
+
+        $listagemurl = new \moodle_url('/blocks/studentcare/index.php');
+
+        $eventdata->subject = "StudentCare - Coleta finalizada: {$coleta->nome}";
+        $eventdata->fullmessage = "Olá! A coleta de emoções '{$coleta->nome}' para a disciplina {$nomedisciplina} foi finalizada.
+            Confira as respostas acessando o painel do StudentCare: {$listagemurl->out()}.";
+        $eventdata->fullmessageformat = FORMAT_PLAIN;
+        $eventdata->fullmessagehtml = "<p>Olá!</p>
+            <p>A coleta de emoções <strong>{$coleta->nome}</strong> para a disciplina <strong>{$nomedisciplina}</strong>
+             foi finalizada.</p>
+            <p>Confira as respostas no painel do StudentCare clicando <a href='{$listagemurl->out()}'>aqui</a>.</p>";
+        $eventdata->smallmessage = "A coleta '{$coleta->nome}' foi finalizada. Confira as respostas no painel do StudentCare
+            <a href='{$listagemurl->out()}'>aqui</a>.";
+        $eventdata->notification = 1;
+
+        // Enviar a mensagem
+        message_send($eventdata);
+
+        // Atualizar a flag de notificação no banco de dados
+        $DB->set_field('studentcare_cadastrocoleta', 'notificacao_finalizada', 1, ['id' => $coleta->id]);
+
+        mtrace("Notificação de fim enviada com sucesso para a coleta: {$coleta->nome}");
     }
 
 
