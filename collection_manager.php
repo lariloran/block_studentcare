@@ -556,8 +556,10 @@ class collection_manager {
                 }               
                 document.getElementById("modalColetaInicio").textContent = new Date(coleta.data_inicio).toLocaleString();
                 document.getElementById("modalColetaFim").textContent = new Date(coleta.data_fim).toLocaleString();
-                document.getElementById("modalNotificarAlunos").textContent = coleta.notificar_alunos == 1 ? "' . get_string('yes', 'block_studentcare') . '" : "' . get_string('no', 'block_studentcare') . '";
-                document.getElementById("modalReceberAlerta").textContent = coleta.receber_alerta == 1 ? "' . get_string('yes', 'block_studentcare') . '" : "' . get_string('no', 'block_studentcare') . '";
+                document.getElementById("modalNotificarAlunos").textContent = coleta.notificar_alunos == 1 ? "' .
+                    get_string('yes', 'block_studentcare') . '" : "' . get_string('no', 'block_studentcare') . '";
+                document.getElementById("modalReceberAlerta").textContent = coleta.receber_alerta == 1 ? "' .
+                    get_string('yes', 'block_studentcare') . '" : "' . get_string('no', 'block_studentcare') . '";
                 document.getElementById("modalResourceName").textContent = coleta.resource_name;
                 document.getElementById("modalSectionName").textContent = coleta.section_name;
                 $.ajax({
@@ -723,19 +725,31 @@ class collection_manager {
         fputs($output, "\xEF\xBB\xBF");
 
         fputcsv($output, ['Nome', 'Data de Início', 'Data de Fim', 'Descrição', 'Disciplina', 'Notificar Aluno', 'Receber Alerta']);
-        fputcsv($output, [mb_convert_encoding($coleta->nome, 'UTF-8'), date('d/m/Y H:i', strtotime($coleta->data_inicio)), date('d/m/Y H:i', strtotime($coleta->data_fim)), mb_convert_encoding($coleta->descricao, 'UTF-8'), $cursonome, $coleta->notificar_alunos ? get_string('yes', 'moodle') : get_string('no', 'block_studentcare'), $coleta->receber_alerta ? get_string('yes', 'moodle') : get_string('no', 'block_studentcare')
+        fputcsv($output, [mb_convert_encoding($coleta->nome, 'UTF-8'),
+            date('d/m/Y H:i', strtotime($coleta->data_inicio)),
+            date('d/m/Y H:i', strtotime($coleta->data_fim)),
+            mb_convert_encoding($coleta->descricao, 'UTF-8'),
+            $cursonome, $coleta->notificar_alunos ? get_string('yes', 'moodle') : get_string('no', 'block_studentcare'),
+            $coleta->receber_alerta ? get_string('yes', 'moodle') : get_string('no', 'block_studentcare')
 
         ]);
 
         fputcsv($output, ['ID da Pergunta', 'Classe AEQ', 'Emoção', 'Pergunta']);
         foreach ($perguntas as $pergunta) {
-            fputcsv($output, [$pergunta->pergunta_id, mb_convert_encoding($pergunta->nome_classe, 'UTF-8'), mb_convert_encoding($pergunta->emocao_nome, 'UTF-8'), !empty($pergunta->pergunta_texto) && get_string_manager()->string_exists($pergunta->pergunta_texto, 'block_studentcare') ? mb_convert_encoding(get_string($pergunta->pergunta_texto, 'block_studentcare'), 'UTF-8') : mb_convert_encoding('Texto não definido', 'UTF-8') // Texto padrão
+            fputcsv($output, [$pergunta->pergunta_id, mb_convert_encoding($pergunta->nome_classe, 'UTF-8'),
+                mb_convert_encoding($pergunta->emocao_nome, 'UTF-8'), !empty($pergunta->pergunta_texto) &&
+                get_string_manager()->string_exists($pergunta->pergunta_texto, 'block_studentcare') ?
+                    mb_convert_encoding(get_string($pergunta->pergunta_texto, 'block_studentcare'), 'UTF-8') :
+                    mb_convert_encoding('Texto não definido', 'UTF-8') // Texto padrão
             ]);
         }
 
         fputcsv($output, ['Usuario', 'Email', 'Role', 'ID da Pergunta', 'Resposta', 'Data de Resposta']);
         foreach ($respostas as $resposta) {
-            fputcsv($output, [mb_convert_encoding($resposta->usuario, 'UTF-8'), mb_convert_encoding($resposta->email, 'UTF-8'), mb_convert_encoding($resposta->role_name, 'UTF-8'), $resposta->pergunta_id, $resposta->resposta, date('d/m/Y H:i', strtotime($resposta->data_resposta))]);
+            fputcsv($output, [mb_convert_encoding($resposta->usuario, 'UTF-8'),
+                mb_convert_encoding($resposta->email, 'UTF-8'),
+                mb_convert_encoding($resposta->role_name, 'UTF-8'), $resposta->pergunta_id, $resposta->resposta,
+                date('d/m/Y H:i', strtotime($resposta->data_resposta))]);
         }
 
         fclose($output);
@@ -800,18 +814,27 @@ class collection_manager {
         header('Content-Type: application/json');
         header('Content-Disposition: attachment; filename="' . $coleta->nome . '.json"');
 
-        $coleta_data = ['nome' => $coleta->nome, 'data_inicio' => $coleta->data_inicio, 'data_fim' => $coleta->data_fim, 'descricao' => $coleta->descricao, 'curso_nome' => $cursonome, 'notificar_alunos' => $coleta->notificar_alunos ? get_string('yes', 'block_studentcare') : get_string('no', 'block_studentcare'), 'receber_alerta' => $coleta->receber_alerta ? get_string('yes', 'block_studentcare') : get_string('no', 'block_studentcare'), 'perguntas' => [], 'respostas' => []];
+        $coleta_data = ['nome' => $coleta->nome, 'data_inicio' => $coleta->data_inicio, 'data_fim' => $coleta->data_fim,
+            'descricao' => $coleta->descricao, 'curso_nome' => $cursonome,
+            'notificar_alunos' => $coleta->notificar_alunos ? get_string('yes', 'block_studentcare') :
+                get_string('no', 'block_studentcare'),
+            'receber_alerta' => $coleta->receber_alerta ? get_string('yes', 'block_studentcare') :
+                get_string('no', 'block_studentcare'), 'perguntas' => [], 'respostas' => []];
 
         foreach ($perguntas as $pergunta) {
-            $texto_pergunta = (!empty($pergunta->pergunta_texto) && get_string_manager()->string_exists($pergunta->pergunta_texto, 'block_studentcare')) ? get_string($pergunta->pergunta_texto, 'block_studentcare') : 'Texto não definido';
+            $texto_pergunta = (!empty($pergunta->pergunta_texto) && get_string_manager()->string_exists($pergunta->pergunta_texto,
+                    'block_studentcare')) ? get_string($pergunta->pergunta_texto, 'block_studentcare') : 'Texto não definido';
             // Fallback para texto padrão
 
-            $coleta_data['perguntas'][] = ['id' => $pergunta->pergunta_id, 'classe_aeq' => $pergunta->nome_classe, 'emocao' => $pergunta->emocao_nome, 'texto_pergunta' => $texto_pergunta];
+            $coleta_data['perguntas'][] = ['id' => $pergunta->pergunta_id, 'classe_aeq' => $pergunta->nome_classe,
+                'emocao' => $pergunta->emocao_nome, 'texto_pergunta' => $texto_pergunta];
         }
 
 
         foreach ($respostas as $resposta) {
-            $coleta_data['respostas'][] = ['usuario' => $resposta->usuario, 'email' => $resposta->email, 'funcao' => $resposta->role_name, 'id_pergunta' => $resposta->pergunta_id, 'resposta' => $resposta->resposta, 'data_resposta' => $resposta->data_resposta];
+            $coleta_data['respostas'][] = ['usuario' => $resposta->usuario, 'email' => $resposta->email,
+                'funcao' => $resposta->role_name, 'id_pergunta' => $resposta->pergunta_id, 'resposta' => $resposta->resposta,
+                'data_resposta' => $resposta->data_resposta];
         }
 
         echo json_encode($coleta_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
