@@ -263,6 +263,11 @@ class edit_form extends moodleform {
         $PAGE->requires->js(new moodle_url('/blocks/studentcare/js/edit_form.js'));
     }
 
+    /**
+     *  Missing description.
+     *
+     * @return string
+     */
     public function get_user_courses($userid) {
         global $DB;
         $courses = enrol_get_users_courses($userid, true);
@@ -278,6 +283,11 @@ class edit_form extends moodleform {
         return $teachercourses;
     }
 
+    /**
+     *  Missing description.
+     *
+     * @return string
+     */
     public function process_form($data) {
         global $DB, $SESSION;
 
