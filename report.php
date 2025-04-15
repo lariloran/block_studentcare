@@ -25,7 +25,7 @@ $context = cont// This file is part of Moodle - http://moodle.org/
  * @package block_studentcare
  */
 
-ext_course::instance($COURSE->id);
+$context = context_course::instance($COURSE->id);
 $PAGE->set_url('/blocks/studentcare/report.php');
 $PAGE->set_context($context);
 $PAGE->set_title(get_string('report', 'block_studentcare'));

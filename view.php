@@ -208,7 +208,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'coleta_id' => $coletaid,
                     'tcle_aceito' => $tcleaceitoform,
                     'curso_id' => $coletar->curso_id,
-                    'data_resposta' => date('Y-m-d H:i:s')
+                    'data_resposta' => date('Y-m-d H:i:s'),
             ]);
         }
         redirect($PAGE->url);
@@ -319,7 +319,7 @@ foreach ($perguntas as $pergunta) {
 
 $perguntasjson = json_encode(array_values($perguntastraduzidas));
 
-echo '<div id="translation-data" 
+echo '<div id="translation-data"
     data-in_course="' . get_string('in_course', 'block_studentcare') . '"
     data-from_course="' . get_string('from_course', 'block_studentcare') . '"
     data-from_class="' . get_string('from_class', 'block_studentcare') . '"
