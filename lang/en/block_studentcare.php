@@ -389,7 +389,7 @@ $string['pride-txttooltip'] = 'A feeling of satisfaction with oneself or others 
 $string['relief-txttooltip'] = 'A feeling of calm and comfort that arises when a stressful, difficult, or painful situation comes to an end or is resolved.';
 $string['enjoyment-txttooltip'] = 'A sense of satisfaction and well-being, usually associated with pleasant and positive experiences.';
 
-///Tooltips
+// Tooltips
 $string['select_section_help'] = 'Choose the section where you want to conduct the emotion collection. Each section represents a course module or week. When selecting a section, a <strong>URL</strong> type resource will automatically be created in the chosen section.';
 $string['select_resource_help'] = 'Choose the resource you want to link to the emotion collection. Each resource represents an activity or material within the course. When selecting the resource, it will be automatically linked to the emotion collection in the corresponding section.';
 $string['aeqclasses_help'] = 'Choose the AEQ classes you want to use in the emotion collection. AEQ classes represent different categories of academic emotions. To learn more about AEQ classes, consult the <strong>AEQ Manual</strong> section in the block panel.';
