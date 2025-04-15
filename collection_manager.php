@@ -571,7 +571,7 @@ class collection_manager {
                 } else {
                     modalDisciplina.textContent = "Disciplina não encontrada";
                     modalDisciplina.href = "#";
-                }               
+                }           
                 document.getElementById("modalColetaInicio").textContent = new Date(coleta.data_inicio).toLocaleString();
                 document.getElementById("modalColetaFim").textContent = new Date(coleta.data_fim).toLocaleString();
                 document.getElementById("modalNotificarAlunos").textContent = coleta.notificar_alunos == 1 ? "' .
@@ -673,7 +673,7 @@ class collection_manager {
 
             function editarColeta() {
                 const coletaId = document.getElementById("modalColetaUrl").getAttribute("href").split("=").pop();
-                window.location.href = M.cfg.wwwroot + "/blocks/studentcare/edit.php?coletaid=" + coletaId;  
+                window.location.href = M.cfg.wwwroot + "/blocks/studentcare/edit.php?coletaid=" + coletaId;
                 // Redireciona para edit_form.php com o ID da coleta
             }
 
@@ -690,20 +690,20 @@ class collection_manager {
 
         require_once($CFG->dirroot . '/lib/accesslib.php');
 
-        $sql = "SELECT DISTINCT c.id, c.nome, c.data_inicio, c.data_fim, c.descricao, 
-                                    c.curso_id, c.notificar_alunos, c.receber_alerta, 
+        $sql = "SELECT DISTINCT c.id, c.nome, c.data_inicio, c.data_fim, c.descricao,
+                                    c.curso_id, c.notificar_alunos, c.receber_alerta,
                                     c.resource_id_atrelado, c.section_id, c.data_criacao
                     FROM {studentcare_cadastrocoleta} c
                     JOIN {context} ctx ON ctx.instanceid = c.curso_id
                     JOIN {role_assignments} ra ON ra.contextid = ctx.id
                     JOIN {role} r ON r.id = ra.roleid
                     WHERE ctx.contextlevel = :context_course_level
-                      AND (c.usuario_id = :usuario_id_cadastro OR 
+                      AND (c.usuario_id = :usuario_id_cadastro OR
                            (ra.userid = :usuario_id_professor AND r.shortname = :role_teacher))
                     ORDER BY c.data_criacao DESC";
 
         $params = ['context_course_level' => CONTEXT_COURSE, 'usuario_id_cadastro' => $usuarioid,
-                'usuario_id_professor' => $usuarioid, 'role_teacher' => 'editingteacher',];
+                'usuario_id_professor' => $usuarioid, 'role_teacher' => 'editingteacher', ];
 
         return $DB->get_records_sql($sql, $params);
     }
@@ -771,7 +771,7 @@ class collection_manager {
                     mb_convert_encoding($pergunta->emocao_nome, 'UTF-8'), !empty($pergunta->pergunta_texto) &&
                     get_string_manager()->string_exists($pergunta->pergunta_texto, 'block_studentcare') ?
                             mb_convert_encoding(get_string($pergunta->pergunta_texto, 'block_studentcare'), 'UTF-8') :
-                            mb_convert_encoding('Texto não definido', 'UTF-8') // Texto padrão
+                            mb_convert_encoding('Texto não definido', 'UTF-8'), // Texto padrão
             ]);
         }
 

@@ -14,12 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * the first page to view the studentcare
+/***
+ * Collection Manager
  *
+ * @package block_studentcare
+ * @copyright  2024 Rafael Rodrigues
  * @author Rafael Rodrigues
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package block_studentcare
  */
 
 require_once('../../config.php');
@@ -241,7 +242,7 @@ $sql = "SELECT
 
 $perguntas = $DB->get_records_sql($sql);
 
-$dados_organizados = [];
+$dadosorganizados = [];
 foreach ($perguntas as $pergunta) {
     $classe = get_string($pergunta->classe_nome, 'block_studentcare');
     $emocao = get_string($pergunta->emocao_nome, 'block_studentcare');
@@ -250,24 +251,23 @@ foreach ($perguntas as $pergunta) {
     } else {
         $texto = 'Text not definied'; // Texto padrão ou mensagem de fallback
     }
-        
 
-    if (!isset($dados_organizados[$classe])) {
-        $dados_organizados[$classe] = [];
+    if (!isset($dadosorganizados[$classe])) {
+        $dadosorganizados[$classe] = [];
     }
-    if (!isset($dados_organizados[$classe][$emocao])) {
-        $dados_organizados[$classe][$emocao] = [];
+    if (!isset($dadosorganizados[$classe][$emocao])) {
+        $dadosorganizados[$classe][$emocao] = [];
     }
-    $dados_organizados[$classe][$emocao][] = $texto;
+    $dadosorganizados[$classe][$emocao][] = $texto;
 }
 
 echo html_writer::start_div('manual_aeq-container');
 
 echo html_writer::start_div('manual_aeq-search');
 echo html_writer::empty_tag('input', array(
-    'type' => 'text', 
-    'id' => 'manual_aeqSearch', 
-    'placeholder' => get_string('manual_aeq_search_placeholder', 'block_studentcare')
+        'type' => 'text',
+        'id' => 'manual_aeqSearch',
+        'placeholder' => get_string('manual_aeq_search_placeholder', 'block_studentcare')
 ));
 echo html_writer::end_div();
 
@@ -277,7 +277,10 @@ echo html_writer::end_div();
 
 echo html_writer::start_div('manual_aeq-topics');
 
-
+/**
+ * @param $dados
+ * @return string
+ */
 function render_acordion($dados) {
     $html = '<div class="accordion">';
     foreach ($dados as $classe => $emocoes) {
@@ -293,8 +296,8 @@ function render_acordion($dados) {
             foreach ($perguntas as $index => $pergunta) {
                 // Adiciona o índice antes da pergunta
                 $index++;
-                $pergunta_texto = htmlspecialchars($pergunta);
-                $html .= "<li>{$index} - {$pergunta_texto}</li>";
+                $perguntatexto = htmlspecialchars($pergunta);
+                $html .= "<li>{$index} - {$perguntatexto}</li>";
             }
             $html .= '</ul>';
             $html .= '</details>';
@@ -307,7 +310,7 @@ function render_acordion($dados) {
 }
 
 echo html_writer::start_div('manual_aeq-topic', array(
-    'onclick' => 'openModal("", ` 
+        'onclick' => 'openModal("", ` 
     <div class="modal-header">
         <h2><i class="fas fa-question-circle"></i> ' . get_string('start_here_title', 'block_studentcare') . '</h2>
     </div>
@@ -316,9 +319,12 @@ echo html_writer::start_div('manual_aeq-topic', array(
         <h3><i class="fas fa-cogs"></i> ' . get_string('how_it_works', 'block_studentcare') . '</h3>
         <p>' . get_string('start_here_questionnaire_description', 'block_studentcare') . '</p>
         <ul>
-            <li><strong>' . get_string('emotion_classrooms', 'block_studentcare') . '</strong>: ' . get_string('emotion_classrooms_description', 'block_studentcare') . '</li>
-            <li><strong>' . get_string('emotion_study', 'block_studentcare') . '</strong>: ' . get_string('emotion_study_description', 'block_studentcare') . '</li>
-            <li><strong>' . get_string('emotion_exams', 'block_studentcare') . '</strong>: ' . get_string('emotion_exams_description', 'block_studentcare') . '</li>
+            <li><strong>' . get_string('emotion_classrooms', 'block_studentcare') . '</strong>: ' .
+                get_string('emotion_classrooms_description', 'block_studentcare') . '</li>
+            <li><strong>' . get_string('emotion_study', 'block_studentcare') . '</strong>: ' .
+                get_string('emotion_study_description', 'block_studentcare') . '</li>
+            <li><strong>' . get_string('emotion_exams', 'block_studentcare') . '</strong>: ' .
+                get_string('emotion_exams_description', 'block_studentcare') . '</li>
         </ul>
         <h3><i class="fas fa-clipboard-list"></i> ' . get_string('how_to_use', 'block_studentcare') . '</h3>
         <p>' . get_string('start_here_usage', 'block_studentcare') . '</p>
@@ -343,7 +349,7 @@ echo html_writer::tag('div', get_string('start_here', 'block_studentcare'), arra
 echo html_writer::end_div();
 
 echo html_writer::start_div('manual_aeq-topic', array(
-    'onclick' => 'openModal("Classes AEQ 📖", ` 
+        'onclick' => 'openModal("Classes AEQ 📖", ` 
     <div class="modal-header">
         <h2><i class="fas fa-layer-group"></i> ' . get_string('classes_aeq', 'block_studentcare') . '</h2>
     </div>
@@ -401,7 +407,7 @@ echo html_writer::tag('div', get_string('classes_aeq', 'block_studentcare'), arr
 echo html_writer::end_div();
 
 echo html_writer::start_div('manual_aeq-topic', array(
-    'onclick' => 'openModal("Emoções Acadêmicas 🎭", ` 
+        'onclick' => 'openModal("Emoções Acadêmicas 🎭", ` 
     <div class="modal-header">
         <h2><i class="fas fa-layer-group"></i> ' . get_string('academic_emotions', 'block_studentcare') . '</h2>
     </div>
@@ -409,38 +415,62 @@ echo html_writer::start_div('manual_aeq-topic', array(
 
     <h3><i class="fas fa-book"></i> ' . get_string('classroom_related_emotions', 'block_studentcare') . '</h3>
     <ul>
-        <li>😄 <strong>' . get_string('joy', 'block_studentcare') . ' (' . get_string('enjoyment', 'block_studentcare') . '):</strong> ' . get_string('classroom_joy_description', 'block_studentcare') . '</li>
-        <li>✨ <strong>' . get_string('hope', 'block_studentcare') . ' (' . get_string('hope', 'block_studentcare') . '):</strong> ' . get_string('classroom_hope_description', 'block_studentcare') . '</li>
-        <li>🏅 <strong>' . get_string('pride', 'block_studentcare') . ' (' . get_string('pride', 'block_studentcare') . '):</strong> ' . get_string('classroom_pride_description', 'block_studentcare') . '</li>
-        <li>😡 <strong>' . get_string('anger', 'block_studentcare') . ' (' . get_string('anger', 'block_studentcare') . '):</strong> ' . get_string('classroom_anger_description', 'block_studentcare') . '</li>
-        <li>😱 <strong>' . get_string('anxiety', 'block_studentcare') . ' (' . get_string('anxiety', 'block_studentcare') . '):</strong> ' . get_string('classroom_anxiety_description', 'block_studentcare') . '</li>
-        <li>🙈 <strong>' . get_string('shame', 'block_studentcare') . ' (' . get_string('shame', 'block_studentcare') . '):</strong> ' . get_string('classroom_shame_description', 'block_studentcare') . '</li>
-        <li>😭 <strong>' . get_string('hopelessness', 'block_studentcare') . ' (' . get_string('hopelessness', 'block_studentcare') . '):</strong> ' . get_string('classroom_hopelessness_description', 'block_studentcare') . '</li>
-        <li>😴 <strong>' . get_string('boredom', 'block_studentcare') . ' (' . get_string('boredom', 'block_studentcare') . '):</strong> ' . get_string('classroom_boredom_description', 'block_studentcare') . '</li>
+        <li>😄 <strong>' . get_string('joy', 'block_studentcare') . ' (' . get_string('enjoyment', 'block_studentcare') .
+                '):</strong> ' . get_string('classroom_joy_description', 'block_studentcare') . '</li>
+        <li>✨ <strong>' . get_string('hope', 'block_studentcare') . ' (' . get_string('hope', 'block_studentcare') .
+                '):</strong> ' . get_string('classroom_hope_description', 'block_studentcare') . '</li>
+        <li>🏅 <strong>' . get_string('pride', 'block_studentcare') . ' (' . get_string('pride', 'block_studentcare') .
+                '):</strong> ' . get_string('classroom_pride_description', 'block_studentcare') . '</li>
+        <li>😡 <strong>' . get_string('anger', 'block_studentcare') . ' (' . get_string('anger', 'block_studentcare') .
+                '):</strong> ' . get_string('classroom_anger_description', 'block_studentcare') . '</li>
+        <li>😱 <strong>' . get_string('anxiety', 'block_studentcare') . ' (' . get_string('anxiety', 'block_studentcare') .
+                '):</strong> ' . get_string('classroom_anxiety_description', 'block_studentcare') . '</li>
+        <li>🙈 <strong>' . get_string('shame', 'block_studentcare') . ' (' . get_string('shame', 'block_studentcare') .
+                '):</strong> ' . get_string('classroom_shame_description', 'block_studentcare') . '</li>
+        <li>😭 <strong>' . get_string('hopelessness', 'block_studentcare') . ' (' . get_string('hopelessness', 'block_studentcare') .
+                '):</strong> ' . get_string('classroom_hopelessness_description', 'block_studentcare') . '</li>
+        <li>😴 <strong>' . get_string('boredom', 'block_studentcare') . ' (' . get_string('boredom', 'block_studentcare') .
+                '):</strong> ' . get_string('classroom_boredom_description', 'block_studentcare') . '</li>
     </ul>
 
     <h3><i class="fas fa-graduation-cap"></i> ' . get_string('learning_related_emotions', 'block_studentcare') . '</h3>
     <ul>
-        <li>😄 <strong>' . get_string('joy', 'block_studentcare') . ' (' . get_string('enjoyment', 'block_studentcare') . '):</strong> ' . get_string('learning_joy_description', 'block_studentcare') . '</li>
-        <li>✨ <strong>' . get_string('hope', 'block_studentcare') . ' (' . get_string('hope', 'block_studentcare') . '):</strong> ' . get_string('learning_hope_description', 'block_studentcare') . '</li>
-        <li>🏅 <strong>' . get_string('pride', 'block_studentcare') . ' (' . get_string('pride', 'block_studentcare') . '):</strong> ' . get_string('learning_pride_description', 'block_studentcare') . '</li>
-        <li>😡 <strong>' . get_string('anger', 'block_studentcare') . ' (' . get_string('anger', 'block_studentcare') . '):</strong> ' . get_string('learning_anger_description', 'block_studentcare') . '</li>
-        <li>😱 <strong>' . get_string('anxiety', 'block_studentcare') . ' (' . get_string('anxiety', 'block_studentcare') . '):</strong> ' . get_string('learning_anxiety_description', 'block_studentcare') . '</li>
-        <li>🙈 <strong>' . get_string('shame', 'block_studentcare') . ' (' . get_string('shame', 'block_studentcare') . '):</strong> ' . get_string('learning_shame_description', 'block_studentcare') . '</li>
-        <li>😭 <strong>' . get_string('hopelessness', 'block_studentcare') . ' (' . get_string('hopelessness', 'block_studentcare') . '):</strong> ' . get_string('learning_hopelessness_description', 'block_studentcare') . '</li>
-        <li>😴 <strong>' . get_string('boredom', 'block_studentcare') . ' (' . get_string('boredom', 'block_studentcare') . '):</strong> ' . get_string('learning_boredom_description', 'block_studentcare') . '</li>
+        <li>😄 <strong>' . get_string('joy', 'block_studentcare') . ' (' . get_string('enjoyment', 'block_studentcare') .
+                '):</strong> ' . get_string('learning_joy_description', 'block_studentcare') . '</li>
+        <li>✨ <strong>' . get_string('hope', 'block_studentcare') . ' (' . get_string('hope', 'block_studentcare') .
+                '):</strong> ' . get_string('learning_hope_description', 'block_studentcare') . '</li>
+        <li>🏅 <strong>' . get_string('pride', 'block_studentcare') . ' (' . get_string('pride', 'block_studentcare') .
+                '):</strong> ' . get_string('learning_pride_description', 'block_studentcare') . '</li>
+        <li>😡 <strong>' . get_string('anger', 'block_studentcare') . ' (' . get_string('anger', 'block_studentcare') .
+                '):</strong> ' . get_string('learning_anger_description', 'block_studentcare') . '</li>
+        <li>😱 <strong>' . get_string('anxiety', 'block_studentcare') . ' (' . get_string('anxiety', 'block_studentcare') .
+                '):</strong> ' . get_string('learning_anxiety_description', 'block_studentcare') . '</li>
+        <li>🙈 <strong>' . get_string('shame', 'block_studentcare') . ' (' . get_string('shame', 'block_studentcare') .
+                '):</strong> ' . get_string('learning_shame_description', 'block_studentcare') . '</li>
+        <li>😭 <strong>' . get_string('hopelessness', 'block_studentcare') . ' (' . get_string('hopelessness', 'block_studentcare') .
+                '):</strong> ' . get_string('learning_hopelessness_description', 'block_studentcare') . '</li>
+        <li>😴 <strong>' . get_string('boredom', 'block_studentcare') . ' (' . get_string('boredom', 'block_studentcare') .
+                '):</strong> ' . get_string('learning_boredom_description', 'block_studentcare') . '</li>
     </ul>
 
     <h3><i class="fas fa-edit"></i> ' . get_string('test_related_emotions', 'block_studentcare') . '</h3>
     <ul>
-        <li>😄 <strong>' . get_string('joy', 'block_studentcare') . ' (' . get_string('enjoyment', 'block_studentcare') . '):</strong> ' . get_string('test_joy_description', 'block_studentcare') . '</li>
-        <li>✨ <strong>' . get_string('hope', 'block_studentcare') . ' (' . get_string('hope', 'block_studentcare') . '):</strong> ' . get_string('test_hope_description', 'block_studentcare') . '</li>
-        <li>🏅 <strong>' . get_string('pride', 'block_studentcare') . ' (' . get_string('pride', 'block_studentcare') . '):</strong> ' . get_string('test_pride_description', 'block_studentcare') . '</li>
-        <li>😌 <strong>' . get_string('relief', 'block_studentcare') . ' (' . get_string('relief', 'block_studentcare') . '):</strong> ' . get_string('test_relief_description', 'block_studentcare') . '</li>
-        <li>😡 <strong>' . get_string('anger', 'block_studentcare') . ' (' . get_string('anger', 'block_studentcare') . '):</strong> ' . get_string('test_anger_description', 'block_studentcare') . '</li>
-        <li>😱 <strong>' . get_string('anxiety', 'block_studentcare') . ' (' . get_string('anxiety', 'block_studentcare') . '):</strong> ' . get_string('test_anxiety_description', 'block_studentcare') . '</li>
-        <li>🙈 <strong>' . get_string('shame', 'block_studentcare') . ' (' . get_string('shame', 'block_studentcare') . '):</strong> ' . get_string('test_shame_description', 'block_studentcare') . '</li>
-        <li>😭 <strong>' . get_string('hopelessness', 'block_studentcare') . ' (' . get_string('hopelessness', 'block_studentcare') . '):</strong> ' . get_string('test_hopelessness_description', 'block_studentcare') . '</li>
+        <li>😄 <strong>' . get_string('joy', 'block_studentcare') . ' (' . get_string('enjoyment', 'block_studentcare') .
+                '):</strong> ' . get_string('test_joy_description', 'block_studentcare') . '</li>
+        <li>✨ <strong>' . get_string('hope', 'block_studentcare') . ' (' . get_string('hope', 'block_studentcare') .
+                '):</strong> ' . get_string('test_hope_description', 'block_studentcare') . '</li>
+        <li>🏅 <strong>' . get_string('pride', 'block_studentcare') . ' (' . get_string('pride', 'block_studentcare') .
+                '):</strong> ' . get_string('test_pride_description', 'block_studentcare') . '</li>
+        <li>😌 <strong>' . get_string('relief', 'block_studentcare') . ' (' . get_string('relief', 'block_studentcare') .
+                '):</strong> ' . get_string('test_relief_description', 'block_studentcare') . '</li>
+        <li>😡 <strong>' . get_string('anger', 'block_studentcare') . ' (' . get_string('anger', 'block_studentcare') .
+                '):</strong> ' . get_string('test_anger_description', 'block_studentcare') . '</li>
+        <li>😱 <strong>' . get_string('anxiety', 'block_studentcare') . ' (' . get_string('anxiety', 'block_studentcare') .
+                '):</strong> ' . get_string('test_anxiety_description', 'block_studentcare') . '</li>
+        <li>🙈 <strong>' . get_string('shame', 'block_studentcare') . ' (' . get_string('shame', 'block_studentcare') .
+                '):</strong> ' . get_string('test_shame_description', 'block_studentcare') . '</li>
+        <li>😭 <strong>' . get_string('hopelessness', 'block_studentcare') . ' (' . get_string('hopelessness', 'block_studentcare') .
+                '):</strong> ' . get_string('test_hopelessness_description', 'block_studentcare') . '</li>
     </ul>
     </div>
     `)'
@@ -449,9 +479,8 @@ echo html_writer::tag('div', '🎭', array('class' => 'manual_aeq-topic-icon'));
 echo html_writer::tag('div', get_string('academic_emotions', 'block_studentcare'), array('class' => 'manual_aeq-topic-title'));
 echo html_writer::end_div();
 
-
 echo html_writer::start_div('manual_aeq-topic', array(
-    'onclick' => 'openModal("' . get_string('aeq_questions', 'block_studentcare') . ' 📝", ` 
+        'onclick' => 'openModal("' . get_string('aeq_questions', 'block_studentcare') . ' 📝", ` 
     <div class="modal-header">
         <h2><i class="fas fa-question-circle"></i> ' . get_string('aeq_questions', 'block_studentcare') . '</h2>
     </div>
@@ -463,16 +492,19 @@ echo html_writer::start_div('manual_aeq-topic', array(
         
         <h3><i class="fas fa-lightbulb"></i> ' . get_string('example_questions', 'block_studentcare') . '</h3>
         <ul>
-            <li><strong>' . get_string('classroom_related', 'block_studentcare') . ':</strong> “' . get_string('example_classroom_question', 'block_studentcare') . '”</li>
-            <li><strong>' . get_string('study_related', 'block_studentcare') . ':</strong> “' . get_string('example_study_question', 'block_studentcare') . '”</li>
-            <li><strong>' . get_string('test_related', 'block_studentcare') . ':</strong> “' . get_string('example_test_question', 'block_studentcare') . '”</li>
+            <li><strong>' . get_string('classroom_related', 'block_studentcare') . ':</strong> “' .
+                get_string('example_classroom_question', 'block_studentcare') . '”</li>
+            <li><strong>' . get_string('study_related', 'block_studentcare') . ':</strong> “' .
+                get_string('example_study_question', 'block_studentcare') . '”</li>
+            <li><strong>' . get_string('test_related', 'block_studentcare') . ':</strong> “' .
+                get_string('example_test_question', 'block_studentcare') . '”</li>
         </ul>
         
         <h3><i class="fas fa-layer-group"></i> ' . get_string('question_organization', 'block_studentcare') . '</h3>
         <p>' . get_string('question_organization_description', 'block_studentcare') . '</p>
         
          <div class="accordion">
-            ' . addslashes(render_acordion($dados_organizados)) . '
+            ' . addslashes(render_acordion($dadosorganizados)) . '
         </div>
     </div>
     `)'
