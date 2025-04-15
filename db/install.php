@@ -36,7 +36,7 @@ function xmldb_block_studentcare_install() {
     $recordsaeqclass = [
             (object) ['id' => 1, 'nome_classe' => 'class-related'],
             (object) ['id' => 2, 'nome_classe' => 'learning-related'],
-            (object) ['id' => 3, 'nome_classe' => 'test-related']
+            (object) ['id' => 3, 'nome_classe' => 'test-related'],
     ];
 
     foreach ($recordsaeqclass as $record) {
@@ -101,7 +101,7 @@ function xmldb_block_studentcare_install() {
         $DB->insert_record('studentcare_emocao', $record);
     }
 
-    $records_questions = [
+    $recordsquestions = [
             (object) ['id' => 1, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'class-related-enjoyment-1'],
             (object) ['id' => 2, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'class-related-enjoyment-2'],
             (object) ['id' => 3, 'emocao_id' => 1, 'classeaeq_id' => 1, 'pergunta_texto' => 'class-related-enjoyment-3'],
@@ -358,7 +358,7 @@ function xmldb_block_studentcare_install() {
             (object) ['id' => 157, 'emocao_id' => 24, 'classeaeq_id' => 3, 'pergunta_texto' => 'test-related-hopelessness-11'],
     ];
 
-    foreach ($records_questions as $record) {
+    foreach ($recordsquestions as $record) {
         $DB->insert_record('studentcare_pergunta', $record);
     }
 }

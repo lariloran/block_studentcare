@@ -22,11 +22,31 @@
  * @author Rafael Rodrigues
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
+
+
+/**
+ * the first page to view the studentcare
+ *
+ * @package block_studentcare
+ * @copyright  2024 Rafael Rodrigues
+ * @author Rafael Rodrigues
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class block_studentcare extends block_base {
+
+    /**
+     * Missing documentation.
+     */
     public function init() {
         $this->title = get_string('pluginname', 'block_studentcare');
     }
 
+
+    /**
+     * Missing documentation.
+     */
     public function get_content() {
         global $USER, $DB, $COURSE;
 
@@ -66,6 +86,10 @@ class block_studentcare extends block_base {
         return $this->content;
     }
 
+
+    /**
+     * Missing documentation.
+     */
     public function applicable_formats() {
         return [
             'my' => true,
