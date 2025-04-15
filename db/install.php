@@ -33,18 +33,18 @@ function xmldb_block_studentcare_install() {
     global $DB;
 
     // AEQ CLASS INSERTS.
-    $records_aeq_class = [
+    $recordsaeqclass = [
             (object) ['id' => 1, 'nome_classe' => 'class-related'],
             (object) ['id' => 2, 'nome_classe' => 'learning-related'],
             (object) ['id' => 3, 'nome_classe' => 'test-related']
     ];
 
-    foreach ($records_aeq_class as $record) {
+    foreach ($recordsaeqclass as $record) {
         $DB->insert_record('studentcare_classeaeq', $record);
     }
 
     // EMOTIONS-CLASS INSERTS.
-    $records_emotions = [
+    $recordsemotions = [
             (object) ['id' => 1, 'classeaeq_id' => 1, 'nome' => 'enjoyment', 'txttooltip' => 'enjoyment-txttooltip', 'antes' => 1,
                     'durante' => 1, 'depois' => 1],
             (object) ['id' => 2, 'classeaeq_id' => 1, 'nome' => 'hope', 'txttooltip' => 'hope-txttooltip', 'antes' => 1,
@@ -94,10 +94,10 @@ function xmldb_block_studentcare_install() {
             (object) ['id' => 23, 'classeaeq_id' => 3, 'nome' => 'shame', 'txttooltip' => 'shame-txttooltip', 'antes' => 1,
                     'durante' => 1, 'depois' => 1],
             (object) ['id' => 24, 'classeaeq_id' => 3, 'nome' => 'hopelessness', 'txttooltip' => 'hopelessness-txttooltip',
-                    'antes' => 1, 'durante' => 1, 'depois' => 1]
+                    'antes' => 1, 'durante' => 1, 'depois' => 1],
     ];
 
-    foreach ($records_emotions as $record) {
+    foreach ($recordsemotions as $record) {
         $DB->insert_record('studentcare_emocao', $record);
     }
 
