@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
+/***
  * Collection Manager
  *
  * @package block_studentcare
@@ -24,7 +24,7 @@
  */
 class collection_manager {
 
-    /*
+    /**
      * Busca todas as coletas das disciplinas onde o usuário é professor.
      */
     public function excluir_coleta($coletaid) {
@@ -59,7 +59,7 @@ class collection_manager {
     }
 
 
-    /*
+    /**
      * Missing documentation.
      */
     public function listar_coletas($usuarioid) {
@@ -91,20 +91,20 @@ class collection_manager {
                 width: 100%;
                 height: 100%;
                 background-color: rgba(0, 0, 0, 0.5);
-                overflow-y: auto; /* Permite scroll para toda a janela, se necessário */
-                padding-top: 20px; /* Adiciona um espaçamento superior geral */
+                overflow-y: auto; /** Permite scroll para toda a janela, se necessário */
+                padding-top: 20px; /** Adiciona um espaçamento superior geral */
             }
 
             .modal-content {
                 position: relative;
                 background-color: white;
-                margin: 50px auto; /* Define uma margem superior mínima */
+                margin: 50px auto; /** Define uma margem superior mínima */
                 padding: 30px;
                 border-radius: 15px;
-                width: 90%; /* Aumenta a largura para ocupar 90% da tela */
-                max-width: 800px; /* Aumenta a largura máxima */
-                max-height: 90vh; /* Limita a altura máxima */
-                overflow-y: auto; /* Adiciona scroll para conteúdo longo */
+                width: 90%; /** Aumenta a largura para ocupar 90% da tela */
+                max-width: 800px; /** Aumenta a largura máxima */
+                max-height: 90vh; /** Limita a altura máxima */
+                overflow-y: auto; /** Adiciona scroll para conteúdo longo */
                 box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
             }
 
@@ -113,18 +113,18 @@ class collection_manager {
                 color: #333;
                 margin-bottom: 15px;
                 text-align: center;
-                max-width: 90%; /* Máximo de 90% da largura da janela */
-                max-height: 80%; /* Máximo de 80% da altura da janela */
-                overflow-y: auto; /* Adiciona rolagem se o conteúdo for muito longo */
+                max-width: 90%; /** Máximo de 90% da largura da janela */
+                max-height: 80%; /** Máximo de 80% da altura da janela */
+                overflow-y: auto; /** Adiciona rolagem se o conteúdo for muito longo */
             }
 
             .modal-content span#modalColetaDescricao {
-                word-wrap: break-word; /* Força a quebra de palavras longas */
-                overflow-wrap: break-word; /* Garante suporte adicional para quebra de palavras */
-                white-space: pre-wrap; /* Preserva quebras de linha no texto original */
-                display: block; /* Garante que o texto ocupe o espaço do elemento */
-                max-height: 200px; /* Define uma altura máxima para a descrição */
-                overflow-y: auto; /* Adiciona rolagem se o conteúdo exceder o limite */
+                word-wrap: break-word; /** Força a quebra de palavras longas */
+                overflow-wrap: break-word; /** Garante suporte adicional para quebra de palavras */
+                white-space: pre-wrap; /** Preserva quebras de linha no texto original */
+                display: block; /** Garante que o texto ocupe o espaço do elemento */
+                max-height: 200px; /** Define uma altura máxima para a descrição */
+                overflow-y: auto; /** Adiciona rolagem se o conteúdo exceder o limite */
             }
 
             .close {
@@ -152,13 +152,13 @@ class collection_manager {
                 border: 1px solid #ddd;
                 border-radius: 8px;
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                padding: 16px; /* Reduz o padding para economizar espaço */
-                max-width: 250px; /* Diminui a largura máxima */
-                min-height: 180px; /* Ajusta a altura mínima */
+                padding: 16px; /** Reduz o padding para economizar espaço */
+                max-width: 250px; /** Diminui a largura máxima */
+                min-height: 180px; /** Ajusta a altura mínima */
                 text-align: left;
                 transition: transform 0.3s;
-                font-size: 14px; /* Reduz o tamanho do texto */
-                line-height: 1.4; /* Ajusta o espaçamento entre linhas */
+                font-size: 14px; /** Reduz o tamanho do texto */
+                line-height: 1.4; /** Ajusta o espaçamento entre linhas */
             }
 
             .card:hover {
@@ -166,28 +166,28 @@ class collection_manager {
             }
 
             .card h3 {
-                font-size: 16px; /* Reduz o tamanho do título */
+                font-size: 16px; /** Reduz o tamanho do título */
                 margin-bottom: 8px;
                 color: #333;
             }
 
             .card p {
-                margin: 4px 0; /* Diminui o espaçamento entre os parágrafos */
-                font-size: 13px; /* Reduz o texto das informações */
+                margin: 4px 0; /** Diminui o espaçamento entre os parágrafos */
+                font-size: 13px; /** Reduz o texto das informações */
                 color: #555;
                 white-space: nowrap;
-                overflow: hidden; /* Oculta o texto excedente */
-                text-overflow: ellipsis; /* Adiciona reticências no final do texto */
+                overflow: hidden; /** Oculta o texto excedente */
+                text-overflow: ellipsis; /** Adiciona reticências no final do texto */
             }
 
             .card .btn-coleta {
-                width: 100%; /* Faz o botão ocupar toda a largura do card */
-                text-align: center; /* Centraliza o texto no botão */
-                display: block; /* Garante que o botão seja um elemento de bloco */
-                margin-top: auto; /* Faz o botão alinhar-se ao final do card */
-                padding: 8px 12px; /* Reduz o padding para diminuir a altura */
-                font-size: 14px; /* Ajusta o tamanho do texto para harmonizar */
-                border-radius: 4px; /* Mantém bordas arredondadas, mas sutis */
+                width: 100%; /** Faz o botão ocupar toda a largura do card */
+                text-align: center; /** Centraliza o texto no botão */
+                display: block; /** Garante que o botão seja um elemento de bloco */
+                margin-top: auto; /** Faz o botão alinhar-se ao final do card */
+                padding: 8px 12px; /** Reduz o padding para diminuir a altura */
+                font-size: 14px; /** Ajusta o tamanho do texto para harmonizar */
+                border-radius: 4px; /** Mantém bordas arredondadas, mas sutis */
             }
 
 
@@ -205,7 +205,7 @@ class collection_manager {
                 border: 1px solid #ddd;
                 border-radius: 8px;
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                flex-wrap: wrap; /* Permite que os elementos se ajustem em telas menores */
+                flex-wrap: wrap; /** Permite que os elementos se ajustem em telas menores */
             }
             .filter-container-coleta label {
                 font-size: 16px;
@@ -220,8 +220,8 @@ class collection_manager {
                 transition: border-color 0.3s;
                 background-color: #fff;
                 color: #333;
-                flex-grow: 1; /* Faz o input crescer para ocupar mais espaço */
-                max-width: 250px; /* Limita o tamanho máximo do input */
+                flex-grow: 1; /** Faz o input crescer para ocupar mais espaço */
+                max-width: 250px; /** Limita o tamanho máximo do input */
             }
             .filter-container-coleta input[type="text"]:focus {
                 border-color: #4CAF50;
@@ -280,7 +280,7 @@ class collection_manager {
 
 
             .pagination-controls {
-                position: relative; /* Ajuste conforme necessário */
+                position: relative; /** Ajuste conforme necessário */
                 text-align: center;
                 margin: 20px 0;
             }
@@ -301,15 +301,15 @@ class collection_manager {
             }
 
             .pagination-controls button.btn-coleta-ativo {
-                background-color: #2E7D32; /* Cor diferenciada para página ativa */
+                background-color: #2E7D32; /** Cor diferenciada para página ativa */
                 cursor: default;
             }
             .button-group {
-                display: flex; /* Coloca os itens em linha */
-                flex-wrap: wrap; /* Permite quebrar para a próxima linha se o espaço não for suficiente */
-                gap: 10px; /* Espaçamento entre os botões */
-                justify-content: center; /* Alinha os botões no centro do modal */
-                margin-top: 20px; /* Espaçamento superior */
+                display: flex; /** Coloca os itens em linha */
+                flex-wrap: wrap; /** Permite quebrar para a próxima linha se o espaço não for suficiente */
+                gap: 10px; /** Espaçamento entre os botões */
+                justify-content: center; /** Alinha os botões no centro do modal */
+                margin-top: 20px; /** Espaçamento superior */
             }
 
         </style>';
@@ -610,7 +610,7 @@ class collection_manager {
             }
 
 
-            /*
+            /**
              * Missing documentation.
              */
             function adicionarEventosFechamento(modal) {
@@ -640,7 +640,7 @@ class collection_manager {
             };
 
 
-            /*
+            /**
              * Missing documentation.
              */
             function abrirGrafico() {
@@ -673,7 +673,7 @@ class collection_manager {
     }
 
 
-    /*
+    /**
      * Missing documentation.
      */
     public function get_coletas_by_professor($usuarioid) {
@@ -700,14 +700,14 @@ class collection_manager {
     }
 
 
-    /*
+    /**
      * Missing documentation.
      */
     public function download_csv($coletaid) {
         global $DB;
 
-        $sql = "SELECT id, nome, data_inicio, data_fim, descricao, curso_id, notificar_alunos, receber_alerta 
-                FROM {studentcare_cadastrocoleta} 
+        $sql = "SELECT id, nome, data_inicio, data_fim, descricao, curso_id, notificar_alunos, receber_alerta
+                FROM {studentcare_cadastrocoleta}
                 WHERE id = :coleta_id";
         $params = ['coleta_id' => $coletaid];
         $coleta = $DB->get_record_sql($sql, $params);
@@ -723,7 +723,7 @@ class collection_manager {
         $perguntas = $this->obter_perguntas_associadas($coletaid);
 
         $sqlrespostas = "SELECT r.id, a.username AS usuario, a.email, p.id AS pergunta_id, p.pergunta_texto, r.resposta,
-            r.data_resposta, 
+            r.data_resposta,
         ra.roleid, role.shortname AS role_name
         FROM {studentcare_resposta} r
         JOIN {user} a ON a.id = r.usuario_id
@@ -753,7 +753,7 @@ class collection_manager {
                 date('d/m/Y H:i', strtotime($coleta->data_fim)),
                 mb_convert_encoding($coleta->descricao, 'UTF-8'),
                 $cursonome, $coleta->notificar_alunos ? get_string('yes', 'moodle') : get_string('no', 'block_studentcare'),
-                $coleta->receber_alerta ? get_string('yes', 'moodle') : get_string('no', 'block_studentcare')
+                $coleta->receber_alerta ? get_string('yes', 'moodle') : get_string('no', 'block_studentcare'),
 
         ]);
 
@@ -780,7 +780,7 @@ class collection_manager {
     }
 
 
-    /*
+    /**
      * Missing documentation.
      */
     private function obter_perguntas_associadas($coletaid) {
@@ -801,7 +801,7 @@ class collection_manager {
     }
 
 
-    /*
+    /**
      * Missing documentation.
      */
     public function download_json($coletaid) {
@@ -853,13 +853,13 @@ class collection_manager {
                         get_string('no', 'block_studentcare'), 'perguntas' => [], 'respostas' => []];
 
         foreach ($perguntas as $pergunta) {
-            $texto_pergunta = (!empty($pergunta->pergunta_texto) && get_string_manager()->string_exists($pergunta->pergunta_texto,
+            $textopergunta = (!empty($pergunta->pergunta_texto) && get_string_manager()->string_exists($pergunta->pergunta_texto,
                             'block_studentcare')) ? get_string($pergunta->pergunta_texto, 'block_studentcare') :
                     'Texto não definido';
             // Fallback para texto padrão
 
             $coletadata['perguntas'][] = ['id' => $pergunta->pergunta_id, 'classe_aeq' => $pergunta->nome_classe,
-                    'emocao' => $pergunta->emocao_nome, 'texto_pergunta' => $texto_pergunta];
+                    'emocao' => $pergunta->emocao_nome, 'texto_pergunta' => $textopergunta];
         }
 
         foreach ($respostas as $resposta) {
@@ -873,14 +873,14 @@ class collection_manager {
     }
 
 
-    /*
+    /**
      * Missing documentation.
      */
     public function obter_emocoes_e_classes($coletaid) {
         global $DB;
 
         $sql = "SELECT
-                    classe.nome_classe, 
+                    classe.nome_classe,
                     GROUP_CONCAT(DISTINCT emocao.nome ORDER BY emocao.nome SEPARATOR ', ') AS emocoes
                 FROM {studentcare_associacao_classe_emocao_coleta} assoc
                 JOIN {studentcare_classeaeq} classe ON classe.id = assoc.classeaeq_id
