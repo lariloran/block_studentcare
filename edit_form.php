@@ -396,7 +396,8 @@ class CadastroColeta {
      *  Missing description.
      *
      * @return string
-     */public function __construct($nome, $datainicio, $horainicio, $dataFim, $horafim, $descricao, $receberalerta, $notificaralunos,
+     */
+    public function __construct($nome, $datainicio, $horainicio, $dataFim, $horafim, $descricao, $receberalerta, $notificaralunos,
             $cursoid, $professorid) {
         $this->nome = $nome;
         $this->dataInicio = $datainicio;
@@ -421,12 +422,13 @@ class CadastroColeta {
     }
 }
 
+/**
+ *  Missing description.
+ *
+ * @return string
+ */
 class ClasseAeq {
-    /**
-     *  Missing description.
-     *
-     * @return string
-     */
+
     private $nomeclasse;
 
     /**
@@ -443,7 +445,7 @@ class ClasseAeq {
      *
      * @return string
      */
-    public function getNomeClasse() {
+    public function get_Class_Name() {
         return $this->nomeClasse;
     }
 
@@ -452,7 +454,7 @@ class ClasseAeq {
      *
      * @return string
      */
-    public function setNomeClasse($nomeclasse) {
+    public function set_Class_Name($nomeclasse) {
         $this->nomeClasse = $nomeclasse;
     }
 }
