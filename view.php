@@ -46,27 +46,27 @@ if (!$DB->record_exists('studentcare_cadastrocoleta', ['id' => $coletaid])) {
 $userid = $USER->id;
 
 $coletar = $DB->get_record('studentcare_cadastrocoleta', ['id' => $coletaid]);
-$cursoR = $DB->get_record('course', ['id' => $coletar->curso_id]);
+$cursor = $DB->get_record('course', ['id' => $coletar->curso_id]);
 
-$is_enrolled = is_enrolled(context_course::instance($coletar->curso_id), $userid);
+$isenrolled = is_enrolled(context_course::instance($coletar->curso_id), $userid);
 
-if (!$is_enrolled) {
+if (!$isenrolled) {
     redirect(new moodle_url('/course/view.php', ['id' => $COURSE->id]));
     exit;
 }
-$respostasExistentes = $DB->get_records('studentcare_resposta', [
+ $respostasexistentes = $DB->get_records('studentcare_resposta', [
         'coleta_id' => $coletaid,
-        'usuario_id' => $userid
+        'usuario_id' => $userid,
 ]);
 
-if ($respostasExistentes) {
+if ( $respostasexistentes) {
     echo $OUTPUT->header();
 
-    $redirectUrl = new moodle_url("/course/view.php", ['id' => intval($coletar->curso_id)]);
+    $redirecturl = new moodle_url("/course/view.php", ['id' => intval($coletar->curso_id)]);
     echo '
     <script>
         function irParaHome() {
-            window.location.href = "' . htmlspecialchars($redirectUrl) . '";
+            window.location.href = "' . htmlspecialchars($redirecturl) . '";
         }
     </script>
     <style>
@@ -161,30 +161,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $coletaid = clean_param($data['coleta_id'], PARAM_INT);
             $usuarioid = clean_param($data['usuario_id'], PARAM_INT);
 
-            $respostasExistentes = $DB->get_records('studentcare_resposta', ['coleta_id' => $coletaid, 'usuario_id' => $usuarioid]);
+             $respostasexistentes = $DB->get_records('studentcare_resposta', ['coleta_id' => $coletaid, 'usuario_id' => $usuarioid]);
 
-            if ($respostasExistentes) {
+            if ( $respostasexistentes) {
                 header('Content-Type: application/json');
                 echo json_encode(['success' => false, 'error' => 'Você já respondeu a essa coleta.']);
                 exit;
             }
 
             $respostas = $data['respostas'];
-            foreach ($respostas as $pergunta_id => $resposta) {
-                $pergunta_id = clean_param($pergunta_id, PARAM_INT);
+            foreach ($respostas as $perguntaid => $resposta) {
+                $perguntaid = clean_param($perguntaid, PARAM_INT);
                 $resposta = clean_param($resposta, PARAM_TEXT);
 
                 if ($resposta !== null) {
-                    $pergunta = $DB->get_record('studentcare_pergunta', ['id' => $pergunta_id]);
+                    $pergunta = $DB->get_record('studentcare_pergunta', ['id' => $perguntaid]);
                     if ($pergunta) {
-                        $nova_resposta = new stdClass();
-                        $nova_resposta->pergunta_id = $pergunta->id;
-                        $nova_resposta->usuario_id = $usuarioid;
-                        $nova_resposta->coleta_id = $coletaid;
-                        $nova_resposta->resposta = $resposta;
-                        $nova_resposta->data_resposta = date('Y-m-d H:i:s');
+                        $novaresposta = new stdClass();
+                        $novaresposta->pergunta_id = $pergunta->id;
+                        $novaresposta->usuario_id = $usuarioid;
+                        $novaresposta->coleta_id = $coletaid;
+                        $novaresposta->resposta = $resposta;
+                        $novaresposta->data_resposta = date('Y-m-d H:i:s');
 
-                        $DB->insert_record('studentcare_resposta', $nova_resposta);
+                        $DB->insert_record('studentcare_resposta', $novaresposta);
                     }
                 }
             }
@@ -200,13 +200,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    $tcleaceito_form = optional_param('tcle_aceito', 0, PARAM_INT);
-    if ($tcleaceito_form == 1) {
+    $tcleaceitoform = optional_param('tcle_aceito', 0, PARAM_INT);
+    if ($tcleaceitoform == 1) {
         if (empty($tclerecords)) {
             $DB->insert_record('studentcare_tcle_resposta', (object) [
                     'usuario_id' => $userid,
                     'coleta_id' => $coletaid,
-                    'tcle_aceito' => $tcleaceito_form,
+                    'tcle_aceito' => $tcleaceitoform,
                     'curso_id' => $coletar->curso_id,
                     'data_resposta' => date('Y-m-d H:i:s')
             ]);
@@ -286,7 +286,7 @@ $perguntas = $DB->get_records_sql("
     WHERE a.cadastrocoleta_id = :coletaid
 ", ['coletaid' => $coletaid]);
 
-$cursoome = $cursoR->fullname;
+$cursoome = $cursor->fullname;
 
 if (!$perguntas) {
     $mensagem = get_string('no_questions_found', 'block_studentcare', format_string($cursoome));
@@ -363,7 +363,7 @@ echo '<div id="translation-data"
         <input type="hidden" id="tcle_aceito" name="tcle_aceito" value="0">
         <p class="tcle-title"><strong><?php echo get_string('tcle_title', 'block_studentcare'); ?></strong></p>
         <p class="tcle-description">
-            <?php echo get_string('tcle_description', 'block_studentcare', format_string($cursoR->fullname)); ?>
+            <?php echo get_string('tcle_description', 'block_studentcare', format_string($cursor->fullname)); ?>
         </p>
 
         <div id="respostas-tcle" class="respostas-tcle">
