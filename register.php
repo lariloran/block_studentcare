@@ -32,9 +32,8 @@ require_login();
 $context = context_system::instance();
 $PAGE->set_context($context);
 $PAGE->set_url(new moodle_url('/blocks/studentcare/register.php'));
-$PAGE->set_title( get_string('add-collection', 'block_studentcare'));
-$PAGE->set_heading( get_string('add-collection', 'block_studentcare'));
-
+$PAGE->set_title(get_string('add-collection', 'block_studentcare'));
+$PAGE->set_heading(get_string('add-collection', 'block_studentcare'));
 
 // Renderiza o formulário
 $mform = new register_form();

@@ -60,18 +60,18 @@ $coletas = $DB->get_records_sql($sql, $params);
     <label for="coletaSelect"><strong><?php echo get_string('select_collection', 'block_studentcare'); ?>:</strong></label>
     <select id="coletaSelect" name="coletaid">
         <option value="" <?php echo empty($selected_coletaid) ? 'selected' : ''; ?>><?php echo get_string('choose_option', 'block_studentcare'); ?></option>
-        <?php 
+        <?php
         $last_course_name = null;
-        foreach ($coletas as $coleta): 
+        foreach ($coletas as $coleta):
             // Agrupa por nome do curso
-            if ($last_course_name !== $coleta->curso_nome): 
+            if ($last_course_name !== $coleta->curso_nome):
                 if ($last_course_name !== null): ?>
                     </optgroup>
                 <?php endif; ?>
                 <optgroup label="<?php echo format_string($coleta->curso_nome); ?>">
-            <?php 
+            <?php
             $last_course_name = $coleta->curso_nome;
-            endif; 
+            endif;
             ?>
             <option value="<?php echo $coleta->coleta_id; ?>" <?php echo ($coleta->coleta_id == $selected_coletaid) ? 'selected' : ''; ?>>
                 <?php echo format_string($coleta->coleta_nome); ?>
@@ -118,7 +118,7 @@ $coletas = $DB->get_records_sql($sql, $params);
     let chart, modaChart;
 
     document.addEventListener('DOMContentLoaded', function () {
-    
+
         const previewData = {
         labels: [
             "<?php echo get_string('strongly_disagree', 'block_studentcare'); ?>",
@@ -231,8 +231,8 @@ function fecharModalAlerta() {
             fetch('/blocks/studentcare/load_collection_data.php?coletaid=' + coletaid)
                 .then(response => response.json())
                 .then(data => {
-                    updateChart(data.chart_data);      
-                    //updateModaChart(data.moda_data);   
+                    updateChart(data.chart_data);
+                    //updateModaChart(data.moda_data);
                 });
         } else {
             if (chart) chart.destroy();
@@ -381,4 +381,3 @@ function fecharModalAlerta() {
 
 <?php
 echo $OUTPUT->footer();
-?>

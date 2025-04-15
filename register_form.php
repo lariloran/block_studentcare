@@ -4,50 +4,25 @@ require_once("$CFG->libdir/classes/notification.php");
 
 use core\notification;
 
-class register_form extends moodleform
-{
+class register_form extends moodleform {
 
-    public function get_user_courses($userid)
-    {
-        global $DB;
-        $courses = enrol_get_users_courses($userid, true);
-        $teacher_courses = [];
-
-        foreach ($courses as $course) {
-            $context = context_course::instance($course->id);
-
-            if (has_capability('moodle/course:update', $context, $userid)) {
-                $teacher_courses[] = $course;
-            }
-        }
-        return $teacher_courses;
-    }
-
-
-    public function __construct()
-    {
+    public function __construct() {
         global $COURSE, $PAGE;
 
         $context = context_course::instance($COURSE->id);
 
         $PAGE->set_context($context);
 
-
         parent::__construct();
     }
 
-
-    public function definition()
-    {
-        global $PAGE, $COURSE, $DB, $USER, $PAGE,$OUTPUT;
+    public function definition() {
+        global $PAGE, $COURSE, $DB, $USER, $PAGE, $OUTPUT;
         $mform = $this->_form;
 
         $context = context_course::instance($COURSE->id);
 
         $PAGE->set_context($context);
-
-
-      
 
         // $mform->addElement('text', 'name', get_string('name', 'block_studentcare'), array('size' => '50', 'readonly' => 'readonly'));
         // $mform->setType('name', PARAM_NOTAGS);
@@ -57,7 +32,7 @@ class register_form extends moodleform
         $options = array();
 
         if (!empty($cursos)) {
-            usort($cursos, function ($a, $b) {
+            usort($cursos, function($a, $b) {
                 return strcmp($a->fullname, $b->fullname);
             });
 
@@ -74,26 +49,27 @@ class register_form extends moodleform
         $mform->addElement('select', 'sectionid', get_string('select_section', 'block_studentcare'), array());
         $mform->setType('sectionid', PARAM_INT);
         $mform->addHelpButton('sectionid', 'select_section', 'block_studentcare');
-        
+
         $mform->addElement('select', 'resourceid', get_string('select_resource', 'block_studentcare'), array());
         $mform->setType('resourceid', PARAM_INT);
         $mform->addHelpButton('resourceid', 'select_resource', 'block_studentcare');
         $current_time = time();
-        
+
         // Ajustar para a próxima hora redonda
         $start_time = strtotime(date('Y-m-d H:00:00', $current_time)) + 3600; // Próxima hora cheia
         $future_time = $start_time + 3600; // Adiciona 1 hora ao start_time
-        
-        $mform->addElement('date_time_selector', 'starttime', get_string('starttime', 'block_studentcare'), array('optional' => false));
+
+        $mform->addElement('date_time_selector', 'starttime', get_string('starttime', 'block_studentcare'),
+                array('optional' => false));
         $mform->setDefault('starttime', $start_time);
-        
+
         $mform->addElement('date_time_selector', 'endtime', get_string('endtime', 'block_studentcare'), array('optional' => false));
         $mform->setDefault('endtime', $future_time);
-        
-        
-        $mform->addElement('textarea', 'description', get_string('description', 'block_studentcare'), 'wrap="virtual" rows="5" cols="50" maxlength="200"');
+
+        $mform->addElement('textarea', 'description', get_string('description', 'block_studentcare'),
+                'wrap="virtual" rows="5" cols="50" maxlength="200"');
         $mform->setType('description', PARAM_TEXT);
-        
+
         $mform->addElement('hidden', 'emocao_selecionadas', '', array('id' => 'emocao_selecionadas'));
         $mform->setType('emocao_selecionadas', PARAM_RAW);
 
@@ -114,7 +90,8 @@ class register_form extends moodleform
         $mform->setType('classe_aeq', PARAM_TEXT);
         $mform->addHelpButton('classe_aeq', 'aeqclasses', 'block_studentcare');
 
-        $mform->addElement('select', 'emocoes', get_string('emotions', 'block_studentcare'), array(), array('multiple' => 'multiple', 'size' => 8));
+        $mform->addElement('select', 'emocoes', get_string('emotions', 'block_studentcare'), array(),
+                array('multiple' => 'multiple', 'size' => 8));
         $mform->setType('emocoes', PARAM_INT);
         $mform->addHelpButton('emocoes', 'emotions', 'block_studentcare');
 
@@ -124,13 +101,14 @@ class register_form extends moodleform
             <div id="emocoes-selecionadas" class="selected-emotions-container"></div>
         </div>
     ');
-    
 
-        $mform->addElement('advcheckbox', 'alertprogress', get_string('alertprogress', 'block_studentcare'), null, array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'alertprogress', get_string('alertprogress', 'block_studentcare'), null,
+                array('group' => 1), array(0, 1));
         $mform->setDefault('alertprogress', 1);
         $mform->addHelpButton('alertprogress', 'alertprogress', 'block_studentcare');
 
-        $mform->addElement('advcheckbox', 'notify_students', get_string('notify_students', 'block_studentcare'), null, array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'notify_students', get_string('notify_students', 'block_studentcare'), null,
+                array('group' => 1), array(0, 1));
         $mform->setDefault('notify_students', 1);
         $mform->addHelpButton('notify_students', 'notify_students', 'block_studentcare');
 
@@ -148,18 +126,29 @@ class register_form extends moodleform
         $buttonarray[] = $mform->createElement('cancel', 'cancel', get_string('cancel'));
         $mform->addGroup($buttonarray, 'buttonar', '', [' '], false);
 
-
         $mform->addElement('hidden', 'userid', $USER->id);
         $mform->setType('userid', PARAM_INT);
 
-
-    
         $PAGE->requires->js(new moodle_url('/blocks/studentcare/js/shared.js'));
         $PAGE->requires->js(new moodle_url('/blocks/studentcare/js/register_form.js'));
     }
 
-    public function validation($data, $files)
-    {
+    public function get_user_courses($userid) {
+        global $DB;
+        $courses = enrol_get_users_courses($userid, true);
+        $teacher_courses = [];
+
+        foreach ($courses as $course) {
+            $context = context_course::instance($course->id);
+
+            if (has_capability('moodle/course:update', $context, $userid)) {
+                $teacher_courses[] = $course;
+            }
+        }
+        return $teacher_courses;
+    }
+
+    public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
         $current_time = time();
@@ -175,8 +164,7 @@ class register_form extends moodleform
         return $errors;
     }
 
-    public function process_form($data)
-    {
+    public function process_form($data) {
         global $DB, $SESSION, $COURSE, $PAGE;
 
         global $DB;
@@ -185,18 +173,16 @@ class register_form extends moodleform
 
         // Obtém o número total de coletas existentes (contagem geral)
         $numeroColeta = $DB->count_records('studentcare_cadastrocoleta', ['curso_id' => $data->courseid]) + 1;
-        
+
         // Formata a data de criação
         $dataCriacao = date('d/m/Y');
-        
+
         // Obtém o nome completo do curso
         $cursoNome = $DB->get_field('course', 'fullname', ['id' => $data->courseid]);
         $cursoNomeFormatado = format_string($cursoNome);
-        
+
         // Cria o nome da coleta com o nome completo do curso
         $nomeColeta = 'Coleta #' . $numeroColeta . ' - ' . $cursoNomeFormatado . ' - ' . $dataCriacao;
-        
-        
 
         // Sanitização de campos numéricos e texto
         $userid = clean_param($data->userid, PARAM_INT);
@@ -210,7 +196,6 @@ class register_form extends moodleform
         $sectionId = clean_param($data->setor, PARAM_INT);
         $resourceIdAtrelado = clean_param($data->recurso, PARAM_INT);
 
-
         $registro = new stdClass();
         $registro->nome = clean_param($nome, PARAM_TEXT);
         $registro->data_inicio = clean_param($dataInicioFormatada, PARAM_TEXT);
@@ -223,7 +208,6 @@ class register_form extends moodleform
         $registro->section_id = clean_param($sectionId, PARAM_INT);
         $registro->resource_id_atrelado = clean_param($resourceIdAtrelado, PARAM_INT);
         $registro->resource_id = 0;
-
 
         $inserted = $DB->insert_record('studentcare_cadastrocoleta', $registro);
 
@@ -240,7 +224,7 @@ class register_form extends moodleform
                             $associacao->cadastrocoleta_id = $cadastroColetaId;
                             $associacao->classeaeq_id = $classeAeqId;
                             $associacao->emocao_id = $emocaoId;
-    
+
                             // Salva a associação no banco
                             $DB->insert_record('studentcare_associacao_classe_emocao_coleta', $associacao);
                         }
@@ -261,8 +245,7 @@ class register_form extends moodleform
     }
 }
 
-class CadastroColeta
-{
+class CadastroColeta {
     private $nome;
     private $dataInicio;
     private $horaInicio;
@@ -275,8 +258,8 @@ class CadastroColeta
     private $professorId;
     private $classesAEQ;
 
-    public function __construct($nome, $dataInicio, $horaInicio, $dataFim, $horaFim, $descricao, $receberAlerta, $notificarAlunos, $cursoId, $professorId)
-    {
+    public function __construct($nome, $dataInicio, $horaInicio, $dataFim, $horaFim, $descricao, $receberAlerta, $notificarAlunos,
+            $cursoId, $professorId) {
         $this->nome = $nome;
         $this->dataInicio = $dataInicio;
         $this->horaInicio = $horaInicio;
@@ -290,28 +273,23 @@ class CadastroColeta
         $this->classesAEQ = [];
     }
 
-    public function adicionarClasse($classe, $emoções)
-    {
+    public function adicionarClasse($classe, $emoções) {
         $this->classesAEQ[$classe] = $emoções;
     }
 }
 
-class ClasseAeq
-{
+class ClasseAeq {
     private $nomeClasse;
 
-    public function __construct($nomeClasse)
-    {
+    public function __construct($nomeClasse) {
         $this->nomeClasse = $nomeClasse;
     }
 
-    public function getNomeClasse()
-    {
+    public function getNomeClasse() {
         return $this->nomeClasse;
     }
 
-    public function setNomeClasse($nomeClasse)
-    {
+    public function setNomeClasse($nomeClasse) {
         $this->nomeClasse = $nomeClasse;
     }
 }
