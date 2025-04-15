@@ -22,6 +22,17 @@
  * @author Rafael Rodrigues
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
+
+/***
+ * Collection Manager
+ *
+ * @package block_studentcare
+ * @copyright  2024 Rafael Rodrigues
+ * @author Rafael Rodrigues
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class collection_manager {
 
     /**
@@ -57,7 +68,6 @@ class collection_manager {
             throw $e;
         }
     }
-
 
     /**
      * Missing documentation.
@@ -672,7 +682,6 @@ class collection_manager {
         return $html;
     }
 
-
     /**
      * Missing documentation.
      */
@@ -698,7 +707,6 @@ class collection_manager {
 
         return $DB->get_records_sql($sql, $params);
     }
-
 
     /**
      * Missing documentation.
@@ -779,7 +787,6 @@ class collection_manager {
         exit;
     }
 
-
     /**
      * Missing documentation.
      */
@@ -799,7 +806,6 @@ class collection_manager {
         $params = ['coleta_id' => $coletaid];
         return $DB->get_records_sql($sql, $params);
     }
-
 
     /**
      * Missing documentation.
@@ -871,7 +877,6 @@ class collection_manager {
         echo json_encode($coletadata, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
         exit;
     }
-
 
     /**
      * Missing documentation.
