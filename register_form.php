@@ -120,7 +120,7 @@ class register_form extends moodleform {
         $options2 = array();
         foreach ($classes2 as $class) {
             $classeaeq2 = new ClasseAeq(get_string($class->nome_classe, 'block_studentcare'));
-            $options2[$class->id] = $classeaeq2->getNomeClasse();
+            $options2[$class->id] = $classeaeq2->get_nome_classe();
         }
 
         $mform->addElement('select', 'classe_aeq', get_string('aeqclasses', 'block_studentcare'), $options2);
@@ -225,17 +225,17 @@ class register_form extends moodleform {
 
         // Obtém o nome completo do curso
         $cursonome = $DB->get_field('course', 'fullname', ['id' => $data->courseid]);
-        $cursonomeFormatado = format_string($cursonome);
+        $cursonomeformatado = format_string($cursonome);
 
         // Cria o nome da coleta com o nome completo do curso
-        $nomecoleta = 'Coleta #' . $numerocoleta . ' - ' . $cursonomeFormatado . ' - ' . $datacriacao;
+        $nomecoleta = 'Coleta #' . $numerocoleta . ' - ' . $cursonomeformatado . ' - ' . $datacriacao;
 
         // Sanitização de campos numéricos e texto
         $userid = clean_param($data->userid, PARAM_INT);
         $courseid = clean_param($data->courseid, PARAM_INT);
         $nome = $nomecoleta;
         $datainicioformatada = clean_param(date('Y-m-d H:i:s', $data->starttime), PARAM_TEXT);
-        $datafimFormatada = clean_param(date('Y-m-d H:i:s', $data->endtime), PARAM_TEXT);
+        $datafimformatada = clean_param(date('Y-m-d H:i:s', $data->endtime), PARAM_TEXT);
         $descricao = clean_param($data->description, PARAM_TEXT);
         $receberalerta = clean_param($data->alertprogress, PARAM_INT);
         $notificaralunos = clean_param($data->notify_students, PARAM_INT);
@@ -245,7 +245,7 @@ class register_form extends moodleform {
         $registro = new stdClass();
         $registro->nome = clean_param($nome, PARAM_TEXT);
         $registro->data_inicio = clean_param($datainicioformatada, PARAM_TEXT);
-        $registro->data_fim = clean_param($datafimFormatada, PARAM_TEXT);
+        $registro->data_fim = clean_param($datafimformatada, PARAM_TEXT);
         $registro->descricao = clean_param($descricao, PARAM_TEXT);
         $registro->receber_alerta = clean_param($receberalerta, PARAM_INT);
         $registro->notificar_alunos = clean_param($notificaralunos, PARAM_INT);
@@ -316,7 +316,7 @@ class CadastroColeta {
     /** @var string */
     private $professorid;
     /** @var string */
-    private $classesAEQ;
+    private $classesaeq;
 
     /**
      * Missing documentation.
@@ -333,14 +333,14 @@ class CadastroColeta {
         $this->notificarAlunos = $notificaralunos;
         $this->cursoId = $cursoid;
         $this->professorId = $professorid;
-        $this->classesAEQ = [];
+        $this->classesaeq = [];
     }
 
     /**
      * Missing documentation.
      */
-    public function adicionarClasse($classe, $emoções) {
-        $this->classesAEQ[$classe] = $emoções;
+    public function adicionarclasse($classe, $emoções) {
+        $this->classesaeq[$classe] = $emoções;
     }
 }
 
@@ -348,27 +348,28 @@ class CadastroColeta {
  * Missing documentation.
  */
 class ClasseAeq {
-    private $nomeClasse;
+    /** @var sgring */
+    private $nomeclasse;
 
     /**
      * Missing documentation.
      */
-    public function __construct($nomeClasse) {
-        $this->nomeClasse = $nomeClasse;
+    public function __construct($nomeclasse) {
+        $this->nomeclasse = $nomeclasse;
     }
 
     /**
      * Missing documentation.
      */
-    public function getNomeClasse() {
-        return $this->nomeClasse;
+    public function get_nome_classe() {
+        return $this->nomeclasse;
     }
 
     /**
      * Missing documentation.
      */
-    public function setNomeClasse($nomeClasse) {
-        $this->nomeClasse = $nomeClasse;
+    public function set_nome_classe($nomeclasse) {
+        $this->nomeclasse = $nomeclasse;
     }
 }
 
