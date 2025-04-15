@@ -25,6 +25,14 @@
 
 namespace block_studentcare\task;
 
+/**
+ * Process Collection
+ *
+ * @package block_studentcare
+ * @copyright  2024 Rafael Rodrigues
+ * @author Rafael Rodrigues
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class process_collection extends \core\task\scheduled_task {
     /**
      * A method that gets the name of the collection.
@@ -229,13 +237,13 @@ class process_collection extends \core\task\scheduled_task {
                 $fullmessagetemplate);
             $eventdata->fullmessageformat = FORMAT_PLAIN;
 
-            $fullMessageHtmlTemplate = get_string('event_fullmessagehtml', 'block_studentcare');
+            $fullmessagehtmltemplate = get_string('event_fullmessagehtml', 'block_studentcare');
             $eventdata->fullmessagehtml = str_replace(array('{disciplina}', '{datafim}', '{url}'),
-                array($nomedisciplina, $datafimformatada, "{$CFG->wwwroot}/blocks/studentcare/view.php?coletaid={$coleta->id}"), $fullMessageHtmlTemplate);
+                array($nomedisciplina, $datafimformatada, "{$CFG->wwwroot}/blocks/studentcare/view.php?coletaid={$coleta->id}"), $fullmessagehtmltemplate);
 
-            $smallMessageTemplate = get_string('event_smallmessage', 'block_studentcare');
+            $smallmessagetemplate = get_string('event_smallmessage', 'block_studentcare');
             $eventdata->smallmessage = str_replace(array('{disciplina}', '{datafim}', '{url}'),
-                array($nomedisciplina, $datafimformatada, "{$CFG->wwwroot}/blocks/studentcare/view.php?coletaid={$coleta->id}"), $smallMessageTemplate);
+                array($nomedisciplina, $datafimformatada, "{$CFG->wwwroot}/blocks/studentcare/view.php?coletaid={$coleta->id}"), $smallmessagetemplate);
 
             $eventdata->notification = 1;
 
