@@ -36,6 +36,8 @@ require_once("$CFG->libdir/formslib.php");
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class edit_form extends moodleform {
+
+    /** @var string This variable does something */
     private $coleta;
 
     public function __construct($coletaid) {
@@ -336,23 +338,34 @@ class edit_form extends moodleform {
 
         // Redirecionar com sucesso
         $SESSION->mensagem_sucesso = get_string('coleta_atualizada_com_sucesso', 'block_studentcare');
-        redirect(new moodle_url('/blocks/studentcare/index.php', ));
+        redirect(new moodle_url('/blocks/studentcare/index.php',));
     }
 
 }
 
 class CadastroColeta {
-    private $nome; // Name
-    private $datainicio; // Start date
-    private $horainicio; // Start hour
-    private $dataFim; // End date
-    private $horafim; // End hour
-    private $descricao; // Description
-    private $receberalerta; // Receive alert
-    private $notificaralunos; // Notify students
-    private $cursoid; // Course id
-    private $professorid; // Professor id
-    private $classesaeq; // Class aeq
+    /** @var string This variable does something */
+    private $nome;
+    /** @var string This variable does something */
+    private $datainicio;
+    /** @var string This variable does something */
+    private $horainicio;
+    /** @var string This variable does something */
+    private $dataFim;
+    /** @var string This variable does something */
+    private $horafim;
+    /** @var string This variable does something */
+    private $descricao;
+    /** @var string This variable does something */
+    private $receberalerta;
+    /** @var string This variable does something */
+    private $notificaralunos;
+    /** @var string This variable does something */
+    private $cursoid;
+    /** @var string This variable does something */
+    private $professorid;
+    /** @var string This variable does something */
+    private $classesaeq;
 
     public function __construct($nome, $datainicio, $horainicio, $dataFim, $horafim, $descricao, $receberalerta, $notificaralunos,
             $cursoid, $professorid) {
