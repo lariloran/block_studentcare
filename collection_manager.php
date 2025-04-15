@@ -169,7 +169,6 @@ class collection_manager {
                 font-size: 16px; /* Reduz o tamanho do título */
                 margin-bottom: 8px;
                 color: #333;
-                
             }
 
             .card p {
@@ -327,10 +326,10 @@ class collection_manager {
             <option value="data_fim">' . get_string('order_by_end_date', 'block_studentcare') . '</option>
             <option value="curso_nome">' . get_string('order_by_course', 'block_studentcare') . '</option>
         </select>
-    
+
         <button id="orderDirection" onclick="toggleOrderDirection()">' . get_string('ascending', 'block_studentcare') .
                 ' <i class="icon fa fa-arrow-up"></i></button>
-    
+
         <label for="pageSize"><strong>' . get_string('show_label', 'block_studentcare') . ':</strong></label>
         <select id="pageSize" onchange="atualizarPaginacao()">
             <option value="5">' . get_string('show_5_per_page', 'block_studentcare') . '</option>
@@ -382,15 +381,15 @@ class collection_manager {
                 $coleta->resource_name = $resourcename;
                 $coleta->section_name = $sectionname;
 
-                $html .= '<div class="card" 
-                data-id="' . $coleta->id . '" 
-                data-nome="' . format_string($coleta->nome) . '" 
-                data-data_inicio="' . $coleta->data_inicio . '" 
-                data-data_fim="' . $coleta->data_fim . '" 
-                data-data_criacao="' . $coleta->data_criacao . '" 
-                data-curso_nome="' . $cursonome . '" 
-                data-recurso_nome="' . $coleta->recurso_nome . '" 
-                data-resource_name="' . format_string($coleta->resource_name) . '" 
+                $html .= '<div class="card"
+                data-id="' . $coleta->id . '"
+                data-nome="' . format_string($coleta->nome) . '"
+                data-data_inicio="' . $coleta->data_inicio . '"
+                data-data_fim="' . $coleta->data_fim . '"
+                data-data_criacao="' . $coleta->data_criacao . '"
+                data-curso_nome="' . $cursonome . '"
+                data-recurso_nome="' . $coleta->recurso_nome . '"
+                data-resource_name="' . format_string($coleta->resource_name) . '"
                 data-section_name="' . format_string($coleta->section_name) . '">
                 <h3>' . format_string(mb_strimwidth($coleta->nome, 0, 40, "...")) . '</h3>
                 <p><strong>' . get_string('course', 'block_studentcare') . ':</strong> ' . $cursonome . '</p>
@@ -536,9 +535,9 @@ class collection_manager {
                     const descricao = card.getAttribute("data-descricao")?.toLowerCase() || "";
                     const recursoNome = card.getAttribute("data-recurso_nome")?.toLowerCase() || "";
 
-                    const matches = nome.includes(searchTerm) || 
-                                    cursoNome.includes(searchTerm) || 
-                                    descricao.includes(searchTerm) || 
+                    const matches = nome.includes(searchTerm) ||
+                                    cursoNome.includes(searchTerm) ||
+                                    descricao.includes(searchTerm) ||
                                     recursoNome.includes(searchTerm);
 
                     // Usa `visibility: hidden` para manter o layout e evitar lacunas
@@ -598,7 +597,7 @@ class collection_manager {
 
                 document.getElementById("downloadCSV").setAttribute("data-id", coleta.id);
                 document.getElementById("downloadJSON").setAttribute("data-id", coleta.id);
-        
+
                 // Atualiza o botão de exclusão no modal
                 const deleteButton = document.getElementById("deleteColeta");
                 deleteButton.setAttribute("data-id", coleta.id);
@@ -609,7 +608,11 @@ class collection_manager {
                     adicionarEventosFechamento(modal);
 
             }
-    
+
+
+            /*
+             * Missing documentation.
+             */
             function adicionarEventosFechamento(modal) {
                 // Fecha o modal ao clicar no "x"
                 modal.querySelector(".close").onclick = function () {
@@ -636,7 +639,10 @@ class collection_manager {
                 window.location.href = downloadUrl;
             };
 
-            
+
+            /*
+             * Missing documentation.
+             */
             function abrirGrafico() {
                 const coletaId = document.getElementById("modalColetaUrl").getAttribute("href").split("=").pop();
                 window.location.href = M.cfg.wwwroot + "/blocks/studentcare/report.php?coletaid=" + coletaId;
@@ -666,6 +672,10 @@ class collection_manager {
         return $html;
     }
 
+
+    /*
+     * Missing documentation.
+     */
     public function get_coletas_by_professor($usuarioid) {
         global $DB, $CFG;
 
