@@ -1,11 +1,47 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * the first page to view the studentcare
+ *
+ * @package block_studentcare
+ * @copyright  2024 Rafael Rodrigues
+ * @author Rafael Rodrigues
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
 require_once("$CFG->libdir/formslib.php");
 require_once("$CFG->libdir/classes/notification.php");
 
 use core\notification;
 
+/**
+ * register_form
+ *
+ * @package block_studentcare
+ * @copyright  2024 Rafael Rodrigues
+ * @author Rafael Rodrigues
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class register_form extends moodleform {
 
+    /**
+     * Missing documentation.
+     */
     public function __construct() {
         global $COURSE, $PAGE;
 
@@ -16,6 +52,9 @@ class register_form extends moodleform {
         parent::__construct();
     }
 
+    /**
+     * Missing documentation.
+     */
     public function definition() {
         global $PAGE, $COURSE, $DB, $USER, $PAGE, $OUTPUT;
         $mform = $this->_form;
@@ -131,6 +170,9 @@ class register_form extends moodleform {
         $PAGE->requires->js(new moodle_url('/blocks/studentcare/js/register_form.js'));
     }
 
+    /**
+     * Missing documentation.
+     */
     public function get_user_courses($userid) {
         global $DB;
         $courses = enrol_get_users_courses($userid, true);
@@ -146,6 +188,9 @@ class register_form extends moodleform {
         return $teachercourses;
     }
 
+    /**
+     * Missing documentation.
+     */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
@@ -162,6 +207,9 @@ class register_form extends moodleform {
         return $errors;
     }
 
+    /**
+     * Missing documentation.
+     */
     public function process_form($data) {
         global $DB, $SESSION, $COURSE, $PAGE;
 
@@ -243,19 +291,36 @@ class register_form extends moodleform {
     }
 }
 
+/**
+ * Missing documentation.
+ */
 class CadastroColeta {
+    /** @var string */
     private $nome;
+    /** @var string */
     private $datainicio;
+    /** @var string */
     private $horainicio;
+    /** @var string */
     private $datafim;
+    /** @var string */
     private $horafim;
+    /** @var string */
     private $descricao;
+    /** @var string */
     private $receberalerta;
+    /** @var string */
     private $notificaralunos;
+    /** @var string */
     private $cursoid;
+    /** @var string */
     private $professorid;
+    /** @var string */
     private $classesAEQ;
 
+    /**
+     * Missing documentation.
+     */
     public function __construct($nome, $datainicio, $horainicio, $datafim, $horafim, $descricao, $receberalerta, $notificaralunos,
             $cursoid, $professorid) {
         $this->nome = $nome;
@@ -271,22 +336,37 @@ class CadastroColeta {
         $this->classesAEQ = [];
     }
 
+    /**
+     * Missing documentation.
+     */
     public function adicionarClasse($classe, $emoções) {
         $this->classesAEQ[$classe] = $emoções;
     }
 }
 
+/**
+ * Missing documentation.
+ */
 class ClasseAeq {
     private $nomeClasse;
 
+    /**
+     * Missing documentation.
+     */
     public function __construct($nomeClasse) {
         $this->nomeClasse = $nomeClasse;
     }
 
+    /**
+     * Missing documentation.
+     */
     public function getNomeClasse() {
         return $this->nomeClasse;
     }
 
+    /**
+     * Missing documentation.
+     */
     public function setNomeClasse($nomeClasse) {
         $this->nomeClasse = $nomeClasse;
     }
