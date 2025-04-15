@@ -26,7 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $messageproviders = array(
-    // Notificação para quando uma coleta é criada
+    // Notificação para quando uma coleta é criada.
     'created_collection' => [
         'capability' => 'block/studentcare:receivenotifications',
         'defaults' => [
@@ -36,7 +36,7 @@ $messageproviders = array(
         ],
     ],
 
-    // Notificação para quando uma coleta é finalizada
+    // Notificação para quando uma coleta é finalizada.
     'collection_finished' => [
         'capability' => 'block/studentcare:receivenotifications',
         'defaults' => [

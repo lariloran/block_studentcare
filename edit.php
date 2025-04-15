@@ -50,7 +50,7 @@ $PAGE->set_context($context);
 // Configuração da página.
 $PAGE->set_url(new moodle_url('/blocks/studentcare/edit.php', ['coletaid' => $coletaid]));
 $PAGE->set_title(get_string('editcoleta', 'block_studentcare') . ": " . format_string($coleta->nome));
-//$PAGE->set_heading(get_string('editcoleta', 'block_studentcare') . " - " . format_string($coleta->nome));.
+// $PAGE->set_heading(get_string('editcoleta', 'block_studentcare') . " - " . format_string($coleta->nome));.
 
 // Verifica se a coleta já foi iniciada.
 $coletainiciada = strtotime($coleta->data_inicio) <= time();
