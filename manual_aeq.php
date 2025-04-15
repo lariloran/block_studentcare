@@ -229,12 +229,12 @@ echo '<style>
 global $DB;
 
 // Consulta SQL para buscar perguntas, emoções e classes AEQ, ordenadas pelo ID da classe AEQ
-$sql = "SELECT 
+$sql = "SELECT
             p.id AS pergunta_id, -- Coluna única
             c.id AS classe_id, -- ID da classe para ordenação
             c.nome_classe AS classe_nome,
             e.nome AS emocao_nome,
-            p.pergunta_texto 
+            p.pergunta_texto
         FROM {studentcare_pergunta} p
         JOIN {studentcare_emocao} e ON p.emocao_id = e.id
         JOIN {studentcare_classeaeq} c ON p.classeaeq_id = c.id
@@ -267,7 +267,7 @@ echo html_writer::start_div('manual_aeq-search');
 echo html_writer::empty_tag('input', array(
         'type' => 'text',
         'id' => 'manual_aeqSearch',
-        'placeholder' => get_string('manual_aeq_search_placeholder', 'block_studentcare')
+        'placeholder' => get_string('manual_aeq_search_placeholder', 'block_studentcare'),
 ));
 echo html_writer::end_div();
 
@@ -278,6 +278,8 @@ echo html_writer::end_div();
 echo html_writer::start_div('manual_aeq-topics');
 
 /**
+ * Missing description
+ *
  * @param $dados
  * @return string
  */
@@ -310,7 +312,7 @@ function render_acordion($dados) {
 }
 
 echo html_writer::start_div('manual_aeq-topic', array(
-        'onclick' => 'openModal("", ` 
+        'onclick' => 'openModal("", `
     <div class="modal-header">
         <h2><i class="fas fa-question-circle"></i> ' . get_string('start_here_title', 'block_studentcare') . '</h2>
     </div>
@@ -342,14 +344,14 @@ echo html_writer::start_div('manual_aeq-topic', array(
             <span class="emotion-chip" style="background-color: #D1C4E9;">' . get_string('shame', 'block_studentcare') . '</span>
         </div>
     </div>
-    `)'
+    `)',
 ));
 echo html_writer::tag('div', '🏃‍♂️‍➡️', array('class' => 'manual_aeq-topic-icon'));
 echo html_writer::tag('div', get_string('start_here', 'block_studentcare'), array('class' => 'manual_aeq-topic-title'));
 echo html_writer::end_div();
 
 echo html_writer::start_div('manual_aeq-topic', array(
-        'onclick' => 'openModal("Classes AEQ 📖", ` 
+        'onclick' => 'openModal("Classes AEQ 📖", `
     <div class="modal-header">
         <h2><i class="fas fa-layer-group"></i> ' . get_string('classes_aeq', 'block_studentcare') . '</h2>
     </div>
@@ -399,7 +401,7 @@ echo html_writer::start_div('manual_aeq-topic', array(
             <span class="emotion-chip" style="background-color: #D1C4E9;">' . get_string('shame', 'block_studentcare') . '</span>
         </div>
     </div>
-    `)'
+    `)',
 ));
 
 echo html_writer::tag('div', '📖', array('class' => 'manual_aeq-topic-icon'));
@@ -407,7 +409,7 @@ echo html_writer::tag('div', get_string('classes_aeq', 'block_studentcare'), arr
 echo html_writer::end_div();
 
 echo html_writer::start_div('manual_aeq-topic', array(
-        'onclick' => 'openModal("Emoções Acadêmicas 🎭", ` 
+        'onclick' => 'openModal("Emoções Acadêmicas 🎭", `
     <div class="modal-header">
         <h2><i class="fas fa-layer-group"></i> ' . get_string('academic_emotions', 'block_studentcare') . '</h2>
     </div>
@@ -473,23 +475,23 @@ echo html_writer::start_div('manual_aeq-topic', array(
                 '):</strong> ' . get_string('test_hopelessness_description', 'block_studentcare') . '</li>
     </ul>
     </div>
-    `)'
+    `)',
 ));
 echo html_writer::tag('div', '🎭', array('class' => 'manual_aeq-topic-icon'));
 echo html_writer::tag('div', get_string('academic_emotions', 'block_studentcare'), array('class' => 'manual_aeq-topic-title'));
 echo html_writer::end_div();
 
 echo html_writer::start_div('manual_aeq-topic', array(
-        'onclick' => 'openModal("' . get_string('aeq_questions', 'block_studentcare') . ' 📝", ` 
+        'onclick' => 'openModal("' . get_string('aeq_questions', 'block_studentcare') . ' 📝", `
     <div class="modal-header">
         <h2><i class="fas fa-question-circle"></i> ' . get_string('aeq_questions', 'block_studentcare') . '</h2>
     </div>
     <div class="modal-content-body">
         <p>' . get_string('aeq_description', 'block_studentcare') . '</p>
-        
+
         <h3><i class="fas fa-cogs"></i> ' . get_string('how_it_works', 'block_studentcare') . '</h3>
         <p>' . get_string('how_it_works_description', 'block_studentcare') . '</p>
-        
+
         <h3><i class="fas fa-lightbulb"></i> ' . get_string('example_questions', 'block_studentcare') . '</h3>
         <ul>
             <li><strong>' . get_string('classroom_related', 'block_studentcare') . ':</strong> “' .
@@ -499,15 +501,15 @@ echo html_writer::start_div('manual_aeq-topic', array(
             <li><strong>' . get_string('test_related', 'block_studentcare') . ':</strong> “' .
                 get_string('example_test_question', 'block_studentcare') . '”</li>
         </ul>
-        
+
         <h3><i class="fas fa-layer-group"></i> ' . get_string('question_organization', 'block_studentcare') . '</h3>
         <p>' . get_string('question_organization_description', 'block_studentcare') . '</p>
-        
+
          <div class="accordion">
             ' . addslashes(render_acordion($dadosorganizados)) . '
         </div>
     </div>
-    `)'
+    `)',
 ));
 
 echo html_writer::tag('div', '📝', array('class' => 'manual_aeq-topic-icon'));
