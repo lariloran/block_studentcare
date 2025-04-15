@@ -26,7 +26,7 @@ class register_form extends moodleform {
 
         // $mform->addElement('text', 'name', get_string('name', 'block_studentcare'), array('size' => '50', 'readonly' => 'readonly'));
         // $mform->setType('name', PARAM_NOTAGS);
-        // $mform->setDefault('name', $nomeColeta);
+        // $mform->setDefault('name', $nomecoleta);
 
         $cursos = $this->get_user_courses($USER->id);
         $options = array();
@@ -39,8 +39,6 @@ class register_form extends moodleform {
             foreach ($cursos as $curso) {
                 $options[$curso->id] = $curso->fullname;
             }
-        } else {
-
         }
 
         $mform->addElement('select', 'courseid', get_string('select_course', 'block_studentcare'), $options);
@@ -53,18 +51,18 @@ class register_form extends moodleform {
         $mform->addElement('select', 'resourceid', get_string('select_resource', 'block_studentcare'), array());
         $mform->setType('resourceid', PARAM_INT);
         $mform->addHelpButton('resourceid', 'select_resource', 'block_studentcare');
-        $current_time = time();
+        $currenttime = time();
 
         // Ajustar para a próxima hora redonda
-        $start_time = strtotime(date('Y-m-d H:00:00', $current_time)) + 3600; // Próxima hora cheia
-        $future_time = $start_time + 3600; // Adiciona 1 hora ao start_time
+        $starttime = strtotime(date('Y-m-d H:00:00', $currenttime)) + 3600; // Próxima hora cheia
+        $futuretime = $starttime + 3600; // Adiciona 1 hora ao start_time
 
         $mform->addElement('date_time_selector', 'starttime', get_string('starttime', 'block_studentcare'),
                 array('optional' => false));
-        $mform->setDefault('starttime', $start_time);
+        $mform->setDefault('starttime', $starttime);
 
         $mform->addElement('date_time_selector', 'endtime', get_string('endtime', 'block_studentcare'), array('optional' => false));
-        $mform->setDefault('endtime', $future_time);
+        $mform->setDefault('endtime', $futuretime);
 
         $mform->addElement('textarea', 'description', get_string('description', 'block_studentcare'),
                 'wrap="virtual" rows="5" cols="50" maxlength="200"');
@@ -82,8 +80,8 @@ class register_form extends moodleform {
         $classes2 = $DB->get_records('studentcare_classeaeq');
         $options2 = array();
         foreach ($classes2 as $class) {
-            $classeAeq2 = new ClasseAeq(get_string($class->nome_classe, 'block_studentcare'));
-            $options2[$class->id] = $classeAeq2->getNomeClasse();
+            $classeaeq2 = new ClasseAeq(get_string($class->nome_classe, 'block_studentcare'));
+            $options2[$class->id] = $classeaeq2->getNomeClasse();
         }
 
         $mform->addElement('select', 'classe_aeq', get_string('aeqclasses', 'block_studentcare'), $options2);
@@ -112,7 +110,7 @@ class register_form extends moodleform {
         $mform->setDefault('notify_students', 1);
         $mform->addHelpButton('notify_students', 'notify_students', 'block_studentcare');
 
-        echo '<div id="confirmation-data" 
+        echo '<div id="confirmation-data"
         data-title="' . get_string('confirm_title', 'block_studentcare') . '"
         data-message="' . get_string('confirm_message', 'block_studentcare') . '"
          data-yes="' . get_string('confirm_button_yes', 'block_studentcare') . '"
@@ -136,24 +134,24 @@ class register_form extends moodleform {
     public function get_user_courses($userid) {
         global $DB;
         $courses = enrol_get_users_courses($userid, true);
-        $teacher_courses = [];
+        $teachercourses = [];
 
         foreach ($courses as $course) {
             $context = context_course::instance($course->id);
 
             if (has_capability('moodle/course:update', $context, $userid)) {
-                $teacher_courses[] = $course;
+                $teachercourses[] = $course;
             }
         }
-        return $teacher_courses;
+        return $teachercourses;
     }
 
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        $current_time = time();
+        $currenttime = time();
 
-        if ($data['starttime'] < $current_time) {
+        if ($data['starttime'] < $currenttime) {
             $errors['starttime'] = get_string('starttime_past_error', 'block_studentcare');
         }
 
@@ -172,58 +170,58 @@ class register_form extends moodleform {
         global $DB;
 
         // Obtém o número total de coletas existentes (contagem geral)
-        $numeroColeta = $DB->count_records('studentcare_cadastrocoleta', ['curso_id' => $data->courseid]) + 1;
+        $numerocoleta = $DB->count_records('studentcare_cadastrocoleta', ['curso_id' => $data->courseid]) + 1;
 
         // Formata a data de criação
-        $dataCriacao = date('d/m/Y');
+        $datacriacao = date('d/m/Y');
 
         // Obtém o nome completo do curso
-        $cursoNome = $DB->get_field('course', 'fullname', ['id' => $data->courseid]);
-        $cursoNomeFormatado = format_string($cursoNome);
+        $cursonome = $DB->get_field('course', 'fullname', ['id' => $data->courseid]);
+        $cursonomeFormatado = format_string($cursonome);
 
         // Cria o nome da coleta com o nome completo do curso
-        $nomeColeta = 'Coleta #' . $numeroColeta . ' - ' . $cursoNomeFormatado . ' - ' . $dataCriacao;
+        $nomecoleta = 'Coleta #' . $numerocoleta . ' - ' . $cursonomeFormatado . ' - ' . $datacriacao;
 
         // Sanitização de campos numéricos e texto
         $userid = clean_param($data->userid, PARAM_INT);
         $courseid = clean_param($data->courseid, PARAM_INT);
-        $nome = $nomeColeta;
-        $dataInicioFormatada = clean_param(date('Y-m-d H:i:s', $data->starttime), PARAM_TEXT);
-        $dataFimFormatada = clean_param(date('Y-m-d H:i:s', $data->endtime), PARAM_TEXT);
+        $nome = $nomecoleta;
+        $datainicioformatada = clean_param(date('Y-m-d H:i:s', $data->starttime), PARAM_TEXT);
+        $datafimFormatada = clean_param(date('Y-m-d H:i:s', $data->endtime), PARAM_TEXT);
         $descricao = clean_param($data->description, PARAM_TEXT);
-        $receberAlerta = clean_param($data->alertprogress, PARAM_INT);
-        $notificarAlunos = clean_param($data->notify_students, PARAM_INT);
-        $sectionId = clean_param($data->setor, PARAM_INT);
-        $resourceIdAtrelado = clean_param($data->recurso, PARAM_INT);
+        $receberalerta = clean_param($data->alertprogress, PARAM_INT);
+        $notificaralunos = clean_param($data->notify_students, PARAM_INT);
+        $sectionid = clean_param($data->setor, PARAM_INT);
+        $resourceidatrelado = clean_param($data->recurso, PARAM_INT);
 
         $registro = new stdClass();
         $registro->nome = clean_param($nome, PARAM_TEXT);
-        $registro->data_inicio = clean_param($dataInicioFormatada, PARAM_TEXT);
-        $registro->data_fim = clean_param($dataFimFormatada, PARAM_TEXT);
+        $registro->data_inicio = clean_param($datainicioformatada, PARAM_TEXT);
+        $registro->data_fim = clean_param($datafimFormatada, PARAM_TEXT);
         $registro->descricao = clean_param($descricao, PARAM_TEXT);
-        $registro->receber_alerta = clean_param($receberAlerta, PARAM_INT);
-        $registro->notificar_alunos = clean_param($notificarAlunos, PARAM_INT);
+        $registro->receber_alerta = clean_param($receberalerta, PARAM_INT);
+        $registro->notificar_alunos = clean_param($notificaralunos, PARAM_INT);
         $registro->curso_id = clean_param($courseid, PARAM_INT);
         $registro->usuario_id = clean_param($userid, PARAM_INT);
-        $registro->section_id = clean_param($sectionId, PARAM_INT);
-        $registro->resource_id_atrelado = clean_param($resourceIdAtrelado, PARAM_INT);
+        $registro->section_id = clean_param($sectionid, PARAM_INT);
+        $registro->resource_id_atrelado = clean_param($resourceidatrelado, PARAM_INT);
         $registro->resource_id = 0;
 
         $inserted = $DB->insert_record('studentcare_cadastrocoleta', $registro);
 
         if ($inserted) {
-            $cadastroColetaId = $inserted;
+            $cadastrocoletaid = $inserted;
 
-            $emocaoSelecionadas = json_decode($data->emocao_selecionadas, true);
-            if (is_array($emocaoSelecionadas)) {
-                foreach ($emocaoSelecionadas as $classeAeqId => $emocoes) {
+            $emocaoselecionadas = json_decode($data->emocao_selecionadas, true);
+            if (is_array($emocaoselecionadas)) {
+                foreach ($emocaoselecionadas as $classeaeqid => $emocoes) {
                     if (is_array($emocoes)) {
                         foreach ($emocoes as $emocao) {
-                            $emocaoId = clean_param($emocao['id'], PARAM_INT); // Pega o ID da emoção
+                            $emocaoid = clean_param($emocao['id'], PARAM_INT); // Pega o ID da emoção
                             $associacao = new stdClass();
-                            $associacao->cadastrocoleta_id = $cadastroColetaId;
-                            $associacao->classeaeq_id = $classeAeqId;
-                            $associacao->emocao_id = $emocaoId;
+                            $associacao->cadastrocoleta_id = $cadastrocoletaid;
+                            $associacao->classeaeq_id = $classeaeqid;
+                            $associacao->emocao_id = $emocaoid;
 
                             // Salva a associação no banco
                             $DB->insert_record('studentcare_associacao_classe_emocao_coleta', $associacao);
@@ -247,29 +245,29 @@ class register_form extends moodleform {
 
 class CadastroColeta {
     private $nome;
-    private $dataInicio;
-    private $horaInicio;
-    private $dataFim;
-    private $horaFim;
+    private $datainicio;
+    private $horainicio;
+    private $datafim;
+    private $horafim;
     private $descricao;
-    private $receberAlerta;
-    private $notificarAlunos;
-    private $cursoId;
-    private $professorId;
+    private $receberalerta;
+    private $notificaralunos;
+    private $cursoid;
+    private $professorid;
     private $classesAEQ;
 
-    public function __construct($nome, $dataInicio, $horaInicio, $dataFim, $horaFim, $descricao, $receberAlerta, $notificarAlunos,
-            $cursoId, $professorId) {
+    public function __construct($nome, $datainicio, $horainicio, $datafim, $horafim, $descricao, $receberalerta, $notificaralunos,
+            $cursoid, $professorid) {
         $this->nome = $nome;
-        $this->dataInicio = $dataInicio;
-        $this->horaInicio = $horaInicio;
-        $this->dataFim = $dataFim;
-        $this->horaFim = $horaFim;
+        $this->dataInicio = $datainicio;
+        $this->horaInicio = $horainicio;
+        $this->dataFim = $datafim;
+        $this->horaFim = $horafim;
         $this->descricao = $descricao;
-        $this->receberAlerta = $receberAlerta;
-        $this->notificarAlunos = $notificarAlunos;
-        $this->cursoId = $cursoId;
-        $this->professorId = $professorId;
+        $this->receberAlerta = $receberalerta;
+        $this->notificarAlunos = $notificaralunos;
+        $this->cursoId = $cursoid;
+        $this->professorId = $professorid;
         $this->classesAEQ = [];
     }
 
