@@ -243,6 +243,7 @@ class process_collection extends \core\task\scheduled_task {
         }
     }
 
+
     /**
      * A method that sends ending notification.
      */
