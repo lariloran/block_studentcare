@@ -120,7 +120,6 @@ class edit_form extends moodleform {
                     $resources[$cm->id] = $cm->name;
                 }
             }
-        } else {
         }
 
         // Adiciona o elemento de seleção ao formulário
@@ -165,7 +164,7 @@ class edit_form extends moodleform {
 
             // Obter as emoções associadas organizadas por classe
             $emocaoassociadas = $DB->get_records('studentcare_associacao_classe_emocao_coleta', [
-                    'cadastrocoleta_id' => $this->coleta->id
+                    'cadastrocoleta_id' => $this->coleta->id,
             ]);
 
             foreach ($emocaoassociadas as $associacao) {
@@ -183,7 +182,7 @@ class edit_form extends moodleform {
                     // Adicionar ao array com os detalhes completos
                     $selectedemotions[$classeid][] = [
                             'id' => $emocao->id,
-                            'name' => get_string($emocao->nome, 'block_studentcare')
+                            'name' => get_string($emocao->nome, 'block_studentcare'),
                     ];
                 }
             }
@@ -229,7 +228,7 @@ class edit_form extends moodleform {
             $mform->addHelpButton('notify_students', 'notify_students', 'block_studentcare');
         }
 
-        echo '<div id="confirmation-data" 
+        echo '<div id="confirmation-data"
         data-title="' . get_string('confirm_title', 'block_studentcare') . '"
         data-message="' . get_string('confirm_message_update', 'block_studentcare') . '"
         data-yes="' . get_string('confirm_button_yes', 'block_studentcare') . '"
@@ -274,29 +273,29 @@ class edit_form extends moodleform {
         $coletaniciada = strtotime($this->coleta->data_inicio) <= time();
 
         // Atualiza apenas os campos permitidos dependendo do estado da coleta
-        $update_data = new stdClass();
-        $update_data->id = clean_param($data->coletaid, PARAM_INT);
+        $updatedata = new stdClass();
+        $updatedata->id = clean_param($data->coletaid, PARAM_INT);
 
         if (!$coletaniciada) {
             // Atualizações permitidas na edição completa
-            $update_data->curso_id = clean_param($data->courseid, PARAM_INT);
-            $update_data->section_id = clean_param($data->setor, PARAM_INT);
-            $update_data->data_inicio = date('Y-m-d H:i:s', clean_param($data->starttime, PARAM_INT));
+            $updatedata->curso_id = clean_param($data->courseid, PARAM_INT);
+            $updatedata->section_id = clean_param($data->setor, PARAM_INT);
+            $updatedata->data_inicio = date('Y-m-d H:i:s', clean_param($data->starttime, PARAM_INT));
         }
 
         // Atualizações permitidas em qualquer estado
-        $update_data->data_fim = date('Y-m-d H:i:s', clean_param($data->endtime, PARAM_INT));
-        $update_data->descricao = clean_param($data->description, PARAM_TEXT);
-        $update_data->receber_alerta = clean_param($data->alertprogress, PARAM_INT);
-        $update_data->resource_id_atrelado = clean_param($data->recurso, PARAM_INT);
+        $updatedata->data_fim = date('Y-m-d H:i:s', clean_param($data->endtime, PARAM_INT));
+        $updatedata->descricao = clean_param($data->description, PARAM_TEXT);
+        $updatedata->receber_alerta = clean_param($data->alertprogress, PARAM_INT);
+        $updatedata->resource_id_atrelado = clean_param($data->recurso, PARAM_INT);
 
         if (!$coletaniciada) {
-            $update_data->notificar_alunos = clean_param($data->notify_students, PARAM_INT);
+            $updatedata->notificar_alunos = clean_param($data->notify_students, PARAM_INT);
         }
 
         // Atualizar o registro principal
         try {
-            $DB->update_record('studentcare_cadastrocoleta', $update_data);
+            $DB->update_record('studentcare_cadastrocoleta', $updatedata);
         } catch (dml_exception $e) {
             debugging('Erro ao atualizar os dados da coleta: ' . $e->getMessage());
             throw new moodle_exception('erro_ao_atualizar_coleta', 'block_studentcare');
@@ -309,20 +308,20 @@ class edit_form extends moodleform {
                 $DB->delete_records('studentcare_associacao_classe_emocao_coleta', ['cadastrocoleta_id' => $this->coleta->id]);
 
                 // Decodificar e validar o campo oculto `emocao_selecionadas`
-                $emocao_selecionadas = json_decode($data->emocao_selecionadas, true);
+                $emocaoselecionadas = json_decode($data->emocao_selecionadas, true);
 
-                if (!is_array($emocao_selecionadas)) {
+                if (!is_array($emocaoselecionadas)) {
                     debugging('O campo emocao_selecionadas não contém um array válido.');
-                    $emocao_selecionadas = [];
+                    $emocaoselecionadas = [];
                 }
 
                 // Adicionar as novas emoções
-                foreach ($emocao_selecionadas as $classe_aeq_id => $emocoes) {
+                foreach ($emocaoselecionadas as $classeaeqid => $emocoes) {
                     if (is_array($emocoes)) {
                         foreach ($emocoes as $emocao) {
                             $assoc = new stdClass();
                             $assoc->cadastrocoleta_id = $this->coleta->id;
-                            $assoc->classeaeq_id = clean_param($classe_aeq_id, PARAM_INT);
+                            $assoc->classeaeq_id = clean_param($classeaeqid, PARAM_INT);
                             $assoc->emocao_id = clean_param($emocao['id'], PARAM_INT);
 
                             $DB->insert_record('studentcare_associacao_classe_emocao_coleta', $assoc);
@@ -337,23 +336,23 @@ class edit_form extends moodleform {
 
         // Redirecionar com sucesso
         $SESSION->mensagem_sucesso = get_string('coleta_atualizada_com_sucesso', 'block_studentcare');
-        redirect(new moodle_url('/blocks/studentcare/index.php',));
+        redirect(new moodle_url('/blocks/studentcare/index.php', ));
     }
 
 }
 
 class CadastroColeta {
-    private $nome;
-    private $datainicio;
-    private $horainicio;
-    private $dataFim;
-    private $horafim;
-    private $descricao;
-    private $receberalerta;
-    private $notificaralunos;
-    private $cursoid;
-    private $professorid;
-    private $classesaeq;
+    private $nome; // Name
+    private $datainicio; // Start date
+    private $horainicio; // Start hour
+    private $dataFim; // End date
+    private $horafim; // End hour
+    private $descricao; // Description
+    private $receberalerta; // Receive alert
+    private $notificaralunos; // Notify students
+    private $cursoid; // Course id
+    private $professorid; // Professor id
+    private $classesaeq; // Class aeq
 
     public function __construct($nome, $datainicio, $horainicio, $dataFim, $horafim, $descricao, $receberalerta, $notificaralunos,
             $cursoid, $professorid) {
