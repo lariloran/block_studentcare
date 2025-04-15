@@ -23,47 +23,41 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once("$CFG->libdir/formslib.php");
 
+/**
+ * edit_form
+ *
+ * @package block_studentcare
+ * @copyright  2024 Rafael Rodrigues
+ * @author Rafael Rodrigues
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class edit_form extends moodleform {
-    public function get_user_courses($userid) {
-        global $DB;
-        $courses = enrol_get_users_courses($userid, true);
-        $teacher_courses = [];
-
-        foreach ($courses as $course) {
-            $context = context_course::instance($course->id);
-
-            if (has_capability('moodle/course:update', $context, $userid)) {
-                $teacher_courses[] = $course;
-            }
-        }
-        return $teacher_courses;
-    }
-
     private $coleta;
 
-    public function __construct($coleta_id) {
+    public function __construct($coletaid) {
         global $DB;
 
-        if (!$coleta_id || !is_numeric($coleta_id)) {
-            throw new moodle_exception('invalidcoletaid', 'block_studentcare', '', $coleta_id);
+        if (!$coletaid || !is_numeric($coletaid)) {
+            throw new moodle_exception('invalidcoletaid', 'block_studentcare', '', $coletaid);
         }
 
-        $this->coleta = $DB->get_record('studentcare_cadastrocoleta', ['id' => $coleta_id]);
+        $this->coleta = $DB->get_record('studentcare_cadastrocoleta', ['id' => $coletaid]);
         if (!$this->coleta) {
-            throw new moodle_exception('invalidcoletaid', 'block_studentcare', '', $coleta_id);
+            throw new moodle_exception('invalidcoletaid', 'block_studentcare', '', $coletaid);
         }
 
         // Garantir que as propriedades necessárias existam com valores padrão
         $this->coleta->classeaeq_id = $this->coleta->classeaeq_id ?? 0;
 
-
         $this->coleta->emocoes = $DB->get_records_menu(
-            'studentcare_associacao_classe_emocao_coleta',
-            ['cadastrocoleta_id' => $coleta_id],
-            null,
-            'emocao_id, emocao_id'
+                'studentcare_associacao_classe_emocao_coleta',
+                ['cadastrocoleta_id' => $coletaid],
+                null,
+                'emocao_id, emocao_id'
         );
 
         parent::__construct();
@@ -78,7 +72,6 @@ class edit_form extends moodleform {
         $mform = $this->_form;
         $mform->addElement('hidden', 'coletaid', $this->coleta->id);
         $mform->setType('coletaid', PARAM_INT);
-
 
         // Nome da coleta (preenchido com o valor existente)
         $mform->addElement('text', 'name', get_string('name', 'block_studentcare'), ['size' => '50', 'readonly' => 'readonly']);
@@ -135,24 +128,23 @@ class edit_form extends moodleform {
         $mform->setType('resourceid', PARAM_INT);
         $mform->addHelpButton('resourceid', 'select_resource', 'block_studentcare');
 
-
         // Define a opção padrão como selecionada, se nenhuma for encontrada
         $default_resourceid = $this->coleta->resource_id_atrelado ?? '';
         $mform->setDefault('resourceid', $default_resourceid);
 
-
         // Datas de início e fim
         if (!$coletaIniciada) {
-            $mform->addElement('date_time_selector', 'starttime', get_string('starttime', 'block_studentcare'), ['optional' => false]);
+            $mform->addElement('date_time_selector', 'starttime', get_string('starttime', 'block_studentcare'),
+                    ['optional' => false]);
             $mform->setDefault('starttime', strtotime($this->coleta->data_inicio));
         }
-
 
         $mform->addElement('date_time_selector', 'endtime', get_string('endtime', 'block_studentcare'), ['optional' => false]);
         $mform->setDefault('endtime', strtotime($this->coleta->data_fim));
 
         // Descrição
-        $mform->addElement('textarea', 'description', get_string('description', 'block_studentcare'), 'wrap="virtual" rows="5" cols="50" maxlength="200"');
+        $mform->addElement('textarea', 'description', get_string('description', 'block_studentcare'),
+                'wrap="virtual" rows="5" cols="50" maxlength="200"');
         $mform->setType('description', PARAM_TEXT);
         $mform->setDefault('description', $this->coleta->descricao);
 
@@ -169,12 +161,11 @@ class edit_form extends moodleform {
             $mform->setDefault('classe_aeq', $this->coleta->classeaeq_id);
             $mform->addHelpButton('classe_aeq', 'aeqclasses', 'block_studentcare');
 
-
             $selected_emotions = [];
 
             // Obter as emoções associadas organizadas por classe
             $emocao_associadas = $DB->get_records('studentcare_associacao_classe_emocao_coleta', [
-                'cadastrocoleta_id' => $this->coleta->id
+                    'cadastrocoleta_id' => $this->coleta->id
             ]);
 
             foreach ($emocao_associadas as $associacao) {
@@ -191,8 +182,8 @@ class edit_form extends moodleform {
 
                     // Adicionar ao array com os detalhes completos
                     $selected_emotions[$classe_id][] = [
-                        'id' => $emocao->id,
-                        'name' => get_string($emocao->nome, 'block_studentcare')
+                            'id' => $emocao->id,
+                            'name' => get_string($emocao->nome, 'block_studentcare')
                     ];
                 }
             }
@@ -203,7 +194,8 @@ class edit_form extends moodleform {
                 $emotion_options[$emotion->id] = $emotion->nome;
             }
 
-            $mform->addElement('select', 'emocoes', get_string('emotions', 'block_studentcare'), $emotion_options, ['multiple' => 'multiple', 'size' => 8]);
+            $mform->addElement('select', 'emocoes', get_string('emotions', 'block_studentcare'), $emotion_options,
+                    ['multiple' => 'multiple', 'size' => 8]);
             $mform->setType('emocoes', PARAM_SEQUENCE);
             $mform->addHelpButton('emocoes', 'emotions', 'block_studentcare');
 
@@ -225,12 +217,14 @@ class edit_form extends moodleform {
 
         }
         // Checkboxes
-        $mform->addElement('advcheckbox', 'alertprogress', get_string('alertprogress', 'block_studentcare'), null, ['group' => 1], [0, 1]);
+        $mform->addElement('advcheckbox', 'alertprogress', get_string('alertprogress', 'block_studentcare'), null, ['group' => 1],
+                [0, 1]);
         $mform->setDefault('alertprogress', $this->coleta->receber_alerta);
         $mform->addHelpButton('alertprogress', 'alertprogress', 'block_studentcare');
 
         if (!$coletaIniciada) {
-            $mform->addElement('advcheckbox', 'notify_students', get_string('notify_students', 'block_studentcare'), null, ['group' => 1], [0, 1]);
+            $mform->addElement('advcheckbox', 'notify_students', get_string('notify_students', 'block_studentcare'), null,
+                    ['group' => 1], [0, 1]);
             $mform->setDefault('notify_students', $this->coleta->notificar_alunos);
             $mform->addHelpButton('notify_students', 'notify_students', 'block_studentcare');
         }
@@ -248,16 +242,29 @@ class edit_form extends moodleform {
         $buttonarray[] = $mform->createElement('cancel', 'cancel', get_string('cancel'));
         $mform->addGroup($buttonarray, 'buttonar', '', [' '], false);
 
-
         $mform->addElement('hidden', 'setor', '', array('id' => 'setor'));
         $mform->setType('setor', PARAM_INT);
 
         $mform->addElement('hidden', 'recurso', '', array('id' => 'recurso'));
         $mform->setType('recurso', PARAM_INT);
 
-
         $PAGE->requires->js(new moodle_url('/blocks/studentcare/js/shared.js'));
         $PAGE->requires->js(new moodle_url('/blocks/studentcare/js/edit_form.js'));
+    }
+
+    public function get_user_courses($userid) {
+        global $DB;
+        $courses = enrol_get_users_courses($userid, true);
+        $teachercourses = [];
+
+        foreach ($courses as $course) {
+            $context = context_course::instance($course->id);
+
+            if (has_capability('moodle/course:update', $context, $userid)) {
+                $teachercourses[] = $course;
+            }
+        }
+        return $teachercourses;
     }
 
     public function process_form($data) {
@@ -333,14 +340,12 @@ class edit_form extends moodleform {
         redirect(new moodle_url('/blocks/studentcare/index.php',));
     }
 
-
 }
-
 
 class CadastroColeta {
     private $nome;
-    private $dataInicio;
-    private $horaInicio;
+    private $datainicio;
+    private $horainicio;
     private $dataFim;
     private $horafim;
     private $descricao;
@@ -350,10 +355,11 @@ class CadastroColeta {
     private $professorid;
     private $classesaeq;
 
-    public function __construct($nome, $dataInicio, $horaInicio, $dataFim, $horafim, $descricao, $receberalerta, $notificaralunos, $cursoid, $professorid) {
+    public function __construct($nome, $datainicio, $horainicio, $dataFim, $horafim, $descricao, $receberalerta, $notificaralunos,
+            $cursoid, $professorid) {
         $this->nome = $nome;
-        $this->dataInicio = $dataInicio;
-        $this->horaInicio = $horaInicio;
+        $this->dataInicio = $datainicio;
+        $this->horaInicio = $horainicio;
         $this->dataFim = $dataFim;
         $this->horaFim = $horafim;
         $this->descricao = $descricao;
