@@ -358,12 +358,16 @@ class edit_form extends moodleform {
 
         // Redirecionar com sucesso
         $SESSION->mensagem_sucesso = get_string('coleta_atualizada_com_sucesso', 'block_studentcare');
-        redirect(new moodle_url('/blocks/studentcare/index.php',));
+        redirect(new moodle_url('/blocks/studentcare/index.php', ));
     }
 
 }
 
-class CadastroColeta {
+/**
+ *  Missing description.
+ *
+ * @return string
+ */class CadastroColeta {
     /** @var string This variable does something */
     private $nome;
     /** @var string This variable does something */
@@ -371,7 +375,7 @@ class CadastroColeta {
     /** @var string This variable does something */
     private $horainicio;
     /** @var string This variable does something */
-    private $dataFim;
+    private $datafim;
     /** @var string This variable does something */
     private $horafim;
     /** @var string This variable does something */
@@ -397,12 +401,12 @@ class CadastroColeta {
      *
      * @return string
      */
-    public function __construct($nome, $datainicio, $horainicio, $dataFim, $horafim, $descricao, $receberalerta, $notificaralunos,
+    public function __construct($nome, $datainicio, $horainicio, $datafim, $horafim, $descricao, $receberalerta, $notificaralunos,
             $cursoid, $professorid) {
         $this->nome = $nome;
         $this->dataInicio = $datainicio;
         $this->horaInicio = $horainicio;
-        $this->dataFim = $dataFim;
+        $this->dataFim = $datafim;
         $this->horaFim = $horafim;
         $this->descricao = $descricao;
         $this->receberAlerta = $receberalerta;
@@ -429,6 +433,7 @@ class CadastroColeta {
  */
 class ClasseAeq {
 
+    /** @var string This variable does something */
     private $nomeclasse;
 
     /**
@@ -445,7 +450,7 @@ class ClasseAeq {
      *
      * @return string
      */
-    public function get_Class_Name() {
+    public function get_class_name() {
         return $this->nomeClasse;
     }
 
@@ -454,7 +459,7 @@ class ClasseAeq {
      *
      * @return string
      */
-    public function set_Class_Name($nomeclasse) {
+    public function set_class_name($nomeclasse) {
         $this->nomeClasse = $nomeclasse;
     }
 }
