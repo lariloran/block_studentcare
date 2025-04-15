@@ -40,8 +40,8 @@ if (empty($emocaorespostas)) {
     header('Content-Type: application/json');
     echo json_encode([
             'tabela_dados' => [],
-            'chart_data' => ['labels' => [], 'datasets' => [],],
-            'moda_data' => ['labels' => [], 'data' => [], 'frequencies' => [],],
+            'chart_data' => ['labels' => [], 'datasets' => []],
+            'moda_data' => ['labels' => [], 'data' => [], 'frequencies' => []],
     ]);
     exit;
 }
@@ -58,7 +58,7 @@ $datasets = [
                 'backgroundColor' => 'rgba(153, 102, 255, 0.5)'],
 ];
 
-$moda_data = [];
+$modadata = [];
 $frequencies = [];
 
 foreach ($emocaorespostas as $resposta) {
@@ -79,13 +79,13 @@ foreach ($emocaorespostas as $resposta) {
 
 foreach ($tabeladados as $perguntaid => $respostas) {
     $moda = array_keys($respostas, max($respostas))[0] + 1;
-    $frequencia_moda = max($respostas);
-    $moda_data[] = $moda;
-    $frequencies[] = $frequencia_moda;
+    $frequenciamoda = max($respostas);
+    $modadata[] = $moda;
+    $frequencies[] = $frequenciamoda;
 }
 
 foreach ($datasets as $index => &$dataset) {
-    foreach ($labels as $perguntaid => $pergunta_texto) {
+    foreach ($labels as $perguntaid => $perguntatexto) {
         $dataset['data'][] = $tabeladados[$perguntaid][$index];
     }
 }
@@ -95,12 +95,12 @@ echo json_encode([
         'tabela_dados' => $tabeladados,
         'chart_data' => [
                 'labels' => array_values($labels),
-                'datasets' => $datasets
+                'datasets' => $datasets,
         ],
         'moda_data' => [
                 'labels' => array_values($labels),
-                'data' => $moda_data,
-                'frequencies' => $frequencies
-        ]
+                'data' => $modadata,
+                'frequencies' => $frequencies,
+        ],
 ]);
 exit;
