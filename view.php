@@ -54,12 +54,12 @@ if (!$isenrolled) {
     redirect(new moodle_url('/course/view.php', ['id' => $COURSE->id]));
     exit;
 }
- $respostasexistentes = $DB->get_records('studentcare_resposta', [
+$respostasexistentes = $DB->get_records('studentcare_resposta', [
         'coleta_id' => $coletaid,
         'usuario_id' => $userid,
 ]);
 
-if ( $respostasexistentes) {
+if ($respostasexistentes) {
     echo $OUTPUT->header();
 
     $redirecturl = new moodle_url("/course/view.php", ['id' => intval($coletar->curso_id)]);
@@ -161,9 +161,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $coletaid = clean_param($data['coleta_id'], PARAM_INT);
             $usuarioid = clean_param($data['usuario_id'], PARAM_INT);
 
-             $respostasexistentes = $DB->get_records('studentcare_resposta', ['coleta_id' => $coletaid, 'usuario_id' => $usuarioid]);
+            $respostasexistentes = $DB->get_records('studentcare_resposta', ['coleta_id' => $coletaid, 'usuario_id' => $usuarioid]);
 
-            if ( $respostasexistentes) {
+            if ($respostasexistentes) {
                 header('Content-Type: application/json');
                 echo json_encode(['success' => false, 'error' => 'Você já respondeu a essa coleta.']);
                 exit;
