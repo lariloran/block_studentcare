@@ -15,11 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * the first page to view the studentcare
+ * faq javascript
  *
+ * @package block_studentcare
+ * @copyright  2024 Rafael Rodrigues
  * @author Rafael Rodrigues
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package block_studentcare
  */
 
 require_once('../../config.php');
@@ -57,5 +58,3 @@ echo $OUTPUT->header();
 $mform->display();
 
 echo $OUTPUT->footer();
-
-?>

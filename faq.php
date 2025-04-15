@@ -204,7 +204,7 @@ echo html_writer::start_div('faq-topic', [
             <h3>' . get_string('faq_benefits_title', 'block_studentcare') . '</h3>
             <ul>' . get_string('faq_benefits_list', 'block_studentcare') . '</ul>
         </div>
-    `)'
+    `)',
 ]);
 
 echo html_writer::tag('div', '🧠', ['class' => 'faq-topic-icon']);
@@ -251,7 +251,7 @@ echo html_writer::start_div('faq-topic', [
     </ul>
 
     <p>' . get_string('faq_how_to_use_conclusion', 'block_studentcare') . '</p>
-`)'
+`)',
 ]);
 
 
@@ -270,7 +270,7 @@ echo html_writer::start_div('faq-topic', [
         ' . get_string('faq_topic_functionalities_list', 'block_studentcare') . '
         <p>' . get_string('faq_topic_functionalities_closing', 'block_studentcare') . '</p>
     </div>
-    `)'
+    `)',
 ]);
 
 echo html_writer::tag('div', '🛠️', ['class' => 'faq-topic-icon']);
@@ -294,7 +294,7 @@ echo html_writer::start_div('faq-topic', [
             <li><a href="mailto:lariloran2@gmail.com">lariloran2@gmail.com</a></li>
         </ul>
     </div>
-    `)'
+    `)',
 ]);
 
 echo html_writer::tag('div', '📟', ['class' => 'faq-topic-icon']);
