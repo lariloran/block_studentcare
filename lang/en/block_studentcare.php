@@ -1,4 +1,27 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Index page
+ *
+ * @package block_studentcare
+ * @copyright  2024 Rafael Rodrigues
+ * @author Rafael Rodrigues
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 $string['pluginname'] = 'StudentCare';
 $string['header'] = 'Manage Collections';
@@ -101,7 +124,7 @@ $string['date_format'] = '%d/%m/%Y %H:%M';
 
 $string['no_questions_found'] = 'No questions were found for this collection. Please contact the teacher of the course <strong>{$a}</strong> for more information.';
 
-$string['yes'] = 'Yes'; 
+$string['yes'] = 'Yes';
 $string['no'] = 'No';
 
 $string['dontlink'] = 'Do not link to any activity/resource';
@@ -308,8 +331,8 @@ $string['studentcare:managecollections'] = 'Manage the StudentCare block';
 $string['manual_aeq_search_placeholder'] = 'Search by title or content...';
 $string['chart_title'] = 'Distribution of Responses by Likert Scale';
 
-$string['yes_en'] = 'Yes'; 
-$string['no_en'] = 'No'; 
+$string['yes_en'] = 'Yes';
+$string['no_en'] = 'No';
 
 $string['confirm_title'] = 'Confirmation';
 $string['confirm_message'] = 'Do you want to save the information of this emotion collection?';
@@ -463,7 +486,7 @@ $string['class-related-boredom-9'] = 'I get restless because I can’t wait for 
 $string['class-related-boredom-10'] = 'During class I feel like I could sink into my chair.';
 $string['class-related-boredom-11'] = 'I start yawning in class because I’m so bored.';
 
-//Perguntas learning related
+// Perguntas learning related
 $string['learning-related-enjoyment-1'] = 'I look forward to studying.';
 $string['learning-related-enjoyment-2'] = 'I enjoy the challenge of learning the material.';
 $string['learning-related-enjoyment-3'] = 'I enjoy acquiring new knowledge.';
@@ -548,7 +571,7 @@ $string['learning-related-boredom-10'] = 'The material bores me so much that I f
 $string['learning-related-boredom-11'] = 'While studying I seem to drift off because it’s so boring.';
 
 
-//Perguntas test related
+// Perguntas test related
 $string['test-related-enjoyment-1'] = 'I look forward to the exam.';
 $string['test-related-enjoyment-2'] = 'I enjoy taking the exam.';
 $string['test-related-enjoyment-3'] = 'I look forward to demonstrating my knowledge.';
@@ -633,5 +656,3 @@ $string['test-related-hopelessness-8'] = 'I’d rather not write the test becaus
 $string['test-related-hopelessness-9'] = 'I feel like giving up.';
 $string['test-related-hopelessness-10'] = 'My hopelessness robs me of all my energy.';
 $string['test-related-hopelessness-11'] = 'I feel so resigned that I have no energy.';
-
-?>

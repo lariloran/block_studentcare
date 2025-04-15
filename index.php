@@ -33,10 +33,9 @@ $PAGE->set_context($context);
 $PAGE->set_url(new moodle_url('/blocks/studentcare/index.php'));
 $PAGE->set_title(get_string('header', 'block_studentcare'));
 
-
 echo $OUTPUT->header();
 
-echo '<div id="confirmation-delete" style="display: none;" 
+echo '<div id="confirmation-delete" style="display: none;"
     data-message-delete="' . get_string('confirm_message_delete', 'block_studentcare') . '"
     data-title="' . get_string('confirm_title', 'block_studentcare') . '"
     data-yes="' . get_string('confirm_button_yes', 'block_studentcare') . '"
@@ -44,19 +43,16 @@ echo '<div id="confirmation-delete" style="display: none;"
 >
 </div>';
 
-
-
 $PAGE->requires->js(new moodle_url('/blocks/studentcare/js/shared.js'));
-
 
 echo html_writer::start_tag('div', ['class' => 'container-fluid']);
 echo html_writer::start_tag('div', ['class' => 'row']);
 echo html_writer::start_tag('div', ['class' => 'col-md-12']);
 
 // Listagem de coletas com o card de criação.
-$collectionManager = new collection_manager();
+$collectionmanager = new collection_manager();
 $usuarioid = $USER->id;
-echo $collectionManager->listar_coletas($usuarioid);
+echo $collectionmanager->listar_coletas($usuarioid);
 
 echo html_writer::end_tag('div');
 echo html_writer::end_tag('div');
