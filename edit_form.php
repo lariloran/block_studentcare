@@ -40,6 +40,11 @@ class edit_form extends moodleform {
     /** @var string This variable does something */
     private $coleta;
 
+    /**
+     *  Missing description.
+     *
+     * @return string
+     */
     public function __construct($coletaid) {
         global $DB;
 
@@ -65,6 +70,11 @@ class edit_form extends moodleform {
         parent::__construct();
     }
 
+    /**
+     *  Missing description.
+     *
+     * @return string
+     */
     public function definition() {
         global $PAGE, $DB, $USER;
 
@@ -367,7 +377,16 @@ class CadastroColeta {
     /** @var string This variable does something */
     private $classesaeq;
 
-    public function __construct($nome, $datainicio, $horainicio, $dataFim, $horafim, $descricao, $receberalerta, $notificaralunos,
+    /**
+     *  Missing description.
+     *
+     * @return string
+     */
+    /**
+     *  Missing description.
+     *
+     * @return string
+     */public function __construct($nome, $datainicio, $horainicio, $dataFim, $horafim, $descricao, $receberalerta, $notificaralunos,
             $cursoid, $professorid) {
         $this->nome = $nome;
         $this->dataInicio = $datainicio;
@@ -382,22 +401,47 @@ class CadastroColeta {
         $this->classesAEQ = [];
     }
 
+    /**
+     *  Missing description.
+     *
+     * @return string
+     */
     public function adicionarclasse($classe, $emoções) {
         $this->classesAEQ[$classe] = $emoções;
     }
 }
 
 class ClasseAeq {
+    /**
+     *  Missing description.
+     *
+     * @return string
+     */
     private $nomeclasse;
 
+    /**
+     *  Missing description.
+     *
+     * @return string
+     */
     public function __construct($nomeclasse) {
         $this->nomeClasse = $nomeclasse;
     }
 
+    /**
+     *  Missing description.
+     *
+     * @return string
+     */
     public function getNomeClasse() {
         return $this->nomeClasse;
     }
 
+    /**
+     *  Missing description.
+     *
+     * @return string
+     */
     public function setNomeClasse($nomeclasse) {
         $this->nomeClasse = $nomeclasse;
     }
