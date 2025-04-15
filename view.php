@@ -32,39 +32,37 @@ $PAGE->set_url('/blocks/studentcare/view.php', array('coletaid' => $coletaid));
 $PAGE->set_context($context);
 $PAGE->set_title(get_string('emotion-colect', 'block_studentcare'));
 
-
 if (!$DB->record_exists('studentcare_cadastrocoleta', ['id' => $coletaid])) {
     echo $OUTPUT->header();
     echo html_writer::tag(
-        'div',
-        get_string('collection_not_available', 'block_studentcare'),
-        ['class' => 'alert alert-info']
+            'div',
+            get_string('collection_not_available', 'block_studentcare'),
+            ['class' => 'alert alert-info']
     );
     echo $OUTPUT->footer();
     exit;
 }
 
-
 $userid = $USER->id;
 
-$coletaR = $DB->get_record('studentcare_cadastrocoleta', ['id' => $coletaid]);
-$cursoR = $DB->get_record('course', ['id' => $coletaR->curso_id]);
+$coletar = $DB->get_record('studentcare_cadastrocoleta', ['id' => $coletaid]);
+$cursoR = $DB->get_record('course', ['id' => $coletar->curso_id]);
 
-$is_enrolled = is_enrolled(context_course::instance($coletaR->curso_id), $userid);
+$is_enrolled = is_enrolled(context_course::instance($coletar->curso_id), $userid);
 
 if (!$is_enrolled) {
     redirect(new moodle_url('/course/view.php', ['id' => $COURSE->id]));
     exit;
 }
 $respostasExistentes = $DB->get_records('studentcare_resposta', [
-    'coleta_id' => $coletaid,
-    'usuario_id' => $userid
+        'coleta_id' => $coletaid,
+        'usuario_id' => $userid
 ]);
 
 if ($respostasExistentes) {
     echo $OUTPUT->header();
 
-    $redirectUrl = new moodle_url("/course/view.php", ['id' => intval($coletaR->curso_id)]);
+    $redirectUrl = new moodle_url("/course/view.php", ['id' => intval($coletar->curso_id)]);
     echo '
     <script>
         function irParaHome() {
@@ -144,13 +142,12 @@ if ($respostasExistentes) {
     return;
 }
 
+$tclerecords = $DB->get_records('studentcare_tcle_resposta', ['usuario_id' => $userid, 'curso_id' => $coletar->curso_id]);
 
-$tcle_records = $DB->get_records('studentcare_tcle_resposta', ['usuario_id' => $userid, 'curso_id' => $coletaR->curso_id]);
-
-$tcle_aceito = false;
-foreach ($tcle_records as $record) {
-    if ($record->tcle_aceito == 1) {
-        $tcle_aceito = true;
+$tcleaceito = false;
+foreach ($tclerecords as $record) {
+    if ($record->tcleaceito == 1) {
+        $tcleaceito = true;
         break;
     }
 }
@@ -192,7 +189,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
 
-
             header('Content-Type: application/json');
             echo json_encode(['success' => true]);
             exit;
@@ -204,21 +200,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-
-    $tcle_aceito_form = optional_param('tcle_aceito', 0, PARAM_INT);
-    if ($tcle_aceito_form == 1) {
-        if (empty($tcle_records)) {
-            $DB->insert_record('studentcare_tcle_resposta', (object)[
-                'usuario_id' => $userid,
-                'coleta_id' => $coletaid,
-                'tcle_aceito' => $tcle_aceito_form,
-                'curso_id' => $coletaR->curso_id,
-                'data_resposta' => date('Y-m-d H:i:s')
+    $tcleaceito_form = optional_param('tcle_aceito', 0, PARAM_INT);
+    if ($tcleaceito_form == 1) {
+        if (empty($tclerecords)) {
+            $DB->insert_record('studentcare_tcle_resposta', (object) [
+                    'usuario_id' => $userid,
+                    'coleta_id' => $coletaid,
+                    'tcle_aceito' => $tcleaceito_form,
+                    'curso_id' => $coletar->curso_id,
+                    'data_resposta' => date('Y-m-d H:i:s')
             ]);
         }
         redirect($PAGE->url);
     } else {
-        redirect(new moodle_url("/course/view.php", ['id' => intval($coletaR->curso_id)]));
+        redirect(new moodle_url("/course/view.php", ['id' => intval($coletar->curso_id)]));
     }
 }
 
@@ -259,26 +254,26 @@ echo '<style>
 
 $agora = time();
 
-if ($agora < strtotime($coletaR->data_inicio)) {
+if ($agora < strtotime($coletar->data_inicio)) {
     echo "<div class='mensagem-sucesso'>" .
-        get_string(
-            'collection_not_started',
-            'block_studentcare',
-            userdate(strtotime($coletaR->data_inicio), get_string('date_format', 'block_studentcare'))
-        ) .
-        "</div>";
+            get_string(
+                    'collection_not_started',
+                    'block_studentcare',
+                    userdate(strtotime($coletar->data_inicio), get_string('date_format', 'block_studentcare'))
+            ) .
+            "</div>";
     echo $OUTPUT->footer();
     return;
 }
 
-if ($agora > strtotime($coletaR->data_fim)) {
+if ($agora > strtotime($coletar->data_fim)) {
     echo "<div class='mensagem-aviso'>" .
-        get_string(
-            'collection_expired',
-            'block_studentcare',
-            userdate(strtotime($coletaR->data_fim), get_string('date_format', 'block_studentcare'))
-        ) .
-        "</div>";
+            get_string(
+                    'collection_expired',
+                    'block_studentcare',
+                    userdate(strtotime($coletar->data_fim), get_string('date_format', 'block_studentcare'))
+            ) .
+            "</div>";
     echo $OUTPUT->footer();
     return;
 }
@@ -291,17 +286,16 @@ $perguntas = $DB->get_records_sql("
     WHERE a.cadastrocoleta_id = :coletaid
 ", ['coletaid' => $coletaid]);
 
-$cursoNome = $cursoR->fullname;
+$cursoome = $cursoR->fullname;
 
 if (!$perguntas) {
-    $mensagem = get_string('no_questions_found', 'block_studentcare', format_string($cursoNome));
+    $mensagem = get_string('no_questions_found', 'block_studentcare', format_string($cursoome));
     echo html_writer::tag('div', $mensagem, ['class' => 'alert alert-info']);
     echo $OUTPUT->footer();
     exit;
 }
 
-
-$perguntas_traduzidas = [];
+$perguntastraduzidas = [];
 
 foreach ($perguntas as $pergunta) {
     if (!empty($pergunta->pergunta_texto)) {
@@ -320,11 +314,10 @@ foreach ($perguntas as $pergunta) {
     }
 
     // Adiciona a pergunta processada ao array de perguntas traduzidas
-    $perguntas_traduzidas[] = $pergunta;
+    $perguntastraduzidas[] = $pergunta;
 }
 
-
-$perguntas_json = json_encode(array_values($perguntas_traduzidas));
+$perguntasjson = json_encode(array_values($perguntastraduzidas));
 
 echo '<div id="translation-data" 
     data-in_course="' . get_string('in_course', 'block_studentcare') . '"
@@ -362,11 +355,10 @@ echo '<div id="translation-data"
 >
 </div>';
 
-
 ?>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
-<div id="tcle-container" style="display: <?php echo $tcle_aceito ? 'none' : 'block'; ?>;">
+<div id="tcle-container" style="display: <?php echo $tcleaceito ? 'none' : 'block'; ?>;">
     <form id="tcle-form" method="POST" class="tcle-form">
         <input type="hidden" id="tcle_aceito" name="tcle_aceito" value="0">
         <p class="tcle-title"><strong><?php echo get_string('tcle_title', 'block_studentcare'); ?></strong></p>
@@ -386,7 +378,7 @@ echo '<div id="translation-data"
 </div>
 
 
-<?php if ($tcle_aceito): ?>
+<?php if ($tcleaceito): ?>
     <div id="quiz-container">
         <div id="titulo-coleta" class="titulo-coleta"></div>
         <div id="progress-bar-container">
@@ -515,13 +507,13 @@ echo '<div id="translation-data"
         document.getElementById('emoji-5').textContent = emojis[4];
     }
 
-    let perguntas = <?php echo $perguntas_json; ?>;
+    let perguntas = <?php echo $perguntasjson; ?>;
     let perguntaAtual = 0;
     let totalPerguntas = perguntas.length;
     let respostasSelecionadas = {};
 
     function irParaHome() {
-        window.location.href = '<?php echo new moodle_url("/course/view.php", ['id' => intval($coletaR->curso_id)]); ?>';
+        window.location.href = '<?php echo new moodle_url("/course/view.php", ['id' => intval($coletar->curso_id)]); ?>';
     }
 
 
@@ -584,28 +576,28 @@ echo '<div id="translation-data"
     }
 
     function mostrarTextoInicial(pergunta, emocoesDaClasse, tooltipsDaClasse) {
-        let cursoNome = <?php echo json_encode($cursoNome); ?>;
+        let cursoNome = <?php echo json_encode($cursoome); ?>;
 
         // Obter o nome do recurso atrelado
         let nomeRecurso = <?php
-            $resource_name = '--';
-            $coleta = $DB->get_record('studentcare_cadastrocoleta', ['id' => $coletaid], '*');
+                $resourcename = '--';
+                $coleta = $DB->get_record('studentcare_cadastrocoleta', ['id' => $coletaid], '*');
 
-            if ($coleta && $coleta->resource_id_atrelado) {
-                $module = $DB->get_record('course_modules', ['id' => $coleta->resource_id_atrelado], 'module');
-                if ($module) {
-                    $mod_info = $DB->get_record('modules', ['id' => $module->module], 'name');
-                    if ($mod_info) {
-                        $resource_name_record = $DB->get_record('course_modules',
-                            ['id' => $coleta->resource_id_atrelado], 'id, instance');
-                        if ($resource_name_record) {
-                            $resource_name = $DB->get_field($mod_info->name, 'name', ['id' => $resource_name_record->instance]);
+                if ($coleta && $coleta->resource_id_atrelado) {
+                    $module = $DB->get_record('course_modules', ['id' => $coleta->resource_id_atrelado], 'module');
+                    if ($module) {
+                        $modinfo = $DB->get_record('modules', ['id' => $module->module], 'name');
+                        if ($modinfo) {
+                            $resourcename_record = $DB->get_record('course_modules',
+                                    ['id' => $coleta->resource_id_atrelado], 'id, instance');
+                            if ($resourcename_record) {
+                                $resourcename = $DB->get_field($modinfo->name, 'name', ['id' => $resourcename_record->instance]);
+                            }
                         }
                     }
                 }
-            }
-            echo json_encode($resource_name);
-            ?>;
+                echo json_encode($resourcename);
+                ?>;
 
         let mensagemInicial = gerarMensagem(
             emocoesDaClasse,
@@ -628,7 +620,7 @@ echo '<div id="translation-data"
 
     function mostrarPergunta(index) {
         let pergunta = perguntas[index];
-        let cursoNome = <?php echo json_encode($cursoNome); ?>;
+        let cursoNome = <?php echo json_encode($cursoome); ?>;
 
         const emocoesDaClasse = [...new Set(
             perguntas
@@ -893,7 +885,7 @@ echo '<div id="translation-data"
     }
 
     window.onload = function () {
-        if (<?php echo json_encode($tcle_aceito); ?>) {
+        if (<?php echo json_encode($tcleaceito); ?>) {
             mostrarPergunta(perguntaAtual);
         }
     };
@@ -1260,4 +1252,3 @@ echo $OUTPUT->footer();
     #controls button:hover {
         background-color: #218838;
     }
-</style>
