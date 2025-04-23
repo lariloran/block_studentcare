@@ -41,10 +41,13 @@ try {
 
     $output = '';
     foreach ($emocoesclasses as $item) {
-        $output .= '<p><strong>' . s(get_string($item->nome_classe, 'block_studentcare')) . ':</strong> ' .
-            s(get_string($item->emocoes, 'block_studentcare')) . '</p>';
+        $emotions = explode(', ', $item->emocoes);
+        $output .= '<p><strong>' . s(get_string($item->nome_classe, 'block_studentcare')) . ':</strong> ';
+        foreach ($emotions as $emotion) {
+            $output .= get_string($emotion, 'block_studentcare') . ', ';
+        }
+        $output .= '</p>';
     }
-
     echo $output;
 } catch (Exception $e) {
     echo '<p>Erro ao carregar emoções e classes AEQ: ' . s($e->getMessage()) . '</p>';
