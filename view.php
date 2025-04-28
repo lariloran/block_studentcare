@@ -146,7 +146,7 @@ $tclerecords = $DB->get_records('studentcare_tcle_resposta', ['usuario_id' => $u
 
 $tcleaceito = false;
 foreach ($tclerecords as $record) {
-    if ($record->tcleaceito == 1) {
+    if ($record->tcle_aceito == 1) {
         $tcleaceito = true;
         break;
     }
